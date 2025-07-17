@@ -1,17 +1,18 @@
 using Microsoft.EntityFrameworkCore;
 using System.Data.Common;
 
-namespace AbpCompanyName.AbpProjectName.EntityFrameworkCore;
-
-public static class AbpProjectNameDbContextConfigurer
+namespace AbpCompanyName.AbpProjectName.EntityFrameworkCore
 {
-    public static void Configure(DbContextOptionsBuilder<AbpProjectNameDbContext> builder, string connectionString)
+    public static class AbpProjectNameDbContextConfigurer
     {
-        builder.UseSqlServer(connectionString);
-    }
+        public static void Configure(DbContextOptionsBuilder<AbpProjectNameDbContext> builder, string connectionString)
+        {
+            builder.UseSqlite(connectionString);
+        }
 
-    public static void Configure(DbContextOptionsBuilder<AbpProjectNameDbContext> builder, DbConnection connection)
-    {
-        builder.UseSqlServer(connection);
+        public static void Configure(DbContextOptionsBuilder<AbpProjectNameDbContext> builder, DbConnection connection)
+        {
+            builder.UseSqlite(connection);
+        }
     }
 }
