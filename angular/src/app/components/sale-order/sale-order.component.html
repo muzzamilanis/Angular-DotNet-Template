@@ -1,0 +1,243 @@
+<!-- Sale Order Form -->
+<div class="row">
+  <div class="col-md-12">
+    <div class="card card-primary">
+      <div class="card-header">
+        <h3 class="card-title">{{ editingOrder ? 'Edit' : 'Create' }} Sale Order</h3>
+      </div>
+      <form [formGroup]="saleOrderForm" (ngSubmit)="onSubmit()">
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="orderNumber">Order Number *</label>
+                <input type="text" 
+                       class="form-control" 
+                       id="orderNumber" 
+                       formControlName="orderNumber"
+                       placeholder="Enter order number"
+                       [class.is-invalid]="saleOrderForm.get('orderNumber')?.invalid && saleOrderForm.get('orderNumber')?.touched">
+                <div class="invalid-feedback" *ngIf="saleOrderForm.get('orderNumber')?.invalid && saleOrderForm.get('orderNumber')?.touched">
+                  <div *ngIf="saleOrderForm.get('orderNumber')?.errors?.['required']">Order number is required</div>
+                  <div *ngIf="saleOrderForm.get('orderNumber')?.errors?.['maxlength']">Order number must be 50 characters or less</div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="orderDate">Order Date *</label>
+                <input type="date" 
+                       class="form-control" 
+                       id="orderDate" 
+                       formControlName="orderDate"
+                       [class.is-invalid]="saleOrderForm.get('orderDate')?.invalid && saleOrderForm.get('orderDate')?.touched">
+                <div class="invalid-feedback" *ngIf="saleOrderForm.get('orderDate')?.invalid && saleOrderForm.get('orderDate')?.touched">
+                  Order date is required
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="customerName">Customer Name *</label>
+                <input type="text" 
+                       class="form-control" 
+                       id="customerName" 
+                       formControlName="customerName"
+                       placeholder="Enter customer name"
+                       [class.is-invalid]="saleOrderForm.get('customerName')?.invalid && saleOrderForm.get('customerName')?.touched">
+                <div class="invalid-feedback" *ngIf="saleOrderForm.get('customerName')?.invalid && saleOrderForm.get('customerName')?.touched">
+                  <div *ngIf="saleOrderForm.get('customerName')?.errors?.['required']">Customer name is required</div>
+                  <div *ngIf="saleOrderForm.get('customerName')?.errors?.['maxlength']">Customer name must be 200 characters or less</div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="customerAddress">Customer Address</label>
+                <textarea class="form-control" 
+                          id="customerAddress" 
+                          formControlName="customerAddress"
+                          placeholder="Enter customer address"
+                          rows="3"
+                          [class.is-invalid]="saleOrderForm.get('customerAddress')?.invalid && saleOrderForm.get('customerAddress')?.touched"></textarea>
+                <div class="invalid-feedback" *ngIf="saleOrderForm.get('customerAddress')?.invalid && saleOrderForm.get('customerAddress')?.touched">
+                  <div *ngIf="saleOrderForm.get('customerAddress')?.errors?.['maxlength']">Customer address must be 500 characters or less</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Order Items -->
+          <div class="row">
+            <div class="col-md-12">
+              <div class="card">
+                <div class="card-header">
+                  <h4 class="card-title">Order Items</h4>
+                  <button type="button" class="btn btn-success btn-sm float-right" (click)="addItem()">
+                    <i class="fas fa-plus"></i> Add Item
+                  </button>
+                </div>
+                <div class="card-body">
+                  <div class="table-responsive">
+                    <table class="table table-bordered">
+                      <thead>
+                        <tr>
+                          <th>Product *</th>
+                          <th>Quantity *</th>
+                          <th>Date *</th>
+                          <th>Price *</th>
+                          <th>Line Total</th>
+                          <th>Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody formArrayName="items">
+                        <tr *ngFor="let item of items.controls; let i = index" [formGroupName]="i">
+                          <td>
+                            <select class="form-control" 
+                                    formControlName="productId" 
+                                    (change)="onProductChange(i, $event.target.value)"
+                                    [class.is-invalid]="item.get('productId')?.invalid && item.get('productId')?.touched">
+                              <option value="">Select Product</option>
+                              <option *ngFor="let product of products" [value]="product.id">
+                                {{ product.name }} - ${{ product.price }}
+                              </option>
+                            </select>
+                            <div class="invalid-feedback" *ngIf="item.get('productId')?.invalid && item.get('productId')?.touched">
+                              Product is required
+                            </div>
+                          </td>
+                          <td>
+                            <input type="number" 
+                                   class="form-control" 
+                                   formControlName="quantity" 
+                                   min="1"
+                                   [class.is-invalid]="item.get('quantity')?.invalid && item.get('quantity')?.touched">
+                            <div class="invalid-feedback" *ngIf="item.get('quantity')?.invalid && item.get('quantity')?.touched">
+                              <div *ngIf="item.get('quantity')?.errors?.['required']">Quantity is required</div>
+                              <div *ngIf="item.get('quantity')?.errors?.['min']">Quantity must be at least 1</div>
+                            </div>
+                          </td>
+                          <td>
+                            <input type="date" 
+                                   class="form-control" 
+                                   formControlName="date"
+                                   [class.is-invalid]="item.get('date')?.invalid && item.get('date')?.touched">
+                            <div class="invalid-feedback" *ngIf="item.get('date')?.invalid && item.get('date')?.touched">
+                              Date is required
+                            </div>
+                          </td>
+                          <td>
+                            <input type="number" 
+                                   class="form-control" 
+                                   formControlName="price" 
+                                   min="0" 
+                                   step="0.01"
+                                   [class.is-invalid]="item.get('price')?.invalid && item.get('price')?.touched">
+                            <div class="invalid-feedback" *ngIf="item.get('price')?.invalid && item.get('price')?.touched">
+                              <div *ngIf="item.get('price')?.errors?.['required']">Price is required</div>
+                              <div *ngIf="item.get('price')?.errors?.['min']">Price must be 0 or greater</div>
+                            </div>
+                          </td>
+                          <td>
+                            <strong>${{ getLineTotal(i).toFixed(2) }}</strong>
+                          </td>
+                          <td>
+                            <button type="button" 
+                                    class="btn btn-danger btn-sm" 
+                                    (click)="removeItem(i)"
+                                    [disabled]="items.length === 1">
+                              <i class="fas fa-trash"></i>
+                            </button>
+                          </td>
+                        </tr>
+                        <tr *ngIf="items.length === 0">
+                          <td colspan="6" class="text-center">No items added yet</td>
+                        </tr>
+                      </tbody>
+                      <tfoot *ngIf="items.length > 0">
+                        <tr>
+                          <td colspan="4" class="text-right"><strong>Total Amount:</strong></td>
+                          <td><strong>${{ getTotalAmount().toFixed(2) }}</strong></td>
+                          <td></td>
+                        </tr>
+                      </tfoot>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card-footer">
+          <button type="submit" 
+                  class="btn btn-primary" 
+                  [disabled]="saleOrderForm.invalid || items.length === 0">
+            <i class="fas fa-save"></i> {{ editingOrder ? 'Update' : 'Create' }} Order
+          </button>
+          <button type="button" 
+                  class="btn btn-secondary ml-2" 
+                  (click)="resetForm()">
+            <i class="fas fa-times"></i> Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Sale Orders List -->
+<div class="row mt-4">
+  <div class="col-md-12">
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">Sale Orders</h3>
+      </div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th>Order Number</th>
+                <th>Order Date</th>
+                <th>Customer Name</th>
+                <th>Customer Address</th>
+                <th>Items Count</th>
+                <th>Total Amount</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let order of saleOrders">
+                <td>{{ order.orderNumber }}</td>
+                <td>{{ order.orderDate | date:'short' }}</td>
+                <td>{{ order.customerName }}</td>
+                <td>{{ order.customerAddress }}</td>
+                <td>{{ order.items.length }}</td>
+                <td>${{ order.totalAmount.toFixed(2) }}</td>
+                <td>
+                  <button type="button" 
+                          class="btn btn-warning btn-sm mr-2" 
+                          (click)="editOrder(order)">
+                    <i class="fas fa-edit"></i>
+                  </button>
+                  <button type="button" 
+                          class="btn btn-danger btn-sm" 
+                          (click)="deleteOrder(order)">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </td>
+              </tr>
+              <tr *ngIf="saleOrders.length === 0">
+                <td colspan="7" class="text-center">No sale orders found</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
