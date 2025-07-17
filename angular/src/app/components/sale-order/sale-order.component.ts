@@ -3,12 +3,14 @@ import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { SaleOrderService } from '../../services/sale-order.service';
 import { ProductService } from '../../services/product.service';
 import { Product } from '../../models/product.model';
-import { SaleOrder, CreateSaleOrderDto, CreateSaleOrderItemDto } from '../../models/sale-order.model';
+import { SaleOrder, CreateSaleOrderDto } from '../../models/sale-order.model';
+import { CreateSaleOrderItemDto } from '../../models/sale-order-item.model';
 
 @Component({
   selector: 'app-sale-order',
   templateUrl: './sale-order.component.html',
-  styleUrls: ['./sale-order.component.css']
+  styleUrls: ['./sale-order.component.css'],
+  standalone: false
 })
 export class SaleOrderComponent implements OnInit {
   saleOrderForm: FormGroup;

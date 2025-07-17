@@ -13,4 +13,4 @@ import 'core-js/es/map';
 import 'core-js/es/weak-map';
 import 'core-js/es/set';
 
-import 'zone.js/dist/zone';
+import 'zone.js';
