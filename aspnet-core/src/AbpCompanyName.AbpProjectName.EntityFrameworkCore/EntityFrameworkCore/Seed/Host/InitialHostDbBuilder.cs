@@ -1,21 +1,23 @@
-﻿namespace AbpCompanyName.AbpProjectName.EntityFrameworkCore.Seed.Host;
-
-public class InitialHostDbBuilder
+﻿namespace AbpCompanyName.AbpProjectName.EntityFrameworkCore.Seed.Host
 {
-    private readonly AbpProjectNameDbContext _context;
-
-    public InitialHostDbBuilder(AbpProjectNameDbContext context)
+    public class InitialHostDbBuilder
     {
-        _context = context;
-    }
+        private readonly AbpProjectNameDbContext _context;
 
-    public void Create()
-    {
-        new DefaultEditionCreator(_context).Create();
-        new DefaultLanguagesCreator(_context).Create();
-        new HostRoleAndUserCreator(_context).Create();
-        new DefaultSettingsCreator(_context).Create();
+        public InitialHostDbBuilder(AbpProjectNameDbContext context)
+        {
+            _context = context;
+        }
 
-        _context.SaveChanges();
+        public void Create()
+        {
+            new DefaultEditionCreator(_context).Create();
+            new DefaultLanguagesCreator(_context).Create();
+            new HostRoleAndUserCreator(_context).Create();
+            new DefaultSettingsCreator(_context).Create();
+            new DefaultProductsCreator(_context).Create();
+
+            _context.SaveChanges();
+        }
     }
 }
