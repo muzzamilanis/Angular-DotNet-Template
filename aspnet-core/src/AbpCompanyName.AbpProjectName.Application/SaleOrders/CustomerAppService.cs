@@ -15,12 +15,16 @@ namespace AbpCompanyName.AbpProjectName.Application.SaleOrders
         {
         }
 
-        public override async Task<ListResultDto<CustomerDto>> GetAllAsync(PagedAndSortedResultRequestDto input)
+        public override async Task<PagedResultDto<CustomerDto>> GetAllAsync(PagedAndSortedResultRequestDto input)
         {
-            var customers = await Repository.GetAllListAsync();
-            return new ListResultDto<CustomerDto>(
-                ObjectMapper.Map<List<CustomerDto>>(customers)
-            );
+            var query = Repository.GetAll();
+            
+            var totalCount = await query.CountAsync();
+            var customers = await query.Skip(input.SkipCount).Take(input.MaxResultCount).ToListAsync();
+            
+            var dtos = ObjectMapper.Map<List<CustomerDto>>(customers);
+            
+            return new PagedResultDto<CustomerDto>(totalCount, dtos);
         }
 
         public async Task<ListResultDto<CustomerDto>> GetActiveCustomers()
