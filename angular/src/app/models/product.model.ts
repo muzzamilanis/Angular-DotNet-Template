@@ -12,3 +12,11 @@ export interface CreateProductDto {
   price: number;
   isActive: boolean;
 }
+
+export interface UpdateProductDto {
+  id: number;
+  name: string;
+  description: string;
+  price: number;
+  isActive: boolean;
+}
