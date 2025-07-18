@@ -14,8 +14,8 @@ builder.Services.AddSwaggerGen();
 
 // Add Entity Framework
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection") ?? 
-        "Data Source=simpleapi.db"));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection") ?? 
+        "Server=(localdb)\\mssqllocaldb;Database=SimpleApiDb;Trusted_Connection=true;MultipleActiveResultSets=true"));
 
 // Add AutoMapper
 builder.Services.AddAutoMapper(typeof(MappingProfile));
