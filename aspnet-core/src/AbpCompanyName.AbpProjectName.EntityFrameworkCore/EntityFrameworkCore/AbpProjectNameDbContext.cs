@@ -11,6 +11,7 @@ namespace AbpCompanyName.AbpProjectName.EntityFrameworkCore
     {
         /* Define a DbSet for each entity of the application */
         public DbSet<Product> Products { get; set; }
+        public DbSet<Customer> Customers { get; set; }
         public DbSet<SaleOrder> SaleOrders { get; set; }
         public DbSet<SaleOrderItem> SaleOrderItems { get; set; }
 
