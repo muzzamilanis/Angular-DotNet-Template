@@ -7,12 +7,12 @@ namespace AbpCompanyName.AbpProjectName.EntityFrameworkCore
     {
         public static void Configure(DbContextOptionsBuilder<AbpProjectNameDbContext> builder, string connectionString)
         {
-            builder.UseSqlite(connectionString);
+            builder.UseSqlServer(connectionString);
         }
 
         public static void Configure(DbContextOptionsBuilder<AbpProjectNameDbContext> builder, DbConnection connection)
         {
-            builder.UseSqlite(connection);
+            builder.UseSqlServer(connection);
         }
     }
 }
