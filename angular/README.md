@@ -2,6 +2,15 @@
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 1.0.0-beta.31.
 
+## Default Login Credentials
+
+When testing the application, use these default credentials to log in:
+
+**Username:** `admin`  
+**Password:** `123qwe`
+
+> ⚠️ **Important**: Change the default password immediately after first login, especially in production environments.
+
 ## Development server
 
 Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
