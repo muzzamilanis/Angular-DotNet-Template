@@ -10,6 +10,17 @@ This is a template to create **ASP.NET Core MVC / Angular** based startup projec
 2. [ASP.NET Core & Angular](https://aspnetboilerplate.com/Pages/Documents/Zero/Startup-Template-Angular) (single page application).
  
 User Interface is based on [AdminLTE theme](https://github.com/ColorlibHQ/AdminLTE).
+
+# Default Login Credentials
+
+After setting up the project and running the database migrations, you can log in using these default credentials:
+
+**Username:** `admin`  
+**Password:** `123qwe`
+
+> ⚠️ **Security Warning**: These are default credentials for development purposes only. **Always change the default password immediately** after first login, especially in production environments.
+
+The default admin user is created during database seeding with the email `admin@aspnetboilerplate.com`.
  
 # Download
 
