@@ -1,0 +1,27 @@
+# Database files
+*.db
+*.db-shm
+*.db-wal
+
+# Build artifacts
+bin/
+obj/
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# IDE files
+.vs/
+.vscode/
+
+# NuGet
+packages/
+
+# Logs
+*.log
+
+# Application settings (if containing secrets)
+appsettings.Production.json
