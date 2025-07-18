@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { LoginDto } from '../../models/auth.model';
 
 @Component({
   selector: 'app-login',
@@ -20,7 +21,7 @@ export class LoginComponent implements OnInit {
     private router: Router
   ) {
     this.loginForm = this.fb.group({
-      userNameOrEmailAddress: ['', [Validators.required]],
+      username: ['', [Validators.required]],
       password: ['', [Validators.required]],
       rememberMe: [false]
     });
@@ -38,8 +39,15 @@ export class LoginComponent implements OnInit {
       this.loading = true;
       this.error = '';
       
-      const loginDto = this.loginForm.value;
+      // Transform the form values to match the expected DTO
+      const loginDto: LoginDto = {
+      username: this.loginForm.get('username')?.value,
+      password: this.loginForm.get('password')?.value,
+      rememberMe: this.loginForm.get('rememberMe')?.value
+      };
       
+      
+
       this.authService.login(loginDto).subscribe({
         next: (result) => {
           this.loading = false;
