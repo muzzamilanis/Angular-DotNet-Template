@@ -2,17 +2,19 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Product, CreateProductDto, UpdateProductDto } from '../models/product.model';
+import { PaginatedResponse } from '../models/common.model';
+import { environment } from '../../environments/environment.hmr';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProductService {
-  private apiUrl = '/api/products';
+  private apiUrl = environment.apiUrl + '/products';
 
   constructor(private http: HttpClient) { }
 
-  getProducts(): Observable<Product[]> {
-    return this.http.get<Product[]>(this.apiUrl);
+  getProducts(): Observable<PaginatedResponse<Product>> {
+    return this.http.get<PaginatedResponse<Product>>(this.apiUrl);
   }
 
   getProduct(id: number): Observable<Product> {

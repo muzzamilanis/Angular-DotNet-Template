@@ -110,8 +110,8 @@ export class ProductComponent implements OnInit {
 
   private loadProducts(): void {
     this.productService.getProducts().subscribe({
-      next: (products) => {
-        this.products = products;
+      next: (response) => {
+        this.products = response.items;
       },
       error: (error) => {
         console.error('Error loading products:', error);

@@ -5,6 +5,7 @@ import { ProductService } from '../../services/product.service';
 import { Product } from '../../models/product.model';
 import { SaleOrder, CreateSaleOrderDto } from '../../models/sale-order.model';
 import { CreateSaleOrderItemDto } from '../../models/sale-order-item.model';
+import { PaginatedResponse } from '../../models/common.model';
 
 @Component({
   selector: 'app-sale-order',
@@ -187,8 +188,11 @@ export class SaleOrderComponent implements OnInit {
 
   private loadProducts(): void {
     this.productService.getProducts().subscribe({
-      next: (products) => {
-        this.products = products.filter(p => p.isActive);
+      next: (response: PaginatedResponse<Product>) => {
+        console.log('Loaded products:', JSON.stringify(response));
+        
+        // Now TypeScript knows response.items exists and is an array
+        this.products = response.items.filter(p => p.isActive);
       },
       error: (error) => {
         console.error('Error loading products:', error);
@@ -198,8 +202,18 @@ export class SaleOrderComponent implements OnInit {
 
   private loadSaleOrders(): void {
     this.saleOrderService.getSaleOrders().subscribe({
-      next: (orders) => {
-        this.saleOrders = orders;
+      next: (response) => {
+        // Check if response has items property (paginated response)
+        if (response && response.items && Array.isArray(response.items)) {
+          this.saleOrders = response.items;
+        } else if (Array.isArray(response)) {
+          // If response is already an array
+          this.saleOrders = response;
+        } else {
+          // Fallback to empty array
+          console.error('Unexpected response format:', response);
+          this.saleOrders = [];
+        }
       },
       error: (error) => {
         console.error('Error loading sale orders:', error);
