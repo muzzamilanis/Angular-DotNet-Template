@@ -45,11 +45,11 @@ dotnet ef migrations script --project . --startup-project ../BusinessApi.Api
 
 ## Database Configuration
 
-The project is configured to use SQLite by default:
-- **Development**: `BusinessApi_Dev.db`
-- **Production**: `BusinessApi.db`
+The project is configured to use SQL Server with LocalDB:
+- **Development**: `Server=(localdb)\\mssqllocaldb;Database=BusinessApiDb_Dev;Trusted_Connection=true;MultipleActiveResultSets=true`
+- **Production**: `Server=(localdb)\\mssqllocaldb;Database=BusinessApiDb;Trusted_Connection=true;MultipleActiveResultSets=true`
 
-Database files are automatically created when the application starts and migrations are applied.
+The database is automatically created when the application starts and migrations are applied.
 
 ## Automatic Migration on Startup
 
@@ -66,7 +66,7 @@ using (var scope = app.Services.CreateScope())
 
 ## Migration History
 
-- **InitialCreate** (20250719072459): Initial database schema with Customer, Product, SaleOrder, and SaleOrderItem tables including seed data.
+- **InitialCreate** (20250719074230): Initial database schema with Customer, Product, SaleOrder, and SaleOrderItem tables including seed data for SQL Server.
 
 ## Troubleshooting
 
@@ -74,14 +74,6 @@ If you encounter issues:
 
 1. **Build errors**: Ensure the solution builds successfully before running migration commands
 2. **Connection issues**: Verify the connection string in `appsettings.json` and `appsettings.Development.json`
-3. **Permission issues**: Ensure the application has write permissions to create the SQLite database file
+3. **LocalDB issues**: Ensure SQL Server LocalDB is installed and running
 4. **Migration conflicts**: Use `dotnet ef migrations remove` to undo pending migrations before creating new ones
 
-## Switching to SQL Server
-
-To switch from SQLite to SQL Server:
-
-1. Update `BusinessApi.Infrastructure.csproj` to reference `Microsoft.EntityFrameworkCore.SqlServer`
-2. Update connection strings in `appsettings.json` and `appsettings.Development.json`
-3. Update `Program.cs` to use `UseSqlServer()` instead of `UseSqlite()`
-4. Create new migrations for SQL Server

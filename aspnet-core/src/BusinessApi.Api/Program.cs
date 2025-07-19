@@ -17,8 +17,8 @@ builder.Services.AddSwaggerGen();
 
 // Add Entity Framework
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection") ?? 
-        "Data Source=BusinessApi.db"));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection") ?? 
+        "Server=(localdb)\\mssqllocaldb;Database=BusinessApiDb;Trusted_Connection=true;MultipleActiveResultSets=true"));
 
 // Add AutoMapper
 builder.Services.AddAutoMapper(typeof(MappingProfile));
