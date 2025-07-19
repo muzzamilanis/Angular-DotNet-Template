@@ -17,8 +17,8 @@ builder.Services.AddSwaggerGen();
 
 // Add Entity Framework
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection") ?? 
-        "Server=(localdb)\\mssqllocaldb;Database=BusinessApiDb;Trusted_Connection=true;MultipleActiveResultSets=true"));
+    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection") ?? 
+        "Data Source=BusinessApi.db"));
 
 // Add AutoMapper
 builder.Services.AddAutoMapper(typeof(MappingProfile));
@@ -79,11 +79,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// Create database if it doesn't exist
+// Apply database migrations
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    context.Database.EnsureCreated();
+    context.Database.Migrate();
 }
 
 app.UseHttpsRedirection();
