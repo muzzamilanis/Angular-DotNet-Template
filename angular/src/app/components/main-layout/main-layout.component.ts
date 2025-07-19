@@ -11,6 +11,9 @@ import { AuthService } from '../../services/auth.service';
 export class MainLayoutComponent implements OnInit {
   sidebarCollapsed = false;
 
+  // Track open/closed state of menus
+  openMenus: {[key: string]: boolean} = {};
+
   constructor(
     private router: Router,
     private authService: AuthService
@@ -26,5 +29,16 @@ export class MainLayoutComponent implements OnInit {
   logout(): void {
     this.authService.logout();
     this.router.navigate(['/login']);
+  }
+
+  // Toggle menu state and prevent default navigation
+  toggleMenuState(menu: string, event: Event): void {
+    event.preventDefault();
+    this.openMenus[menu] = !this.openMenus[menu];
+  }
+
+  // Check if a menu is open
+  isMenuOpen(menu: string): boolean {
+    return this.openMenus[menu] === true;
   }
 }

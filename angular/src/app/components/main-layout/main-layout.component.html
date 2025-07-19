@@ -51,8 +51,8 @@
           </li>
 
           <!-- Masters -->
-          <li class="nav-item">
-            <a href="#" class="nav-link">
+          <li class="nav-item" [class.menu-open]="isMenuOpen('masters')">
+            <a (click)="toggleMenuState('masters', $event)" class="nav-link">
               <i class="nav-icon fas fa-database"></i>
               <p>
                 Masters
@@ -76,8 +76,8 @@
           </li>
 
           <!-- Transactions -->
-          <li class="nav-item">
-            <a href="#" class="nav-link">
+          <li class="nav-item" [class.menu-open]="isMenuOpen('transactions')">
+            <a (click)="toggleMenuState('transactions', $event)" class="nav-link">
               <i class="nav-icon fas fa-shopping-cart"></i>
               <p>
                 Transactions
