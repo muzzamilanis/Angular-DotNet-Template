@@ -2,10 +2,10 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using BusinessApi.Infrastructure.Data;
-using BusinessApi.Application.Services;
-using BusinessApi.Application.Mappings;
-using BusinessApi.Domain.Interfaces;
-using BusinessApi.Infrastructure.Repositories;
+using BusinessApi.Api.Modules.Shared;
+using BusinessApi.Api.Modules.CustomerManagement;
+using BusinessApi.Api.Modules.ProductManagement;
+using BusinessApi.Api.Modules.OrderManagement;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,24 +15,11 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Add Entity Framework
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection") ?? 
-        "Server=(localdb)\\mssqllocaldb;Database=BusinessApiDb;Trusted_Connection=true;MultipleActiveResultSets=true"));
-
-// Add AutoMapper
-builder.Services.AddAutoMapper(typeof(MappingProfile));
-
-// Add repositories
-builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
-builder.Services.AddScoped<IProductRepository, ProductRepository>();
-builder.Services.AddScoped<ISaleOrderRepository, SaleOrderRepository>();
-
-// Add application services
-builder.Services.AddScoped<ICustomerService, CustomerService>();
-builder.Services.AddScoped<IProductService, ProductService>();
-builder.Services.AddScoped<ISaleOrderService, SaleOrderService>();
-builder.Services.AddScoped<IAuthService, AuthService>();
+// Add modules - Modular Monolith Pattern
+builder.Services.AddSharedModule(builder.Configuration);
+builder.Services.AddCustomerModule();
+builder.Services.AddProductModule();
+builder.Services.AddOrderModule();
 
 // Add CORS
 builder.Services.AddCors(options =>
@@ -79,12 +66,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// Apply database migrations
-using (var scope = app.Services.CreateScope())
-{
-    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    context.Database.Migrate();
-}
+// Apply database migrations (temporarily disabled for demo)
+// using (var scope = app.Services.CreateScope())
+// {
+//     var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+//     context.Database.Migrate();
+// }
 
 app.UseHttpsRedirection();
 
