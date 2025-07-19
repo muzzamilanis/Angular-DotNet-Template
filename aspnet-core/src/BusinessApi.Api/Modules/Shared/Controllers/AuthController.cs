@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using BusinessApi.Application.DTOs;
 using BusinessApi.Application.Services;
 
-namespace BusinessApi.Api.Controllers
+namespace BusinessApi.Api.Modules.Shared.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
