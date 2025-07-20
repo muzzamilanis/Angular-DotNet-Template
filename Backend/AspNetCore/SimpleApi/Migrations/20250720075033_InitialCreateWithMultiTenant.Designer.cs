@@ -2,7 +2,6 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SimpleApi.Data;
@@ -12,49 +11,43 @@ using SimpleApi.Data;
 namespace SimpleApi.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250720073511_AddMultiTenantIndustrySupport")]
-    partial class AddMultiTenantIndustrySupport
+    [Migration("20250720075033_InitialCreateWithMultiTenant")]
+    partial class InitialCreateWithMultiTenant
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.17")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128);
-
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+            modelBuilder.HasAnnotation("ProductVersion", "8.0.17");
 
             modelBuilder.Entity("SimpleApi.Models.BusinessNature", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("ConfigSchema")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Description")
                         .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("DisplayName")
                         .IsRequired()
                         .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasColumnType("TEXT");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -90,41 +83,39 @@ namespace SimpleApi.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Address")
                         .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("BusinessNatureId")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("CompanyName")
                         .IsRequired()
                         .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("CustomFields")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Email")
                         .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasColumnType("TEXT");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Phone")
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("TenantId")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
@@ -140,35 +131,33 @@ namespace SimpleApi.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Address")
                         .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
+                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Email")
                         .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasColumnType("TEXT");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Phone")
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("TEXT");
 
                     b.Property<int?>("TenantId")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
@@ -203,30 +192,28 @@ namespace SimpleApi.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("BusinessNatureId")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("FieldSchema")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("FormType")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("TEXT");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("ValidationRules")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -234,36 +221,76 @@ namespace SimpleApi.Migrations
                         .IsUnique();
 
                     b.ToTable("IndustryFormConfigs");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            BusinessNatureId = 1,
+                            CreatedDate = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            FieldSchema = "{\"fields\":[{\"name\":\"vendor\",\"type\":\"text\",\"label\":\"Vendor\",\"required\":true},{\"name\":\"campaignId\",\"type\":\"text\",\"label\":\"Campaign ID\",\"required\":true},{\"name\":\"adPlatform\",\"type\":\"select\",\"label\":\"Ad Platform\",\"options\":[\"Google Ads\",\"Facebook Ads\",\"LinkedIn Ads\",\"Twitter Ads\"],\"required\":true},{\"name\":\"budget\",\"type\":\"number\",\"label\":\"Budget\",\"required\":true,\"min\":0}]}",
+                            FormType = "purchase",
+                            IsActive = true,
+                            ValidationRules = "{\"vendor\":{\"minLength\":2,\"maxLength\":100},\"budget\":{\"min\":0,\"max\":1000000}}"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            BusinessNatureId = 1,
+                            CreatedDate = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            FieldSchema = "{\"fields\":[{\"name\":\"clientId\",\"type\":\"text\",\"label\":\"Client ID\",\"required\":true},{\"name\":\"serviceType\",\"type\":\"select\",\"label\":\"Service Type\",\"options\":[\"PPC Management\",\"Social Media Marketing\",\"SEO\",\"Content Marketing\",\"Email Marketing\"],\"required\":true},{\"name\":\"deliverables\",\"type\":\"textarea\",\"label\":\"Deliverables\",\"required\":true},{\"name\":\"roi\",\"type\":\"number\",\"label\":\"Expected ROI (%)\",\"required\":false,\"min\":0}]}",
+                            FormType = "sales",
+                            IsActive = true,
+                            ValidationRules = "{\"clientId\":{\"minLength\":3,\"maxLength\":50},\"deliverables\":{\"minLength\":10,\"maxLength\":1000}}"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            BusinessNatureId = 2,
+                            CreatedDate = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            FieldSchema = "{\"fields\":[{\"name\":\"supplier\",\"type\":\"text\",\"label\":\"Supplier\",\"required\":true},{\"name\":\"partNumber\",\"type\":\"text\",\"label\":\"Part Number\",\"required\":true},{\"name\":\"vehicleModel\",\"type\":\"text\",\"label\":\"Vehicle Model\",\"required\":true},{\"name\":\"quantity\",\"type\":\"number\",\"label\":\"Quantity\",\"required\":true,\"min\":1}]}",
+                            FormType = "purchase",
+                            IsActive = true,
+                            ValidationRules = "{\"supplier\":{\"minLength\":2,\"maxLength\":100},\"partNumber\":{\"pattern\":\"^[A-Z0-9-]+$\"},\"quantity\":{\"min\":1,\"max\":10000}}"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            BusinessNatureId = 2,
+                            CreatedDate = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            FieldSchema = "{\"fields\":[{\"name\":\"customerId\",\"type\":\"text\",\"label\":\"Customer ID\",\"required\":true},{\"name\":\"vehicleVin\",\"type\":\"text\",\"label\":\"Vehicle VIN\",\"required\":true},{\"name\":\"financing\",\"type\":\"select\",\"label\":\"Financing\",\"options\":[\"Cash\",\"Bank Loan\",\"Dealer Financing\",\"Lease\"],\"required\":true},{\"name\":\"warranty\",\"type\":\"select\",\"label\":\"Warranty\",\"options\":[\"Basic\",\"Extended\",\"Premium\"],\"required\":false}]}",
+                            FormType = "sales",
+                            IsActive = true,
+                            ValidationRules = "{\"customerId\":{\"minLength\":3,\"maxLength\":50},\"vehicleVin\":{\"pattern\":\"^[A-HJ-NPR-Z0-9]{17}$\",\"message\":\"Invalid VIN format\"}}"
+                        });
                 });
 
             modelBuilder.Entity("SimpleApi.Models.IndustryModule", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("BusinessNatureId")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("DisplayName")
                         .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasColumnType("TEXT");
 
                     b.Property<bool>("IsEnabled")
-                        .HasColumnType("bit");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("ModuleConfig")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("ModuleName")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -271,36 +298,76 @@ namespace SimpleApi.Migrations
                         .IsUnique();
 
                     b.ToTable("IndustryModules");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            BusinessNatureId = 1,
+                            CreatedDate = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "Campaign Management",
+                            IsEnabled = true,
+                            ModuleConfig = "{\"features\":[\"createCampaign\",\"trackMetrics\",\"budgetManagement\"],\"permissions\":[\"campaign.create\",\"campaign.view\",\"campaign.edit\"]}",
+                            ModuleName = "CampaignManagement"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            BusinessNatureId = 1,
+                            CreatedDate = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "Client Billing",
+                            IsEnabled = true,
+                            ModuleConfig = "{\"features\":[\"invoiceGeneration\",\"paymentTracking\",\"roiReporting\"],\"permissions\":[\"billing.create\",\"billing.view\",\"billing.edit\"]}",
+                            ModuleName = "ClientBilling"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            BusinessNatureId = 2,
+                            CreatedDate = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "Inventory Management",
+                            IsEnabled = true,
+                            ModuleConfig = "{\"features\":[\"stockTracking\",\"partsCatalog\",\"supplierManagement\"],\"permissions\":[\"inventory.create\",\"inventory.view\",\"inventory.edit\"]}",
+                            ModuleName = "InventoryManagement"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            BusinessNatureId = 2,
+                            CreatedDate = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "Vehicle Sales",
+                            IsEnabled = true,
+                            ModuleConfig = "{\"features\":[\"vehicleCatalog\",\"salesTracking\",\"financingOptions\"],\"permissions\":[\"sales.create\",\"sales.view\",\"sales.edit\"]}",
+                            ModuleName = "VehicleSales"
+                        });
                 });
 
             modelBuilder.Entity("SimpleApi.Models.Product", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Description")
                         .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
+                        .HasColumnType("TEXT");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasColumnType("TEXT");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<int?>("TenantId")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
@@ -342,31 +409,29 @@ namespace SimpleApi.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("CustomerAddress")
                         .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("CustomerName")
                         .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("OrderDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("OrderNumber")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("TEXT");
 
                     b.Property<int?>("TenantId")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<decimal>("TotalAmount")
                         .HasColumnType("decimal(18,2)");
@@ -382,21 +447,19 @@ namespace SimpleApi.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("INTEGER");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("ProductId")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("Quantity")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("SaleOrderId")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
@@ -411,53 +474,51 @@ namespace SimpleApi.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("INTEGER");
 
                     b.Property<int?>("CompanyProfileId")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("FirstName")
                         .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasColumnType("TEXT");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .HasColumnType("INTEGER");
 
                     b.Property<bool>("IsEmailConfirmed")
-                        .HasColumnType("bit");
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime?>("LastLoginDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("LastName")
                         .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("PasswordHash")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Phone")
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("TEXT");
 
                     b.Property<int?>("TenantId")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Username")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 

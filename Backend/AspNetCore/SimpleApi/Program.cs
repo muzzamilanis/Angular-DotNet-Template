@@ -74,11 +74,19 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// Create database if it doesn't exist
+// Apply migrations on startup
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    context.Database.EnsureCreated();
+    try
+    {
+        context.Database.Migrate();
+    }
+    catch (Exception ex)
+    {
+        var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "An error occurred while migrating the database.");
+    }
 }
 
 app.UseHttpsRedirection();

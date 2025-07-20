@@ -1,0 +1,133 @@
+<div class="container-fluid">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">
+            <i class="fas fa-building mr-2"></i>
+            Company Setup
+          </h3>
+          <p class="card-text">
+            Set up your company profile to get started with industry-specific features.
+          </p>
+        </div>
+        
+        <div class="card-body">
+          <div *ngIf="isLoading" class="text-center">
+            <div class="spinner-border" role="status">
+              <span class="sr-only">Loading...</span>
+            </div>
+            <p class="mt-2">Loading business types...</p>
+          </div>
+
+          <form [formGroup]="companyForm" (ngSubmit)="onSubmit()" *ngIf="!isLoading">
+            <!-- Business Nature Selection -->
+            <div class="form-group">
+              <label for="businessNatureId" class="required">Business Type</label>
+              <select 
+                class="form-control" 
+                id="businessNatureId" 
+                formControlName="businessNatureId"
+                (change)="onBusinessNatureChange()"
+                [class.is-invalid]="f['businessNatureId'].invalid && f['businessNatureId'].touched">
+                <option value="">Select your business type</option>
+                <option *ngFor="let bn of businessNatures" [value]="bn.id">
+                  {{ bn.displayName }}
+                </option>
+              </select>
+              <div *ngIf="f['businessNatureId'].invalid && f['businessNatureId'].touched" class="invalid-feedback">
+                Please select a business type.
+              </div>
+            </div>
+
+            <!-- Selected Business Nature Info -->
+            <div *ngIf="selectedBusinessNature" class="alert alert-info">
+              <h6><i class="fas fa-info-circle mr-2"></i>{{ selectedBusinessNature.displayName }}</h6>
+              <p class="mb-0">{{ selectedBusinessNature.description }}</p>
+            </div>
+
+            <!-- Company Name -->
+            <div class="form-group">
+              <label for="companyName" class="required">Company Name</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                id="companyName" 
+                formControlName="companyName"
+                placeholder="Enter your company name"
+                [class.is-invalid]="f['companyName'].invalid && f['companyName'].touched">
+              <div *ngIf="f['companyName'].invalid && f['companyName'].touched" class="invalid-feedback">
+                <div *ngIf="f['companyName'].errors?.['required']">Company name is required.</div>
+                <div *ngIf="f['companyName'].errors?.['minlength']">Company name must be at least 2 characters.</div>
+                <div *ngIf="f['companyName'].errors?.['maxlength']">Company name cannot exceed 200 characters.</div>
+              </div>
+            </div>
+
+            <!-- Address -->
+            <div class="form-group">
+              <label for="address">Address</label>
+              <textarea 
+                class="form-control" 
+                id="address" 
+                formControlName="address"
+                placeholder="Enter company address"
+                rows="3"
+                [class.is-invalid]="f['address'].invalid && f['address'].touched">
+              </textarea>
+              <div *ngIf="f['address'].invalid && f['address'].touched" class="invalid-feedback">
+                <div *ngIf="f['address'].errors?.['maxlength']">Address cannot exceed 500 characters.</div>
+              </div>
+            </div>
+
+            <!-- Phone and Email Row -->
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="phone">Phone</label>
+                  <input 
+                    type="tel" 
+                    class="form-control" 
+                    id="phone" 
+                    formControlName="phone"
+                    placeholder="Enter phone number"
+                    [class.is-invalid]="f['phone'].invalid && f['phone'].touched">
+                  <div *ngIf="f['phone'].invalid && f['phone'].touched" class="invalid-feedback">
+                    <div *ngIf="f['phone'].errors?.['maxlength']">Phone number cannot exceed 50 characters.</div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="email">Email</label>
+                  <input 
+                    type="email" 
+                    class="form-control" 
+                    id="email" 
+                    formControlName="email"
+                    placeholder="Enter company email"
+                    [class.is-invalid]="f['email'].invalid && f['email'].touched">
+                  <div *ngIf="f['email'].invalid && f['email'].touched" class="invalid-feedback">
+                    <div *ngIf="f['email'].errors?.['email']">Please enter a valid email address.</div>
+                    <div *ngIf="f['email'].errors?.['maxlength']">Email cannot exceed 200 characters.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="form-group text-center">
+              <button 
+                type="submit" 
+                class="btn btn-primary btn-lg"
+                [disabled]="companyForm.invalid || isSubmitting">
+                <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm mr-2" role="status"></span>
+                <i *ngIf="!isSubmitting" class="fas fa-save mr-2"></i>
+                {{ isSubmitting ? 'Creating...' : 'Create Company Profile' }}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

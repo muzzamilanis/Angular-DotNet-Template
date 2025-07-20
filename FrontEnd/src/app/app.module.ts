@@ -11,6 +11,7 @@ import { MainLayoutComponent } from './components/main-layout/main-layout.compon
 import { SaleOrderComponent } from './components/sale-order/sale-order.component';
 import { ProductComponent } from './components/product/product.component';
 import { CustomerComponent } from './components/customer/customer.component';
+import { CompanySetupComponent } from './components/company-setup/company-setup.component';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
 
 @NgModule({
@@ -20,7 +21,8 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
     MainLayoutComponent,
     SaleOrderComponent,
     ProductComponent,
-    CustomerComponent
+    CustomerComponent,
+    CompanySetupComponent
   ],
   imports: [
     BrowserModule,

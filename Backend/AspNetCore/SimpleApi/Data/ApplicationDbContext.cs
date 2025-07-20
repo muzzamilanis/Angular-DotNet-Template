@@ -173,6 +173,98 @@ namespace SimpleApi.Data
                 }
             );
 
+            // Seed data for IndustryModules
+            modelBuilder.Entity<IndustryModule>().HasData(
+                // Digital Marketing Modules
+                new IndustryModule
+                {
+                    Id = 1,
+                    BusinessNatureId = 1,
+                    ModuleName = "CampaignManagement",
+                    DisplayName = "Campaign Management",
+                    ModuleConfig = "{\"features\":[\"createCampaign\",\"trackMetrics\",\"budgetManagement\"],\"permissions\":[\"campaign.create\",\"campaign.view\",\"campaign.edit\"]}",
+                    IsEnabled = true,
+                    CreatedDate = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+                },
+                new IndustryModule
+                {
+                    Id = 2,
+                    BusinessNatureId = 1,
+                    ModuleName = "ClientBilling",
+                    DisplayName = "Client Billing",
+                    ModuleConfig = "{\"features\":[\"invoiceGeneration\",\"paymentTracking\",\"roiReporting\"],\"permissions\":[\"billing.create\",\"billing.view\",\"billing.edit\"]}",
+                    IsEnabled = true,
+                    CreatedDate = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+                },
+                // Automobile Modules
+                new IndustryModule
+                {
+                    Id = 3,
+                    BusinessNatureId = 2,
+                    ModuleName = "InventoryManagement",
+                    DisplayName = "Inventory Management",
+                    ModuleConfig = "{\"features\":[\"stockTracking\",\"partsCatalog\",\"supplierManagement\"],\"permissions\":[\"inventory.create\",\"inventory.view\",\"inventory.edit\"]}",
+                    IsEnabled = true,
+                    CreatedDate = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+                },
+                new IndustryModule
+                {
+                    Id = 4,
+                    BusinessNatureId = 2,
+                    ModuleName = "VehicleSales",
+                    DisplayName = "Vehicle Sales",
+                    ModuleConfig = "{\"features\":[\"vehicleCatalog\",\"salesTracking\",\"financingOptions\"],\"permissions\":[\"sales.create\",\"sales.view\",\"sales.edit\"]}",
+                    IsEnabled = true,
+                    CreatedDate = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+                }
+            );
+
+            // Seed data for IndustryFormConfigs
+            modelBuilder.Entity<IndustryFormConfig>().HasData(
+                // Digital Marketing Form Configs
+                new IndustryFormConfig
+                {
+                    Id = 1,
+                    BusinessNatureId = 1,
+                    FormType = "purchase",
+                    FieldSchema = "{\"fields\":[{\"name\":\"vendor\",\"type\":\"text\",\"label\":\"Vendor\",\"required\":true},{\"name\":\"campaignId\",\"type\":\"text\",\"label\":\"Campaign ID\",\"required\":true},{\"name\":\"adPlatform\",\"type\":\"select\",\"label\":\"Ad Platform\",\"options\":[\"Google Ads\",\"Facebook Ads\",\"LinkedIn Ads\",\"Twitter Ads\"],\"required\":true},{\"name\":\"budget\",\"type\":\"number\",\"label\":\"Budget\",\"required\":true,\"min\":0}]}",
+                    ValidationRules = "{\"vendor\":{\"minLength\":2,\"maxLength\":100},\"budget\":{\"min\":0,\"max\":1000000}}",
+                    IsActive = true,
+                    CreatedDate = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+                },
+                new IndustryFormConfig
+                {
+                    Id = 2,
+                    BusinessNatureId = 1,
+                    FormType = "sales",
+                    FieldSchema = "{\"fields\":[{\"name\":\"clientId\",\"type\":\"text\",\"label\":\"Client ID\",\"required\":true},{\"name\":\"serviceType\",\"type\":\"select\",\"label\":\"Service Type\",\"options\":[\"PPC Management\",\"Social Media Marketing\",\"SEO\",\"Content Marketing\",\"Email Marketing\"],\"required\":true},{\"name\":\"deliverables\",\"type\":\"textarea\",\"label\":\"Deliverables\",\"required\":true},{\"name\":\"roi\",\"type\":\"number\",\"label\":\"Expected ROI (%)\",\"required\":false,\"min\":0}]}",
+                    ValidationRules = "{\"clientId\":{\"minLength\":3,\"maxLength\":50},\"deliverables\":{\"minLength\":10,\"maxLength\":1000}}",
+                    IsActive = true,
+                    CreatedDate = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+                },
+                // Automobile Form Configs
+                new IndustryFormConfig
+                {
+                    Id = 3,
+                    BusinessNatureId = 2,
+                    FormType = "purchase",
+                    FieldSchema = "{\"fields\":[{\"name\":\"supplier\",\"type\":\"text\",\"label\":\"Supplier\",\"required\":true},{\"name\":\"partNumber\",\"type\":\"text\",\"label\":\"Part Number\",\"required\":true},{\"name\":\"vehicleModel\",\"type\":\"text\",\"label\":\"Vehicle Model\",\"required\":true},{\"name\":\"quantity\",\"type\":\"number\",\"label\":\"Quantity\",\"required\":true,\"min\":1}]}",
+                    ValidationRules = "{\"supplier\":{\"minLength\":2,\"maxLength\":100},\"partNumber\":{\"pattern\":\"^[A-Z0-9-]+$\"},\"quantity\":{\"min\":1,\"max\":10000}}",
+                    IsActive = true,
+                    CreatedDate = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+                },
+                new IndustryFormConfig
+                {
+                    Id = 4,
+                    BusinessNatureId = 2,
+                    FormType = "sales",
+                    FieldSchema = "{\"fields\":[{\"name\":\"customerId\",\"type\":\"text\",\"label\":\"Customer ID\",\"required\":true},{\"name\":\"vehicleVin\",\"type\":\"text\",\"label\":\"Vehicle VIN\",\"required\":true},{\"name\":\"financing\",\"type\":\"select\",\"label\":\"Financing\",\"options\":[\"Cash\",\"Bank Loan\",\"Dealer Financing\",\"Lease\"],\"required\":true},{\"name\":\"warranty\",\"type\":\"select\",\"label\":\"Warranty\",\"options\":[\"Basic\",\"Extended\",\"Premium\"],\"required\":false}]}",
+                    ValidationRules = "{\"customerId\":{\"minLength\":3,\"maxLength\":50},\"vehicleVin\":{\"pattern\":\"^[A-HJ-NPR-Z0-9]{17}$\",\"message\":\"Invalid VIN format\"}}",
+                    IsActive = true,
+                    CreatedDate = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+                }
+            );
+
             // Seed data for existing entities (updated with TenantId)
             modelBuilder.Entity<Customer>().HasData(
                 new Customer { Id = 1, TenantId = null, Name = "John Doe", Address = "123 Main St", Phone = "555-1234", Email = "john@example.com", IsActive = true, CreatedDate = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc) },
