@@ -9,10 +9,18 @@ namespace SimpleApi.Data
         {
         }
 
+        // Existing entities
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<SaleOrder> SaleOrders { get; set; }
         public DbSet<SaleOrderItem> SaleOrderItems { get; set; }
+
+        // Multi-tenant and industry entities
+        public DbSet<User> Users { get; set; }
+        public DbSet<BusinessNature> BusinessNatures { get; set; }
+        public DbSet<CompanyProfile> CompanyProfiles { get; set; }
+        public DbSet<IndustryModule> IndustryModules { get; set; }
+        public DbSet<IndustryFormConfig> IndustryFormConfigs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -26,6 +34,7 @@ namespace SimpleApi.Data
                 entity.Property(e => e.Address).HasMaxLength(500);
                 entity.Property(e => e.Phone).HasMaxLength(50);
                 entity.Property(e => e.Email).HasMaxLength(200);
+                entity.HasIndex(e => e.TenantId); // Index for multi-tenant queries
             });
 
             // Configure Product
@@ -35,6 +44,7 @@ namespace SimpleApi.Data
                 entity.Property(e => e.Name).IsRequired().HasMaxLength(200);
                 entity.Property(e => e.Description).HasMaxLength(500);
                 entity.Property(e => e.Price).HasColumnType("decimal(18,2)");
+                entity.HasIndex(e => e.TenantId); // Index for multi-tenant queries
             });
 
             // Configure SaleOrder
@@ -45,6 +55,7 @@ namespace SimpleApi.Data
                 entity.Property(e => e.CustomerName).HasMaxLength(200);
                 entity.Property(e => e.CustomerAddress).HasMaxLength(500);
                 entity.Property(e => e.TotalAmount).HasColumnType("decimal(18,2)");
+                entity.HasIndex(e => e.TenantId); // Index for multi-tenant queries
                 
                 entity.HasMany(e => e.Items)
                       .WithOne(e => e.SaleOrder)
@@ -67,16 +78,111 @@ namespace SimpleApi.Data
                       .HasForeignKey(e => e.ProductId);
             });
 
-            // Seed data
+            // Configure User
+            modelBuilder.Entity<User>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Username).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.Email).IsRequired().HasMaxLength(200);
+                entity.Property(e => e.PasswordHash).IsRequired();
+                entity.Property(e => e.FirstName).HasMaxLength(200);
+                entity.Property(e => e.LastName).HasMaxLength(200);
+                entity.Property(e => e.Phone).HasMaxLength(50);
+                entity.HasIndex(e => e.Email).IsUnique();
+                entity.HasIndex(e => e.Username).IsUnique();
+                entity.HasIndex(e => e.TenantId);
+            });
+
+            // Configure BusinessNature
+            modelBuilder.Entity<BusinessNature>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.DisplayName).IsRequired().HasMaxLength(200);
+                entity.Property(e => e.Description).HasMaxLength(500);
+                entity.HasIndex(e => e.Name).IsUnique();
+            });
+
+            // Configure CompanyProfile
+            modelBuilder.Entity<CompanyProfile>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.CompanyName).IsRequired().HasMaxLength(200);
+                entity.Property(e => e.Address).HasMaxLength(500);
+                entity.Property(e => e.Phone).HasMaxLength(50);
+                entity.Property(e => e.Email).HasMaxLength(200);
+                entity.HasIndex(e => e.TenantId).IsUnique(); // One company per tenant
+
+                entity.HasOne(e => e.BusinessNature)
+                      .WithMany(e => e.CompanyProfiles)
+                      .HasForeignKey(e => e.BusinessNatureId)
+                      .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            // Configure IndustryModule
+            modelBuilder.Entity<IndustryModule>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.ModuleName).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.DisplayName).HasMaxLength(200);
+
+                entity.HasOne(e => e.BusinessNature)
+                      .WithMany()
+                      .HasForeignKey(e => e.BusinessNatureId)
+                      .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasIndex(e => new { e.BusinessNatureId, e.ModuleName }).IsUnique();
+            });
+
+            // Configure IndustryFormConfig
+            modelBuilder.Entity<IndustryFormConfig>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.FormType).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.FieldSchema).IsRequired();
+
+                entity.HasOne(e => e.BusinessNature)
+                      .WithMany()
+                      .HasForeignKey(e => e.BusinessNatureId)
+                      .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasIndex(e => new { e.BusinessNatureId, e.FormType }).IsUnique();
+            });
+
+            // Seed data for BusinessNatures
+            modelBuilder.Entity<BusinessNature>().HasData(
+                new BusinessNature 
+                { 
+                    Id = 1, 
+                    Name = "DigitalMarketing", 
+                    DisplayName = "Digital Marketing Agency",
+                    Description = "Digital marketing and advertising agencies",
+                    ConfigSchema = "{\"dashboardWidgets\":[\"campaignMetrics\",\"clientBilling\",\"adSpend\"],\"forms\":{\"purchase\":[\"vendor\",\"campaignId\",\"adPlatform\",\"budget\"],\"sales\":[\"clientId\",\"serviceType\",\"deliverables\",\"roi\"]},\"reports\":[\"campaignROI\",\"clientProfitability\",\"monthlyRevenue\"]}",
+                    IsActive = true,
+                    CreatedDate = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+                },
+                new BusinessNature 
+                { 
+                    Id = 2, 
+                    Name = "Automobile", 
+                    DisplayName = "Automobile Industry",
+                    Description = "Automotive sales and service businesses",
+                    ConfigSchema = "{\"dashboardWidgets\":[\"inventory\",\"salesVolume\",\"serviceRevenue\"],\"forms\":{\"purchase\":[\"supplier\",\"partNumber\",\"vehicleModel\",\"quantity\"],\"sales\":[\"customerId\",\"vehicleVin\",\"financing\",\"warranty\"]},\"reports\":[\"inventoryTurnover\",\"salesPerformance\",\"serviceAnalytics\"]}",
+                    IsActive = true,
+                    CreatedDate = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+                }
+            );
+
+            // Seed data for existing entities (updated with TenantId)
             modelBuilder.Entity<Customer>().HasData(
-                new Customer { Id = 1, Name = "John Doe", Address = "123 Main St", Phone = "555-1234", Email = "john@example.com", IsActive = true },
-                new Customer { Id = 2, Name = "Jane Smith", Address = "456 Oak Ave", Phone = "555-5678", Email = "jane@example.com", IsActive = true }
+                new Customer { Id = 1, TenantId = null, Name = "John Doe", Address = "123 Main St", Phone = "555-1234", Email = "john@example.com", IsActive = true, CreatedDate = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc) },
+                new Customer { Id = 2, TenantId = null, Name = "Jane Smith", Address = "456 Oak Ave", Phone = "555-5678", Email = "jane@example.com", IsActive = true, CreatedDate = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc) }
             );
 
             modelBuilder.Entity<Product>().HasData(
-                new Product { Id = 1, Name = "Product A", Description = "Description for Product A", Price = 10.50m, IsActive = true },
-                new Product { Id = 2, Name = "Product B", Description = "Description for Product B", Price = 25.00m, IsActive = true },
-                new Product { Id = 3, Name = "Product C", Description = "Description for Product C", Price = 15.75m, IsActive = true }
+                new Product { Id = 1, TenantId = null, Name = "Product A", Description = "Description for Product A", Price = 10.50m, IsActive = true, CreatedDate = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc) },
+                new Product { Id = 2, TenantId = null, Name = "Product B", Description = "Description for Product B", Price = 25.00m, IsActive = true, CreatedDate = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc) },
+                new Product { Id = 3, TenantId = null, Name = "Product C", Description = "Description for Product C", Price = 15.75m, IsActive = true, CreatedDate = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc) }
             );
         }
     }
