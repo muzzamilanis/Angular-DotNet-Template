@@ -22,7 +22,7 @@ namespace SimpleApi.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("SimpleApi.Models.Customer", b =>
+            modelBuilder.Entity("SimpleApi.Models.Company", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -33,6 +33,13 @@ namespace SimpleApi.Migrations
                     b.Property<string>("Address")
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("ContactPerson")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
                         .HasMaxLength(200)
@@ -52,6 +59,57 @@ namespace SimpleApi.Migrations
 
                     b.HasKey("Id");
 
+                    b.ToTable("Companies");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Address = "123 Business St",
+                            ContactPerson = "System Admin",
+                            CreatedAt = new DateTime(2025, 7, 21, 16, 34, 54, 752, DateTimeKind.Utc).AddTicks(6516),
+                            Email = "admin@defaultcompany.com",
+                            IsActive = true,
+                            Name = "Default Company",
+                            Phone = "555-0001"
+                        });
+                });
+
+            modelBuilder.Entity("SimpleApi.Models.Customer", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Address")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("Phone")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
                     b.ToTable("Customers");
 
                     b.HasData(
@@ -59,6 +117,7 @@ namespace SimpleApi.Migrations
                         {
                             Id = 1,
                             Address = "123 Main St",
+                            CompanyId = 1,
                             Email = "john@example.com",
                             IsActive = true,
                             Name = "John Doe",
@@ -68,6 +127,7 @@ namespace SimpleApi.Migrations
                         {
                             Id = 2,
                             Address = "456 Oak Ave",
+                            CompanyId = 1,
                             Email = "jane@example.com",
                             IsActive = true,
                             Name = "Jane Smith",
@@ -82,6 +142,9 @@ namespace SimpleApi.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Description")
                         .HasMaxLength(500)
@@ -100,12 +163,15 @@ namespace SimpleApi.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CompanyId");
+
                     b.ToTable("Products");
 
                     b.HasData(
                         new
                         {
                             Id = 1,
+                            CompanyId = 1,
                             Description = "Description for Product A",
                             IsActive = true,
                             Name = "Product A",
@@ -114,6 +180,7 @@ namespace SimpleApi.Migrations
                         new
                         {
                             Id = 2,
+                            CompanyId = 1,
                             Description = "Description for Product B",
                             IsActive = true,
                             Name = "Product B",
@@ -122,6 +189,7 @@ namespace SimpleApi.Migrations
                         new
                         {
                             Id = 3,
+                            CompanyId = 1,
                             Description = "Description for Product C",
                             IsActive = true,
                             Name = "Product C",
@@ -136,6 +204,9 @@ namespace SimpleApi.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("int");
 
                     b.Property<string>("CustomerAddress")
                         .HasMaxLength(500)
@@ -157,6 +228,8 @@ namespace SimpleApi.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
 
                     b.ToTable("SaleOrders");
                 });
@@ -190,6 +263,83 @@ namespace SimpleApi.Migrations
                     b.ToTable("SaleOrderItems");
                 });
 
+            modelBuilder.Entity("SimpleApi.Models.User", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsSuperAdmin")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("Email")
+                        .IsUnique();
+
+                    b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("SimpleApi.Models.Customer", b =>
+                {
+                    b.HasOne("SimpleApi.Models.Company", "Company")
+                        .WithMany("Customers")
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Company");
+                });
+
+            modelBuilder.Entity("SimpleApi.Models.Product", b =>
+                {
+                    b.HasOne("SimpleApi.Models.Company", "Company")
+                        .WithMany("Products")
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Company");
+                });
+
+            modelBuilder.Entity("SimpleApi.Models.SaleOrder", b =>
+                {
+                    b.HasOne("SimpleApi.Models.Company", "Company")
+                        .WithMany("SaleOrders")
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Company");
+                });
+
             modelBuilder.Entity("SimpleApi.Models.SaleOrderItem", b =>
                 {
                     b.HasOne("SimpleApi.Models.Product", "Product")
@@ -207,6 +357,28 @@ namespace SimpleApi.Migrations
                     b.Navigation("Product");
 
                     b.Navigation("SaleOrder");
+                });
+
+            modelBuilder.Entity("SimpleApi.Models.User", b =>
+                {
+                    b.HasOne("SimpleApi.Models.Company", "Company")
+                        .WithMany("Users")
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Company");
+                });
+
+            modelBuilder.Entity("SimpleApi.Models.Company", b =>
+                {
+                    b.Navigation("Customers");
+
+                    b.Navigation("Products");
+
+                    b.Navigation("SaleOrders");
+
+                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("SimpleApi.Models.SaleOrder", b =>
