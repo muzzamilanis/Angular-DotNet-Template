@@ -39,8 +39,8 @@ namespace SimpleApi.Data
                 entity.Property(e => e.Email).IsRequired().HasMaxLength(200);
                 entity.Property(e => e.PasswordHash).IsRequired();
                 
-                entity.HasOne(e => e.Company)
-                      .WithMany(e => e.Users)
+                entity.HasOne<Company>()
+                      .WithMany()
                       .HasForeignKey(e => e.CompanyId)
                       .OnDelete(DeleteBehavior.Restrict);
                       
@@ -56,8 +56,8 @@ namespace SimpleApi.Data
                 entity.Property(e => e.Phone).HasMaxLength(50);
                 entity.Property(e => e.Email).HasMaxLength(200);
                 
-                entity.HasOne(e => e.Company)
-                      .WithMany(e => e.Customers)
+                entity.HasOne<Company>()
+                      .WithMany()
                       .HasForeignKey(e => e.CompanyId)
                       .OnDelete(DeleteBehavior.Restrict);
             });
@@ -70,8 +70,8 @@ namespace SimpleApi.Data
                 entity.Property(e => e.Description).HasMaxLength(500);
                 entity.Property(e => e.Price).HasColumnType("decimal(18,2)");
                 
-                entity.HasOne(e => e.Company)
-                      .WithMany(e => e.Products)
+                entity.HasOne<Company>()
+                      .WithMany()
                       .HasForeignKey(e => e.CompanyId)
                       .OnDelete(DeleteBehavior.Restrict);
             });
@@ -85,8 +85,8 @@ namespace SimpleApi.Data
                 entity.Property(e => e.CustomerAddress).HasMaxLength(500);
                 entity.Property(e => e.TotalAmount).HasColumnType("decimal(18,2)");
                 
-                entity.HasOne(e => e.Company)
-                      .WithMany(e => e.SaleOrders)
+                entity.HasOne<Company>()
+                      .WithMany()
                       .HasForeignKey(e => e.CompanyId)
                       .OnDelete(DeleteBehavior.Restrict);
                 

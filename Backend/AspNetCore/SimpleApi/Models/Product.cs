@@ -20,6 +20,5 @@ namespace SimpleApi.Models
 
         // Foreign key for Company (Tenant)
         public int CompanyId { get; set; }
-        public Company Company { get; set; } = null!;
     }
 }

@@ -25,11 +25,5 @@ namespace SimpleApi.Models
         public bool IsActive { get; set; } = true;
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-
-        // Navigation properties
-        public ICollection<User> Users { get; set; } = new List<User>();
-        public ICollection<Customer> Customers { get; set; } = new List<Customer>();
-        public ICollection<Product> Products { get; set; } = new List<Product>();
-        public ICollection<SaleOrder> SaleOrders { get; set; } = new List<SaleOrder>();
     }
 }
