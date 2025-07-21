@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { SaleOrder, CreateSaleOrderDto, UpdateSaleOrderDto } from '../models/sale-order.model';
 import { PaginatedResponse } from '../models/common.model';
-import { environment } from '../../environments/environment.hmr';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
