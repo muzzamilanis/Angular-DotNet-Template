@@ -13,6 +13,8 @@ import { ProductComponent } from './components/product/product.component';
 import { CustomerComponent } from './components/customer/customer.component';
 import { CompanySetupComponent } from './components/company-setup/company-setup.component';
 import { UserManagementComponent } from './components/user-management/user-management.component';
+import { DashboardComponent } from './components/dashboard/dashboard.component';
+import { RegistrationComponent } from './components/registration/registration.component';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
 
 @NgModule({
@@ -24,7 +26,9 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
     ProductComponent,
     CustomerComponent,
     CompanySetupComponent,
-    UserManagementComponent
+    UserManagementComponent,
+    DashboardComponent,
+    RegistrationComponent
   ],
   imports: [
     BrowserModule,

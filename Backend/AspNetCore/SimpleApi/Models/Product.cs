@@ -17,5 +17,9 @@ namespace SimpleApi.Models
         public decimal Price { get; set; }
 
         public bool IsActive { get; set; } = true;
+
+        // Foreign key for Company (Tenant)
+        public int CompanyId { get; set; }
+        public Company Company { get; set; } = null!;
     }
 }

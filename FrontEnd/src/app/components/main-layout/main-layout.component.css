@@ -144,13 +144,14 @@
   margin: 0.5rem 0;
 }
 
-/* Sidebar collapse animation */
+/* Sidebar collapse animation - Fix for full width utilization */
 .sidebar-collapse .main-sidebar {
   margin-left: -250px;
 }
 
 .sidebar-collapse .content-wrapper {
-  margin-left: 0;
+  margin-left: 0 !important;
+  width: 100% !important;
 }
 
 /* Responsive design */
