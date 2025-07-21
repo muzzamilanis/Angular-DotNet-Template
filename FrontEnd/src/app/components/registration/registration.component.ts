@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { RegistrationService, RegistrationDto } from '../../services/registration.service';
 
 @Component({
   selector: 'app-registration',
@@ -19,6 +20,7 @@ export class RegistrationComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private authService: AuthService,
+    private registrationService: RegistrationService,
     private router: Router
   ) {}
 
@@ -83,20 +85,37 @@ export class RegistrationComponent implements OnInit {
       this.loading = true;
       this.error = '';
 
-      const registrationData = {
-        user: this.userForm.value,
-        company: this.companyForm.value
+      const registrationData: RegistrationDto = {
+        user: {
+          name: this.userForm.value.name,
+          email: this.userForm.value.email,
+          password: this.userForm.value.password
+        },
+        company: {
+          companyName: this.companyForm.value.companyName,
+          address: this.companyForm.value.address,
+          phone: this.companyForm.value.phone,
+          email: this.companyForm.value.email,
+          contactPerson: this.companyForm.value.contactPerson
+        }
       };
 
-      // TODO: Call registration service when backend is ready
-      console.log('Registration data:', registrationData);
-      
-      // For now, simulate successful registration
-      setTimeout(() => {
-        this.loading = false;
-        alert('Registration successful! You can now login with your credentials.');
-        this.router.navigate(['/login']);
-      }, 2000);
+      this.registrationService.register(registrationData).subscribe({
+        next: (response) => {
+          this.loading = false;
+          if (response.success) {
+            alert(response.message);
+            this.router.navigate(['/login']);
+          } else {
+            this.error = response.message;
+          }
+        },
+        error: (error) => {
+          this.loading = false;
+          console.error('Registration error:', error);
+          this.error = error.error?.message || 'An error occurred during registration. Please try again.';
+        }
+      });
     }
   }
 
