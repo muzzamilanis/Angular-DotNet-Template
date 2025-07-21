@@ -94,6 +94,31 @@
             </ul>
           </li>
 
+          <!-- Administration -->
+          <li class="nav-item" [class.menu-open]="isMenuOpen('administration')">
+            <a (click)="toggleMenuState('administration', $event)" class="nav-link">
+              <i class="nav-icon fas fa-cogs"></i>
+              <p>
+                Administration
+                <i class="fas fa-angle-left right"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a routerLink="/administration/company-setup" class="nav-link" routerLinkActive="active">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Company Setup</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a routerLink="/administration/user-management" class="nav-link" routerLinkActive="active">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>User Management</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+
           <!-- Reports -->
           <li class="nav-item">
             <a href="#" class="nav-link">

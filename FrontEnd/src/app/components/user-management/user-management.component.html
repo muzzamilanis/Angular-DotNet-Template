@@ -1,0 +1,279 @@
+<!-- Content Header (Page header) -->
+<div class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <h1 class="m-0">User Management</h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><a href="#">Home</a></li>
+          <li class="breadcrumb-item"><a href="#">Administration</a></li>
+          <li class="breadcrumb-item active">User Management</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Main content -->
+<section class="content">
+  <div class="container-fluid">
+    
+    <!-- User Form Card -->
+    <div class="card card-primary">
+      <div class="card-header">
+        <h3 class="card-title">
+          <i class="fas fa-user-plus mr-2"></i>
+          {{ isEditing ? 'Edit User' : 'Create New User' }}
+        </h3>
+      </div>
+      
+      <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+        <div class="card-body">
+          <div class="row">
+            
+            <!-- Personal Information -->
+            <div class="col-md-6">
+              <h5 class="text-primary mb-3"><i class="fas fa-user mr-2"></i>Personal Information</h5>
+              
+              <div class="form-group">
+                <label for="userName">Username <span class="text-danger">*</span></label>
+                <input type="text" 
+                       class="form-control" 
+                       id="userName" 
+                       formControlName="userName"
+                       [class.is-invalid]="isFieldInvalid('userName')"
+                       placeholder="Enter username">
+                <div class="invalid-feedback" *ngIf="isFieldInvalid('userName')">
+                  {{ getFieldError('userName') }}
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="firstName">First Name <span class="text-danger">*</span></label>
+                    <input type="text" 
+                           class="form-control" 
+                           id="firstName" 
+                           formControlName="firstName"
+                           [class.is-invalid]="isFieldInvalid('firstName')"
+                           placeholder="Enter first name">
+                    <div class="invalid-feedback" *ngIf="isFieldInvalid('firstName')">
+                      {{ getFieldError('firstName') }}
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="lastName">Last Name <span class="text-danger">*</span></label>
+                    <input type="text" 
+                           class="form-control" 
+                           id="lastName" 
+                           formControlName="lastName"
+                           [class.is-invalid]="isFieldInvalid('lastName')"
+                           placeholder="Enter last name">
+                    <div class="invalid-feedback" *ngIf="isFieldInvalid('lastName')">
+                      {{ getFieldError('lastName') }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="email">Email <span class="text-danger">*</span></label>
+                <input type="email" 
+                       class="form-control" 
+                       id="email" 
+                       formControlName="email"
+                       [class.is-invalid]="isFieldInvalid('email')"
+                       placeholder="Enter email address">
+                <div class="invalid-feedback" *ngIf="isFieldInvalid('email')">
+                  {{ getFieldError('email') }}
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="phone">Phone</label>
+                <input type="text" 
+                       class="form-control" 
+                       id="phone" 
+                       formControlName="phone"
+                       placeholder="Enter phone number">
+              </div>
+            </div>
+
+            <!-- Account Information -->
+            <div class="col-md-6">
+              <h5 class="text-primary mb-3"><i class="fas fa-cog mr-2"></i>Account Information</h5>
+              
+              <div class="form-group" *ngIf="!isEditing">
+                <label for="password">Password <span class="text-danger">*</span></label>
+                <input type="password" 
+                       class="form-control" 
+                       id="password" 
+                       formControlName="password"
+                       [class.is-invalid]="isFieldInvalid('password')"
+                       placeholder="Enter password">
+                <div class="invalid-feedback" *ngIf="isFieldInvalid('password')">
+                  {{ getFieldError('password') }}
+                </div>
+                <small class="form-text text-muted">Password must be at least 6 characters long</small>
+              </div>
+
+              <div class="form-group">
+                <label for="role">Role <span class="text-danger">*</span></label>
+                <select class="form-control" 
+                        id="role" 
+                        formControlName="role"
+                        [class.is-invalid]="isFieldInvalid('role')">
+                  <option value="">Select Role</option>
+                  <option *ngFor="let role of userRoles" [value]="role">
+                    {{ getRoleDisplayName(role) }}
+                  </option>
+                </select>
+                <div class="invalid-feedback" *ngIf="isFieldInvalid('role')">
+                  {{ getFieldError('role') }}
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="companyId">Company</label>
+                <select class="form-control" 
+                        id="companyId" 
+                        formControlName="companyId">
+                  <option value="">No Company</option>
+                  <option *ngFor="let company of companies" [value]="company.id">
+                    {{ company.name }}
+                  </option>
+                </select>
+                <small class="form-text text-muted">Optional: Assign user to a specific company</small>
+              </div>
+
+              <div class="form-group" *ngIf="isEditing">
+                <div class="form-check">
+                  <input type="checkbox" 
+                         class="form-check-input" 
+                         id="isActive" 
+                         formControlName="isActive">
+                  <label class="form-check-label" for="isActive">
+                    Active User
+                  </label>
+                </div>
+              </div>
+
+              <div class="form-group" *ngIf="isEditing">
+                <h6 class="text-info"><i class="fas fa-info-circle mr-2"></i>Additional Actions</h6>
+                <p class="text-muted">Password changes must be done separately using the reset password function.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card-footer">
+          <button type="submit" 
+                  class="btn btn-primary mr-2" 
+                  [disabled]="isLoading">
+            <i class="fas fa-save mr-2"></i>
+            {{ isEditing ? 'Update User' : 'Create User' }}
+          </button>
+          <button type="button" 
+                  class="btn btn-secondary" 
+                  (click)="resetForm()"
+                  [disabled]="isLoading">
+            <i class="fas fa-times mr-2"></i>
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Users List Card -->
+    <div class="card card-secondary">
+      <div class="card-header">
+        <h3 class="card-title">
+          <i class="fas fa-users mr-2"></i>
+          Existing Users
+        </h3>
+      </div>
+      
+      <div class="card-body">
+        <div class="row" *ngIf="isLoading">
+          <div class="col-12 text-center">
+            <i class="fas fa-spinner fa-spin fa-2x"></i>
+            <p class="mt-2">Loading users...</p>
+          </div>
+        </div>
+
+        <div class="table-responsive" *ngIf="!isLoading">
+          <table class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th>Username</th>
+                <th>Full Name</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Company</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let user of users">
+                <td>{{ user.userName }}</td>
+                <td>{{ user.firstName }} {{ user.lastName }}</td>
+                <td>{{ user.email }}</td>
+                <td>
+                  <span class="badge badge-info">
+                    {{ getRoleDisplayName(user.role) }}
+                  </span>
+                </td>
+                <td>{{ getCompanyName(user.companyId) }}</td>
+                <td>
+                  <span class="badge" 
+                        [class.badge-success]="user.isActive" 
+                        [class.badge-danger]="!user.isActive">
+                    {{ user.isActive ? 'Active' : 'Inactive' }}
+                  </span>
+                </td>
+                <td>
+                  <div class="btn-group">
+                    <button class="btn btn-sm btn-info" 
+                            (click)="editUser(user)"
+                            title="Edit User">
+                      <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn btn-sm btn-warning" 
+                            (click)="resetPassword(user)"
+                            title="Reset Password">
+                      <i class="fas fa-key"></i>
+                    </button>
+                    <button class="btn btn-sm"
+                            [class.btn-warning]="user.isActive"
+                            [class.btn-success]="!user.isActive"
+                            (click)="toggleUserStatus(user)"
+                            [title]="user.isActive ? 'Deactivate' : 'Activate'">
+                      <i class="fas" 
+                         [class.fa-pause]="user.isActive"
+                         [class.fa-play]="!user.isActive"></i>
+                    </button>
+                    <button class="btn btn-sm btn-danger" 
+                            (click)="deleteUser(user)"
+                            title="Delete User">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              <tr *ngIf="users.length === 0">
+                <td colspan="7" class="text-center">No users found</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
