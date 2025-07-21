@@ -24,6 +24,7 @@ builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ISaleOrderService, SaleOrderService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IRegistrationService, RegistrationService>();
 
 // Add CORS
 builder.Services.AddCors(options =>

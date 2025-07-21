@@ -7,16 +7,20 @@ import { ProductComponent } from './components/product/product.component';
 import { CustomerComponent } from './components/customer/customer.component';
 import { CompanySetupComponent } from './components/company-setup/company-setup.component';
 import { UserManagementComponent } from './components/user-management/user-management.component';
+import { DashboardComponent } from './components/dashboard/dashboard.component';
+import { RegistrationComponent } from './components/registration/registration.component';
 import { AuthGuard } from './guards/auth.guard';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
+  { path: 'register', component: RegistrationComponent },
   { 
     path: '', 
     component: MainLayoutComponent,
     canActivate: [AuthGuard],
     children: [
-      { path: '', redirectTo: '/transactions/sale-orders', pathMatch: 'full' },
+      { path: '', component: DashboardComponent },
+      { path: 'dashboard', component: DashboardComponent },
       { path: 'transactions/sale-orders', component: SaleOrderComponent },
       { path: 'masters/products', component: ProductComponent },
       { path: 'masters/customers', component: CustomerComponent },
