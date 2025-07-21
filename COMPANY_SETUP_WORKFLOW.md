@@ -1,14 +1,20 @@
 # Company Setup and User Management Workflow Documentation
 
 ## Overview
-This document explains the complete workflow for the newly implemented Company Setup and User Management functionality in the Angular-DotNet Template, designed following professional ERP standards.
+This document explains the complete workflow for the Company Setup and User Management functionality in the Angular-DotNet Template. The implementation builds upon the existing company setup from the saas-implementation branch and enhances it with professional ERP-style administration features.
+
+## Integration Approach
+- **Foundation**: Uses the existing company setup component from the saas-implementation branch
+- **Enhancement**: Integrated into a comprehensive Administration menu structure
+- **Business Types**: Supports multiple business natures (Retail, Manufacturing, Services, Hospitality)
+- **Multi-tenant Ready**: Built with SaaS/multi-tenant architecture in mind
 
 ## Navigation Structure
-The new Administration menu has been added to the sidebar navigation with the following structure:
+The Administration menu has been added to the sidebar navigation with the following structure:
 ```
 Administration
-├── Company Setup
-└── User Management
+├── Company Setup (integrated from saas-implementation)
+└── User Management (enhanced for ERP workflow)
 ```
 
 ## Complete Workflow
@@ -20,18 +26,19 @@ Administration
 - System redirects to the main dashboard
 - Administration menu is now visible in the sidebar
 
-#### Step 2: Company Setup
+#### Step 2: Company Setup (Enhanced from saas-implementation)
 - Navigate to **Administration → Company Setup**
-- Admin can view existing companies or create new ones
-- **Create Company Form includes:**
-  - **Basic Information**: Company Name, Code, Email, Phone, Website
-  - **Address Information**: Full address, City, State, Country, Zip Code
-  - **Business Information**: Tax Number, Registration Number
-- **Company Management Features:**
-  - View all companies in a tabular format
-  - Edit existing company details
-  - Activate/Deactivate companies
-  - Delete companies (with confirmation)
+- **Business Type Selection**: Choose from predefined business natures:
+  - Retail & E-commerce
+  - Manufacturing  
+  - Service Industry
+  - Hospitality & Tourism
+- **Company Profile Creation includes:**
+  - **Business Type**: Required selection with industry-specific features
+  - **Company Name**: Required field with validation
+  - **Contact Information**: Address, Phone, Email (optional)
+- **Multi-tenant Architecture**: Built for SaaS deployment
+- **Industry-specific Configuration**: Extensible for different business types
 
 #### Step 3: User Management
 - Navigate to **Administration → User Management**
