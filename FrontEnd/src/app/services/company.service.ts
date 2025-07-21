@@ -1,15 +1,70 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { Company, CreateCompanyDto, UpdateCompanyDto } from '../models/company.model';
+import { CompanyProfile, CreateCompanyProfileRequest, BusinessNature } from '../models/multi-tenant.model';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CompanyService {
   private apiUrl = 'https://localhost:44311/api/services/app/Company';
+  private readonly profileApiUrl = `${environment.apiUrl}/api/Company`;
 
   constructor(private http: HttpClient) { }
+
+  // Company Profile methods (from saas-implementation)
+  getProfile(): Observable<CompanyProfile> {
+    // Mock implementation for demo
+    const mockProfile: CompanyProfile = {
+      id: 1,
+      tenantId: 1,
+      businessNatureId: 1,
+      companyName: 'Demo Company',
+      address: '123 Demo Street',
+      phone: '+1-555-0123',
+      email: 'demo@company.com',
+      isActive: true,
+      createdDate: new Date(),
+      businessNature: {
+        id: 1,
+        name: 'retail',
+        displayName: 'Retail & E-commerce',
+        description: 'Traditional retail and online commerce operations',
+        isActive: true,
+        createdDate: new Date()
+      }
+    };
+
+    return of(mockProfile);
+    // Original implementation:
+    // return this.http.get<CompanyProfile>(`${this.profileApiUrl}/profile`);
+  }
+
+  createProfile(request: CreateCompanyProfileRequest): Observable<CompanyProfile> {
+    // Mock implementation for demo
+    const newProfile: CompanyProfile = {
+      id: Date.now(),
+      tenantId: 1,
+      businessNatureId: request.businessNatureId,
+      companyName: request.companyName,
+      address: request.address,
+      phone: request.phone,
+      email: request.email,
+      customFields: request.customFields,
+      isActive: true,
+      createdDate: new Date()
+    };
+
+    return of(newProfile);
+    // Original implementation:
+    // return this.http.post<CompanyProfile>(`${this.profileApiUrl}/profile`, request);
+  }
+
+  updateProfile(request: CreateCompanyProfileRequest): Observable<CompanyProfile> {
+    return this.http.put<CompanyProfile>(`${this.profileApiUrl}/profile`, request);
+  }
 
   getAll(): Observable<Company[]> {
     // Mock data for demonstration
