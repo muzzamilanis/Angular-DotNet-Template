@@ -73,11 +73,23 @@ namespace SimpleApi.Migrations
                             Address = "123 Business St",
                             CompanyNature = "General",
                             ContactPerson = "System Admin",
-                            CreatedAt = new DateTime(2025, 7, 23, 10, 51, 54, 62, DateTimeKind.Utc).AddTicks(1513),
+                            CreatedAt = new DateTime(2025, 7, 23, 11, 14, 56, 177, DateTimeKind.Utc).AddTicks(3546),
                             Email = "admin@defaultcompany.com",
                             IsActive = true,
                             Name = "Default Company",
                             Phone = "555-0001"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Address = "456 Marketing Ave",
+                            CompanyNature = "Digital Marketing",
+                            ContactPerson = "Marketing Manager",
+                            CreatedAt = new DateTime(2025, 7, 23, 11, 14, 56, 177, DateTimeKind.Utc).AddTicks(3549),
+                            Email = "admin@digitalmarketingpro.com",
+                            IsActive = true,
+                            Name = "Digital Marketing Pro",
+                            Phone = "555-0002"
                         });
                 });
 
@@ -246,23 +258,45 @@ namespace SimpleApi.Migrations
                         {
                             Id = 1,
                             CompanyId = 1,
-                            CreatedDate = new DateTime(2025, 7, 23, 10, 51, 54, 62, DateTimeKind.Utc).AddTicks(3164),
+                            CreatedDate = new DateTime(2025, 7, 23, 11, 14, 56, 177, DateTimeKind.Utc).AddTicks(4754),
                             IsActive = true,
                             ProjectDescription = "Corporate website development project",
                             ProjectName = "Website Development",
                             ProjectStatus = 1,
-                            UpdatedDate = new DateTime(2025, 7, 23, 10, 51, 54, 62, DateTimeKind.Utc).AddTicks(3165)
+                            UpdatedDate = new DateTime(2025, 7, 23, 11, 14, 56, 177, DateTimeKind.Utc).AddTicks(4755)
                         },
                         new
                         {
                             Id = 2,
                             CompanyId = 1,
-                            CreatedDate = new DateTime(2025, 7, 23, 10, 51, 54, 62, DateTimeKind.Utc).AddTicks(3169),
+                            CreatedDate = new DateTime(2025, 7, 23, 11, 14, 56, 177, DateTimeKind.Utc).AddTicks(4758),
                             IsActive = true,
                             ProjectDescription = "Search engine optimization campaign",
                             ProjectName = "SEO Campaign",
                             ProjectStatus = 1,
-                            UpdatedDate = new DateTime(2025, 7, 23, 10, 51, 54, 62, DateTimeKind.Utc).AddTicks(3169)
+                            UpdatedDate = new DateTime(2025, 7, 23, 11, 14, 56, 177, DateTimeKind.Utc).AddTicks(4758)
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CompanyId = 2,
+                            CreatedDate = new DateTime(2025, 7, 23, 11, 14, 56, 177, DateTimeKind.Utc).AddTicks(4761),
+                            IsActive = true,
+                            ProjectDescription = "Comprehensive social media marketing strategy",
+                            ProjectName = "Social Media Marketing",
+                            ProjectStatus = 1,
+                            UpdatedDate = new DateTime(2025, 7, 23, 11, 14, 56, 177, DateTimeKind.Utc).AddTicks(4762)
+                        },
+                        new
+                        {
+                            Id = 4,
+                            CompanyId = 2,
+                            CreatedDate = new DateTime(2025, 7, 23, 11, 14, 56, 177, DateTimeKind.Utc).AddTicks(4764),
+                            IsActive = true,
+                            ProjectDescription = "Blog and content creation for digital presence",
+                            ProjectName = "Content Creation Campaign",
+                            ProjectStatus = 3,
+                            UpdatedDate = new DateTime(2025, 7, 23, 11, 14, 56, 177, DateTimeKind.Utc).AddTicks(4764)
                         });
                 });
 
@@ -444,7 +478,7 @@ namespace SimpleApi.Migrations
                         {
                             Id = 1,
                             CompanyId = 1,
-                            CreatedAt = new DateTime(2025, 7, 23, 10, 51, 54, 62, DateTimeKind.Utc).AddTicks(2978),
+                            CreatedAt = new DateTime(2025, 7, 23, 11, 14, 56, 177, DateTimeKind.Utc).AddTicks(4580),
                             Email = "admin@aspnetboilerplate.com",
                             IsActive = true,
                             IsSuperAdmin = true,

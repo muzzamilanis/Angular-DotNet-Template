@@ -150,7 +150,8 @@ namespace SimpleApi.Data
 
             // Seed data - Create a default company first
             modelBuilder.Entity<Company>().HasData(
-                new Company { Id = 1, Name = "Default Company", Address = "123 Business St", Phone = "555-0001", Email = "admin@defaultcompany.com", ContactPerson = "System Admin", CompanyNature = "General", IsActive = true, CreatedAt = DateTime.UtcNow }
+                new Company { Id = 1, Name = "Default Company", Address = "123 Business St", Phone = "555-0001", Email = "admin@defaultcompany.com", ContactPerson = "System Admin", CompanyNature = "General", IsActive = true, CreatedAt = DateTime.UtcNow },
+                new Company { Id = 2, Name = "Digital Marketing Pro", Address = "456 Marketing Ave", Phone = "555-0002", Email = "admin@digitalmarketingpro.com", ContactPerson = "Marketing Manager", CompanyNature = "Digital Marketing", IsActive = true, CreatedAt = DateTime.UtcNow }
             );
 
             // Seed data for default admin user
@@ -176,7 +177,9 @@ namespace SimpleApi.Data
             // Seed data for Projects
             modelBuilder.Entity<Project>().HasData(
                 new Project { Id = 1, ProjectName = "Website Development", ProjectDescription = "Corporate website development project", ProjectStatus = ProjectStatus.Active, CreatedDate = DateTime.UtcNow, UpdatedDate = DateTime.UtcNow, CompanyId = 1, IsActive = true },
-                new Project { Id = 2, ProjectName = "SEO Campaign", ProjectDescription = "Search engine optimization campaign", ProjectStatus = ProjectStatus.Active, CreatedDate = DateTime.UtcNow, UpdatedDate = DateTime.UtcNow, CompanyId = 1, IsActive = true }
+                new Project { Id = 2, ProjectName = "SEO Campaign", ProjectDescription = "Search engine optimization campaign", ProjectStatus = ProjectStatus.Active, CreatedDate = DateTime.UtcNow, UpdatedDate = DateTime.UtcNow, CompanyId = 1, IsActive = true },
+                new Project { Id = 3, ProjectName = "Social Media Marketing", ProjectDescription = "Comprehensive social media marketing strategy", ProjectStatus = ProjectStatus.Active, CreatedDate = DateTime.UtcNow, UpdatedDate = DateTime.UtcNow, CompanyId = 2, IsActive = true },
+                new Project { Id = 4, ProjectName = "Content Creation Campaign", ProjectDescription = "Blog and content creation for digital presence", ProjectStatus = ProjectStatus.Completed, CreatedDate = DateTime.UtcNow, UpdatedDate = DateTime.UtcNow, CompanyId = 2, IsActive = true }
             );
         }
     }
