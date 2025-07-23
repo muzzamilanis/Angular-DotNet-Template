@@ -116,6 +116,13 @@ namespace SimpleApi.Data
                 new Company { Id = 1, Name = "Default Company", Address = "123 Business St", Phone = "555-0001", Email = "admin@defaultcompany.com", ContactPerson = "System Admin", IsActive = true, CreatedAt = DateTime.UtcNow }
             );
 
+            // Seed data for default admin user
+            // Password "123qwe" hashed with SHA256
+            var adminPasswordHash = Convert.ToBase64String(System.Security.Cryptography.SHA256.HashData(System.Text.Encoding.UTF8.GetBytes("123qwe")));
+            modelBuilder.Entity<User>().HasData(
+                new User { Id = 1, Name = "System Administrator", Email = "admin@aspnetboilerplate.com", PasswordHash = adminPasswordHash, IsActive = true, IsSuperAdmin = true, CompanyId = 1, CreatedAt = DateTime.UtcNow }
+            );
+
             // Seed data for Customers (with CompanyId)
             modelBuilder.Entity<Customer>().HasData(
                 new Customer { Id = 1, Name = "John Doe", Address = "123 Main St", Phone = "555-1234", Email = "john@example.com", IsActive = true, CompanyId = 1 },

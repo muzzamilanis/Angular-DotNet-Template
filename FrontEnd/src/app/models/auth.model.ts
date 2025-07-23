@@ -1,7 +1,7 @@
 export interface LoginDto {
-  username: string;
+  usernameOrEmail: string;
   password: string;
-  rememberMe: boolean;
+  rememberMe?: boolean;
 }
 
 export interface AuthenticateResultModel {
