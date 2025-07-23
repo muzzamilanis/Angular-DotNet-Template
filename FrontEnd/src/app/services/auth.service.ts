@@ -22,42 +22,28 @@ export class AuthService {
   }
 
   login(loginDto: LoginDto): Observable<AuthenticateResultModel> {
-    // Temporary mock authentication for demonstration
-    if (loginDto.username === 'admin' && loginDto.password === '123qwe') {
-      const mockResult: AuthenticateResultModel = {
-        accessToken: 'mock-token-' + Date.now(),
-        encryptedAccessToken: 'encrypted-mock-token',
-        expireInSeconds: 3600,
-        userId: 1
-      };
-      
-      localStorage.setItem('token', mockResult.accessToken);
-      this.currentUserSubject.next({ token: mockResult.accessToken });
-      
-      return new Observable(observer => {
-        observer.next(mockResult);
-        observer.complete();
-      });
-    } else {
-      return new Observable(observer => {
-        observer.error({ error: { message: 'Invalid credentials' } });
-      });
-    }
-    
-    // Original implementation (commented for demo):
-    /*
-    return this.http.post<any>(`${this.apiUrl}/Authenticate`, loginDto)
+    return this.http.post<any>(`${this.apiUrl}/authenticate`, {
+      usernameOrEmail: loginDto.usernameOrEmail,
+      password: loginDto.password
+    })
       .pipe(
         map(response => {
           const authResult = response.result;
           if (authResult && authResult.accessToken) {
             localStorage.setItem('token', authResult.accessToken);
             this.currentUserSubject.next({ token: authResult.accessToken });
+            
+            // Map the response to match the expected interface
+            return {
+              accessToken: authResult.accessToken,
+              encryptedAccessToken: authResult.accessToken, // Using same token for simplicity
+              expireInSeconds: Math.floor((new Date(authResult.expireTime).getTime() - new Date().getTime()) / 1000),
+              userId: authResult.user.id
+            };
           }
-          return authResult;
+          throw new Error('Invalid response from server');
         })
       );
-    */
   }
 
   logout(): void {

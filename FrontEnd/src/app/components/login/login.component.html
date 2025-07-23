@@ -12,16 +12,16 @@
             <input 
               type="text" 
               class="form-control" 
-              placeholder="Username or Email"
-              formControlName="username"
-              [class.is-invalid]="loginForm.get('username')?.invalid && loginForm.get('username')?.touched">
+              placeholder="Username or Email Address"
+              formControlName="usernameOrEmail"
+              [class.is-invalid]="loginForm.get('usernameOrEmail')?.invalid && loginForm.get('usernameOrEmail')?.touched">
             <div class="input-group-append">
               <div class="input-group-text">
                 <span class="fas fa-user"></span>
               </div>
             </div>
-            <div class="invalid-feedback" *ngIf="loginForm.get('username')?.invalid && loginForm.get('username')?.touched">
-              Username or email is required
+            <div class="invalid-feedback" *ngIf="loginForm.get('usernameOrEmail')?.invalid && loginForm.get('usernameOrEmail')?.touched">
+              <span *ngIf="loginForm.get('usernameOrEmail')?.errors?.['required']">Username or Email is required</span>
             </div>
           </div>
           

@@ -67,7 +67,7 @@ namespace SimpleApi.Migrations
                             Id = 1,
                             Address = "123 Business St",
                             ContactPerson = "System Admin",
-                            CreatedAt = new DateTime(2025, 7, 21, 16, 34, 54, 752, DateTimeKind.Utc).AddTicks(6516),
+                            CreatedAt = new DateTime(2025, 7, 23, 6, 36, 33, 303, DateTimeKind.Utc).AddTicks(7075),
                             Email = "admin@defaultcompany.com",
                             IsActive = true,
                             Name = "Default Company",
@@ -305,39 +305,46 @@ namespace SimpleApi.Migrations
                         .IsUnique();
 
                     b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CompanyId = 1,
+                            CreatedAt = new DateTime(2025, 7, 23, 6, 36, 33, 303, DateTimeKind.Utc).AddTicks(8095),
+                            Email = "admin@aspnetboilerplate.com",
+                            IsActive = true,
+                            IsSuperAdmin = true,
+                            Name = "System Administrator",
+                            PasswordHash = "+/s4bv6mfoFvLdoKjJSpjrIDdXrrs/VfGDdVoZLURGc="
+                        });
                 });
 
             modelBuilder.Entity("SimpleApi.Models.Customer", b =>
                 {
-                    b.HasOne("SimpleApi.Models.Company", "Company")
-                        .WithMany("Customers")
+                    b.HasOne("SimpleApi.Models.Company", null)
+                        .WithMany()
                         .HasForeignKey("CompanyId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.Navigation("Company");
                 });
 
             modelBuilder.Entity("SimpleApi.Models.Product", b =>
                 {
-                    b.HasOne("SimpleApi.Models.Company", "Company")
-                        .WithMany("Products")
+                    b.HasOne("SimpleApi.Models.Company", null)
+                        .WithMany()
                         .HasForeignKey("CompanyId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.Navigation("Company");
                 });
 
             modelBuilder.Entity("SimpleApi.Models.SaleOrder", b =>
                 {
-                    b.HasOne("SimpleApi.Models.Company", "Company")
-                        .WithMany("SaleOrders")
+                    b.HasOne("SimpleApi.Models.Company", null)
+                        .WithMany()
                         .HasForeignKey("CompanyId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.Navigation("Company");
                 });
 
             modelBuilder.Entity("SimpleApi.Models.SaleOrderItem", b =>
@@ -361,24 +368,11 @@ namespace SimpleApi.Migrations
 
             modelBuilder.Entity("SimpleApi.Models.User", b =>
                 {
-                    b.HasOne("SimpleApi.Models.Company", "Company")
-                        .WithMany("Users")
+                    b.HasOne("SimpleApi.Models.Company", null)
+                        .WithMany()
                         .HasForeignKey("CompanyId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.Navigation("Company");
-                });
-
-            modelBuilder.Entity("SimpleApi.Models.Company", b =>
-                {
-                    b.Navigation("Customers");
-
-                    b.Navigation("Products");
-
-                    b.Navigation("SaleOrders");
-
-                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("SimpleApi.Models.SaleOrder", b =>

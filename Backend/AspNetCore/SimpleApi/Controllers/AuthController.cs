@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SimpleApi.DTOs;
 using SimpleApi.Services;
@@ -46,6 +47,7 @@ namespace SimpleApi.Controllers
         }
 
         [HttpGet("GetCurrentLoginInformations")]
+        [Authorize]
         public async Task<ActionResult<object>> GetCurrentLoginInformations()
         {
             try

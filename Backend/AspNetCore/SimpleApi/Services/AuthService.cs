@@ -1,7 +1,10 @@
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using SimpleApi.Data;
 using SimpleApi.DTOs;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace SimpleApi.Services
@@ -15,52 +18,87 @@ namespace SimpleApi.Services
     public class AuthService : IAuthService
     {
         private readonly IConfiguration _configuration;
+        private readonly ApplicationDbContext _context;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public AuthService(IConfiguration configuration)
+        public AuthService(IConfiguration configuration, ApplicationDbContext context, IHttpContextAccessor httpContextAccessor)
         {
             _configuration = configuration;
+            _context = context;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<LoginResponseDto> LoginAsync(LoginDto input)
         {
-            // Simple authentication - in a real application, verify against a database
-            if (input.Username == "admin" && input.Password == "123qwe")
+            // Find user by email or name
+            var user = await _context.Users
+                .FirstOrDefaultAsync(u => (u.Email == input.UsernameOrEmail || u.Name == input.UsernameOrEmail) && u.IsActive);
+
+            if (user == null)
             {
-                var user = new UserInfoDto
-                {
-                    Id = 1,
-                    UserName = "admin",
-                    EmailAddress = "admin@example.com",
-                    Name = "System",
-                    Surname = "Administrator"
-                };
-
-                var token = GenerateJwtToken(user);
-                var expireTime = DateTime.UtcNow.AddHours(24);
-
-                return new LoginResponseDto
-                {
-                    AccessToken = token,
-                    ExpireTime = expireTime,
-                    User = user
-                };
+                throw new UnauthorizedAccessException("Invalid username/email or password");
             }
 
-            throw new UnauthorizedAccessException("Invalid username or password");
+            // Verify password
+            if (!VerifyPassword(input.Password, user.PasswordHash))
+            {
+                throw new UnauthorizedAccessException("Invalid username/email or password");
+            }
+
+            var userInfo = new UserInfoDto
+            {
+                Id = user.Id,
+                UserName = user.Email, // Use email as username
+                EmailAddress = user.Email,
+                Name = user.Name,
+                Surname = "" // User model doesn't have surname, keeping empty for compatibility
+            };
+
+            var token = GenerateJwtToken(userInfo);
+            var expireTime = DateTime.UtcNow.AddHours(24);
+
+            return new LoginResponseDto
+            {
+                AccessToken = token,
+                ExpireTime = expireTime,
+                User = userInfo
+            };
         }
 
         public async Task<SessionInfoDto> GetCurrentLoginInformationAsync()
         {
-            // In a real application, you would get the current user from the JWT token
+            var httpContext = _httpContextAccessor.HttpContext;
+            if (httpContext?.User?.Identity?.IsAuthenticated != true)
+            {
+                throw new UnauthorizedAccessException("User is not authenticated");
+            }
+
+            // Extract claims from JWT token
+            var userIdClaim = httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var userName = httpContext.User.FindFirst(ClaimTypes.Name)?.Value;
+            var email = httpContext.User.FindFirst(ClaimTypes.Email)?.Value;
+
+            if (!int.TryParse(userIdClaim, out var userId))
+            {
+                throw new UnauthorizedAccessException("Invalid user ID in token");
+            }
+
+            // Get user details from database to ensure data is current
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null)
+            {
+                throw new UnauthorizedAccessException("User not found");
+            }
+
             return new SessionInfoDto
             {
                 User = new UserInfoDto
                 {
-                    Id = 1,
-                    UserName = "admin",
-                    EmailAddress = "admin@example.com",
-                    Name = "System",
-                    Surname = "Administrator"
+                    Id = user.Id,
+                    UserName = user.Email, // Use email as username for consistency
+                    EmailAddress = user.Email,
+                    Name = user.Name,
+                    Surname = "" // User model doesn't have surname, keeping empty for compatibility
                 },
                 Application = new ApplicationInfoDto
                 {
@@ -89,6 +127,14 @@ namespace SimpleApi.Services
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
+        }
+
+        private bool VerifyPassword(string password, string hash)
+        {
+            using var sha256 = SHA256.Create();
+            var hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
+            var hashedPassword = Convert.ToBase64String(hashedBytes);
+            return hashedPassword == hash;
         }
     }
 }
