@@ -15,6 +15,7 @@ namespace SimpleApi.Data
         public DbSet<SaleOrderItem> SaleOrderItems { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Company> Companies { get; set; }
+        public DbSet<Project> Projects { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -29,6 +30,21 @@ namespace SimpleApi.Data
                 entity.Property(e => e.Phone).HasMaxLength(50);
                 entity.Property(e => e.Email).HasMaxLength(200);
                 entity.Property(e => e.ContactPerson).HasMaxLength(100);
+                entity.Property(e => e.CompanyNature).IsRequired().HasMaxLength(100);
+            });
+
+            // Configure Project
+            modelBuilder.Entity<Project>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.ProjectName).IsRequired().HasMaxLength(200);
+                entity.Property(e => e.ProjectDescription).HasMaxLength(1000);
+                entity.Property(e => e.ProjectStatus).IsRequired();
+                
+                entity.HasOne(e => e.Company)
+                      .WithMany(e => e.Projects)
+                      .HasForeignKey(e => e.CompanyId)
+                      .OnDelete(DeleteBehavior.Restrict);
             });
 
             // Configure User
@@ -84,11 +100,28 @@ namespace SimpleApi.Data
                 entity.Property(e => e.CustomerName).HasMaxLength(200);
                 entity.Property(e => e.CustomerAddress).HasMaxLength(500);
                 entity.Property(e => e.TotalAmount).HasColumnType("decimal(18,2)");
+                entity.Property(e => e.AmountReceived).HasColumnType("decimal(18,2)");
                 
-                entity.HasOne<Company>()
+                // Digital marketing specific field configurations
+                entity.Property(e => e.Code).HasMaxLength(50);
+                entity.Property(e => e.ClientName).HasMaxLength(200);
+                entity.Property(e => e.Status).HasMaxLength(50);
+                entity.Property(e => e.PaymentStatus).HasMaxLength(50);
+                entity.Property(e => e.ContactEmail).HasMaxLength(200);
+                entity.Property(e => e.ContactPhone).HasMaxLength(50);
+                entity.Property(e => e.AssignedTo).HasMaxLength(200);
+                entity.Property(e => e.AcademicLevel).HasMaxLength(100);
+                entity.Property(e => e.Country).HasMaxLength(100);
+                
+                entity.HasOne(e => e.Company)
                       .WithMany()
                       .HasForeignKey(e => e.CompanyId)
                       .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(e => e.Project)
+                      .WithMany(e => e.SaleOrders)
+                      .HasForeignKey(e => e.ProjectId)
+                      .OnDelete(DeleteBehavior.SetNull);
                 
                 entity.HasMany(e => e.Items)
                       .WithOne(e => e.SaleOrder)
@@ -102,6 +135,10 @@ namespace SimpleApi.Data
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.Price).HasColumnType("decimal(18,2)");
                 
+                // Digital marketing specific field configurations
+                entity.Property(e => e.WorkTitle).HasMaxLength(200);
+                entity.Property(e => e.PaperType).HasMaxLength(100);
+                
                 entity.HasOne(e => e.SaleOrder)
                       .WithMany(e => e.Items)
                       .HasForeignKey(e => e.SaleOrderId);
@@ -113,7 +150,7 @@ namespace SimpleApi.Data
 
             // Seed data - Create a default company first
             modelBuilder.Entity<Company>().HasData(
-                new Company { Id = 1, Name = "Default Company", Address = "123 Business St", Phone = "555-0001", Email = "admin@defaultcompany.com", ContactPerson = "System Admin", IsActive = true, CreatedAt = DateTime.UtcNow }
+                new Company { Id = 1, Name = "Default Company", Address = "123 Business St", Phone = "555-0001", Email = "admin@defaultcompany.com", ContactPerson = "System Admin", CompanyNature = "General", IsActive = true, CreatedAt = DateTime.UtcNow }
             );
 
             // Seed data for default admin user
@@ -134,6 +171,12 @@ namespace SimpleApi.Data
                 new Product { Id = 1, Name = "Product A", Description = "Description for Product A", Price = 10.50m, IsActive = true, CompanyId = 1 },
                 new Product { Id = 2, Name = "Product B", Description = "Description for Product B", Price = 25.00m, IsActive = true, CompanyId = 1 },
                 new Product { Id = 3, Name = "Product C", Description = "Description for Product C", Price = 15.75m, IsActive = true, CompanyId = 1 }
+            );
+
+            // Seed data for Projects
+            modelBuilder.Entity<Project>().HasData(
+                new Project { Id = 1, ProjectName = "Website Development", ProjectDescription = "Corporate website development project", ProjectStatus = ProjectStatus.Active, CreatedDate = DateTime.UtcNow, UpdatedDate = DateTime.UtcNow, CompanyId = 1, IsActive = true },
+                new Project { Id = 2, ProjectName = "SEO Campaign", ProjectDescription = "Search engine optimization campaign", ProjectStatus = ProjectStatus.Active, CreatedDate = DateTime.UtcNow, UpdatedDate = DateTime.UtcNow, CompanyId = 1, IsActive = true }
             );
         }
     }

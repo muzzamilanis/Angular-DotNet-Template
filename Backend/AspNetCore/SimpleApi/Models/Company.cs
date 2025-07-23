@@ -22,8 +22,14 @@ namespace SimpleApi.Models
         [MaxLength(100)]
         public string? ContactPerson { get; set; }
 
+        [MaxLength(100)]
+        public string CompanyNature { get; set; } = "General"; // "General" or "Digital Marketing"
+
         public bool IsActive { get; set; } = true;
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+        // Navigation properties
+        public virtual ICollection<Project> Projects { get; set; } = new List<Project>();
     }
 }
