@@ -7,6 +7,13 @@ export interface SaleOrderItem {
   date: Date;
   price: number;
   lineTotal: number;
+
+  // Digital Marketing specific fields
+  workTitle?: string;
+  paperType?: string;
+  wordCount?: number;
+  pageCount?: number;
+  itemDeadline?: Date;
 }
 
 export interface CreateSaleOrderItemDto {
@@ -14,4 +21,11 @@ export interface CreateSaleOrderItemDto {
   quantity: number;
   date: Date;
   price: number;
+
+  // Digital Marketing specific fields
+  workTitle?: string;
+  paperType?: string;
+  wordCount?: number;
+  pageCount?: number;
+  itemDeadline?: Date;
 }

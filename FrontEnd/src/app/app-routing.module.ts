@@ -9,6 +9,9 @@ import { CompanySetupComponent } from './components/company-setup/company-setup.
 import { UserManagementComponent } from './components/user-management/user-management.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { RegistrationComponent } from './components/registration/registration.component';
+import { ProjectListComponent } from './components/project/project-list.component';
+import { ProjectFormComponent } from './components/project/project-form.component';
+import { ProjectDetailComponent } from './components/project/project-detail.component';
 import { AuthGuard } from './guards/auth.guard';
 
 const routes: Routes = [
@@ -24,6 +27,10 @@ const routes: Routes = [
       { path: 'transactions/sale-orders', component: SaleOrderComponent },
       { path: 'masters/products', component: ProductComponent },
       { path: 'masters/customers', component: CustomerComponent },
+      { path: 'masters/projects', component: ProjectListComponent },
+      { path: 'masters/projects/create', component: ProjectFormComponent },
+      { path: 'masters/projects/edit/:id', component: ProjectFormComponent },
+      { path: 'masters/projects/:id', component: ProjectDetailComponent },
       { path: 'administration/company-setup', component: CompanySetupComponent },
       { path: 'administration/user-management', component: UserManagementComponent },
     ]

@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -15,6 +15,10 @@ import { CompanySetupComponent } from './components/company-setup/company-setup.
 import { UserManagementComponent } from './components/user-management/user-management.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { RegistrationComponent } from './components/registration/registration.component';
+import { ProjectComponent } from './components/project/project.component';
+import { ProjectListComponent } from './components/project/project-list.component';
+import { ProjectFormComponent } from './components/project/project-form.component';
+import { ProjectDetailComponent } from './components/project/project-detail.component';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
 
 @NgModule({
@@ -28,13 +32,18 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
     CompanySetupComponent,
     UserManagementComponent,
     DashboardComponent,
-    RegistrationComponent
+    RegistrationComponent,
+    ProjectComponent,
+    ProjectListComponent,
+    ProjectFormComponent,
+    ProjectDetailComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
     ReactiveFormsModule,
+    FormsModule,
     BrowserAnimationsModule
   ],
   providers: [
