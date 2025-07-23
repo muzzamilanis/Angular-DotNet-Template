@@ -8,11 +8,11 @@ namespace SimpleApi.Services
 {
     public interface ISaleOrderService
     {
-        Task<PagedResultDto<SaleOrderDto>> GetAllAsync(PagedResultRequestDto input);
-        Task<SaleOrderDto> GetAsync(int id);
-        Task<SaleOrderDto> CreateAsync(CreateSaleOrderDto input);
-        Task<SaleOrderDto> UpdateAsync(UpdateSaleOrderDto input);
-        Task DeleteAsync(int id);
+        Task<PagedResultDto<SaleOrderDto>> GetAllAsync(PagedResultRequestDto input, int companyId);
+        Task<SaleOrderDto> GetAsync(int id, int companyId);
+        Task<SaleOrderDto> CreateAsync(CreateSaleOrderDto input, int companyId);
+        Task<SaleOrderDto> UpdateAsync(UpdateSaleOrderDto input, int companyId);
+        Task DeleteAsync(int id, int companyId);
     }
 
     public class SaleOrderService : ISaleOrderService
@@ -26,28 +26,85 @@ namespace SimpleApi.Services
             _mapper = mapper;
         }
 
-        public async Task<PagedResultDto<SaleOrderDto>> GetAllAsync(PagedResultRequestDto input)
+        public async Task<PagedResultDto<SaleOrderDto>> GetAllAsync(PagedResultRequestDto input, int companyId)
         {
-            var query = _context.SaleOrders.Include(so => so.Items).ThenInclude(i => i.Product);
+            var query = _context.SaleOrders
+                .Where(so => so.CompanyId == companyId)
+                .Include(so => so.Items)
+                .ThenInclude(i => i.Product)
+                .Include(so => so.Project)
+                .AsQueryable();
+
+            // Apply filtering
+            if (!string.IsNullOrEmpty(input.Filter))
+            {
+                query = query.Where(so => so.OrderNumber.Contains(input.Filter) || 
+                                         (so.CustomerName != null && so.CustomerName.Contains(input.Filter)) ||
+                                         (so.ClientName != null && so.ClientName.Contains(input.Filter)));
+            }
+
+            // Apply sorting
+            if (!string.IsNullOrEmpty(input.Sorting))
+            {
+                switch (input.Sorting.ToLower())
+                {
+                    case "ordernumber":
+                        query = query.OrderBy(so => so.OrderNumber);
+                        break;
+                    case "ordernumber desc":
+                        query = query.OrderByDescending(so => so.OrderNumber);
+                        break;
+                    case "orderdate":
+                        query = query.OrderBy(so => so.OrderDate);
+                        break;
+                    case "orderdate desc":
+                        query = query.OrderByDescending(so => so.OrderDate);
+                        break;
+                    case "customername":
+                        query = query.OrderBy(so => so.CustomerName);
+                        break;
+                    case "customername desc":
+                        query = query.OrderByDescending(so => so.CustomerName);
+                        break;
+                    case "totalamount":
+                        query = query.OrderBy(so => so.TotalAmount);
+                        break;
+                    case "totalamount desc":
+                        query = query.OrderByDescending(so => so.TotalAmount);
+                        break;
+                    default:
+                        query = query.OrderByDescending(so => so.OrderDate);
+                        break;
+                }
+            }
+            else
+            {
+                query = query.OrderByDescending(so => so.OrderDate);
+            }
             
             var totalCount = await query.CountAsync();
-            var saleOrders = await query.Skip(input.SkipCount).Take(input.MaxResultCount).ToListAsync();
+            var saleOrders = await query
+                .Skip(input.SkipCount)
+                .Take(input.MaxResultCount)
+                .ToListAsync();
             
             var dtos = _mapper.Map<List<SaleOrderDto>>(saleOrders);
             
             return new PagedResultDto<SaleOrderDto>(totalCount, dtos);
         }
 
-        public async Task<SaleOrderDto> GetAsync(int id)
+        public async Task<SaleOrderDto> GetAsync(int id, int companyId)
         {
             var saleOrder = await _context.SaleOrders
+                .Where(so => so.Id == id && so.CompanyId == companyId)
                 .Include(so => so.Items)
                 .ThenInclude(i => i.Product)
-                .FirstOrDefaultAsync(so => so.Id == id);
+                .Include(so => so.Project)
+                .FirstOrDefaultAsync();
 
             if (saleOrder == null)
             {
-                throw new InvalidOperationException("Sale order not found");
+                throw new ArgumentException($"Sale order with ID {id} not found or access denied.");
             }
 
             var dto = _mapper.Map<SaleOrderDto>(saleOrder);
@@ -62,13 +119,25 @@ namespace SimpleApi.Services
             return dto;
         }
 
-        public async Task<SaleOrderDto> CreateAsync(CreateSaleOrderDto input)
+        public async Task<SaleOrderDto> CreateAsync(CreateSaleOrderDto input, int companyId)
         {
             using var transaction = await _context.Database.BeginTransactionAsync();
             
             try
             {
                 var saleOrder = _mapper.Map<SaleOrder>(input);
+                saleOrder.CompanyId = companyId;
+
+                // Validate Project belongs to the same company if specified
+                if (input.ProjectId.HasValue)
+                {
+                    var project = await _context.Projects
+                        .FirstOrDefaultAsync(p => p.Id == input.ProjectId.Value && p.CompanyId == companyId);
+                    if (project == null)
+                    {
+                        throw new ArgumentException("Invalid project specified or access denied.");
+                    }
+                }
                 
                 // Calculate total amount
                 decimal totalAmount = 0;
@@ -87,6 +156,14 @@ namespace SimpleApi.Services
                 // Create items after the sale order is saved (to get the ID)
                 foreach (var itemDto in input.Items)
                 {
+                    // Validate Product belongs to the same company
+                    var product = await _context.Products
+                        .FirstOrDefaultAsync(p => p.Id == itemDto.ProductId && p.CompanyId == companyId);
+                    if (product == null)
+                    {
+                        throw new ArgumentException($"Invalid product specified (ID: {itemDto.ProductId}) or access denied.");
+                    }
+
                     var item = _mapper.Map<SaleOrderItem>(itemDto);
                     item.SaleOrderId = saleOrder.Id;
                     _context.SaleOrderItems.Add(item);
@@ -96,7 +173,7 @@ namespace SimpleApi.Services
                 
                 await transaction.CommitAsync();
 
-                return await GetAsync(saleOrder.Id);
+                return await GetAsync(saleOrder.Id, companyId);
             }
             catch
             {
@@ -105,19 +182,31 @@ namespace SimpleApi.Services
             }
         }
 
-        public async Task<SaleOrderDto> UpdateAsync(UpdateSaleOrderDto input)
+        public async Task<SaleOrderDto> UpdateAsync(UpdateSaleOrderDto input, int companyId)
         {
             using var transaction = await _context.Database.BeginTransactionAsync();
             
             try
             {
                 var saleOrder = await _context.SaleOrders
+                    .Where(so => so.Id == input.Id && so.CompanyId == companyId)
                     .Include(so => so.Items)
-                    .FirstOrDefaultAsync(so => so.Id == input.Id);
+                    .FirstOrDefaultAsync();
                     
                 if (saleOrder == null)
                 {
-                    throw new InvalidOperationException("Sale order not found");
+                    throw new ArgumentException($"Sale order with ID {input.Id} not found or access denied.");
+                }
+
+                // Validate Project belongs to the same company if specified
+                if (input.ProjectId.HasValue)
+                {
+                    var project = await _context.Projects
+                        .FirstOrDefaultAsync(p => p.Id == input.ProjectId.Value && p.CompanyId == companyId);
+                    if (project == null)
+                    {
+                        throw new ArgumentException("Invalid project specified or access denied.");
+                    }
                 }
                 
                 // Update sale order properties
@@ -131,6 +220,14 @@ namespace SimpleApi.Services
                 var newItems = new List<SaleOrderItem>();
                 foreach (var itemDto in input.Items)
                 {
+                    // Validate Product belongs to the same company
+                    var product = await _context.Products
+                        .FirstOrDefaultAsync(p => p.Id == itemDto.ProductId && p.CompanyId == companyId);
+                    if (product == null)
+                    {
+                        throw new ArgumentException($"Invalid product specified (ID: {itemDto.ProductId}) or access denied.");
+                    }
+
                     totalAmount += itemDto.Quantity * itemDto.Price;
                     var item = _mapper.Map<SaleOrderItem>(itemDto);
                     item.SaleOrderId = saleOrder.Id;
@@ -143,7 +240,7 @@ namespace SimpleApi.Services
                 
                 await transaction.CommitAsync();
 
-                return await GetAsync(saleOrder.Id);
+                return await GetAsync(saleOrder.Id, companyId);
             }
             catch
             {
@@ -152,19 +249,20 @@ namespace SimpleApi.Services
             }
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(int id, int companyId)
         {
             using var transaction = await _context.Database.BeginTransactionAsync();
             
             try
             {
                 var saleOrder = await _context.SaleOrders
+                    .Where(so => so.Id == id && so.CompanyId == companyId)
                     .Include(so => so.Items)
-                    .FirstOrDefaultAsync(so => so.Id == id);
+                    .FirstOrDefaultAsync();
                     
                 if (saleOrder == null)
                 {
-                    throw new InvalidOperationException("Sale order not found");
+                    throw new ArgumentException($"Sale order with ID {id} not found or access denied.");
                 }
                 
                 _context.SaleOrders.Remove(saleOrder);
