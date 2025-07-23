@@ -34,6 +34,11 @@ namespace SimpleApi.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
+                    b.Property<string>("CompanyNature")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
                     b.Property<string>("ContactPerson")
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
@@ -66,12 +71,25 @@ namespace SimpleApi.Migrations
                         {
                             Id = 1,
                             Address = "123 Business St",
+                            CompanyNature = "General",
                             ContactPerson = "System Admin",
-                            CreatedAt = new DateTime(2025, 7, 23, 6, 36, 33, 303, DateTimeKind.Utc).AddTicks(7075),
+                            CreatedAt = new DateTime(2025, 7, 23, 11, 14, 56, 177, DateTimeKind.Utc).AddTicks(3546),
                             Email = "admin@defaultcompany.com",
                             IsActive = true,
                             Name = "Default Company",
                             Phone = "555-0001"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Address = "456 Marketing Ave",
+                            CompanyNature = "Digital Marketing",
+                            ContactPerson = "Marketing Manager",
+                            CreatedAt = new DateTime(2025, 7, 23, 11, 14, 56, 177, DateTimeKind.Utc).AddTicks(3549),
+                            Email = "admin@digitalmarketingpro.com",
+                            IsActive = true,
+                            Name = "Digital Marketing Pro",
+                            Phone = "555-0002"
                         });
                 });
 
@@ -197,7 +215,7 @@ namespace SimpleApi.Migrations
                         });
                 });
 
-            modelBuilder.Entity("SimpleApi.Models.SaleOrder", b =>
+            modelBuilder.Entity("SimpleApi.Models.Project", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -208,6 +226,122 @@ namespace SimpleApi.Migrations
                     b.Property<int>("CompanyId")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("ProjectDescription")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<string>("ProjectName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<int>("ProjectStatus")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.ToTable("Projects");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CompanyId = 1,
+                            CreatedDate = new DateTime(2025, 7, 23, 11, 14, 56, 177, DateTimeKind.Utc).AddTicks(4754),
+                            IsActive = true,
+                            ProjectDescription = "Corporate website development project",
+                            ProjectName = "Website Development",
+                            ProjectStatus = 1,
+                            UpdatedDate = new DateTime(2025, 7, 23, 11, 14, 56, 177, DateTimeKind.Utc).AddTicks(4755)
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CompanyId = 1,
+                            CreatedDate = new DateTime(2025, 7, 23, 11, 14, 56, 177, DateTimeKind.Utc).AddTicks(4758),
+                            IsActive = true,
+                            ProjectDescription = "Search engine optimization campaign",
+                            ProjectName = "SEO Campaign",
+                            ProjectStatus = 1,
+                            UpdatedDate = new DateTime(2025, 7, 23, 11, 14, 56, 177, DateTimeKind.Utc).AddTicks(4758)
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CompanyId = 2,
+                            CreatedDate = new DateTime(2025, 7, 23, 11, 14, 56, 177, DateTimeKind.Utc).AddTicks(4761),
+                            IsActive = true,
+                            ProjectDescription = "Comprehensive social media marketing strategy",
+                            ProjectName = "Social Media Marketing",
+                            ProjectStatus = 1,
+                            UpdatedDate = new DateTime(2025, 7, 23, 11, 14, 56, 177, DateTimeKind.Utc).AddTicks(4762)
+                        },
+                        new
+                        {
+                            Id = 4,
+                            CompanyId = 2,
+                            CreatedDate = new DateTime(2025, 7, 23, 11, 14, 56, 177, DateTimeKind.Utc).AddTicks(4764),
+                            IsActive = true,
+                            ProjectDescription = "Blog and content creation for digital presence",
+                            ProjectName = "Content Creation Campaign",
+                            ProjectStatus = 3,
+                            UpdatedDate = new DateTime(2025, 7, 23, 11, 14, 56, 177, DateTimeKind.Utc).AddTicks(4764)
+                        });
+                });
+
+            modelBuilder.Entity("SimpleApi.Models.SaleOrder", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AcademicLevel")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<decimal?>("AmountReceived")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("AssignedTo")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("ClientName")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("Code")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ContactEmail")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("ContactPhone")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Country")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
                     b.Property<string>("CustomerAddress")
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
@@ -215,6 +349,9 @@ namespace SimpleApi.Migrations
                     b.Property<string>("CustomerName")
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
+
+                    b.Property<DateTime?>("Deadline")
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("datetime2");
@@ -224,12 +361,25 @@ namespace SimpleApi.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<string>("PaymentStatus")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int?>("ProjectId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Status")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
                     b.Property<decimal>("TotalAmount")
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CompanyId");
+
+                    b.HasIndex("ProjectId");
 
                     b.ToTable("SaleOrders");
                 });
@@ -242,6 +392,16 @@ namespace SimpleApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime?>("ItemDeadline")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("PageCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PaperType")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
@@ -253,6 +413,13 @@ namespace SimpleApi.Migrations
 
                     b.Property<int>("SaleOrderId")
                         .HasColumnType("int");
+
+                    b.Property<int?>("WordCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("WorkTitle")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.HasKey("Id");
 
@@ -311,7 +478,7 @@ namespace SimpleApi.Migrations
                         {
                             Id = 1,
                             CompanyId = 1,
-                            CreatedAt = new DateTime(2025, 7, 23, 6, 36, 33, 303, DateTimeKind.Utc).AddTicks(8095),
+                            CreatedAt = new DateTime(2025, 7, 23, 11, 14, 56, 177, DateTimeKind.Utc).AddTicks(4580),
                             Email = "admin@aspnetboilerplate.com",
                             IsActive = true,
                             IsSuperAdmin = true,
@@ -338,13 +505,33 @@ namespace SimpleApi.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("SimpleApi.Models.Project", b =>
+                {
+                    b.HasOne("SimpleApi.Models.Company", "Company")
+                        .WithMany("Projects")
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Company");
+                });
+
             modelBuilder.Entity("SimpleApi.Models.SaleOrder", b =>
                 {
-                    b.HasOne("SimpleApi.Models.Company", null)
+                    b.HasOne("SimpleApi.Models.Company", "Company")
                         .WithMany()
                         .HasForeignKey("CompanyId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.HasOne("SimpleApi.Models.Project", "Project")
+                        .WithMany("SaleOrders")
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Company");
+
+                    b.Navigation("Project");
                 });
 
             modelBuilder.Entity("SimpleApi.Models.SaleOrderItem", b =>
@@ -373,6 +560,16 @@ namespace SimpleApi.Migrations
                         .HasForeignKey("CompanyId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("SimpleApi.Models.Company", b =>
+                {
+                    b.Navigation("Projects");
+                });
+
+            modelBuilder.Entity("SimpleApi.Models.Project", b =>
+                {
+                    b.Navigation("SaleOrders");
                 });
 
             modelBuilder.Entity("SimpleApi.Models.SaleOrder", b =>

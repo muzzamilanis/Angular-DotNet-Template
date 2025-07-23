@@ -26,6 +26,8 @@ builder.Services.AddAutoMapper(typeof(MappingProfile));
 builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ISaleOrderService, SaleOrderService>();
+builder.Services.AddScoped<IProjectService, ProjectService>();
+builder.Services.AddScoped<ICompanyNatureService, CompanyNatureService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IRegistrationService, RegistrationService>();
 

@@ -8,6 +8,23 @@ export interface SaleOrder {
   customerAddress: string;
   totalAmount: number;
   items: SaleOrderItem[];
+
+  // Project relationship
+  projectId?: number;
+  projectName?: string;
+
+  // Digital Marketing specific fields
+  code?: string;
+  clientName?: string;
+  deadline?: Date;
+  status?: string;
+  amountReceived?: number;
+  paymentStatus?: string;
+  contactEmail?: string;
+  contactPhone?: string;
+  assignedTo?: string;
+  academicLevel?: string;
+  country?: string;
 }
 
 export interface CreateSaleOrderDto {
@@ -16,6 +33,22 @@ export interface CreateSaleOrderDto {
   customerName: string;
   customerAddress: string;
   items: CreateSaleOrderItemDto[];
+
+  // Project relationship
+  projectId?: number;
+
+  // Digital Marketing specific fields
+  code?: string;
+  clientName?: string;
+  deadline?: Date;
+  status?: string;
+  amountReceived?: number;
+  paymentStatus?: string;
+  contactEmail?: string;
+  contactPhone?: string;
+  assignedTo?: string;
+  academicLevel?: string;
+  country?: string;
 }
 
 export interface UpdateSaleOrderDto {
@@ -25,4 +58,20 @@ export interface UpdateSaleOrderDto {
   customerName: string;
   customerAddress: string;
   items: CreateSaleOrderItemDto[];
+
+  // Project relationship
+  projectId?: number;
+
+  // Digital Marketing specific fields
+  code?: string;
+  clientName?: string;
+  deadline?: Date;
+  status?: string;
+  amountReceived?: number;
+  paymentStatus?: string;
+  contactEmail?: string;
+  contactPhone?: string;
+  assignedTo?: string;
+  academicLevel?: string;
+  country?: string;
 }
