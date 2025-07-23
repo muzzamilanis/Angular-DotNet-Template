@@ -30,6 +30,7 @@ export class CompanySetupComponent implements OnInit {
       address: ['', Validators.maxLength(500)],
       phone: ['', Validators.maxLength(50)],
       email: ['', [Validators.email, Validators.maxLength(200)]],
+      contactPerson: ['', Validators.maxLength(100)], // Add this field
       customFields: ['']
     });
   }
@@ -74,6 +75,26 @@ export class CompanySetupComponent implements OnInit {
       });
     }
   }
+
+// Add this method to your existing component class
+resetForm(): void {
+  this.companyForm.reset();
+  this.selectedBusinessNature = null;
+  
+  // Reset form to initial state with default values
+  this.companyForm.patchValue({
+    businessNatureId: '',
+    companyName: '',
+    address: '',
+    phone: '',
+    email: '',
+    contactPerson: ''
+  });
+  
+  // Clear all validation states
+  this.companyForm.markAsUntouched();
+  this.companyForm.markAsPristine();
+}
 
   get f() {
     return this.companyForm.controls;

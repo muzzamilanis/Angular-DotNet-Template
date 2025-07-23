@@ -1,6 +1,13 @@
 .main-header {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+  transition: margin-left 0.3s ease; /* Add smooth transition */
+  margin-left: 250px; /* Default margin when sidebar is open */
+}
+
+/* When sidebar is collapsed, adjust header position */
+.sidebar-collapse .main-header {
+  margin-left: 0 !important;
 }
 
 .main-header .navbar-brand {
@@ -71,10 +78,19 @@
 
 .content-wrapper {
   background: #f8f9fa;
+  margin-left: 250px; /* Default margin when sidebar is open */
+  transition: margin-left 0.3s ease;
+}
+
+.sidebar-collapse .content-wrapper {
+  margin-left: 0 !important;
+  width: 100% !important;
 }
 
 .content-header {
-  background: white;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  margin-bottom: 0;
   border-radius: 15px;
   margin: 1rem;
   padding: 1.5rem;
@@ -82,24 +98,19 @@
 }
 
 .content-header h1 {
-  color: #2c3e50;
-  font-weight: 600;
-  margin: 0;
+  color: white;
 }
 
 .breadcrumb {
   background: transparent;
-  margin: 0;
-  padding: 0;
 }
 
 .breadcrumb-item a {
-  color: #667eea;
-  text-decoration: none;
+  color: #f8f9fa;
 }
 
 .breadcrumb-item.active {
-  color: #6c757d;
+  color: #dee2e6;
 }
 
 .content {
@@ -149,12 +160,6 @@
   margin-left: -250px;
 }
 
-.sidebar-collapse .content-wrapper {
-  margin-left: 0 !important;
-  width: 100% !important;
-}
-
-/* Responsive design */
 @media (max-width: 768px) {
   .main-sidebar {
     margin-left: -250px;

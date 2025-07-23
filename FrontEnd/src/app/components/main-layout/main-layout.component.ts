@@ -41,4 +41,26 @@ export class MainLayoutComponent implements OnInit {
   isMenuOpen(menu: string): boolean {
     return this.openMenus[menu] === true;
   }
+  // Add these new methods here:
+  getCurrentPageTitle(): string {
+    const url = this.router.url;
+    if (url.includes('/administration/company-setup')) {
+      return 'Company Setup';
+    } else if (url.includes('/masters/products')) {
+      return 'Product Management';
+    } else if (url.includes('/masters/customers')) {
+      return 'Customer Management';
+    } else if (url.includes('/transactions/sale-orders')) {
+      return 'Sale Orders';
+    } else if (url.includes('/administration/user-management')) {
+      return 'User Management';
+    }
+    return 'Dashboard';
+  }
+
+  shouldShowBreadcrumb(): boolean {
+    const url = this.router.url;
+    // return !url.includes('/administration/company-setup'); // Hide breadcrumb on setup pages
+    return true;
+  }
 }
