@@ -1,7 +1,10 @@
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using SimpleApi.Data;
 using SimpleApi.DTOs;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace SimpleApi.Services
@@ -15,52 +18,64 @@ namespace SimpleApi.Services
     public class AuthService : IAuthService
     {
         private readonly IConfiguration _configuration;
+        private readonly ApplicationDbContext _context;
 
-        public AuthService(IConfiguration configuration)
+        public AuthService(IConfiguration configuration, ApplicationDbContext context)
         {
             _configuration = configuration;
+            _context = context;
         }
 
         public async Task<LoginResponseDto> LoginAsync(LoginDto input)
         {
-            // Simple authentication - in a real application, verify against a database
-            if (input.Username == "admin" && input.Password == "123qwe")
+            // Find user by email
+            var user = await _context.Users
+                .FirstOrDefaultAsync(u => u.Email == input.Email && u.IsActive);
+
+            if (user == null)
             {
-                var user = new UserInfoDto
-                {
-                    Id = 1,
-                    UserName = "admin",
-                    EmailAddress = "admin@example.com",
-                    Name = "System",
-                    Surname = "Administrator"
-                };
-
-                var token = GenerateJwtToken(user);
-                var expireTime = DateTime.UtcNow.AddHours(24);
-
-                return new LoginResponseDto
-                {
-                    AccessToken = token,
-                    ExpireTime = expireTime,
-                    User = user
-                };
+                throw new UnauthorizedAccessException("Invalid email or password");
             }
 
-            throw new UnauthorizedAccessException("Invalid username or password");
+            // Verify password
+            if (!VerifyPassword(input.Password, user.PasswordHash))
+            {
+                throw new UnauthorizedAccessException("Invalid email or password");
+            }
+
+            var userInfo = new UserInfoDto
+            {
+                Id = user.Id,
+                UserName = user.Email, // Use email as username
+                EmailAddress = user.Email,
+                Name = user.Name,
+                Surname = "" // User model doesn't have surname, keeping empty for compatibility
+            };
+
+            var token = GenerateJwtToken(userInfo);
+            var expireTime = DateTime.UtcNow.AddHours(24);
+
+            return new LoginResponseDto
+            {
+                AccessToken = token,
+                ExpireTime = expireTime,
+                User = userInfo
+            };
         }
 
         public async Task<SessionInfoDto> GetCurrentLoginInformationAsync()
         {
             // In a real application, you would get the current user from the JWT token
+            // For now, returning a generic response - this should be enhanced to extract from JWT
             return new SessionInfoDto
             {
                 User = new UserInfoDto
                 {
                     Id = 1,
-                    UserName = "admin",
-                    EmailAddress = "admin@example.com",
-                    Name = "System",
-                    Surname = "Administrator"
+                    UserName = "current-user",
+                    EmailAddress = "user@example.com",
+                    Name = "Current",
+                    Surname = "User"
                 },
                 Application = new ApplicationInfoDto
                 {
@@ -89,6 +104,14 @@ namespace SimpleApi.Services
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
+        }
+
+        private bool VerifyPassword(string password, string hash)
+        {
+            using var sha256 = SHA256.Create();
+            var hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
+            var hashedPassword = Convert.ToBase64String(hashedBytes);
+            return hashedPassword == hash;
         }
     }
 }
