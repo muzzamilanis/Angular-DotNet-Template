@@ -21,7 +21,7 @@ export class LoginComponent implements OnInit {
     private router: Router
   ) {
     this.loginForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
+      usernameOrEmail: ['', [Validators.required]],
       password: ['', [Validators.required]],
       rememberMe: [false]
     });
@@ -41,7 +41,7 @@ export class LoginComponent implements OnInit {
       
       // Transform the form values to match the expected DTO
       const loginDto: LoginDto = {
-        email: this.loginForm.get('email')?.value,
+        usernameOrEmail: this.loginForm.get('usernameOrEmail')?.value,
         password: this.loginForm.get('password')?.value,
         rememberMe: this.loginForm.get('rememberMe')?.value
       };

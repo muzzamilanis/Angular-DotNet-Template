@@ -23,7 +23,7 @@ export class AuthService {
 
   login(loginDto: LoginDto): Observable<AuthenticateResultModel> {
     return this.http.post<any>(`${this.apiUrl}/authenticate`, {
-      email: loginDto.email,
+      usernameOrEmail: loginDto.usernameOrEmail,
       password: loginDto.password
     })
       .pipe(

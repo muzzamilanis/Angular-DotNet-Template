@@ -28,19 +28,19 @@ namespace SimpleApi.Services
 
         public async Task<LoginResponseDto> LoginAsync(LoginDto input)
         {
-            // Find user by email
+            // Find user by email or name
             var user = await _context.Users
-                .FirstOrDefaultAsync(u => u.Email == input.Email && u.IsActive);
+                .FirstOrDefaultAsync(u => (u.Email == input.UsernameOrEmail || u.Name == input.UsernameOrEmail) && u.IsActive);
 
             if (user == null)
             {
-                throw new UnauthorizedAccessException("Invalid email or password");
+                throw new UnauthorizedAccessException("Invalid username/email or password");
             }
 
             // Verify password
             if (!VerifyPassword(input.Password, user.PasswordHash))
             {
-                throw new UnauthorizedAccessException("Invalid email or password");
+                throw new UnauthorizedAccessException("Invalid username/email or password");
             }
 
             var userInfo = new UserInfoDto

@@ -10,19 +10,18 @@
         <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
           <div class="input-group mb-3">
             <input 
-              type="email" 
+              type="text" 
               class="form-control" 
-              placeholder="Email Address"
-              formControlName="email"
-              [class.is-invalid]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
+              placeholder="Username or Email Address"
+              formControlName="usernameOrEmail"
+              [class.is-invalid]="loginForm.get('usernameOrEmail')?.invalid && loginForm.get('usernameOrEmail')?.touched">
             <div class="input-group-append">
               <div class="input-group-text">
-                <span class="fas fa-envelope"></span>
+                <span class="fas fa-user"></span>
               </div>
             </div>
-            <div class="invalid-feedback" *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
-              <span *ngIf="loginForm.get('email')?.errors?.['required']">Email is required</span>
-              <span *ngIf="loginForm.get('email')?.errors?.['email']">Please enter a valid email address</span>
+            <div class="invalid-feedback" *ngIf="loginForm.get('usernameOrEmail')?.invalid && loginForm.get('usernameOrEmail')?.touched">
+              <span *ngIf="loginForm.get('usernameOrEmail')?.errors?.['required']">Username or Email is required</span>
             </div>
           </div>
           
