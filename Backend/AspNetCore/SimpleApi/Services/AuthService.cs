@@ -19,11 +19,13 @@ namespace SimpleApi.Services
     {
         private readonly IConfiguration _configuration;
         private readonly ApplicationDbContext _context;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public AuthService(IConfiguration configuration, ApplicationDbContext context)
+        public AuthService(IConfiguration configuration, ApplicationDbContext context, IHttpContextAccessor httpContextAccessor)
         {
             _configuration = configuration;
             _context = context;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<LoginResponseDto> LoginAsync(LoginDto input)
@@ -65,17 +67,38 @@ namespace SimpleApi.Services
 
         public async Task<SessionInfoDto> GetCurrentLoginInformationAsync()
         {
-            // In a real application, you would get the current user from the JWT token
-            // For now, returning a generic response - this should be enhanced to extract from JWT
+            var httpContext = _httpContextAccessor.HttpContext;
+            if (httpContext?.User?.Identity?.IsAuthenticated != true)
+            {
+                throw new UnauthorizedAccessException("User is not authenticated");
+            }
+
+            // Extract claims from JWT token
+            var userIdClaim = httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var userName = httpContext.User.FindFirst(ClaimTypes.Name)?.Value;
+            var email = httpContext.User.FindFirst(ClaimTypes.Email)?.Value;
+
+            if (!int.TryParse(userIdClaim, out var userId))
+            {
+                throw new UnauthorizedAccessException("Invalid user ID in token");
+            }
+
+            // Get user details from database to ensure data is current
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null)
+            {
+                throw new UnauthorizedAccessException("User not found");
+            }
+
             return new SessionInfoDto
             {
                 User = new UserInfoDto
                 {
-                    Id = 1,
-                    UserName = "current-user",
-                    EmailAddress = "user@example.com",
-                    Name = "Current",
-                    Surname = "User"
+                    Id = user.Id,
+                    UserName = user.Email, // Use email as username for consistency
+                    EmailAddress = user.Email,
+                    Name = user.Name,
+                    Surname = "" // User model doesn't have surname, keeping empty for compatibility
                 },
                 Application = new ApplicationInfoDto
                 {
