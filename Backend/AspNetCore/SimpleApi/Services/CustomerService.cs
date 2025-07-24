@@ -29,7 +29,7 @@ namespace SimpleApi.Services
 
         public async Task<PagedResultDto<CustomerDto>> GetAllAsync(PagedResultRequestDto input)
         {
-            var query = _context.Customers.AsQueryable();
+            var query = _context.Customers.Include(c => c.Company).AsQueryable();
             
             var totalCount = await query.CountAsync();
             var customers = await query.Skip(input.SkipCount).Take(input.MaxResultCount).ToListAsync();
@@ -41,7 +41,10 @@ namespace SimpleApi.Services
 
         public async Task<List<CustomerDto>> GetActiveCustomersAsync()
         {
-            var customers = await _context.Customers.Where(c => c.IsActive).ToListAsync();
+            var customers = await _context.Customers
+                .Include(c => c.Company)
+                .Where(c => c.IsActive)
+                .ToListAsync();
             return _mapper.Map<List<CustomerDto>>(customers);
         }
 

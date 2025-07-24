@@ -16,6 +16,10 @@ namespace SimpleApi.DTOs
         public decimal Price { get; set; }
         
         public bool IsActive { get; set; }
+        
+        public int CompanyId { get; set; }
+        
+        public string? CompanyName { get; set; }
     }
 
     public class CreateProductDto

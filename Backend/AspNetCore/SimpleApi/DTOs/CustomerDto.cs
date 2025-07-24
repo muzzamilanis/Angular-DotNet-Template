@@ -20,6 +20,10 @@ namespace SimpleApi.DTOs
         public string? Email { get; set; }
         
         public bool IsActive { get; set; }
+        
+        public int CompanyId { get; set; }
+        
+        public string? CompanyName { get; set; }
     }
 
     public class CreateCustomerDto

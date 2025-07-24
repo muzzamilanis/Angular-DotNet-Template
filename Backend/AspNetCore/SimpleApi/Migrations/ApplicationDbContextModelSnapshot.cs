@@ -22,6 +22,86 @@ namespace SimpleApi.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("SimpleApi.Models.BusinessNature", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("DisplayName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("BusinessNatures");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedAt = new DateTime(2025, 7, 24, 10, 32, 38, 610, DateTimeKind.Utc).AddTicks(8622),
+                            Description = "Digital marketing and content creation services",
+                            DisplayName = "Digital Marketing Agency",
+                            IsActive = true,
+                            Name = "DigitalMarketingAgency"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreatedAt = new DateTime(2025, 7, 24, 10, 32, 38, 610, DateTimeKind.Utc).AddTicks(8626),
+                            Description = "Automotive industry and vehicle-related services",
+                            DisplayName = "Automobile",
+                            IsActive = true,
+                            Name = "Automobile"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CreatedAt = new DateTime(2025, 7, 24, 10, 32, 38, 610, DateTimeKind.Utc).AddTicks(8690),
+                            Description = "General business operations and services",
+                            DisplayName = "General",
+                            IsActive = true,
+                            Name = "General"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            CreatedAt = new DateTime(2025, 7, 24, 10, 32, 38, 610, DateTimeKind.Utc).AddTicks(8692),
+                            Description = "Traditional retail and online commerce operations",
+                            DisplayName = "Retail & E-commerce",
+                            IsActive = true,
+                            Name = "Retail"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            CreatedAt = new DateTime(2025, 7, 24, 10, 32, 38, 610, DateTimeKind.Utc).AddTicks(8694),
+                            Description = "Manufacturing and production businesses",
+                            DisplayName = "Manufacturing",
+                            IsActive = true,
+                            Name = "Manufacturing"
+                        });
+                });
+
             modelBuilder.Entity("SimpleApi.Models.Company", b =>
                 {
                     b.Property<int>("Id")
@@ -34,10 +114,8 @@ namespace SimpleApi.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
-                    b.Property<string>("CompanyNature")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                    b.Property<int>("BusinessNatureId")
+                        .HasColumnType("int");
 
                     b.Property<string>("ContactPerson")
                         .HasMaxLength(100)
@@ -64,6 +142,8 @@ namespace SimpleApi.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("BusinessNatureId");
+
                     b.ToTable("Companies");
 
                     b.HasData(
@@ -71,9 +151,9 @@ namespace SimpleApi.Migrations
                         {
                             Id = 1,
                             Address = "123 Business St",
-                            CompanyNature = "General",
+                            BusinessNatureId = 3,
                             ContactPerson = "System Admin",
-                            CreatedAt = new DateTime(2025, 7, 23, 11, 14, 56, 177, DateTimeKind.Utc).AddTicks(3546),
+                            CreatedAt = new DateTime(2025, 7, 24, 10, 32, 38, 610, DateTimeKind.Utc).AddTicks(8879),
                             Email = "admin@defaultcompany.com",
                             IsActive = true,
                             Name = "Default Company",
@@ -83,9 +163,9 @@ namespace SimpleApi.Migrations
                         {
                             Id = 2,
                             Address = "456 Marketing Ave",
-                            CompanyNature = "Digital Marketing",
+                            BusinessNatureId = 1,
                             ContactPerson = "Marketing Manager",
-                            CreatedAt = new DateTime(2025, 7, 23, 11, 14, 56, 177, DateTimeKind.Utc).AddTicks(3549),
+                            CreatedAt = new DateTime(2025, 7, 24, 10, 32, 38, 610, DateTimeKind.Utc).AddTicks(8882),
                             Email = "admin@digitalmarketingpro.com",
                             IsActive = true,
                             Name = "Digital Marketing Pro",
@@ -258,45 +338,45 @@ namespace SimpleApi.Migrations
                         {
                             Id = 1,
                             CompanyId = 1,
-                            CreatedDate = new DateTime(2025, 7, 23, 11, 14, 56, 177, DateTimeKind.Utc).AddTicks(4754),
+                            CreatedDate = new DateTime(2025, 7, 24, 10, 32, 38, 610, DateTimeKind.Utc).AddTicks(9728),
                             IsActive = true,
                             ProjectDescription = "Corporate website development project",
                             ProjectName = "Website Development",
                             ProjectStatus = 1,
-                            UpdatedDate = new DateTime(2025, 7, 23, 11, 14, 56, 177, DateTimeKind.Utc).AddTicks(4755)
+                            UpdatedDate = new DateTime(2025, 7, 24, 10, 32, 38, 610, DateTimeKind.Utc).AddTicks(9729)
                         },
                         new
                         {
                             Id = 2,
                             CompanyId = 1,
-                            CreatedDate = new DateTime(2025, 7, 23, 11, 14, 56, 177, DateTimeKind.Utc).AddTicks(4758),
+                            CreatedDate = new DateTime(2025, 7, 24, 10, 32, 38, 610, DateTimeKind.Utc).AddTicks(9732),
                             IsActive = true,
                             ProjectDescription = "Search engine optimization campaign",
                             ProjectName = "SEO Campaign",
                             ProjectStatus = 1,
-                            UpdatedDate = new DateTime(2025, 7, 23, 11, 14, 56, 177, DateTimeKind.Utc).AddTicks(4758)
+                            UpdatedDate = new DateTime(2025, 7, 24, 10, 32, 38, 610, DateTimeKind.Utc).AddTicks(9732)
                         },
                         new
                         {
                             Id = 3,
                             CompanyId = 2,
-                            CreatedDate = new DateTime(2025, 7, 23, 11, 14, 56, 177, DateTimeKind.Utc).AddTicks(4761),
+                            CreatedDate = new DateTime(2025, 7, 24, 10, 32, 38, 610, DateTimeKind.Utc).AddTicks(9735),
                             IsActive = true,
                             ProjectDescription = "Comprehensive social media marketing strategy",
                             ProjectName = "Social Media Marketing",
                             ProjectStatus = 1,
-                            UpdatedDate = new DateTime(2025, 7, 23, 11, 14, 56, 177, DateTimeKind.Utc).AddTicks(4762)
+                            UpdatedDate = new DateTime(2025, 7, 24, 10, 32, 38, 610, DateTimeKind.Utc).AddTicks(9735)
                         },
                         new
                         {
                             Id = 4,
                             CompanyId = 2,
-                            CreatedDate = new DateTime(2025, 7, 23, 11, 14, 56, 177, DateTimeKind.Utc).AddTicks(4764),
+                            CreatedDate = new DateTime(2025, 7, 24, 10, 32, 38, 610, DateTimeKind.Utc).AddTicks(9738),
                             IsActive = true,
                             ProjectDescription = "Blog and content creation for digital presence",
                             ProjectName = "Content Creation Campaign",
                             ProjectStatus = 3,
-                            UpdatedDate = new DateTime(2025, 7, 23, 11, 14, 56, 177, DateTimeKind.Utc).AddTicks(4764)
+                            UpdatedDate = new DateTime(2025, 7, 24, 10, 32, 38, 610, DateTimeKind.Utc).AddTicks(9738)
                         });
                 });
 
@@ -478,13 +558,24 @@ namespace SimpleApi.Migrations
                         {
                             Id = 1,
                             CompanyId = 1,
-                            CreatedAt = new DateTime(2025, 7, 23, 11, 14, 56, 177, DateTimeKind.Utc).AddTicks(4580),
+                            CreatedAt = new DateTime(2025, 7, 24, 10, 32, 38, 610, DateTimeKind.Utc).AddTicks(9625),
                             Email = "admin@aspnetboilerplate.com",
                             IsActive = true,
                             IsSuperAdmin = true,
                             Name = "System Administrator",
                             PasswordHash = "+/s4bv6mfoFvLdoKjJSpjrIDdXrrs/VfGDdVoZLURGc="
                         });
+                });
+
+            modelBuilder.Entity("SimpleApi.Models.Company", b =>
+                {
+                    b.HasOne("SimpleApi.Models.BusinessNature", "BusinessNature")
+                        .WithMany("Companies")
+                        .HasForeignKey("BusinessNatureId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("BusinessNature");
                 });
 
             modelBuilder.Entity("SimpleApi.Models.Customer", b =>
@@ -560,6 +651,11 @@ namespace SimpleApi.Migrations
                         .HasForeignKey("CompanyId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("SimpleApi.Models.BusinessNature", b =>
+                {
+                    b.Navigation("Companies");
                 });
 
             modelBuilder.Entity("SimpleApi.Models.Company", b =>

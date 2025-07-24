@@ -4,6 +4,8 @@ export interface Product {
   description: string;
   price: number;
   isActive: boolean;
+  companyId: number;
+  companyName?: string;
 }
 
 export interface CreateProductDto {

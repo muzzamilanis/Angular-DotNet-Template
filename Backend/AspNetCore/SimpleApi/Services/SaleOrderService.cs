@@ -33,6 +33,7 @@ namespace SimpleApi.Services
                 .Include(so => so.Items)
                 .ThenInclude(i => i.Product)
                 .Include(so => so.Project)
+                .Include(so => so.Company)
                 .AsQueryable();
 
             // Apply filtering

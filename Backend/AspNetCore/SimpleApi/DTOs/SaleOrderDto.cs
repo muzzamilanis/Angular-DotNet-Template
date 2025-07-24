@@ -19,6 +19,10 @@ namespace SimpleApi.DTOs
         public string? CustomerAddress { get; set; }
         
         public decimal TotalAmount { get; set; }
+        
+        // Company relationship
+        public int CompanyId { get; set; }
+        public string? CompanyName { get; set; }
 
         // Project relationship
         public int? ProjectId { get; set; }
