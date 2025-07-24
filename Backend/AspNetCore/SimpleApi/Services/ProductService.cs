@@ -8,12 +8,12 @@ namespace SimpleApi.Services
 {
     public interface IProductService
     {
-        Task<PagedResultDto<ProductDto>> GetAllAsync(PagedResultRequestDto input);
-        Task<List<ProductDto>> GetAllActiveProductsAsync();
-        Task<ProductDto> GetAsync(int id);
-        Task<ProductDto> CreateAsync(CreateProductDto input);
-        Task<ProductDto> UpdateAsync(UpdateProductDto input);
-        Task DeleteAsync(int id);
+        Task<PagedResultDto<ProductDto>> GetAllAsync(PagedResultRequestDto input, int companyId);
+        Task<List<ProductDto>> GetAllActiveProductsAsync(int companyId);
+        Task<ProductDto> GetAsync(int id, int companyId);
+        Task<ProductDto> CreateAsync(CreateProductDto input, int companyId);
+        Task<ProductDto> UpdateAsync(UpdateProductDto input, int companyId);
+        Task DeleteAsync(int id, int companyId);
     }
 
     public class ProductService : IProductService
@@ -27,9 +27,12 @@ namespace SimpleApi.Services
             _mapper = mapper;
         }
 
-        public async Task<PagedResultDto<ProductDto>> GetAllAsync(PagedResultRequestDto input)
+        public async Task<PagedResultDto<ProductDto>> GetAllAsync(PagedResultRequestDto input, int companyId)
         {
-            var query = _context.Products.Include(p => p.Company).AsQueryable();
+            var query = _context.Products
+                .Where(p => p.CompanyId == companyId)
+                .Include(p => p.Company)
+                .AsQueryable();
             
             var totalCount = await query.CountAsync();
             var products = await query.Skip(input.SkipCount).Take(input.MaxResultCount).ToListAsync();
@@ -39,39 +42,44 @@ namespace SimpleApi.Services
             return new PagedResultDto<ProductDto>(totalCount, dtos);
         }
 
-        public async Task<List<ProductDto>> GetAllActiveProductsAsync()
+        public async Task<List<ProductDto>> GetAllActiveProductsAsync(int companyId)
         {
             var products = await _context.Products
                 .Include(p => p.Company)
-                .Where(p => p.IsActive)
+                .Where(p => p.IsActive && p.CompanyId == companyId)
                 .ToListAsync();
             return _mapper.Map<List<ProductDto>>(products);
         }
 
-        public async Task<ProductDto> GetAsync(int id)
+        public async Task<ProductDto> GetAsync(int id, int companyId)
         {
-            var product = await _context.Products.FindAsync(id);
+            var product = await _context.Products
+                .Where(p => p.Id == id && p.CompanyId == companyId)
+                .FirstOrDefaultAsync();
             if (product == null)
             {
-                throw new InvalidOperationException("Product not found");
+                throw new ArgumentException("Product not found");
             }
             return _mapper.Map<ProductDto>(product);
         }
 
-        public async Task<ProductDto> CreateAsync(CreateProductDto input)
+        public async Task<ProductDto> CreateAsync(CreateProductDto input, int companyId)
         {
             var product = _mapper.Map<Product>(input);
+            product.CompanyId = companyId;
             _context.Products.Add(product);
             await _context.SaveChangesAsync();
             return _mapper.Map<ProductDto>(product);
         }
 
-        public async Task<ProductDto> UpdateAsync(UpdateProductDto input)
+        public async Task<ProductDto> UpdateAsync(UpdateProductDto input, int companyId)
         {
-            var product = await _context.Products.FindAsync(input.Id);
+            var product = await _context.Products
+                .Where(p => p.Id == input.Id && p.CompanyId == companyId)
+                .FirstOrDefaultAsync();
             if (product == null)
             {
-                throw new InvalidOperationException("Product not found");
+                throw new ArgumentException("Product not found");
             }
             
             _mapper.Map(input, product);
@@ -79,12 +87,14 @@ namespace SimpleApi.Services
             return _mapper.Map<ProductDto>(product);
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(int id, int companyId)
         {
-            var product = await _context.Products.FindAsync(id);
+            var product = await _context.Products
+                .Where(p => p.Id == id && p.CompanyId == companyId)
+                .FirstOrDefaultAsync();
             if (product == null)
             {
-                throw new InvalidOperationException("Product not found");
+                throw new ArgumentException("Product not found");
             }
             
             _context.Products.Remove(product);
