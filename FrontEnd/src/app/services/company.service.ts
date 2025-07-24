@@ -9,9 +9,9 @@ import { environment } from '../../environments/environment';
   providedIn: 'root'
 })
 export class CompanyService {
-  private apiUrl = 'https://localhost:44311/api/services/app/Company';
-  private readonly profileApiUrl = `${environment.apiUrl}/api/Company`;
-  private readonly companiesApiUrl = `${environment.apiUrl}/api/Companies`;
+  private apiUrl = `${environment.apiUrl}/services/app/Company`;
+  private readonly profileApiUrl = `${environment.apiUrl}/Company`;
+  private readonly companiesApiUrl = `${environment.apiUrl}/Companies`;
 
   constructor(private http: HttpClient) { }
 
