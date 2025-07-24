@@ -11,8 +11,14 @@ import { environment } from '../../environments/environment';
 export class CompanyService {
   private apiUrl = 'https://localhost:44311/api/services/app/Company';
   private readonly profileApiUrl = `${environment.apiUrl}/api/Company`;
+  private readonly companiesApiUrl = `${environment.apiUrl}/api/Companies`;
 
   constructor(private http: HttpClient) { }
+
+  // Get current user's company
+  getCurrentCompany(): Observable<Company> {
+    return this.http.get<Company>(`${this.companiesApiUrl}/current`);
+  }
 
   // Company Profile methods (from saas-implementation)
   getProfile(): Observable<CompanyProfile> {

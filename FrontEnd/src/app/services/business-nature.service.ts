@@ -46,6 +46,14 @@ export class BusinessNatureService {
         description: 'Hotels, restaurants, and tourism services',
         isActive: true,
         createdDate: new Date()
+      },
+      {
+        id: 5,
+        name: 'digital-marketing',
+        displayName: 'Digital Marketing',
+        description: 'Digital marketing and content creation services',
+        isActive: true,
+        createdDate: new Date()
       }
     ];
 

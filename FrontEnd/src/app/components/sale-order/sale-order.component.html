@@ -37,6 +37,186 @@
               </div>
             </div>
           </div>
+
+          <!-- Digital Marketing specific fields -->
+          <div class="row" *ngIf="isDigitalMarketing">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="projectId">Project</label>
+                <select class="form-control" 
+                        id="projectId" 
+                        formControlName="projectId">
+                  <option value="">Select Project</option>
+                  <option *ngFor="let project of projects" [value]="project.id">
+                    {{ project.projectName }}
+                  </option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="code">Code</label>
+                <input type="text" 
+                       class="form-control" 
+                       id="code" 
+                       formControlName="code"
+                       placeholder="Enter code"
+                       [class.is-invalid]="saleOrderForm.get('code')?.invalid && saleOrderForm.get('code')?.touched">
+                <div class="invalid-feedback" *ngIf="saleOrderForm.get('code')?.invalid && saleOrderForm.get('code')?.touched">
+                  <div *ngIf="saleOrderForm.get('code')?.errors?.['maxlength']">Code must be 50 characters or less</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row" *ngIf="isDigitalMarketing">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="clientName">Client Name</label>
+                <input type="text" 
+                       class="form-control" 
+                       id="clientName" 
+                       formControlName="clientName"
+                       placeholder="Enter client name"
+                       [class.is-invalid]="saleOrderForm.get('clientName')?.invalid && saleOrderForm.get('clientName')?.touched">
+                <div class="invalid-feedback" *ngIf="saleOrderForm.get('clientName')?.invalid && saleOrderForm.get('clientName')?.touched">
+                  <div *ngIf="saleOrderForm.get('clientName')?.errors?.['maxlength']">Client name must be 200 characters or less</div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="deadline">Deadline</label>
+                <input type="date" 
+                       class="form-control" 
+                       id="deadline" 
+                       formControlName="deadline">
+              </div>
+            </div>
+          </div>
+
+          <div class="row" *ngIf="isDigitalMarketing">
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="status">Status</label>
+                <input type="text" 
+                       class="form-control" 
+                       id="status" 
+                       formControlName="status"
+                       placeholder="Enter status"
+                       [class.is-invalid]="saleOrderForm.get('status')?.invalid && saleOrderForm.get('status')?.touched">
+                <div class="invalid-feedback" *ngIf="saleOrderForm.get('status')?.invalid && saleOrderForm.get('status')?.touched">
+                  <div *ngIf="saleOrderForm.get('status')?.errors?.['maxlength']">Status must be 50 characters or less</div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="amountReceived">Amount Received</label>
+                <input type="number" 
+                       class="form-control" 
+                       id="amountReceived" 
+                       formControlName="amountReceived"
+                       min="0" 
+                       step="0.01"
+                       [class.is-invalid]="saleOrderForm.get('amountReceived')?.invalid && saleOrderForm.get('amountReceived')?.touched">
+                <div class="invalid-feedback" *ngIf="saleOrderForm.get('amountReceived')?.invalid && saleOrderForm.get('amountReceived')?.touched">
+                  <div *ngIf="saleOrderForm.get('amountReceived')?.errors?.['min']">Amount must be 0 or greater</div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="paymentStatus">Payment Status</label>
+                <input type="text" 
+                       class="form-control" 
+                       id="paymentStatus" 
+                       formControlName="paymentStatus"
+                       placeholder="Enter payment status"
+                       [class.is-invalid]="saleOrderForm.get('paymentStatus')?.invalid && saleOrderForm.get('paymentStatus')?.touched">
+                <div class="invalid-feedback" *ngIf="saleOrderForm.get('paymentStatus')?.invalid && saleOrderForm.get('paymentStatus')?.touched">
+                  <div *ngIf="saleOrderForm.get('paymentStatus')?.errors?.['maxlength']">Payment status must be 50 characters or less</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row" *ngIf="isDigitalMarketing">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="contactEmail">Contact Email</label>
+                <input type="email" 
+                       class="form-control" 
+                       id="contactEmail" 
+                       formControlName="contactEmail"
+                       placeholder="Enter contact email"
+                       [class.is-invalid]="saleOrderForm.get('contactEmail')?.invalid && saleOrderForm.get('contactEmail')?.touched">
+                <div class="invalid-feedback" *ngIf="saleOrderForm.get('contactEmail')?.invalid && saleOrderForm.get('contactEmail')?.touched">
+                  <div *ngIf="saleOrderForm.get('contactEmail')?.errors?.['email']">Please enter a valid email address</div>
+                  <div *ngIf="saleOrderForm.get('contactEmail')?.errors?.['maxlength']">Email must be 200 characters or less</div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="contactPhone">Contact Phone</label>
+                <input type="text" 
+                       class="form-control" 
+                       id="contactPhone" 
+                       formControlName="contactPhone"
+                       placeholder="Enter contact phone"
+                       [class.is-invalid]="saleOrderForm.get('contactPhone')?.invalid && saleOrderForm.get('contactPhone')?.touched">
+                <div class="invalid-feedback" *ngIf="saleOrderForm.get('contactPhone')?.invalid && saleOrderForm.get('contactPhone')?.touched">
+                  <div *ngIf="saleOrderForm.get('contactPhone')?.errors?.['maxlength']">Phone must be 50 characters or less</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row" *ngIf="isDigitalMarketing">
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="assignedTo">Assigned To (Doer)</label>
+                <input type="text" 
+                       class="form-control" 
+                       id="assignedTo" 
+                       formControlName="assignedTo"
+                       placeholder="Enter assigned person"
+                       [class.is-invalid]="saleOrderForm.get('assignedTo')?.invalid && saleOrderForm.get('assignedTo')?.touched">
+                <div class="invalid-feedback" *ngIf="saleOrderForm.get('assignedTo')?.invalid && saleOrderForm.get('assignedTo')?.touched">
+                  <div *ngIf="saleOrderForm.get('assignedTo')?.errors?.['maxlength']">Assigned to must be 200 characters or less</div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="academicLevel">Academic Level</label>
+                <input type="text" 
+                       class="form-control" 
+                       id="academicLevel" 
+                       formControlName="academicLevel"
+                       placeholder="Enter academic level"
+                       [class.is-invalid]="saleOrderForm.get('academicLevel')?.invalid && saleOrderForm.get('academicLevel')?.touched">
+                <div class="invalid-feedback" *ngIf="saleOrderForm.get('academicLevel')?.invalid && saleOrderForm.get('academicLevel')?.touched">
+                  <div *ngIf="saleOrderForm.get('academicLevel')?.errors?.['maxlength']">Academic level must be 100 characters or less</div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="country">Country</label>
+                <input type="text" 
+                       class="form-control" 
+                       id="country" 
+                       formControlName="country"
+                       placeholder="Enter country"
+                       [class.is-invalid]="saleOrderForm.get('country')?.invalid && saleOrderForm.get('country')?.touched">
+                <div class="invalid-feedback" *ngIf="saleOrderForm.get('country')?.invalid && saleOrderForm.get('country')?.touched">
+                  <div *ngIf="saleOrderForm.get('country')?.errors?.['maxlength']">Country must be 100 characters or less</div>
+                </div>
+              </div>
+            </div>
+          </div>
           
           <div class="row">
             <div class="col-md-6">
@@ -89,6 +269,11 @@
                           <th>Quantity *</th>
                           <th>Date *</th>
                           <th>Price *</th>
+                          <th *ngIf="isDigitalMarketing">Work Title</th>
+                          <th *ngIf="isDigitalMarketing">Paper Type</th>
+                          <th *ngIf="isDigitalMarketing">Word Count</th>
+                          <th *ngIf="isDigitalMarketing">Page Count</th>
+                          <th *ngIf="isDigitalMarketing">Item Deadline</th>
                           <th>Line Total</th>
                           <th>Actions</th>
                         </tr>
@@ -141,6 +326,54 @@
                               <div *ngIf="item.get('price')?.errors?.['min']">Price must be 0 or greater</div>
                             </div>
                           </td>
+                          <td *ngIf="isDigitalMarketing">
+                            <input type="text" 
+                                   class="form-control" 
+                                   formControlName="workTitle"
+                                   placeholder="Work Title"
+                                   [class.is-invalid]="item.get('workTitle')?.invalid && item.get('workTitle')?.touched">
+                            <div class="invalid-feedback" *ngIf="item.get('workTitle')?.invalid && item.get('workTitle')?.touched">
+                              <div *ngIf="item.get('workTitle')?.errors?.['maxlength']">Work title must be 200 characters or less</div>
+                            </div>
+                          </td>
+                          <td *ngIf="isDigitalMarketing">
+                            <input type="text" 
+                                   class="form-control" 
+                                   formControlName="paperType"
+                                   placeholder="Paper Type"
+                                   [class.is-invalid]="item.get('paperType')?.invalid && item.get('paperType')?.touched">
+                            <div class="invalid-feedback" *ngIf="item.get('paperType')?.invalid && item.get('paperType')?.touched">
+                              <div *ngIf="item.get('paperType')?.errors?.['maxlength']">Paper type must be 100 characters or less</div>
+                            </div>
+                          </td>
+                          <td *ngIf="isDigitalMarketing">
+                            <input type="number" 
+                                   class="form-control" 
+                                   formControlName="wordCount"
+                                   placeholder="Word Count"
+                                   min="0"
+                                   [class.is-invalid]="item.get('wordCount')?.invalid && item.get('wordCount')?.touched">
+                            <div class="invalid-feedback" *ngIf="item.get('wordCount')?.invalid && item.get('wordCount')?.touched">
+                              <div *ngIf="item.get('wordCount')?.errors?.['min']">Word count must be 0 or greater</div>
+                            </div>
+                          </td>
+                          <td *ngIf="isDigitalMarketing">
+                            <input type="number" 
+                                   class="form-control" 
+                                   formControlName="pageCount"
+                                   placeholder="Page Count"
+                                   min="0"
+                                   [class.is-invalid]="item.get('pageCount')?.invalid && item.get('pageCount')?.touched">
+                            <div class="invalid-feedback" *ngIf="item.get('pageCount')?.invalid && item.get('pageCount')?.touched">
+                              <div *ngIf="item.get('pageCount')?.errors?.['min']">Page count must be 0 or greater</div>
+                            </div>
+                          </td>
+                          <td *ngIf="isDigitalMarketing">
+                            <input type="date" 
+                                   class="form-control" 
+                                   formControlName="itemDeadline"
+                                   placeholder="Item Deadline">
+                          </td>
                           <td>
                             <strong>${{ getLineTotal(i).toFixed(2) }}</strong>
                           </td>
@@ -154,12 +387,12 @@
                           </td>
                         </tr>
                         <tr *ngIf="items.length === 0">
-                          <td colspan="6" class="text-center">No items added yet</td>
+                          <td [attr.colspan]="isDigitalMarketing ? 11 : 6" class="text-center">No items added yet</td>
                         </tr>
                       </tbody>
                       <tfoot *ngIf="items.length > 0">
                         <tr>
-                          <td colspan="4" class="text-right"><strong>Total Amount:</strong></td>
+                          <td [attr.colspan]="isDigitalMarketing ? 9 : 4" class="text-right"><strong>Total Amount:</strong></td>
                           <td><strong>${{ getTotalAmount().toFixed(2) }}</strong></td>
                           <td></td>
                         </tr>
@@ -204,7 +437,12 @@
                 <th>Order Number</th>
                 <th>Order Date</th>
                 <th>Customer Name</th>
-                <th>Customer Address</th>
+                <th *ngIf="isDigitalMarketing">Project</th>
+                <th *ngIf="isDigitalMarketing">Client Name</th>
+                <th *ngIf="isDigitalMarketing">Deadline</th>
+                <th *ngIf="isDigitalMarketing">Status</th>
+                <th *ngIf="isDigitalMarketing">Assigned To</th>
+                <th *ngIf="!isDigitalMarketing">Customer Address</th>
                 <th>Items Count</th>
                 <th>Total Amount</th>
                 <th>Actions</th>
@@ -215,7 +453,12 @@
                 <td>{{ order.orderNumber }}</td>
                 <td>{{ order.orderDate | date:'short' }}</td>
                 <td>{{ order.customerName }}</td>
-                <td>{{ order.customerAddress }}</td>
+                <td *ngIf="isDigitalMarketing">{{ order.projectName || 'N/A' }}</td>
+                <td *ngIf="isDigitalMarketing">{{ order.clientName || 'N/A' }}</td>
+                <td *ngIf="isDigitalMarketing">{{ order.deadline ? (order.deadline | date:'short') : 'N/A' }}</td>
+                <td *ngIf="isDigitalMarketing">{{ order.status || 'N/A' }}</td>
+                <td *ngIf="isDigitalMarketing">{{ order.assignedTo || 'N/A' }}</td>
+                <td *ngIf="!isDigitalMarketing">{{ order.customerAddress }}</td>
                 <td>{{ order.items.length }}</td>
                 <td>${{ order.totalAmount.toFixed(2) }}</td>
                 <td>
@@ -232,7 +475,7 @@
                 </td>
               </tr>
               <tr *ngIf="saleOrders.length === 0">
-                <td colspan="7" class="text-center">No sale orders found</td>
+                <td [attr.colspan]="isDigitalMarketing ? 11 : 7" class="text-center">No sale orders found</td>
               </tr>
             </tbody>
           </table>
