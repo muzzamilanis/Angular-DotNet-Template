@@ -17,53 +17,7 @@ export class CompanyService {
 
   // Get current user's company
   getCurrentCompany(): Observable<Company> {
-    // For testing purposes, let's create mock companies with different business natures
-    // In real implementation, this would call the API
-    
-    // Mock Digital Marketing company
-    const digitalMarketingCompany: Company = {
-      id: 1,
-      name: 'Digital Creative Agency',
-      code: 'DCA',
-      email: 'info@digitalcreative.com',
-      phone: '+1-555-0123',
-      address: '123 Digital Ave',
-      city: 'San Francisco',
-      state: 'CA',
-      country: 'USA',
-      zipCode: '94102',
-      website: 'https://digitalcreative.com',
-      isActive: true,
-      companyNature: 'Digital Marketing', // This will trigger Digital Marketing view
-      createdDate: new Date()
-    };
-
-    // Mock General company
-    const generalCompany: Company = {
-      id: 2,
-      name: 'General Business Corp',
-      code: 'GBC',
-      email: 'info@generalbusiness.com',
-      phone: '+1-555-0456',
-      address: '456 Business Blvd',
-      city: 'New York',
-      state: 'NY',
-      country: 'USA',
-      zipCode: '10001',
-      website: 'https://generalbusiness.com',
-      isActive: true,
-      companyNature: 'General', // This will trigger General view
-      createdDate: new Date()
-    };
-
-    // For demonstration, return General company to test the basic UI
-    // Change this to digitalMarketingCompany to test the enhanced UI
-    const testWithDigitalMarketing = false; // Set to true to test Digital Marketing view
-    
-    return of(testWithDigitalMarketing ? digitalMarketingCompany : generalCompany);
-    
-    // Original implementation (when backend is available):
-    // return this.http.get<Company>(`${this.companiesApiUrl}/current`);
+    return this.http.get<Company>(`${this.companiesApiUrl}/current`);
   }
 
   // Company Profile methods (from saas-implementation)
