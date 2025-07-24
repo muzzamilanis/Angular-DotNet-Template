@@ -2,10 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { SaleOrderService } from '../../services/sale-order.service';
 import { ProductService } from '../../services/product.service';
+import { CompanyService } from '../../services/company.service';
+import { ProjectService } from '../../services/project.service';
 import { Product } from '../../models/product.model';
 import { SaleOrder, CreateSaleOrderDto } from '../../models/sale-order.model';
 import { CreateSaleOrderItemDto } from '../../models/sale-order-item.model';
 import { PaginatedResponse } from '../../models/common.model';
+import { Company } from '../../models/company.model';
+import { Project } from '../../models/project.model';
 
 @Component({
   selector: 'app-sale-order',
@@ -16,30 +20,91 @@ import { PaginatedResponse } from '../../models/common.model';
 export class SaleOrderComponent implements OnInit {
   saleOrderForm: FormGroup;
   products: Product[] = [];
+  projects: Project[] = [];
   saleOrders: SaleOrder[] = [];
   editingOrder: SaleOrder | null = null;
+  currentCompany: Company | null = null;
+  isDigitalMarketing = false;
 
   constructor(
     private fb: FormBuilder,
     private saleOrderService: SaleOrderService,
-    private productService: ProductService
+    private productService: ProductService,
+    private companyService: CompanyService,
+    private projectService: ProjectService
   ) {
     this.initializeForm();
   }
 
   ngOnInit(): void {
+    this.loadCurrentCompany();
     this.loadProducts();
     this.loadSaleOrders();
   }
 
+  private loadCurrentCompany(): void {
+    this.companyService.getCurrentCompany().subscribe({
+      next: (company) => {
+        this.currentCompany = company;
+        this.isDigitalMarketing = company.companyNature?.toLowerCase() === 'digital marketing';
+        
+        // Reinitialize form with proper structure
+        this.initializeForm();
+        
+        if (this.isDigitalMarketing) {
+          this.loadProjects();
+        }
+        
+        // Add initial item
+        this.addItem();
+      },
+      error: (error) => {
+        console.error('Error loading current company:', error);
+        // Fallback to general mode
+        this.isDigitalMarketing = false;
+        this.initializeForm();
+        this.addItem();
+      }
+    });
+  }
+
+  private loadProjects(): void {
+    this.projectService.getAll().subscribe({
+      next: (response: PaginatedResponse<any>) => {
+        this.projects = response.items || [];
+      },
+      error: (error) => {
+        console.error('Error loading projects:', error);
+      }
+    });
+  }
+
   private initializeForm(): void {
-    this.saleOrderForm = this.fb.group({
+    const formControls: any = {
       orderNumber: ['', [Validators.required, Validators.maxLength(50)]],
       orderDate: [new Date().toISOString().substring(0, 10), Validators.required],
       customerName: ['', [Validators.required, Validators.maxLength(200)]],
       customerAddress: ['', [Validators.maxLength(500)]],
       items: this.fb.array([])
-    });
+    };
+
+    // Add Digital Marketing specific fields if company is Digital Marketing
+    if (this.isDigitalMarketing) {
+      formControls.projectId = [''];
+      formControls.code = ['', [Validators.maxLength(50)]];
+      formControls.clientName = ['', [Validators.maxLength(200)]];
+      formControls.deadline = [''];
+      formControls.status = ['', [Validators.maxLength(50)]];
+      formControls.amountReceived = [0, [Validators.min(0)]];
+      formControls.paymentStatus = ['', [Validators.maxLength(50)]];
+      formControls.contactEmail = ['', [Validators.email, Validators.maxLength(200)]];
+      formControls.contactPhone = ['', [Validators.maxLength(50)]];
+      formControls.assignedTo = ['', [Validators.maxLength(200)]];
+      formControls.academicLevel = ['', [Validators.maxLength(100)]];
+      formControls.country = ['', [Validators.maxLength(100)]];
+    }
+
+    this.saleOrderForm = this.fb.group(formControls);
   }
 
   get items(): FormArray {
@@ -47,13 +112,19 @@ export class SaleOrderComponent implements OnInit {
   }
 
   addItem(): void {
-    const itemForm = this.fb.group({
-      productId: ['', Validators.required],
-      quantity: [1, [Validators.required, Validators.min(1)]],
-      date: [new Date().toISOString().substring(0, 10), Validators.required],
-      price: [0, [Validators.required, Validators.min(0)]]
-    });
+    const itemValue = {
+      productId: '',
+      quantity: 1,
+      date: new Date().toISOString().substring(0, 10),
+      price: 0,
+      workTitle: '',
+      paperType: '',
+      wordCount: null,
+      pageCount: null,
+      itemDeadline: ''
+    };
 
+    const itemForm = this.createItemFormGroup(itemValue);
     this.items.push(itemForm);
   }
 
@@ -72,6 +143,12 @@ export class SaleOrderComponent implements OnInit {
   getProductName(productId: number): string {
     const product = this.products.find(p => p.id === productId);
     return product ? product.name : '';
+  }
+
+  getProjectName(projectId: number | null | undefined): string {
+    if (!projectId) return '';
+    const project = this.projects.find(p => p.id === projectId);
+    return project ? project.projectName : '';
   }
 
   getLineTotal(index: number): number {
@@ -97,13 +174,45 @@ export class SaleOrderComponent implements OnInit {
         orderDate: new Date(formValue.orderDate),
         customerName: formValue.customerName,
         customerAddress: formValue.customerAddress,
-        items: formValue.items.map((item: any) => ({
-          productId: item.productId,
-          quantity: item.quantity,
-          date: new Date(item.date),
-          price: item.price
-        }))
+        items: formValue.items.map((item: any) => {
+          const baseItem: CreateSaleOrderItemDto = {
+            productId: item.productId,
+            quantity: item.quantity,
+            date: new Date(item.date),
+            price: item.price
+          };
+
+          // Add Digital Marketing specific fields if company is Digital Marketing
+          if (this.isDigitalMarketing) {
+            return {
+              ...baseItem,
+              workTitle: item.workTitle,
+              paperType: item.paperType,
+              wordCount: item.wordCount,
+              pageCount: item.pageCount,
+              itemDeadline: item.itemDeadline ? new Date(item.itemDeadline) : undefined
+            };
+          }
+
+          return baseItem;
+        })
       };
+
+      // Add Digital Marketing specific fields to sale order if company is Digital Marketing
+      if (this.isDigitalMarketing) {
+        saleOrder.projectId = formValue.projectId || null;
+        saleOrder.code = formValue.code;
+        saleOrder.clientName = formValue.clientName;
+        saleOrder.deadline = formValue.deadline ? new Date(formValue.deadline) : undefined;
+        saleOrder.status = formValue.status;
+        saleOrder.amountReceived = formValue.amountReceived;
+        saleOrder.paymentStatus = formValue.paymentStatus;
+        saleOrder.contactEmail = formValue.contactEmail;
+        saleOrder.contactPhone = formValue.contactPhone;
+        saleOrder.assignedTo = formValue.assignedTo;
+        saleOrder.academicLevel = formValue.academicLevel;
+        saleOrder.country = formValue.country;
+      }
 
       if (this.editingOrder) {
         // Update existing order
@@ -140,12 +249,31 @@ export class SaleOrderComponent implements OnInit {
 
   editOrder(order: SaleOrder): void {
     this.editingOrder = order;
-    this.saleOrderForm.patchValue({
+    
+    const formValue: any = {
       orderNumber: order.orderNumber,
       orderDate: new Date(order.orderDate).toISOString().substring(0, 10),
       customerName: order.customerName,
       customerAddress: order.customerAddress
-    });
+    };
+
+    // Add Digital Marketing specific fields if company is Digital Marketing
+    if (this.isDigitalMarketing) {
+      formValue.projectId = order.projectId || '';
+      formValue.code = order.code || '';
+      formValue.clientName = order.clientName || '';
+      formValue.deadline = order.deadline ? new Date(order.deadline).toISOString().substring(0, 10) : '';
+      formValue.status = order.status || '';
+      formValue.amountReceived = order.amountReceived || 0;
+      formValue.paymentStatus = order.paymentStatus || '';
+      formValue.contactEmail = order.contactEmail || '';
+      formValue.contactPhone = order.contactPhone || '';
+      formValue.assignedTo = order.assignedTo || '';
+      formValue.academicLevel = order.academicLevel || '';
+      formValue.country = order.country || '';
+    }
+
+    this.saleOrderForm.patchValue(formValue);
 
     // Clear existing items
     while (this.items.length !== 0) {
@@ -154,14 +282,45 @@ export class SaleOrderComponent implements OnInit {
 
     // Add items from the order
     order.items.forEach(item => {
-      const itemForm = this.fb.group({
-        productId: [item.productId, Validators.required],
-        quantity: [item.quantity, [Validators.required, Validators.min(1)]],
-        date: [new Date(item.date).toISOString().substring(0, 10), Validators.required],
-        price: [item.price, [Validators.required, Validators.min(0)]]
-      });
+      const itemFormValue: any = {
+        productId: item.productId,
+        quantity: item.quantity,
+        date: new Date(item.date).toISOString().substring(0, 10),
+        price: item.price
+      };
+
+      // Add Digital Marketing specific fields if company is Digital Marketing
+      if (this.isDigitalMarketing) {
+        itemFormValue.workTitle = item.workTitle || '';
+        itemFormValue.paperType = item.paperType || '';
+        itemFormValue.wordCount = item.wordCount || null;
+        itemFormValue.pageCount = item.pageCount || null;
+        itemFormValue.itemDeadline = item.itemDeadline ? new Date(item.itemDeadline).toISOString().substring(0, 10) : '';
+      }
+
+      const itemForm = this.createItemFormGroup(itemFormValue);
       this.items.push(itemForm);
     });
+  }
+
+  private createItemFormGroup(itemValue: any): FormGroup {
+    const formControls: any = {
+      productId: [itemValue.productId, Validators.required],
+      quantity: [itemValue.quantity, [Validators.required, Validators.min(1)]],
+      date: [itemValue.date, Validators.required],
+      price: [itemValue.price, [Validators.required, Validators.min(0)]]
+    };
+
+    // Add Digital Marketing specific fields if company is Digital Marketing
+    if (this.isDigitalMarketing) {
+      formControls.workTitle = [itemValue.workTitle || '', [Validators.maxLength(200)]];
+      formControls.paperType = [itemValue.paperType || '', [Validators.maxLength(100)]];
+      formControls.wordCount = [itemValue.wordCount || null, [Validators.min(0)]];
+      formControls.pageCount = [itemValue.pageCount || null, [Validators.min(0)]];
+      formControls.itemDeadline = [itemValue.itemDeadline || ''];
+    }
+
+    return this.fb.group(formControls);
   }
 
   deleteOrder(order: SaleOrder): void {
@@ -181,7 +340,6 @@ export class SaleOrderComponent implements OnInit {
 
   resetForm(): void {
     this.editingOrder = null;
-    this.saleOrderForm.reset();
     this.initializeForm();
     this.addItem(); // Add one empty item by default
   }

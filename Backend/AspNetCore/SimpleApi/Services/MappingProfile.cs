@@ -8,6 +8,11 @@ namespace SimpleApi.Services
     {
         public MappingProfile()
         {
+            // Company mappings
+            CreateMap<Company, CompanyDto>();
+            CreateMap<CreateCompanyDto, Company>();
+            CreateMap<UpdateCompanyDto, Company>();
+
             // Customer mappings
             CreateMap<Customer, CustomerDto>();
             CreateMap<CreateCustomerDto, Customer>();
