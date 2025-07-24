@@ -14,12 +14,14 @@ namespace SimpleApi.Services
             CreateMap<UpdateCompanyDto, Company>();
 
             // Customer mappings
-            CreateMap<Customer, CustomerDto>();
+            CreateMap<Customer, CustomerDto>()
+                .ForMember(dest => dest.CompanyName, opt => opt.MapFrom(src => src.Company!.Name));
             CreateMap<CreateCustomerDto, Customer>();
             CreateMap<UpdateCustomerDto, Customer>();
 
             // Product mappings
-            CreateMap<Product, ProductDto>();
+            CreateMap<Product, ProductDto>()
+                .ForMember(dest => dest.CompanyName, opt => opt.MapFrom(src => src.Company!.Name));
             CreateMap<CreateProductDto, Product>();
             CreateMap<UpdateProductDto, Product>();
 
@@ -32,7 +34,8 @@ namespace SimpleApi.Services
 
             // SaleOrder mappings
             CreateMap<SaleOrder, SaleOrderDto>()
-                .ForMember(dest => dest.ProjectName, opt => opt.MapFrom(src => src.Project!.ProjectName));
+                .ForMember(dest => dest.ProjectName, opt => opt.MapFrom(src => src.Project!.ProjectName))
+                .ForMember(dest => dest.CompanyName, opt => opt.MapFrom(src => src.Company!.Name));
             CreateMap<CreateSaleOrderDto, SaleOrder>()
                 .ForMember(dest => dest.Items, opt => opt.Ignore()); // Handle items manually
             CreateMap<UpdateSaleOrderDto, SaleOrder>()

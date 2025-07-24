@@ -25,6 +25,8 @@ export interface ProjectListItem {
   updatedDate: Date;
   isActive: boolean;
   relatedSaleOrdersCount: number;
+  companyId: number;
+  companyName?: string;
 }
 
 export interface CreateProjectDto {

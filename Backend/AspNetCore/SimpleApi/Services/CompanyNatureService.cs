@@ -7,7 +7,7 @@ namespace SimpleApi.Services
     {
         Task<bool> IsDigitalMarketingCompanyAsync(int companyId);
         Task<string> GetCompanyNatureAsync(int companyId);
-        Task UpdateCompanyNatureAsync(int companyId, string companyNature);
+        Task UpdateCompanyNatureAsync(int companyId, int businessNatureId);
     }
 
     public class CompanyNatureService : ICompanyNatureService
@@ -21,22 +21,26 @@ namespace SimpleApi.Services
 
         public async Task<bool> IsDigitalMarketingCompanyAsync(int companyId)
         {
-            var company = await _context.Companies.FindAsync(companyId);
-            return company?.CompanyNature?.ToLower() == "digital marketing";
+            var company = await _context.Companies
+                .Include(c => c.BusinessNature)
+                .FirstOrDefaultAsync(c => c.Id == companyId);
+            return company?.BusinessNature?.Name?.ToLower() == "digitalmarketingagency";
         }
 
         public async Task<string> GetCompanyNatureAsync(int companyId)
         {
-            var company = await _context.Companies.FindAsync(companyId);
-            return company?.CompanyNature ?? "General";
+            var company = await _context.Companies
+                .Include(c => c.BusinessNature)
+                .FirstOrDefaultAsync(c => c.Id == companyId);
+            return company?.BusinessNature?.DisplayName ?? "General";
         }
 
-        public async Task UpdateCompanyNatureAsync(int companyId, string companyNature)
+        public async Task UpdateCompanyNatureAsync(int companyId, int businessNatureId)
         {
             var company = await _context.Companies.FindAsync(companyId);
             if (company != null)
             {
-                company.CompanyNature = companyNature;
+                company.BusinessNatureId = businessNatureId;
                 await _context.SaveChangesAsync();
             }
         }
