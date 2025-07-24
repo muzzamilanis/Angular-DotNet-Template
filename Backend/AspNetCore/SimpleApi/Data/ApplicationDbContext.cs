@@ -16,10 +16,20 @@ namespace SimpleApi.Data
         public DbSet<User> Users { get; set; }
         public DbSet<Company> Companies { get; set; }
         public DbSet<Project> Projects { get; set; }
+        public DbSet<BusinessNature> BusinessNatures { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            // Configure BusinessNature
+            modelBuilder.Entity<BusinessNature>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.DisplayName).IsRequired().HasMaxLength(200);
+                entity.Property(e => e.Description).HasMaxLength(500);
+            });
 
             // Configure Company
             modelBuilder.Entity<Company>(entity =>
@@ -30,7 +40,12 @@ namespace SimpleApi.Data
                 entity.Property(e => e.Phone).HasMaxLength(50);
                 entity.Property(e => e.Email).HasMaxLength(200);
                 entity.Property(e => e.ContactPerson).HasMaxLength(100);
-                entity.Property(e => e.CompanyNature).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.BusinessNatureId).IsRequired();
+                
+                entity.HasOne(e => e.BusinessNature)
+                      .WithMany(e => e.Companies)
+                      .HasForeignKey(e => e.BusinessNatureId)
+                      .OnDelete(DeleteBehavior.Restrict);
             });
 
             // Configure Project
@@ -148,10 +163,19 @@ namespace SimpleApi.Data
                       .HasForeignKey(e => e.ProductId);
             });
 
-            // Seed data - Create a default company first
+            // Seed data - Create business natures first
+            modelBuilder.Entity<BusinessNature>().HasData(
+                new BusinessNature { Id = 1, Name = "DigitalMarketingAgency", DisplayName = "Digital Marketing Agency", Description = "Digital marketing and content creation services", IsActive = true, CreatedAt = DateTime.UtcNow },
+                new BusinessNature { Id = 2, Name = "Automobile", DisplayName = "Automobile", Description = "Automotive industry and vehicle-related services", IsActive = true, CreatedAt = DateTime.UtcNow },
+                new BusinessNature { Id = 3, Name = "General", DisplayName = "General", Description = "General business operations and services", IsActive = true, CreatedAt = DateTime.UtcNow },
+                new BusinessNature { Id = 4, Name = "Retail", DisplayName = "Retail & E-commerce", Description = "Traditional retail and online commerce operations", IsActive = true, CreatedAt = DateTime.UtcNow },
+                new BusinessNature { Id = 5, Name = "Manufacturing", DisplayName = "Manufacturing", Description = "Manufacturing and production businesses", IsActive = true, CreatedAt = DateTime.UtcNow }
+            );
+
+            // Seed data - Create companies with business nature references
             modelBuilder.Entity<Company>().HasData(
-                new Company { Id = 1, Name = "Default Company", Address = "123 Business St", Phone = "555-0001", Email = "admin@defaultcompany.com", ContactPerson = "System Admin", CompanyNature = "General", IsActive = true, CreatedAt = DateTime.UtcNow },
-                new Company { Id = 2, Name = "Digital Marketing Pro", Address = "456 Marketing Ave", Phone = "555-0002", Email = "admin@digitalmarketingpro.com", ContactPerson = "Marketing Manager", CompanyNature = "Digital Marketing", IsActive = true, CreatedAt = DateTime.UtcNow }
+                new Company { Id = 1, Name = "Default Company", Address = "123 Business St", Phone = "555-0001", Email = "admin@defaultcompany.com", ContactPerson = "System Admin", BusinessNatureId = 3, IsActive = true, CreatedAt = DateTime.UtcNow },
+                new Company { Id = 2, Name = "Digital Marketing Pro", Address = "456 Marketing Ave", Phone = "555-0002", Email = "admin@digitalmarketingpro.com", ContactPerson = "Marketing Manager", BusinessNatureId = 1, IsActive = true, CreatedAt = DateTime.UtcNow }
             );
 
             // Seed data for default admin user
