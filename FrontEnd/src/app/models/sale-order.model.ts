@@ -8,6 +8,8 @@ export interface SaleOrder {
   customerAddress: string;
   totalAmount: number;
   items: SaleOrderItem[];
+  companyId: number;
+  companyName?: string;
 
   // Project relationship
   projectId?: number;

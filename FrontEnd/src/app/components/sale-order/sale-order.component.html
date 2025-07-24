@@ -437,6 +437,7 @@
                 <th>Order Number</th>
                 <th>Order Date</th>
                 <th>Customer Name</th>
+                <th>Company</th>
                 <th *ngIf="isDigitalMarketing">Project</th>
                 <th *ngIf="isDigitalMarketing">Client Name</th>
                 <th *ngIf="isDigitalMarketing">Deadline</th>
@@ -453,6 +454,7 @@
                 <td>{{ order.orderNumber }}</td>
                 <td>{{ order.orderDate | date:'short' }}</td>
                 <td>{{ order.customerName }}</td>
+                <td>{{ order.companyName || 'Unknown' }}</td>
                 <td *ngIf="isDigitalMarketing">{{ order.projectName || 'N/A' }}</td>
                 <td *ngIf="isDigitalMarketing">{{ order.clientName || 'N/A' }}</td>
                 <td *ngIf="isDigitalMarketing">{{ order.deadline ? (order.deadline | date:'short') : 'N/A' }}</td>

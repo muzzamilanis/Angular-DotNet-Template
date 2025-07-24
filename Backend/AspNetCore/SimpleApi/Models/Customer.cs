@@ -23,5 +23,8 @@ namespace SimpleApi.Models
 
         // Foreign key for Company (Tenant)
         public int CompanyId { get; set; }
+        
+        // Navigation property
+        public virtual Company? Company { get; set; }
     }
 }

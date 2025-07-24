@@ -62,6 +62,7 @@
               Status
               <i [class]="getSortIcon('projectStatus')" class="ml-1"></i>
             </th>
+            <th>Company</th>
             <th (click)="onSort('createdDate')" style="cursor: pointer;">
               Created Date
               <i [class]="getSortIcon('createdDate')" class="ml-1"></i>
@@ -88,6 +89,7 @@
                 {{ getStatusText(project.projectStatus) }}
               </span>
             </td>
+            <td>{{ project.companyName || 'Unknown' }}</td>
             <td>
               {{ project.createdDate | date:'short' }}
             </td>

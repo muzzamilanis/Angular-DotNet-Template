@@ -118,6 +118,7 @@
                 <th>Name</th>
                 <th>Description</th>
                 <th>Price</th>
+                <th>Company</th>
                 <th>Status</th>
                 <th>Actions</th>
               </tr>
@@ -127,6 +128,7 @@
                 <td>{{ product.name }}</td>
                 <td>{{ product.description || '-' }}</td>
                 <td>${{ product.price.toFixed(2) }}</td>
+                <td>{{ product.companyName || 'Unknown' }}</td>
                 <td>
                   <span class="badge" [class.badge-success]="product.isActive" [class.badge-danger]="!product.isActive">
                     {{ product.isActive ? 'Active' : 'Inactive' }}
@@ -146,7 +148,7 @@
                 </td>
               </tr>
               <tr *ngIf="products.length === 0">
-                <td colspan="5" class="text-center">No products found</td>
+                <td colspan="6" class="text-center">No products found</td>
               </tr>
             </tbody>
           </table>
