@@ -9,7 +9,7 @@ import { environment } from '../../environments/environment';
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = environment.apiUrl + '/TokenAuth';
+  private apiUrl = environment.apiUrl;
   private currentUserSubject = new BehaviorSubject<any>(null);
   public currentUser = this.currentUserSubject.asObservable();
 
@@ -22,7 +22,7 @@ export class AuthService {
   }
 
   login(loginDto: LoginDto): Observable<AuthenticateResultModel> {
-    return this.http.post<any>(`${this.apiUrl}/authenticate`, {
+    return this.http.post<any>(`${this.apiUrl}/TokenAuth/authenticate`, {
       usernameOrEmail: loginDto.usernameOrEmail,
       password: loginDto.password
     })
@@ -57,5 +57,9 @@ export class AuthService {
 
   getToken(): string | null {
     return localStorage.getItem('token');
+  }
+
+  getCurrentLoginInformation(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/session/GetCurrentLoginInformations`);
   }
 }

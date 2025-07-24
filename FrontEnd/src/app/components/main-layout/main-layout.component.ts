@@ -10,6 +10,8 @@ import { AuthService } from '../../services/auth.service';
 })
 export class MainLayoutComponent implements OnInit {
   sidebarCollapsed = false;
+  currentUser: any = null; // Add this property
+  isLoadingUser = true; // Add loading state
 
   // Track open/closed state of menus
   openMenus: {[key: string]: boolean} = {};
@@ -20,6 +22,39 @@ export class MainLayoutComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.loadCurrentUser(); // Add this method call
+  }
+
+  // Add this new method to load current user
+  loadCurrentUser(): void {
+    this.authService.getCurrentLoginInformation().subscribe({
+      next: (response) => {
+        if (response.success) {
+          this.currentUser = response.result.user;
+        }
+        this.isLoadingUser = false;
+      },
+      error: (error) => {
+        console.error('Error loading current user:', error);
+        this.isLoadingUser = false;
+      }
+    });
+  }
+
+  // Add method to get display name
+  getUserDisplayName(): string {
+    if (this.currentUser) {
+      return this.currentUser.name || this.currentUser.userName || 'User';
+    }
+    return 'Loading...';
+  }
+
+  // Add method to get user email
+  getUserEmail(): string {
+    if (this.currentUser) {
+      return this.currentUser.emailAddress || this.currentUser.email || '';
+    }
+    return '';
   }
 
   toggleSidebar(): void {
@@ -41,6 +76,7 @@ export class MainLayoutComponent implements OnInit {
   isMenuOpen(menu: string): boolean {
     return this.openMenus[menu] === true;
   }
+
   // Add these new methods here:
   getCurrentPageTitle(): string {
     const url = this.router.url;

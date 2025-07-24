@@ -22,7 +22,7 @@ export interface ProjectQueryParams {
   providedIn: 'root'
 })
 export class ProjectService {
-  private readonly apiUrl = `${environment.apiUrl}/api/projects`;
+  private readonly apiUrl = `${environment.apiUrl}/projects`;
 
   constructor(private http: HttpClient) { }
 

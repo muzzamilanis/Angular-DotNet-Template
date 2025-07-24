@@ -51,8 +51,9 @@ namespace SimpleApi.Services
                 UserName = user.Email, // Use email as username
                 EmailAddress = user.Email,
                 Name = user.Name,
-                Surname = "" // User model doesn't have surname, keeping empty for compatibility
-            };
+				Surname = "", // User model doesn't have surname, keeping empty for compatibility
+				CompanyId = user.CompanyId.ToString() // Assuming CompanyId is a string, adjust as necessary
+			};
 
             var token = GenerateJwtToken(userInfo);
             var expireTime = DateTime.UtcNow.AddHours(24);
@@ -98,8 +99,9 @@ namespace SimpleApi.Services
                     UserName = user.Email, // Use email as username for consistency
                     EmailAddress = user.Email,
                     Name = user.Name,
-                    Surname = "" // User model doesn't have surname, keeping empty for compatibility
-                },
+                    Surname = "", // User model doesn't have surname, keeping empty for compatibility
+                    CompanyId = user.CompanyId.ToString() // Assuming CompanyId is a string, adjust as necessary
+				},
                 Application = new ApplicationInfoDto
                 {
                     Version = "1.0.0",
@@ -118,7 +120,8 @@ namespace SimpleApi.Services
                 {
                     new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                     new Claim(ClaimTypes.Name, user.UserName),
-                    new Claim(ClaimTypes.Email, user.EmailAddress)
+                    new Claim(ClaimTypes.Email, user.EmailAddress),
+                    new Claim("CompanyId", user.CompanyId)
                 }),
                 Expires = DateTime.UtcNow.AddHours(24),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
