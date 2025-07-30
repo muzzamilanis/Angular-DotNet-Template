@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CustomerService } from '../../services/customer.service';
 import { Customer, CreateCustomerDto } from '../../models/customer.model';
+import { NotificationService } from '../../services/notification.service';
 
 @Component({
   selector: 'app-customer',
@@ -17,7 +18,8 @@ export class CustomerComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private customerService: CustomerService
+    private customerService: CustomerService,
+    private notificationService: NotificationService
   ) {
     this.initializeForm();
   }
@@ -51,12 +53,12 @@ export class CustomerComponent implements OnInit {
             this.loadCustomers();
             this.resetForm();
             this.loading = false;
-            alert('Customer updated successfully!');
+            this.notificationService.showSuccess('Customer updated successfully!');
           },
           error: (error) => {
             console.error('Error updating customer:', error);
             this.loading = false;
-            alert('Error updating customer. Please try again.');
+            this.notificationService.showError('Error updating customer. Please try again.');
           }
         });
       } else {
@@ -67,12 +69,12 @@ export class CustomerComponent implements OnInit {
             this.loadCustomers();
             this.resetForm();
             this.loading = false;
-            alert('Customer created successfully!');
+            this.notificationService.showSuccess('Customer created successfully!');
           },
           error: (error) => {
             console.error('Error creating customer:', error);
             this.loading = false;
-            alert('Error creating customer. Please try again.');
+            this.notificationService.showError('Error creating customer. Please try again.');
           }
         });
       }
@@ -91,18 +93,25 @@ export class CustomerComponent implements OnInit {
   }
 
   deleteCustomer(customer: Customer): void {
-    if (confirm(`Are you sure you want to delete customer ${customer.name}?`)) {
-      this.customerService.deleteCustomer(customer.id).subscribe({
-        next: () => {
-          this.loadCustomers();
-          alert('Customer deleted successfully!');
-        },
-        error: (error) => {
-          console.error('Error deleting customer:', error);
-          alert('Error deleting customer. Please try again.');
-        }
-      });
-    }
+    this.notificationService.showConfirm(
+      `Are you sure you want to delete customer ${customer.name}?`,
+      'Delete Customer',
+      'Yes, delete it!',
+      'Cancel'
+    ).then((confirmed) => {
+      if (confirmed) {
+        this.customerService.deleteCustomer(customer.id).subscribe({
+          next: () => {
+            this.loadCustomers();
+            this.notificationService.showSuccess('Customer deleted successfully!');
+          },
+          error: (error) => {
+            console.error('Error deleting customer:', error);
+            this.notificationService.showError('Error deleting customer. Please try again.');
+          }
+        });
+      }
+    });
   }
 
   resetForm(): void {

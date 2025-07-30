@@ -12,6 +12,7 @@ import { CreateSaleOrderItemDto } from '../../models/sale-order-item.model';
 import { PaginatedResponse } from '../../models/common.model';
 import { Company } from '../../models/company.model';
 import { Project } from '../../models/project.model';
+import { NotificationService } from '../../services/notification.service';
 
 @Component({
   selector: 'app-sale-order',
@@ -35,7 +36,8 @@ export class SaleOrderComponent implements OnInit {
     private productService: ProductService,
     private companyService: CompanyService,
     private projectService: ProjectService,
-    private serviceTypeService: ServiceTypeService
+    private serviceTypeService: ServiceTypeService,
+    private notificationService: NotificationService
   ) {
     this.initializeForm();
   }
@@ -260,11 +262,11 @@ export class SaleOrderComponent implements OnInit {
           next: (response) => {
             this.loadSaleOrders();
             this.resetForm();
-            alert('Sale order updated successfully!');
+            this.notificationService.showSuccess('Sale order updated successfully!');
           },
           error: (error) => {
             console.error('Error updating sale order:', error);
-            alert('Error updating sale order. Please try again.');
+            this.notificationService.showError('Error updating sale order. Please try again.');
           }
         });
       } else {
@@ -273,11 +275,11 @@ export class SaleOrderComponent implements OnInit {
           next: (response) => {
             this.loadSaleOrders();
             this.resetForm();
-            alert('Sale order created successfully!');
+            this.notificationService.showSuccess('Sale order created successfully!');
           },
           error: (error) => {
             console.error('Error creating sale order:', error);
-            alert('Error creating sale order. Please try again.');
+            this.notificationService.showError('Error creating sale order. Please try again.');
           }
         });
       }
@@ -368,18 +370,25 @@ export class SaleOrderComponent implements OnInit {
   }
 
   deleteOrder(order: SaleOrder): void {
-    if (confirm(`Are you sure you want to delete order ${order.orderNumber}?`)) {
-      this.saleOrderService.deleteSaleOrder(order.id).subscribe({
-        next: () => {
-          this.loadSaleOrders();
-          alert('Sale order deleted successfully!');
-        },
-        error: (error) => {
-          console.error('Error deleting sale order:', error);
-          alert('Error deleting sale order. Please try again.');
-        }
-      });
-    }
+    this.notificationService.showConfirm(
+      `Are you sure you want to delete order ${order.orderNumber}?`,
+      'Delete Sale Order',
+      'Yes, delete it!',
+      'Cancel'
+    ).then((confirmed) => {
+      if (confirmed) {
+        this.saleOrderService.deleteSaleOrder(order.id).subscribe({
+          next: () => {
+            this.loadSaleOrders();
+            this.notificationService.showSuccess('Sale order deleted successfully!');
+          },
+          error: (error) => {
+            console.error('Error deleting sale order:', error);
+            this.notificationService.showError('Error deleting sale order. Please try again.');
+          }
+        });
+      }
+    });
   }
 
   resetForm(): void {
