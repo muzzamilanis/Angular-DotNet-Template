@@ -17,7 +17,7 @@ builder.Services.AddHttpContextAccessor();
 
 // Add Entity Framework
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlite("Data Source=business.db"));
 
 // Add AutoMapper
 builder.Services.AddAutoMapper(typeof(MappingProfile));
