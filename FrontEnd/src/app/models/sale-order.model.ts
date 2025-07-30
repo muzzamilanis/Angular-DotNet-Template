@@ -93,7 +93,7 @@ export interface UpdateSaleOrderDto {
   assignedTo?: string;
   academicLevel?: string;
   country?: string;
-}
   orderDetails?: string;
   wordsOrPages?: string;
   totalPayment?: number;
+}
