@@ -46,8 +46,9 @@ export class SaleOrderComponent implements OnInit {
     this.companyService.getCurrentCompany().subscribe({
       next: (company) => {
         this.currentCompany = company;
-        this.isDigitalMarketing = company.companyNature?.toLowerCase() === 'digital marketing';
-        
+        this.isDigitalMarketing = company.companyNature === 'Digital Marketing Agency';
+        console.log('Company: ', company);
+        console.log(`IsDigitalMarketing: ${this.isDigitalMarketing}`);
         // Reinitialize form with proper structure
         this.initializeForm();
         

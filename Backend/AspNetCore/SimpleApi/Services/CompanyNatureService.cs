@@ -1,5 +1,6 @@
 using SimpleApi.Data;
 using Microsoft.EntityFrameworkCore;
+using AutoMapper;
 
 namespace SimpleApi.Services
 {
@@ -13,10 +14,12 @@ namespace SimpleApi.Services
     public class CompanyNatureService : ICompanyNatureService
     {
         private readonly ApplicationDbContext _context;
+		private readonly IMapper _mapper;
 
-        public CompanyNatureService(ApplicationDbContext context)
+		public CompanyNatureService(ApplicationDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         public async Task<bool> IsDigitalMarketingCompanyAsync(int companyId)

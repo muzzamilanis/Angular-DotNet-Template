@@ -25,19 +25,25 @@
             <div *ngIf="!isLoading">
               <!-- Business Nature Selection -->
               <div class="form-group">
-                <label for="businessNatureId">Business Type <span class="text-danger">*</span></label>
+                <label for="businessNatureId">
+                  <i class="fas fa-industry"></i>
+                  Business Type 
+                  <span class="text-danger">*</span>
+                </label>
                 <select 
                   class="form-control" 
                   id="businessNatureId" 
                   formControlName="businessNatureId"
                   (change)="onBusinessNatureChange()"
-                  [class.is-invalid]="f['businessNatureId'].invalid && f['businessNatureId'].touched">
-                  <option value="">Select your business type</option>
+                  [class.is-invalid]="f['businessNatureId'].invalid && f['businessNatureId'].touched"
+                  [class.loading]="isLoading">
+                  <option value="" disabled>🏢 Select your business type</option>
                   <option *ngFor="let bn of businessNatures" [value]="bn.id">
                     {{ bn.displayName }}
                   </option>
                 </select>
                 <div *ngIf="f['businessNatureId'].invalid && f['businessNatureId'].touched" class="invalid-feedback">
+                  <i class="fas fa-exclamation-circle mr-1"></i>
                   Please select a business type.
                 </div>
               </div>

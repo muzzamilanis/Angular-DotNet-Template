@@ -42,11 +42,14 @@
           <div class="row" *ngIf="isDigitalMarketing">
             <div class="col-md-6">
               <div class="form-group">
-                <label for="projectId">Project</label>
+                <label for="projectId">
+                  <i class="fas fa-project-diagram"></i>
+                  Project
+                </label>
                 <select class="form-control" 
                         id="projectId" 
                         formControlName="projectId">
-                  <option value="">Select Project</option>
+                  <option value="">🎯 Select Project</option>
                   <option *ngFor="let project of projects" [value]="project.id">
                     {{ project.projectName }}
                   </option>
@@ -285,7 +288,7 @@
                                     formControlName="productId" 
                                     (change)="onProductChange(i, $event.target.value)"
                                     [class.is-invalid]="item.get('productId')?.invalid && item.get('productId')?.touched">
-                              <option value="">Select Product</option>
+                              <option value="">📦 Select Product</option>
                               <option *ngFor="let product of products" [value]="product.id">
                                 {{ product.name }} - ${{ product.price }}
                               </option>

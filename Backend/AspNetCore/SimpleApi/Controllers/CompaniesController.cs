@@ -12,10 +12,12 @@ namespace SimpleApi.Controllers
     public class CompaniesController : ControllerBase
     {
         private readonly ICompanyService _companyService;
+        private readonly ICompanyNatureService _companyNatureService;
 
-        public CompaniesController(ICompanyService companyService)
+        public CompaniesController(ICompanyService companyService, ICompanyNatureService companyNatureService)
         {
             _companyService = companyService;
+            _companyNatureService = companyNatureService;
         }
 
         private int GetCurrentUserCompanyId()
@@ -35,6 +37,7 @@ namespace SimpleApi.Controllers
             {
                 var companyId = GetCurrentUserCompanyId();
                 var result = await _companyService.GetCurrentUserCompanyAsync(companyId);
+                result.CompanyNature = await _companyNatureService.GetCompanyNatureAsync(companyId);
                 return Ok(result);
             }
             catch (UnauthorizedAccessException ex)

@@ -63,16 +63,18 @@
             </small>
           </div>
 
-          <!-- Project Status -->
+          <!-- Project Status Selection -->
           <div class="form-group">
             <label for="projectStatus">
-              Project Status <span class="text-danger">*</span>
+              <i class="fas fa-tasks"></i>
+              Project Status 
+              <span class="text-danger">*</span>
             </label>
             <select id="projectStatus"
                     class="form-control"
                     formControlName="projectStatus"
                     [class.is-invalid]="isFieldInvalid('projectStatus')">
-              <option value="">Select project status</option>
+              <option value="">📊 Select project status</option>
               <option *ngFor="let option of statusOptions" [value]="option.value">
                 {{ option.label }}
               </option>
