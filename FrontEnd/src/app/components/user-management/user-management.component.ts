@@ -4,6 +4,7 @@ import { User, CreateUserDto, UpdateUserDto, UserRole } from '../../models/user.
 import { Company } from '../../models/company.model';
 import { UserService } from '../../services/user.service';
 import { CompanyService } from '../../services/company.service';
+import { NotificationService } from '../../services/notification.service';
 
 @Component({
   selector: 'app-user-management',
@@ -23,7 +24,8 @@ export class UserManagementComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private userService: UserService,
-    private companyService: CompanyService
+    private companyService: CompanyService,
+    private notificationService: NotificationService
   ) {
     this.userForm = this.createForm();
   }
@@ -114,12 +116,12 @@ export class UserManagementComponent implements OnInit {
         this.users.push(newUser);
         this.resetForm();
         this.isLoading = false;
-        alert('User created successfully!');
+        this.notificationService.showSuccess('User created successfully!');
       },
       error: (error) => {
         console.error('Error creating user:', error);
         this.isLoading = false;
-        alert('Error creating user');
+        this.notificationService.showError('Error creating user');
       }
     });
   }
@@ -134,12 +136,12 @@ export class UserManagementComponent implements OnInit {
         }
         this.resetForm();
         this.isLoading = false;
-        alert('User updated successfully!');
+        this.notificationService.showSuccess('User updated successfully!');
       },
       error: (error) => {
         console.error('Error updating user:', error);
         this.isLoading = false;
-        alert('Error updating user');
+        this.notificationService.showError('Error updating user');
       }
     });
   }
@@ -163,55 +165,76 @@ export class UserManagementComponent implements OnInit {
   }
 
   deleteUser(user: User): void {
-    if (confirm(`Are you sure you want to delete ${user.firstName} ${user.lastName}?`)) {
-      this.userService.delete(user.id!).subscribe({
-        next: () => {
-          this.users = this.users.filter(u => u.id !== user.id);
-          alert('User deleted successfully!');
-        },
-        error: (error) => {
-          console.error('Error deleting user:', error);
-          alert('Error deleting user');
-        }
-      });
-    }
+    this.notificationService.showConfirm(
+      `Are you sure you want to delete ${user.firstName} ${user.lastName}?`,
+      'Delete User',
+      'Yes, delete it!',
+      'Cancel'
+    ).then((confirmed) => {
+      if (confirmed) {
+        this.userService.delete(user.id!).subscribe({
+          next: () => {
+            this.users = this.users.filter(u => u.id !== user.id);
+            this.notificationService.showSuccess('User deleted successfully!');
+          },
+          error: (error) => {
+            console.error('Error deleting user:', error);
+            this.notificationService.showError('Error deleting user');
+          }
+        });
+      }
+    });
   }
 
   toggleUserStatus(user: User): void {
     const action = user.isActive ? 'deactivate' : 'activate';
-    if (confirm(`Are you sure you want to ${action} ${user.firstName} ${user.lastName}?`)) {
-      const request = user.isActive 
-        ? this.userService.deactivate(user.id!)
-        : this.userService.activate(user.id!);
-      
-      request.subscribe({
-        next: () => {
-          user.isActive = !user.isActive;
-          alert(`User ${action}d successfully!`);
-        },
-        error: (error) => {
-          console.error(`Error ${action}ing user:`, error);
-          alert(`Error ${action}ing user`);
-        }
-      });
-    }
+    this.notificationService.showConfirm(
+      `Are you sure you want to ${action} ${user.firstName} ${user.lastName}?`,
+      `${action.charAt(0).toUpperCase() + action.slice(1)} User`,
+      `Yes, ${action} it!`,
+      'Cancel'
+    ).then((confirmed) => {
+      if (confirmed) {
+        const request = user.isActive 
+          ? this.userService.deactivate(user.id!)
+          : this.userService.activate(user.id!);
+        
+        request.subscribe({
+          next: () => {
+            user.isActive = !user.isActive;
+            this.notificationService.showSuccess(`User ${action}d successfully!`);
+          },
+          error: (error) => {
+            console.error(`Error ${action}ing user:`, error);
+            this.notificationService.showError(`Error ${action}ing user`);
+          }
+        });
+      }
+    });
   }
 
   resetPassword(user: User): void {
-    const newPassword = prompt('Enter new password for the user:');
-    if (newPassword && newPassword.length >= 6) {
-      this.userService.resetPassword(user.id!, newPassword).subscribe({
-        next: () => {
-          alert('Password reset successfully!');
-        },
-        error: (error) => {
-          console.error('Error resetting password:', error);
-          alert('Error resetting password');
-        }
-      });
-    } else if (newPassword) {
-      alert('Password must be at least 6 characters long');
-    }
+    this.notificationService.showPrompt(
+      'Password must be at least 6 characters long.',
+      'Enter new password for the user',
+      'Enter new password...',
+      'Reset Password',
+      'Cancel'
+    ).then((newPassword) => {
+      if (newPassword && newPassword.length >= 6) {
+        this.userService.resetPassword(user.id!, newPassword).subscribe({
+          next: () => {
+            this.notificationService.showSuccess('Password reset successfully!');
+          },
+          error: (error) => {
+            console.error('Error resetting password:', error);
+            this.notificationService.showError('Error resetting password');
+          }
+        });
+      } else if (newPassword) {
+        this.notificationService.showError('Password must be at least 6 characters long');
+      }
+    });
   }
 
   resetForm(): void {

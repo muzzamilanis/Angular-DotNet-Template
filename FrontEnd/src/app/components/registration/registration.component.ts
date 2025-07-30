@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { RegistrationService, RegistrationDto } from '../../services/registration.service';
+import { NotificationService } from '../../services/notification.service';
 
 @Component({
   selector: 'app-registration',
@@ -21,7 +22,8 @@ export class RegistrationComponent implements OnInit {
     private formBuilder: FormBuilder,
     private authService: AuthService,
     private registrationService: RegistrationService,
-    private router: Router
+    private router: Router,
+    private notificationService: NotificationService
   ) {}
 
   ngOnInit(): void {
@@ -104,8 +106,9 @@ export class RegistrationComponent implements OnInit {
         next: (response) => {
           this.loading = false;
           if (response.success) {
-            alert(response.message);
-            this.router.navigate(['/login']);
+            this.notificationService.showSuccess(response.message).then(() => {
+              this.router.navigate(['/login']);
+            });
           } else {
             this.error = response.message;
           }

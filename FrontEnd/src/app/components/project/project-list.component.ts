@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ProjectService } from '../../services/project.service';
 import { ProjectListItem, ProjectStatus, getProjectStatusText, getProjectStatusClass } from '../../models/project.model';
 import { PaginatedResponse } from '../../models/common.model';
+import { NotificationService } from '../../services/notification.service';
 
 @Component({
   selector: 'app-project-list',
@@ -34,7 +35,10 @@ export class ProjectListComponent implements OnInit {
   alertType = '';
   showAlert = false;
 
-  constructor(private projectService: ProjectService) { }
+  constructor(
+    private projectService: ProjectService,
+    private notificationService: NotificationService
+  ) { }
 
   ngOnInit(): void {
     this.loadProjects();
@@ -94,9 +98,16 @@ export class ProjectListComponent implements OnInit {
   }
 
   confirmDelete(project: ProjectListItem): void {
-    if (confirm(`Are you sure you want to delete the project "${project.projectName}"?`)) {
-      this.deleteProject(project.id);
-    }
+    this.notificationService.showConfirm(
+      `Are you sure you want to delete the project "${project.projectName}"?`,
+      'Delete Project',
+      'Yes, delete it!',
+      'Cancel'
+    ).then((confirmed) => {
+      if (confirmed) {
+        this.deleteProject(project.id);
+      }
+    });
   }
 
   deleteProject(id: number): void {
