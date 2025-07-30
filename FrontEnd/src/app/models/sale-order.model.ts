@@ -15,6 +15,10 @@ export interface SaleOrder {
   projectId?: number;
   projectName?: string;
 
+  // ServiceType relationship
+  serviceTypeId?: number;
+  serviceTypeName?: string;
+
   // Digital Marketing specific fields
   code?: string;
   clientName?: string;
@@ -26,6 +30,9 @@ export interface SaleOrder {
   contactEmail?: string;
   contactPhone?: string;
   assignedTo?: string;
+  orderDetails?: string;
+  wordsOrPages?: string;
+  totalPayment?: number;
   academicLevel?: string;
   country?: string;
 }
@@ -39,6 +46,8 @@ export interface CreateSaleOrderDto {
 
   // Project relationship
   projectId?: number;
+  // ServiceType relationship
+  serviceTypeId?: number;
 
   // Digital Marketing specific fields
   code?: string;
@@ -52,6 +61,9 @@ export interface CreateSaleOrderDto {
   contactPhone?: string;
   assignedTo?: string;
   academicLevel?: string;
+  orderDetails?: string;
+  wordsOrPages?: string;
+  totalPayment?: number;
   country?: string;
 }
 
@@ -65,6 +77,8 @@ export interface UpdateSaleOrderDto {
 
   // Project relationship
   projectId?: number;
+  // ServiceType relationship
+  serviceTypeId?: number;
 
   // Digital Marketing specific fields
   code?: string;
@@ -80,3 +94,6 @@ export interface UpdateSaleOrderDto {
   academicLevel?: string;
   country?: string;
 }
+  orderDetails?: string;
+  wordsOrPages?: string;
+  totalPayment?: number;

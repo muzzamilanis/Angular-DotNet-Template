@@ -31,6 +31,7 @@ builder.Services.AddScoped<ICompanyNatureService, CompanyNatureService>();
 builder.Services.AddScoped<ICompanyService, CompanyService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IRegistrationService, RegistrationService>();
+builder.Services.AddScoped<IServiceTypeService, ServiceTypeService>();
 
 // Add CORS
 builder.Services.AddCors(options =>
