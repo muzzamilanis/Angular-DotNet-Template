@@ -22,6 +22,7 @@ export interface SaleOrder {
   status?: string;
   amountReceived?: number;
   paymentStatus?: string;
+  sourceOfPayment?: string;
   contactEmail?: string;
   contactPhone?: string;
   assignedTo?: string;
@@ -46,6 +47,7 @@ export interface CreateSaleOrderDto {
   status?: string;
   amountReceived?: number;
   paymentStatus?: string;
+  sourceOfPayment?: string;
   contactEmail?: string;
   contactPhone?: string;
   assignedTo?: string;
@@ -71,6 +73,7 @@ export interface UpdateSaleOrderDto {
   status?: string;
   amountReceived?: number;
   paymentStatus?: string;
+  sourceOfPayment?: string;
   contactEmail?: string;
   contactPhone?: string;
   assignedTo?: string;
