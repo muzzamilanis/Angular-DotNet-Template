@@ -1,0 +1,6 @@
+Date,Order ID,Deadline,Client Name,Words or Pages,Order Details,Task Assigned To,Status,Advance Amount,Total Payment,Source of Payment,Project,Service Type
+2025-01-15,ORD-001,2025-01-25,ABC Corp,500 words,Blog post about digital marketing trends,John Doe,In Progress,150.00,300.00,Bank Transfer,Social Media Campaign,Content Writing
+2025-01-16,ORD-002,2025-01-30,XYZ Ltd,3 pages,Landing page design and copy,Jane Smith,Pending,200.00,450.00,PayPal,Website Redesign,Web Design
+2025-01-17,ORD-003,2025-02-01,Tech Solutions,1000 words,SEO optimized article for tech blog,Mike Johnson,Completed,100.00,250.00,Credit Card,Content Marketing,SEO Writing
+2025-01-18,ORD-004,2025-02-05,Digital Agency,2 pages,Social media strategy document,Sarah Wilson,Review,300.00,600.00,Bank Transfer,Brand Strategy,Strategy Planning
+2025-01-19,ORD-005,2025-02-10,StartupCorp,800 words,Email marketing campaign content,Tom Brown,In Progress,175.00,350.00,Stripe,Email Campaign,Email Marketing

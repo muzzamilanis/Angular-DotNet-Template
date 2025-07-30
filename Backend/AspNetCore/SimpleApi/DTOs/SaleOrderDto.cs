@@ -44,6 +44,8 @@ namespace SimpleApi.DTOs
 
         [StringLength(50)]
         public string? PaymentStatus { get; set; }
+        [StringLength(100)]
+        public string? SourceOfPayment { get; set; }
 
         [StringLength(200)]
         public string? ContactEmail { get; set; }
@@ -96,6 +98,8 @@ namespace SimpleApi.DTOs
 
         [StringLength(50)]
         public string? PaymentStatus { get; set; }
+        [StringLength(100)]
+        public string? SourceOfPayment { get; set; }
 
         [StringLength(200)]
         public string? ContactEmail { get; set; }
@@ -150,6 +154,8 @@ namespace SimpleApi.DTOs
 
         [StringLength(50)]
         public string? PaymentStatus { get; set; }
+        [StringLength(100)]
+        public string? SourceOfPayment { get; set; }
 
         [StringLength(200)]
         public string? ContactEmail { get; set; }
@@ -193,6 +199,8 @@ namespace SimpleApi.DTOs
 
         [StringLength(100)]
         public string? PaperType { get; set; }
+        [StringLength(100)]
+        public string? ServiceType { get; set; }
 
         public int? WordCount { get; set; }
 
@@ -218,6 +226,8 @@ namespace SimpleApi.DTOs
 
         [StringLength(100)]
         public string? PaperType { get; set; }
+        [StringLength(100)]
+        public string? ServiceType { get; set; }
 
         public int? WordCount { get; set; }
 

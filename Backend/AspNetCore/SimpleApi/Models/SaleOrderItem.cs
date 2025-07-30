@@ -27,6 +27,9 @@ namespace SimpleApi.Models
         [StringLength(100)]
         public string? PaperType { get; set; }
 
+        [StringLength(100)]
+        public string? ServiceType { get; set; }
+
         public int? WordCount { get; set; }
 
         public int? PageCount { get; set; }

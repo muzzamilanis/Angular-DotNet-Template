@@ -11,6 +11,7 @@ export interface SaleOrderItem {
   // Digital Marketing specific fields
   workTitle?: string;
   paperType?: string;
+  serviceType?: string;
   wordCount?: number;
   pageCount?: number;
   itemDeadline?: Date;
@@ -25,6 +26,7 @@ export interface CreateSaleOrderItemDto {
   // Digital Marketing specific fields
   workTitle?: string;
   paperType?: string;
+  serviceType?: string;
   wordCount?: number;
   pageCount?: number;
   itemDeadline?: Date;

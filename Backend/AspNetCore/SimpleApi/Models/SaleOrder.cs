@@ -45,6 +45,9 @@ namespace SimpleApi.Models
         [StringLength(50)]
         public string? PaymentStatus { get; set; }
 
+        [StringLength(100)]
+        public string? SourceOfPayment { get; set; }
+
         [StringLength(200)]
         public string? ContactEmail { get; set; }
 

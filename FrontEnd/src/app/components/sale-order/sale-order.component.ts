@@ -84,25 +84,27 @@ export class SaleOrderComponent implements OnInit {
     const formControls: any = {
       orderNumber: ['', [Validators.required, Validators.maxLength(50)]],
       orderDate: [new Date().toISOString().substring(0, 10), Validators.required],
-      customerName: ['', [Validators.required, Validators.maxLength(200)]],
-      customerAddress: ['', [Validators.maxLength(500)]],
       items: this.fb.array([])
     };
 
     // Add Digital Marketing specific fields if company is Digital Marketing
     if (this.isDigitalMarketing) {
+      // For digital marketing, we use clientName instead of customerName
+      formControls.clientName = ['', [Validators.required, Validators.maxLength(200)]];
       formControls.projectId = [''];
       formControls.code = ['', [Validators.maxLength(50)]];
-      formControls.clientName = ['', [Validators.maxLength(200)]];
       formControls.deadline = [''];
       formControls.status = ['', [Validators.maxLength(50)]];
       formControls.amountReceived = [0, [Validators.min(0)]];
       formControls.paymentStatus = ['', [Validators.maxLength(50)]];
+      formControls.sourceOfPayment = ['', [Validators.maxLength(100)]];
+      formControls.assignedTo = ['', [Validators.maxLength(200)]];
       formControls.contactEmail = ['', [Validators.email, Validators.maxLength(200)]];
       formControls.contactPhone = ['', [Validators.maxLength(50)]];
-      formControls.assignedTo = ['', [Validators.maxLength(200)]];
-      formControls.academicLevel = ['', [Validators.maxLength(100)]];
-      formControls.country = ['', [Validators.maxLength(100)]];
+    } else {
+      // For non-digital marketing companies, use traditional fields
+      formControls.customerName = ['', [Validators.required, Validators.maxLength(200)]];
+      formControls.customerAddress = ['', [Validators.maxLength(500)]];
     }
 
     this.saleOrderForm = this.fb.group(formControls);
@@ -120,6 +122,7 @@ export class SaleOrderComponent implements OnInit {
       price: 0,
       workTitle: '',
       paperType: '',
+      serviceType: '',
       wordCount: null,
       pageCount: null,
       itemDeadline: ''
@@ -173,8 +176,8 @@ export class SaleOrderComponent implements OnInit {
       const saleOrder: CreateSaleOrderDto = {
         orderNumber: formValue.orderNumber,
         orderDate: new Date(formValue.orderDate),
-        customerName: formValue.customerName,
-        customerAddress: formValue.customerAddress,
+        customerName: this.isDigitalMarketing ? (formValue.clientName || '') : formValue.customerName,
+        customerAddress: this.isDigitalMarketing ? '' : (formValue.customerAddress || ''),
         items: formValue.items.map((item: any) => {
           const baseItem: CreateSaleOrderItemDto = {
             productId: item.productId,
@@ -189,6 +192,7 @@ export class SaleOrderComponent implements OnInit {
               ...baseItem,
               workTitle: item.workTitle,
               paperType: item.paperType,
+              serviceType: item.serviceType,
               wordCount: item.wordCount,
               pageCount: item.pageCount,
               itemDeadline: item.itemDeadline ? new Date(item.itemDeadline) : undefined
@@ -208,11 +212,10 @@ export class SaleOrderComponent implements OnInit {
         saleOrder.status = formValue.status;
         saleOrder.amountReceived = formValue.amountReceived;
         saleOrder.paymentStatus = formValue.paymentStatus;
+        saleOrder.sourceOfPayment = formValue.sourceOfPayment;
         saleOrder.contactEmail = formValue.contactEmail;
         saleOrder.contactPhone = formValue.contactPhone;
         saleOrder.assignedTo = formValue.assignedTo;
-        saleOrder.academicLevel = formValue.academicLevel;
-        saleOrder.country = formValue.country;
       }
 
       if (this.editingOrder) {
@@ -253,25 +256,25 @@ export class SaleOrderComponent implements OnInit {
     
     const formValue: any = {
       orderNumber: order.orderNumber,
-      orderDate: new Date(order.orderDate).toISOString().substring(0, 10),
-      customerName: order.customerName,
-      customerAddress: order.customerAddress
+      orderDate: new Date(order.orderDate).toISOString().substring(0, 10)
     };
 
     // Add Digital Marketing specific fields if company is Digital Marketing
     if (this.isDigitalMarketing) {
+      formValue.clientName = order.clientName || order.customerName || '';
       formValue.projectId = order.projectId || '';
       formValue.code = order.code || '';
-      formValue.clientName = order.clientName || '';
       formValue.deadline = order.deadline ? new Date(order.deadline).toISOString().substring(0, 10) : '';
       formValue.status = order.status || '';
       formValue.amountReceived = order.amountReceived || 0;
       formValue.paymentStatus = order.paymentStatus || '';
+      formValue.sourceOfPayment = order.sourceOfPayment || '';
       formValue.contactEmail = order.contactEmail || '';
       formValue.contactPhone = order.contactPhone || '';
       formValue.assignedTo = order.assignedTo || '';
-      formValue.academicLevel = order.academicLevel || '';
-      formValue.country = order.country || '';
+    } else {
+      formValue.customerName = order.customerName;
+      formValue.customerAddress = order.customerAddress;
     }
 
     this.saleOrderForm.patchValue(formValue);
@@ -294,6 +297,7 @@ export class SaleOrderComponent implements OnInit {
       if (this.isDigitalMarketing) {
         itemFormValue.workTitle = item.workTitle || '';
         itemFormValue.paperType = item.paperType || '';
+        itemFormValue.serviceType = item.serviceType || '';
         itemFormValue.wordCount = item.wordCount || null;
         itemFormValue.pageCount = item.pageCount || null;
         itemFormValue.itemDeadline = item.itemDeadline ? new Date(item.itemDeadline).toISOString().substring(0, 10) : '';
@@ -316,6 +320,7 @@ export class SaleOrderComponent implements OnInit {
     if (this.isDigitalMarketing) {
       formControls.workTitle = [itemValue.workTitle || '', [Validators.maxLength(200)]];
       formControls.paperType = [itemValue.paperType || '', [Validators.maxLength(100)]];
+      formControls.serviceType = [itemValue.serviceType || '', [Validators.maxLength(100)]];
       formControls.wordCount = [itemValue.wordCount || null, [Validators.min(0)]];
       formControls.pageCount = [itemValue.pageCount || null, [Validators.min(0)]];
       formControls.itemDeadline = [itemValue.itemDeadline || ''];
