@@ -35,6 +35,7 @@ namespace SimpleApi.Services
             // SaleOrder mappings
             CreateMap<SaleOrder, SaleOrderDto>()
                 .ForMember(dest => dest.ProjectName, opt => opt.MapFrom(src => src.Project!.ProjectName))
+                .ForMember(dest => dest.ServiceTypeName, opt => opt.MapFrom(src => src.ServiceType!.Name))
                 .ForMember(dest => dest.CompanyName, opt => opt.MapFrom(src => src.Company!.Name));
             CreateMap<CreateSaleOrderDto, SaleOrder>()
                 .ForMember(dest => dest.Items, opt => opt.Ignore()); // Handle items manually
@@ -45,6 +46,11 @@ namespace SimpleApi.Services
             CreateMap<SaleOrderItem, SaleOrderItemDto>()
                 .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Product!.Name));
             CreateMap<CreateSaleOrderItemDto, SaleOrderItem>();
+
+            // ServiceType mappings
+            CreateMap<ServiceType, ServiceTypeDto>()
+                .ForMember(dest => dest.CompanyName, opt => opt.MapFrom(src => src.Company!.Name));
+            CreateMap<CreateServiceTypeDto, ServiceType>();
         }
     }
 }

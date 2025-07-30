@@ -17,6 +17,7 @@ namespace SimpleApi.Data
         public DbSet<Company> Companies { get; set; }
         public DbSet<Project> Projects { get; set; }
         public DbSet<BusinessNature> BusinessNatures { get; set; }
+        public DbSet<ServiceType> ServiceTypes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -58,6 +59,19 @@ namespace SimpleApi.Data
                 
                 entity.HasOne(e => e.Company)
                       .WithMany(e => e.Projects)
+                      .HasForeignKey(e => e.CompanyId)
+                      .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            // Configure ServiceType
+            modelBuilder.Entity<ServiceType>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.Description).HasMaxLength(200);
+                
+                entity.HasOne(e => e.Company)
+                      .WithMany()
                       .HasForeignKey(e => e.CompanyId)
                       .OnDelete(DeleteBehavior.Restrict);
             });
@@ -116,6 +130,7 @@ namespace SimpleApi.Data
                 entity.Property(e => e.CustomerAddress).HasMaxLength(500);
                 entity.Property(e => e.TotalAmount).HasColumnType("decimal(18,2)");
                 entity.Property(e => e.AmountReceived).HasColumnType("decimal(18,2)");
+                entity.Property(e => e.TotalPayment).HasColumnType("decimal(18,2)");
                 
                 // Digital marketing specific field configurations
                 entity.Property(e => e.Code).HasMaxLength(50);
@@ -125,6 +140,8 @@ namespace SimpleApi.Data
                 entity.Property(e => e.ContactEmail).HasMaxLength(200);
                 entity.Property(e => e.ContactPhone).HasMaxLength(50);
                 entity.Property(e => e.AssignedTo).HasMaxLength(200);
+                entity.Property(e => e.OrderDetails).HasMaxLength(1000);
+                entity.Property(e => e.WordsOrPages).HasMaxLength(100);
                 entity.Property(e => e.AcademicLevel).HasMaxLength(100);
                 entity.Property(e => e.Country).HasMaxLength(100);
                 
@@ -136,6 +153,11 @@ namespace SimpleApi.Data
                 entity.HasOne(e => e.Project)
                       .WithMany(e => e.SaleOrders)
                       .HasForeignKey(e => e.ProjectId)
+                      .OnDelete(DeleteBehavior.SetNull);
+
+                entity.HasOne(e => e.ServiceType)
+                      .WithMany()
+                      .HasForeignKey(e => e.ServiceTypeId)
                       .OnDelete(DeleteBehavior.SetNull);
                 
                 entity.HasMany(e => e.Items)
@@ -204,6 +226,17 @@ namespace SimpleApi.Data
                 new Project { Id = 2, ProjectName = "SEO Campaign", ProjectDescription = "Search engine optimization campaign", ProjectStatus = ProjectStatus.Active, CreatedDate = DateTime.UtcNow, UpdatedDate = DateTime.UtcNow, CompanyId = 1, IsActive = true },
                 new Project { Id = 3, ProjectName = "Social Media Marketing", ProjectDescription = "Comprehensive social media marketing strategy", ProjectStatus = ProjectStatus.Active, CreatedDate = DateTime.UtcNow, UpdatedDate = DateTime.UtcNow, CompanyId = 2, IsActive = true },
                 new Project { Id = 4, ProjectName = "Content Creation Campaign", ProjectDescription = "Blog and content creation for digital presence", ProjectStatus = ProjectStatus.Completed, CreatedDate = DateTime.UtcNow, UpdatedDate = DateTime.UtcNow, CompanyId = 2, IsActive = true }
+            );
+
+            // Seed data for ServiceTypes
+            modelBuilder.Entity<ServiceType>().HasData(
+                new ServiceType { Id = 1, Name = "Content Writing", Description = "Blog posts, articles, and other written content", IsActive = true, CompanyId = 1, CreatedAt = DateTime.UtcNow },
+                new ServiceType { Id = 2, Name = "Web Design", Description = "Website design and development services", IsActive = true, CompanyId = 1, CreatedAt = DateTime.UtcNow },
+                new ServiceType { Id = 3, Name = "SEO Writing", Description = "Search engine optimized content creation", IsActive = true, CompanyId = 1, CreatedAt = DateTime.UtcNow },
+                new ServiceType { Id = 4, Name = "Strategy Planning", Description = "Digital marketing strategy development", IsActive = true, CompanyId = 1, CreatedAt = DateTime.UtcNow },
+                new ServiceType { Id = 5, Name = "Email Marketing", Description = "Email campaign development and management", IsActive = true, CompanyId = 1, CreatedAt = DateTime.UtcNow },
+                new ServiceType { Id = 6, Name = "SEO", Description = "Search engine optimization services", IsActive = true, CompanyId = 2, CreatedAt = DateTime.UtcNow },
+                new ServiceType { Id = 7, Name = "Writing Service", Description = "General writing and content creation", IsActive = true, CompanyId = 2, CreatedAt = DateTime.UtcNow }
             );
         }
     }

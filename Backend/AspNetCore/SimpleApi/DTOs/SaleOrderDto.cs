@@ -28,6 +28,10 @@ namespace SimpleApi.DTOs
         public int? ProjectId { get; set; }
         public string? ProjectName { get; set; }
 
+        // ServiceType relationship
+        public int? ServiceTypeId { get; set; }
+        public string? ServiceTypeName { get; set; }
+
         // Digital Marketing specific fields
         [StringLength(50)]
         public string? Code { get; set; }
@@ -55,6 +59,14 @@ namespace SimpleApi.DTOs
 
         [StringLength(200)]
         public string? AssignedTo { get; set; }
+
+        [StringLength(1000)]
+        public string? OrderDetails { get; set; }
+
+        [StringLength(100)]
+        public string? WordsOrPages { get; set; }
+
+        public decimal? TotalPayment { get; set; }
 
         [StringLength(100)]
         public string? AcademicLevel { get; set; }
@@ -83,6 +95,8 @@ namespace SimpleApi.DTOs
         public int? ProjectId { get; set; }
 
         // Digital Marketing specific fields
+        // ServiceType relationship
+        public int? ServiceTypeId { get; set; }
         [StringLength(50)]
         public string? Code { get; set; }
 
@@ -109,6 +123,13 @@ namespace SimpleApi.DTOs
 
         [StringLength(200)]
         public string? AssignedTo { get; set; }
+        [StringLength(1000)]
+        public string? OrderDetails { get; set; }
+
+        [StringLength(100)]
+        public string? WordsOrPages { get; set; }
+
+        public decimal? TotalPayment { get; set; }
 
         [StringLength(100)]
         public string? AcademicLevel { get; set; }
@@ -127,6 +148,8 @@ namespace SimpleApi.DTOs
         [StringLength(50)]
         public string OrderNumber { get; set; } = string.Empty;
         
+        // ServiceType relationship
+        public int? ServiceTypeId { get; set; }
         public DateTime OrderDate { get; set; }
         
         [StringLength(200)]
@@ -163,6 +186,13 @@ namespace SimpleApi.DTOs
         [StringLength(50)]
         public string? ContactPhone { get; set; }
 
+        [StringLength(1000)]
+        public string? OrderDetails { get; set; }
+
+        [StringLength(100)]
+        public string? WordsOrPages { get; set; }
+
+        public decimal? TotalPayment { get; set; }
         [StringLength(200)]
         public string? AssignedTo { get; set; }
 
@@ -256,3 +286,41 @@ namespace SimpleApi.DTOs
         public string? Sorting { get; set; }
     }
 }
+
+
+
+
+
+
+
+
+
+
+    public class ServiceTypeDto
+    {
+        public int Id { get; set; }
+
+        [Required]
+        [StringLength(100)]
+        public string Name { get; set; } = string.Empty;
+
+        [StringLength(200)]
+        public string? Description { get; set; }
+
+        public bool IsActive { get; set; }
+
+        public int CompanyId { get; set; }
+        public string? CompanyName { get; set; }
+    }
+
+    public class CreateServiceTypeDto
+    {
+        [Required]
+        [StringLength(100)]
+        public string Name { get; set; } = string.Empty;
+
+        [StringLength(200)]
+        public string? Description { get; set; }
+
+        public bool IsActive { get; set; } = true;
+    }

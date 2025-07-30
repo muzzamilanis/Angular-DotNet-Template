@@ -28,6 +28,10 @@ namespace SimpleApi.Models
         public int? ProjectId { get; set; }
         public virtual Project? Project { get; set; }
 
+        // Foreign key for ServiceType (Optional - for digital marketing companies)
+        public int? ServiceTypeId { get; set; }
+        public virtual ServiceType? ServiceType { get; set; }
+
         // Digital Marketing specific fields
         [StringLength(50)]
         public string? Code { get; set; }
@@ -41,6 +45,8 @@ namespace SimpleApi.Models
         public string? Status { get; set; }
 
         public decimal? AmountReceived { get; set; }
+
+        public decimal? TotalPayment { get; set; }
 
         [StringLength(50)]
         public string? PaymentStatus { get; set; }
@@ -56,6 +62,12 @@ namespace SimpleApi.Models
 
         [StringLength(200)]
         public string? AssignedTo { get; set; }
+
+        [StringLength(1000)]
+        public string? OrderDetails { get; set; }
+
+        [StringLength(100)]
+        public string? WordsOrPages { get; set; }
 
         [StringLength(100)]
         public string? AcademicLevel { get; set; }

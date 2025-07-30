@@ -4,7 +4,9 @@ import { SaleOrderService } from '../../services/sale-order.service';
 import { ProductService } from '../../services/product.service';
 import { CompanyService } from '../../services/company.service';
 import { ProjectService } from '../../services/project.service';
+import { ServiceTypeService } from '../../services/service-type.service';
 import { Product } from '../../models/product.model';
+import { ServiceType } from '../../models/service-type.model';
 import { SaleOrder, CreateSaleOrderDto } from '../../models/sale-order.model';
 import { CreateSaleOrderItemDto } from '../../models/sale-order-item.model';
 import { PaginatedResponse } from '../../models/common.model';
@@ -21,6 +23,7 @@ export class SaleOrderComponent implements OnInit {
   saleOrderForm: FormGroup;
   products: Product[] = [];
   projects: Project[] = [];
+  serviceTypes: ServiceType[] = [];
   saleOrders: SaleOrder[] = [];
   editingOrder: SaleOrder | null = null;
   currentCompany: Company | null = null;
@@ -31,7 +34,8 @@ export class SaleOrderComponent implements OnInit {
     private saleOrderService: SaleOrderService,
     private productService: ProductService,
     private companyService: CompanyService,
-    private projectService: ProjectService
+    private projectService: ProjectService,
+    private serviceTypeService: ServiceTypeService
   ) {
     this.initializeForm();
   }
@@ -54,10 +58,13 @@ export class SaleOrderComponent implements OnInit {
         
         if (this.isDigitalMarketing) {
           this.loadProjects();
+          this.loadServiceTypes();
         }
         
-        // Add initial item
-        this.addItem();
+        // Add initial item only for non-digital marketing
+        if (!this.isDigitalMarketing) {
+          this.addItem();
+        }
       },
       error: (error) => {
         console.error('Error loading current company:', error);
@@ -80,6 +87,19 @@ export class SaleOrderComponent implements OnInit {
     });
   }
 
+  private loadServiceTypes(): void {
+    if (this.currentCompany) {
+      this.serviceTypeService.getServiceTypesByCompany(this.currentCompany.id).subscribe({
+        next: (serviceTypes: ServiceType[]) => {
+          this.serviceTypes = serviceTypes || [];
+        },
+        error: (error) => {
+          console.error('Error loading service types:', error);
+        }
+      });
+    }
+  }
+
   private initializeForm(): void {
     const formControls: any = {
       orderNumber: ['', [Validators.required, Validators.maxLength(50)]],
@@ -92,26 +112,30 @@ export class SaleOrderComponent implements OnInit {
       // For digital marketing, we use clientName instead of customerName
       formControls.clientName = ['', [Validators.required, Validators.maxLength(200)]];
       formControls.projectId = [''];
-      formControls.code = ['', [Validators.maxLength(50)]];
+      formControls.serviceTypeId = [''];
       formControls.deadline = [''];
       formControls.status = ['', [Validators.maxLength(50)]];
       formControls.amountReceived = [0, [Validators.min(0)]];
+      formControls.totalPayment = [0, [Validators.min(0)]];
       formControls.paymentStatus = ['', [Validators.maxLength(50)]];
       formControls.sourceOfPayment = ['', [Validators.maxLength(100)]];
       formControls.assignedTo = ['', [Validators.maxLength(200)]];
       formControls.contactEmail = ['', [Validators.email, Validators.maxLength(200)]];
       formControls.contactPhone = ['', [Validators.maxLength(50)]];
+      formControls.orderDetails = ['', [Validators.maxLength(1000)]];
+      formControls.wordsOrPages = ['', [Validators.maxLength(100)]];
     } else {
-      // For non-digital marketing companies, use traditional fields
+      // For non-digital marketing companies, use traditional fields and items
       formControls.customerName = ['', [Validators.required, Validators.maxLength(200)]];
       formControls.customerAddress = ['', [Validators.maxLength(500)]];
+      formControls.items = this.fb.array([]);
     }
 
     this.saleOrderForm = this.fb.group(formControls);
   }
 
   get items(): FormArray {
-    return this.saleOrderForm.get('items') as FormArray;
+    return this.saleOrderForm.get('items') as FormArray || this.fb.array([]);
   }
 
   addItem(): void {
@@ -155,6 +179,12 @@ export class SaleOrderComponent implements OnInit {
     return project ? project.projectName : '';
   }
 
+  getServiceTypeName(serviceTypeId: number | null | undefined): string {
+    if (!serviceTypeId) return '';
+    const serviceType = this.serviceTypes.find(st => st.id === serviceTypeId);
+    return serviceType ? serviceType.name : '';
+  }
+
   getLineTotal(index: number): number {
     const itemForm = this.items.at(index) as FormGroup;
     const quantity = itemForm.get('quantity')?.value || 0;
@@ -178,7 +208,7 @@ export class SaleOrderComponent implements OnInit {
         orderDate: new Date(formValue.orderDate),
         customerName: this.isDigitalMarketing ? (formValue.clientName || '') : formValue.customerName,
         customerAddress: this.isDigitalMarketing ? '' : (formValue.customerAddress || ''),
-        items: formValue.items.map((item: any) => {
+        items: this.isDigitalMarketing ? [] : formValue.items.map((item: any) => {
           const baseItem: CreateSaleOrderItemDto = {
             productId: item.productId,
             quantity: item.quantity,
@@ -206,16 +236,19 @@ export class SaleOrderComponent implements OnInit {
       // Add Digital Marketing specific fields to sale order if company is Digital Marketing
       if (this.isDigitalMarketing) {
         saleOrder.projectId = formValue.projectId || null;
-        saleOrder.code = formValue.code;
+        saleOrder.serviceTypeId = formValue.serviceTypeId || null;
         saleOrder.clientName = formValue.clientName;
         saleOrder.deadline = formValue.deadline ? new Date(formValue.deadline) : undefined;
         saleOrder.status = formValue.status;
         saleOrder.amountReceived = formValue.amountReceived;
+        saleOrder.totalPayment = formValue.totalPayment;
         saleOrder.paymentStatus = formValue.paymentStatus;
         saleOrder.sourceOfPayment = formValue.sourceOfPayment;
         saleOrder.contactEmail = formValue.contactEmail;
         saleOrder.contactPhone = formValue.contactPhone;
         saleOrder.assignedTo = formValue.assignedTo;
+        saleOrder.orderDetails = formValue.orderDetails;
+        saleOrder.wordsOrPages = formValue.wordsOrPages;
       }
 
       if (this.editingOrder) {
@@ -263,15 +296,18 @@ export class SaleOrderComponent implements OnInit {
     if (this.isDigitalMarketing) {
       formValue.clientName = order.clientName || order.customerName || '';
       formValue.projectId = order.projectId || '';
-      formValue.code = order.code || '';
+      formValue.serviceTypeId = order.serviceTypeId || '';
       formValue.deadline = order.deadline ? new Date(order.deadline).toISOString().substring(0, 10) : '';
       formValue.status = order.status || '';
       formValue.amountReceived = order.amountReceived || 0;
+      formValue.totalPayment = order.totalPayment || 0;
       formValue.paymentStatus = order.paymentStatus || '';
       formValue.sourceOfPayment = order.sourceOfPayment || '';
       formValue.contactEmail = order.contactEmail || '';
       formValue.contactPhone = order.contactPhone || '';
       formValue.assignedTo = order.assignedTo || '';
+      formValue.orderDetails = order.orderDetails || '';
+      formValue.wordsOrPages = order.wordsOrPages || '';
     } else {
       formValue.customerName = order.customerName;
       formValue.customerAddress = order.customerAddress;
@@ -280,32 +316,34 @@ export class SaleOrderComponent implements OnInit {
     this.saleOrderForm.patchValue(formValue);
 
     // Clear existing items
-    while (this.items.length !== 0) {
-      this.items.removeAt(0);
-    }
-
-    // Add items from the order
-    order.items.forEach(item => {
-      const itemFormValue: any = {
-        productId: item.productId,
-        quantity: item.quantity,
-        date: new Date(item.date).toISOString().substring(0, 10),
-        price: item.price
-      };
-
-      // Add Digital Marketing specific fields if company is Digital Marketing
-      if (this.isDigitalMarketing) {
-        itemFormValue.workTitle = item.workTitle || '';
-        itemFormValue.paperType = item.paperType || '';
-        itemFormValue.serviceType = item.serviceType || '';
-        itemFormValue.wordCount = item.wordCount || null;
-        itemFormValue.pageCount = item.pageCount || null;
-        itemFormValue.itemDeadline = item.itemDeadline ? new Date(item.itemDeadline).toISOString().substring(0, 10) : '';
+    if (!this.isDigitalMarketing) {
+      while (this.items.length !== 0) {
+        this.items.removeAt(0);
       }
 
-      const itemForm = this.createItemFormGroup(itemFormValue);
-      this.items.push(itemForm);
-    });
+      // Add items from the order for non-digital marketing
+      order.items.forEach(item => {
+        const itemFormValue: any = {
+          productId: item.productId,
+          quantity: item.quantity,
+          date: new Date(item.date).toISOString().substring(0, 10),
+          price: item.price
+        };
+
+        // Add Digital Marketing specific fields if company is Digital Marketing
+        if (this.isDigitalMarketing) {
+          itemFormValue.workTitle = item.workTitle || '';
+          itemFormValue.paperType = item.paperType || '';
+          itemFormValue.serviceType = item.serviceType || '';
+          itemFormValue.wordCount = item.wordCount || null;
+          itemFormValue.pageCount = item.pageCount || null;
+          itemFormValue.itemDeadline = item.itemDeadline ? new Date(item.itemDeadline).toISOString().substring(0, 10) : '';
+        }
+
+        const itemForm = this.createItemFormGroup(itemFormValue);
+        this.items.push(itemForm);
+      });
+    }
   }
 
   private createItemFormGroup(itemValue: any): FormGroup {
@@ -347,7 +385,10 @@ export class SaleOrderComponent implements OnInit {
   resetForm(): void {
     this.editingOrder = null;
     this.initializeForm();
-    this.addItem(); // Add one empty item by default
+    // Add one empty item by default only for non-digital marketing
+    if (!this.isDigitalMarketing) {
+      this.addItem();
+    }
   }
 
   private loadProducts(): void {
