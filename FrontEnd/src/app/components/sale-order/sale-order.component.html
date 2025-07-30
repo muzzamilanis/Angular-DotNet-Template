@@ -142,6 +142,23 @@
           </div>
 
           <div class="row" *ngIf="isDigitalMarketing">
+            <div class="col-md-12">
+              <div class="form-group">
+                <label for="sourceOfPayment">Source of Payment</label>
+                <input type="text" 
+                       class="form-control" 
+                       id="sourceOfPayment" 
+                       formControlName="sourceOfPayment"
+                       placeholder="Enter source of payment"
+                       [class.is-invalid]="saleOrderForm.get('sourceOfPayment')?.invalid && saleOrderForm.get('sourceOfPayment')?.touched">
+                <div class="invalid-feedback" *ngIf="saleOrderForm.get('sourceOfPayment')?.invalid && saleOrderForm.get('sourceOfPayment')?.touched">
+                  <div *ngIf="saleOrderForm.get('sourceOfPayment')?.errors?.['maxlength']">Source of payment must be 100 characters or less</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row" *ngIf="isDigitalMarketing">
             <div class="col-md-6">
               <div class="form-group">
                 <label for="contactEmail">Contact Email</label>
@@ -271,6 +288,7 @@
                           <th>Price *</th>
                           <th *ngIf="isDigitalMarketing">Work Title</th>
                           <th *ngIf="isDigitalMarketing">Paper Type</th>
+                          <th *ngIf="isDigitalMarketing">Service Type</th>
                           <th *ngIf="isDigitalMarketing">Word Count</th>
                           <th *ngIf="isDigitalMarketing">Page Count</th>
                           <th *ngIf="isDigitalMarketing">Item Deadline</th>
@@ -347,6 +365,16 @@
                             </div>
                           </td>
                           <td *ngIf="isDigitalMarketing">
+                            <input type="text" 
+                                   class="form-control" 
+                                   formControlName="serviceType"
+                                   placeholder="Service Type"
+                                   [class.is-invalid]="item.get('serviceType')?.invalid && item.get('serviceType')?.touched">
+                            <div class="invalid-feedback" *ngIf="item.get('serviceType')?.invalid && item.get('serviceType')?.touched">
+                              <div *ngIf="item.get('serviceType')?.errors?.['maxlength']">Service type must be 100 characters or less</div>
+                            </div>
+                          </td>
+                          <td *ngIf="isDigitalMarketing">
                             <input type="number" 
                                    class="form-control" 
                                    formControlName="wordCount"
@@ -387,12 +415,12 @@
                           </td>
                         </tr>
                         <tr *ngIf="items.length === 0">
-                          <td [attr.colspan]="isDigitalMarketing ? 11 : 6" class="text-center">No items added yet</td>
+                          <td [attr.colspan]="isDigitalMarketing ? 12 : 6" class="text-center">No items added yet</td>
                         </tr>
                       </tbody>
                       <tfoot *ngIf="items.length > 0">
                         <tr>
-                          <td [attr.colspan]="isDigitalMarketing ? 9 : 4" class="text-right"><strong>Total Amount:</strong></td>
+                          <td [attr.colspan]="isDigitalMarketing ? 10 : 4" class="text-right"><strong>Total Amount:</strong></td>
                           <td><strong>${{ getTotalAmount().toFixed(2) }}</strong></td>
                           <td></td>
                         </tr>

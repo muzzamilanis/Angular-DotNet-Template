@@ -97,6 +97,7 @@ export class SaleOrderComponent implements OnInit {
       formControls.status = ['', [Validators.maxLength(50)]];
       formControls.amountReceived = [0, [Validators.min(0)]];
       formControls.paymentStatus = ['', [Validators.maxLength(50)]];
+      formControls.sourceOfPayment = ['', [Validators.maxLength(100)]];
       formControls.contactEmail = ['', [Validators.email, Validators.maxLength(200)]];
       formControls.contactPhone = ['', [Validators.maxLength(50)]];
       formControls.assignedTo = ['', [Validators.maxLength(200)]];
@@ -119,6 +120,7 @@ export class SaleOrderComponent implements OnInit {
       price: 0,
       workTitle: '',
       paperType: '',
+      serviceType: '',
       wordCount: null,
       pageCount: null,
       itemDeadline: ''
@@ -188,6 +190,7 @@ export class SaleOrderComponent implements OnInit {
               ...baseItem,
               workTitle: item.workTitle,
               paperType: item.paperType,
+              serviceType: item.serviceType,
               wordCount: item.wordCount,
               pageCount: item.pageCount,
               itemDeadline: item.itemDeadline ? new Date(item.itemDeadline) : undefined
@@ -207,6 +210,7 @@ export class SaleOrderComponent implements OnInit {
         saleOrder.status = formValue.status;
         saleOrder.amountReceived = formValue.amountReceived;
         saleOrder.paymentStatus = formValue.paymentStatus;
+        saleOrder.sourceOfPayment = formValue.sourceOfPayment;
         saleOrder.contactEmail = formValue.contactEmail;
         saleOrder.contactPhone = formValue.contactPhone;
         saleOrder.assignedTo = formValue.assignedTo;
@@ -266,6 +270,7 @@ export class SaleOrderComponent implements OnInit {
       formValue.status = order.status || '';
       formValue.amountReceived = order.amountReceived || 0;
       formValue.paymentStatus = order.paymentStatus || '';
+      formValue.sourceOfPayment = order.sourceOfPayment || '';
       formValue.contactEmail = order.contactEmail || '';
       formValue.contactPhone = order.contactPhone || '';
       formValue.assignedTo = order.assignedTo || '';
@@ -293,6 +298,7 @@ export class SaleOrderComponent implements OnInit {
       if (this.isDigitalMarketing) {
         itemFormValue.workTitle = item.workTitle || '';
         itemFormValue.paperType = item.paperType || '';
+        itemFormValue.serviceType = item.serviceType || '';
         itemFormValue.wordCount = item.wordCount || null;
         itemFormValue.pageCount = item.pageCount || null;
         itemFormValue.itemDeadline = item.itemDeadline ? new Date(item.itemDeadline).toISOString().substring(0, 10) : '';
@@ -315,6 +321,7 @@ export class SaleOrderComponent implements OnInit {
     if (this.isDigitalMarketing) {
       formControls.workTitle = [itemValue.workTitle || '', [Validators.maxLength(200)]];
       formControls.paperType = [itemValue.paperType || '', [Validators.maxLength(100)]];
+      formControls.serviceType = [itemValue.serviceType || '', [Validators.maxLength(100)]];
       formControls.wordCount = [itemValue.wordCount || null, [Validators.min(0)]];
       formControls.pageCount = [itemValue.pageCount || null, [Validators.min(0)]];
       formControls.itemDeadline = [itemValue.itemDeadline || ''];
