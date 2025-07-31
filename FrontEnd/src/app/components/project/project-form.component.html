@@ -1,138 +1,134 @@
 <!-- Alert Messages -->
-<div class="alert alert-dismissible fade show" 
-     [class]="'alert-' + alertType" 
-     *ngIf="showAlert"
-     role="alert">
-  {{ alertMessage }}
-  <button type="button" class="btn-close" (click)="closeAlert()"></button>
+<div class="alert alert-dismissible fade show" [class]="'alert-' + alertType" *ngIf="showAlert" role="alert">
+    {{ alertMessage }}
+    <button type="button" class="btn-close" (click)="closeAlert()"></button>
 </div>
 
 <!-- Project Form Card -->
 <div class="row justify-content-center">
-  <div class="col-lg-8">
-    <div class="card card-primary">
-      <div class="card-header">
-        <h3 class="card-title">
-          <i class="fas fa-project-diagram mr-2"></i>
-          {{ isEditMode ? 'Edit Project' : 'Create New Project' }}
-        </h3>
-        <div class="card-tools">
-          <button type="button" 
-                  class="btn btn-outline-light btn-sm" 
-                  (click)="onCancel()">
-            <i class="fas fa-arrow-left mr-1"></i>
-            Back to Projects
-          </button>
+    <div class="col-lg-8">
+        <div class="card card-primary">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-project-diagram mr-2"></i>
+                    {{ isEditMode ? 'Edit Project' : 'Create New Project' }}
+                </h3>
+                <div class="card-tools">
+                    <button type="button" class="btn btn-outline-light btn-sm" (click)="onCancel()">
+                        <i class="fas fa-arrow-left mr-1"></i>
+                        Back to Projects
+                    </button>
+                </div>
+            </div>
+
+            <div class="card-body" *ngIf="!loading">
+                <form [formGroup]="projectForm" (ngSubmit)="onSubmit()">
+                    <!-- Project Name -->
+                    <div class="form-group">
+                        <label for="projectName">
+                            Project Name
+                            <span class="text-danger">*</span>
+                        </label>
+                        <input
+                            type="text"
+                            id="projectName"
+                            class="form-control"
+                            formControlName="projectName"
+                            [class.is-invalid]="isFieldInvalid('projectName')"
+                            placeholder="Enter project name" />
+                        <div class="invalid-feedback" *ngIf="isFieldInvalid('projectName')">
+                            {{ getFieldError('projectName') }}
+                        </div>
+                    </div>
+
+                    <!-- Project Description -->
+                    <div class="form-group">
+                        <label for="projectDescription">Project Description</label>
+                        <textarea
+                            id="projectDescription"
+                            class="form-control"
+                            formControlName="projectDescription"
+                            [class.is-invalid]="isFieldInvalid('projectDescription')"
+                            rows="4"
+                            placeholder="Enter project description (optional)"></textarea>
+                        <div class="invalid-feedback" *ngIf="isFieldInvalid('projectDescription')">
+                            {{ getFieldError('projectDescription') }}
+                        </div>
+                        <small class="form-text text-muted">Maximum 1000 characters</small>
+                    </div>
+
+                    <!-- Project Status Selection -->
+                    <div class="form-group">
+                        <label for="projectStatus">
+                            <i class="fas fa-tasks"></i>
+                            Project Status
+                            <span class="text-danger">*</span>
+                        </label>
+                        <select
+                            id="projectStatus"
+                            class="form-control"
+                            formControlName="projectStatus"
+                            [class.is-invalid]="isFieldInvalid('projectStatus')">
+                            <option value="">📊 Select project status</option>
+                            <option *ngFor="let option of statusOptions" [value]="option.value">
+                                {{ option.label }}
+                            </option>
+                        </select>
+                        <div class="invalid-feedback" *ngIf="isFieldInvalid('projectStatus')">
+                            {{ getFieldError('projectStatus') }}
+                        </div>
+                    </div>
+
+                    <!-- Is Active -->
+                    <div class="form-group">
+                        <div class="custom-control custom-checkbox">
+                            <input
+                                type="checkbox"
+                                id="isActive"
+                                class="custom-control-input"
+                                formControlName="isActive" />
+                            <label for="isActive" class="custom-control-label">Active Project</label>
+                        </div>
+                        <small class="form-text text-muted">
+                            Inactive projects will not appear in dropdown selections
+                        </small>
+                    </div>
+
+                    <!-- Form Actions -->
+                    <div class="card-footer">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <button
+                                    type="button"
+                                    class="btn btn-secondary"
+                                    (click)="onCancel()"
+                                    [disabled]="submitting">
+                                    <i class="fas fa-times mr-1"></i>
+                                    Cancel
+                                </button>
+                            </div>
+                            <div class="col-md-6 text-right">
+                                <button
+                                    type="submit"
+                                    class="btn btn-primary"
+                                    [disabled]="submitting || projectForm.invalid">
+                                    <span *ngIf="submitting" class="spinner-border spinner-border-sm mr-2"></span>
+                                    <i class="fas fa-save mr-1" *ngIf="!submitting"></i>
+                                    {{ isEditMode ? 'Update Project' : 'Create Project' }}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Loading State -->
+            <div class="card-body text-center" *ngIf="loading">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+                <p class="mt-2 text-muted">Loading project details...</p>
+            </div>
         </div>
-      </div>
-
-      <div class="card-body" *ngIf="!loading">
-        <form [formGroup]="projectForm" (ngSubmit)="onSubmit()">
-          <!-- Project Name -->
-          <div class="form-group">
-            <label for="projectName">
-              Project Name <span class="text-danger">*</span>
-            </label>
-            <input type="text" 
-                   id="projectName"
-                   class="form-control"
-                   formControlName="projectName"
-                   [class.is-invalid]="isFieldInvalid('projectName')"
-                   placeholder="Enter project name">
-            <div class="invalid-feedback" *ngIf="isFieldInvalid('projectName')">
-              {{ getFieldError('projectName') }}
-            </div>
-          </div>
-
-          <!-- Project Description -->
-          <div class="form-group">
-            <label for="projectDescription">
-              Project Description
-            </label>
-            <textarea id="projectDescription"
-                      class="form-control"
-                      formControlName="projectDescription"
-                      [class.is-invalid]="isFieldInvalid('projectDescription')"
-                      rows="4"
-                      placeholder="Enter project description (optional)"></textarea>
-            <div class="invalid-feedback" *ngIf="isFieldInvalid('projectDescription')">
-              {{ getFieldError('projectDescription') }}
-            </div>
-            <small class="form-text text-muted">
-              Maximum 1000 characters
-            </small>
-          </div>
-
-          <!-- Project Status Selection -->
-          <div class="form-group">
-            <label for="projectStatus">
-              <i class="fas fa-tasks"></i>
-              Project Status 
-              <span class="text-danger">*</span>
-            </label>
-            <select id="projectStatus"
-                    class="form-control"
-                    formControlName="projectStatus"
-                    [class.is-invalid]="isFieldInvalid('projectStatus')">
-              <option value="">📊 Select project status</option>
-              <option *ngFor="let option of statusOptions" [value]="option.value">
-                {{ option.label }}
-              </option>
-            </select>
-            <div class="invalid-feedback" *ngIf="isFieldInvalid('projectStatus')">
-              {{ getFieldError('projectStatus') }}
-            </div>
-          </div>
-
-          <!-- Is Active -->
-          <div class="form-group">
-            <div class="custom-control custom-checkbox">
-              <input type="checkbox" 
-                     id="isActive"
-                     class="custom-control-input"
-                     formControlName="isActive">
-              <label for="isActive" class="custom-control-label">
-                Active Project
-              </label>
-            </div>
-            <small class="form-text text-muted">
-              Inactive projects will not appear in dropdown selections
-            </small>
-          </div>
-
-          <!-- Form Actions -->
-          <div class="card-footer">
-            <div class="row">
-              <div class="col-md-6">
-                <button type="button" 
-                        class="btn btn-secondary"
-                        (click)="onCancel()"
-                        [disabled]="submitting">
-                  <i class="fas fa-times mr-1"></i>
-                  Cancel
-                </button>
-              </div>
-              <div class="col-md-6 text-right">
-                <button type="submit" 
-                        class="btn btn-primary"
-                        [disabled]="submitting || projectForm.invalid">
-                  <span *ngIf="submitting" class="spinner-border spinner-border-sm mr-2"></span>
-                  <i class="fas fa-save mr-1" *ngIf="!submitting"></i>
-                  {{ isEditMode ? 'Update Project' : 'Create Project' }}
-                </button>
-              </div>
-            </div>
-          </div>
-        </form>
-      </div>
-
-      <!-- Loading State -->
-      <div class="card-body text-center" *ngIf="loading">
-        <div class="spinner-border text-primary" role="status">
-          <span class="sr-only">Loading...</span>
-        </div>
-        <p class="mt-2 text-muted">Loading project details...</p>
-      </div>
     </div>
-  </div>
 </div>

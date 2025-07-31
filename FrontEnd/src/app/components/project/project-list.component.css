@@ -1,71 +1,71 @@
 .container-fluid {
-  padding: 20px;
+    padding: 20px;
 }
 
 .card {
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  border: none;
-  border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    border: none;
+    border-radius: 8px;
 }
 
 .card-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border-radius: 8px 8px 0 0;
-  padding: 1rem 1.5rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 8px 8px 0 0;
+    padding: 1rem 1.5rem;
 }
 
 .btn-group .btn {
-  margin-right: 0.25rem;
+    margin-right: 0.25rem;
 }
 
 .btn-group .btn:last-child {
-  margin-right: 0;
+    margin-right: 0;
 }
 
 .badge {
-  font-size: 0.75rem;
-  padding: 0.5em 0.75em;
+    font-size: 0.75rem;
+    padding: 0.5em 0.75em;
 }
 
 .text-muted {
-  color: #6c757d !important;
+    color: #6c757d !important;
 }
 
 ::ng-deep .p-datatable {
-  border-radius: 8px;
-  overflow: hidden;
+    border-radius: 8px;
+    overflow: hidden;
 }
 
 ::ng-deep .p-datatable .p-datatable-thead > tr > th {
-  background: #f8f9fa;
-  border-color: #dee2e6;
-  font-weight: 600;
+    background: #f8f9fa;
+    border-color: #dee2e6;
+    font-weight: 600;
 }
 
 ::ng-deep .p-datatable .p-datatable-tbody > tr:hover {
-  background: #f8f9fa;
+    background: #f8f9fa;
 }
 
 ::ng-deep .p-paginator {
-  border: none;
-  padding: 1rem;
+    border: none;
+    padding: 1rem;
 }
 
 .input-group-text {
-  background: #f8f9fa;
-  border-color: #ced4da;
+    background: #f8f9fa;
+    border-color: #ced4da;
 }
 
 .fa-spin {
-  animation: fa-spin 1s infinite linear;
+    animation: fa-spin 1s infinite linear;
 }
 
 @keyframes fa-spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
 }

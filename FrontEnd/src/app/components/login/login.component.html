@@ -1,86 +1,100 @@
 <div class="login-page">
-  <div class="login-box">
-    <div class="login-logo">
-      <a href="#"><b>Angular</b> DotNet Template</a>
-    </div>
-    <div class="card">
-      <div class="card-body login-card-body">
-        <p class="login-box-msg">Sign in to start your session</p>
-        
-        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-          <div class="input-group mb-3">
-            <input 
-              type="text" 
-              class="form-control" 
-              placeholder="Username or Email Address"
-              formControlName="usernameOrEmail"
-              [class.is-invalid]="loginForm.get('usernameOrEmail')?.invalid && loginForm.get('usernameOrEmail')?.touched">
-            <div class="input-group-append">
-              <div class="input-group-text">
-                <span class="fas fa-user"></span>
-              </div>
-            </div>
-            <div class="invalid-feedback" *ngIf="loginForm.get('usernameOrEmail')?.invalid && loginForm.get('usernameOrEmail')?.touched">
-              <span *ngIf="loginForm.get('usernameOrEmail')?.errors?.['required']">Username or Email is required</span>
-            </div>
-          </div>
-          
-          <div class="input-group mb-3">
-            <input 
-              type="password" 
-              class="form-control" 
-              placeholder="Password"
-              formControlName="password"
-              [class.is-invalid]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
-            <div class="input-group-append">
-              <div class="input-group-text">
-                <span class="fas fa-lock"></span>
-              </div>
-            </div>
-            <div class="invalid-feedback" *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
-              Password is required
-            </div>
-          </div>
-          
-          <div class="row">
-            <div class="col-8">
-              <div class="icheck-primary">
-                <input type="checkbox" id="remember" formControlName="rememberMe">
-                <label for="remember">
-                  Remember Me
-                </label>
-              </div>
-            </div>
-            <div class="col-4">
-              <button 
-                type="submit" 
-                class="btn btn-primary btn-block"
-                [disabled]="loginForm.invalid || loading">
-                <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
-                Sign In
-              </button>
-            </div>
-          </div>
-        </form>
-        
-        <div class="alert alert-danger mt-3" *ngIf="error" role="alert">
-          {{ error }}
+    <div class="login-box">
+        <div class="login-logo">
+            <a href="#">
+                <b>Angular</b>
+                DotNet Template
+            </a>
         </div>
-        
-        <div class="social-auth-links text-center mb-3">
-          <p>- OR -</p>
-          <a href="#" class="btn btn-block btn-success">
-            <i class="fab fa-google-plus mr-2"></i> Sign in using Google+
-          </a>
+        <div class="card">
+            <div class="card-body login-card-body">
+                <p class="login-box-msg">Sign in to start your session</p>
+
+                <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+                    <div class="input-group mb-3">
+                        <input
+                            type="text"
+                            class="form-control"
+                            placeholder="Username or Email Address"
+                            formControlName="usernameOrEmail"
+                            [class.is-invalid]="
+                                loginForm.get('usernameOrEmail')?.invalid && loginForm.get('usernameOrEmail')?.touched
+                            " />
+                        <div class="input-group-append">
+                            <div class="input-group-text">
+                                <span class="fas fa-user"></span>
+                            </div>
+                        </div>
+                        <div
+                            class="invalid-feedback"
+                            *ngIf="
+                                loginForm.get('usernameOrEmail')?.invalid && loginForm.get('usernameOrEmail')?.touched
+                            ">
+                            <span *ngIf="loginForm.get('usernameOrEmail')?.errors?.['required']">
+                                Username or Email is required
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="input-group mb-3">
+                        <input
+                            type="password"
+                            class="form-control"
+                            placeholder="Password"
+                            formControlName="password"
+                            [class.is-invalid]="
+                                loginForm.get('password')?.invalid && loginForm.get('password')?.touched
+                            " />
+                        <div class="input-group-append">
+                            <div class="input-group-text">
+                                <span class="fas fa-lock"></span>
+                            </div>
+                        </div>
+                        <div
+                            class="invalid-feedback"
+                            *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+                            Password is required
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-8">
+                            <div class="icheck-primary">
+                                <input type="checkbox" id="remember" formControlName="rememberMe" />
+                                <label for="remember">Remember Me</label>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <button
+                                type="submit"
+                                class="btn btn-primary btn-block"
+                                [disabled]="loginForm.invalid || loading">
+                                <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
+                                Sign In
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+                <div class="alert alert-danger mt-3" *ngIf="error" role="alert">
+                    {{ error }}
+                </div>
+
+                <div class="social-auth-links text-center mb-3">
+                    <p>- OR -</p>
+                    <a href="#" class="btn btn-block btn-success">
+                        <i class="fab fa-google-plus mr-2"></i>
+                        Sign in using Google+
+                    </a>
+                </div>
+
+                <p class="mb-1">
+                    <a href="#">I forgot my password</a>
+                </p>
+                <p class="mb-0">
+                    <a routerLink="/register" class="text-center">Register a new membership</a>
+                </p>
+            </div>
         </div>
-        
-        <p class="mb-1">
-          <a href="#">I forgot my password</a>
-        </p>
-        <p class="mb-0">
-          <a routerLink="/register" class="text-center">Register a new membership</a>
-        </p>
-      </div>
     </div>
-  </div>
 </div>
