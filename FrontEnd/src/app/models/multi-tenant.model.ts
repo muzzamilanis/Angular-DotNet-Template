@@ -28,6 +28,7 @@ export interface CreateCompanyProfileRequest {
     address?: string;
     phone?: string;
     email?: string;
+    contactPerson?: string;
     customFields?: string;
 }
 
