@@ -22,37 +22,37 @@ import { ProjectDetailComponent } from './components/project/project-detail.comp
 import { AuthInterceptor } from './interceptors/auth.interceptor';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    LoginComponent,
-    MainLayoutComponent,
-    SaleOrderComponent,
-    ProductComponent,
-    CustomerComponent,
-    CompanySetupComponent,
-    UserManagementComponent,
-    DashboardComponent,
-    RegistrationComponent,
-    ProjectComponent,
-    ProjectListComponent,
-    ProjectFormComponent,
-    ProjectDetailComponent
-  ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    HttpClientModule,
-    ReactiveFormsModule,
-    FormsModule,
-    BrowserAnimationsModule
-  ],
-  providers: [
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: AuthInterceptor,
-      multi: true
-    }
-  ],
-  bootstrap: [AppComponent]
+    declarations: [
+        AppComponent,
+        LoginComponent,
+        MainLayoutComponent,
+        SaleOrderComponent,
+        ProductComponent,
+        CustomerComponent,
+        CompanySetupComponent,
+        UserManagementComponent,
+        DashboardComponent,
+        RegistrationComponent,
+        ProjectComponent,
+        ProjectListComponent,
+        ProjectFormComponent,
+        ProjectDetailComponent,
+    ],
+    imports: [
+        BrowserModule,
+        AppRoutingModule,
+        HttpClientModule,
+        ReactiveFormsModule,
+        FormsModule,
+        BrowserAnimationsModule,
+    ],
+    providers: [
+        {
+            provide: HTTP_INTERCEPTORS,
+            useClass: AuthInterceptor,
+            multi: true,
+        },
+    ],
+    bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}

@@ -5,34 +5,34 @@ import { Customer, CreateCustomerDto, UpdateCustomerDto } from '../models/custom
 import { environment } from '../../environments/environment';
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root',
 })
 export class CustomerService {
-  private apiUrl =  environment.apiUrl+ '/customers';
+    private apiUrl = environment.apiUrl + '/customers';
 
-  constructor(private http: HttpClient) { }
+    constructor(private http: HttpClient) {}
 
-  getCustomers(): Observable<Customer[]> {
-    return this.http.get<Customer[]>(this.apiUrl);
-  }
+    getCustomers(): Observable<Customer[]> {
+        return this.http.get<Customer[]>(this.apiUrl);
+    }
 
-  getActiveCustomers(): Observable<Customer[]> {
-    return this.http.get<Customer[]>(`${this.apiUrl}/active`);
-  }
+    getActiveCustomers(): Observable<Customer[]> {
+        return this.http.get<Customer[]>(`${this.apiUrl}/active`);
+    }
 
-  getCustomer(id: number): Observable<Customer> {
-    return this.http.get<Customer>(`${this.apiUrl}/${id}`);
-  }
+    getCustomer(id: number): Observable<Customer> {
+        return this.http.get<Customer>(`${this.apiUrl}/${id}`);
+    }
 
-  createCustomer(customer: CreateCustomerDto): Observable<Customer> {
-    return this.http.post<Customer>(this.apiUrl, customer);
-  }
+    createCustomer(customer: CreateCustomerDto): Observable<Customer> {
+        return this.http.post<Customer>(this.apiUrl, customer);
+    }
 
-  updateCustomer(id: number, customer: UpdateCustomerDto): Observable<Customer> {
-    return this.http.put<Customer>(`${this.apiUrl}/${id}`, customer);
-  }
+    updateCustomer(id: number, customer: UpdateCustomerDto): Observable<Customer> {
+        return this.http.put<Customer>(`${this.apiUrl}/${id}`, customer);
+    }
 
-  deleteCustomer(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
-  }
+    deleteCustomer(id: number): Observable<void> {
+        return this.http.delete<void>(`${this.apiUrl}/${id}`);
+    }
 }

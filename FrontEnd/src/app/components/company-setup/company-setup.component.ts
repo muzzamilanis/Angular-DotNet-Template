@@ -4,99 +4,194 @@ import { Router } from '@angular/router';
 import { BusinessNature, CreateCompanyProfileRequest } from '../../models/multi-tenant.model';
 import { BusinessNatureService } from '../../services/business-nature.service';
 import { CompanyService } from '../../services/company.service';
+import { AuthService } from '../../services/auth.service';
+import { NotificationService } from '../../services/notification.service';
 
 @Component({
-  selector: 'app-company-setup',
-  templateUrl: './company-setup.component.html',
-  styleUrls: ['./company-setup.component.css'],
-  standalone: false
+    selector: 'app-company-setup',
+    templateUrl: './company-setup.component.html',
+    styleUrls: ['./company-setup.component.css'],
+    standalone: false,
 })
 export class CompanySetupComponent implements OnInit {
-  companyForm: FormGroup;
-  businessNatures: BusinessNature[] = [];
-  isLoading = false;
-  isSubmitting = false;
-  selectedBusinessNature?: BusinessNature;
+    companyForm: FormGroup;
+    businessNatures: BusinessNature[] = [];
+    isLoading = false;
+    isSubmitting = false;
+    selectedBusinessNature?: BusinessNature;
+    isEditing = false;
+    currentCompany: any = null;
+    currentUserIsSuperAdmin = false;
 
-  constructor(
-    private fb: FormBuilder,
-    private router: Router,
-    private businessNatureService: BusinessNatureService,
-    private companyService: CompanyService
-  ) {
-    this.companyForm = this.fb.group({
-      businessNatureId: ['', Validators.required],
-      companyName: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(200)]],
-      address: ['', Validators.maxLength(500)],
-      phone: ['', Validators.maxLength(50)],
-      email: ['', [Validators.email, Validators.maxLength(200)]],
-      contactPerson: ['', Validators.maxLength(100)], // Add this field
-      customFields: ['']
-    });
-  }
-
-  ngOnInit(): void {
-    this.loadBusinessNatures();
-  }
-
-  loadBusinessNatures(): void {
-    this.isLoading = true;
-    this.businessNatureService.getAll().subscribe({
-      next: (businessNatures) => {
-        this.businessNatures = businessNatures;
-        this.isLoading = false;
-      },
-      error: (error) => {
-        console.error('Error loading business natures:', error);
-        this.isLoading = false;
-      }
-    });
-  }
-
-  onBusinessNatureChange(): void {
-    const businessNatureId = this.companyForm.get('businessNatureId')?.value;
-    this.selectedBusinessNature = this.businessNatures.find(bn => bn.id === parseInt(businessNatureId));
-  }
-
-  onSubmit(): void {
-    if (this.companyForm.valid && !this.isSubmitting) {
-      this.isSubmitting = true;
-      const request: CreateCompanyProfileRequest = this.companyForm.value;
-      
-      this.companyService.createProfile(request).subscribe({
-        next: (profile) => {
-          console.log('Company profile created:', profile);
-          this.router.navigate(['/dashboard']);
-        },
-        error: (error) => {
-          console.error('Error creating company profile:', error);
-          this.isSubmitting = false;
-        }
-      });
+    constructor(
+        private fb: FormBuilder,
+        private router: Router,
+        private businessNatureService: BusinessNatureService,
+        private companyService: CompanyService,
+        private authService: AuthService,
+        private notificationService: NotificationService
+    ) {
+        this.companyForm = this.fb.group({
+            businessNatureId: ['', Validators.required],
+            companyName: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(200)]],
+            address: ['', Validators.maxLength(500)],
+            phone: ['', Validators.maxLength(50)],
+            email: ['', [Validators.email, Validators.maxLength(200)]],
+            contactPerson: ['', Validators.maxLength(100)],
+            customFields: [''],
+        });
     }
-  }
 
-// Add this method to your existing component class
-resetForm(): void {
-  this.companyForm.reset();
-  this.selectedBusinessNature = null;
-  
-  // Reset form to initial state with default values
-  this.companyForm.patchValue({
-    businessNatureId: '',
-    companyName: '',
-    address: '',
-    phone: '',
-    email: '',
-    contactPerson: ''
-  });
-  
-  // Clear all validation states
-  this.companyForm.markAsUntouched();
-  this.companyForm.markAsPristine();
-}
+    ngOnInit(): void {
+        this.currentUserIsSuperAdmin = this.authService.isSuperAdmin();
+        this.loadBusinessNatures();
+        this.loadCurrentCompany();
+    }
 
-  get f() {
-    return this.companyForm.controls;
-  }
+    loadBusinessNatures(): void {
+        this.isLoading = true;
+        this.businessNatureService.getAll().subscribe({
+            next: (businessNatures) => {
+                this.businessNatures = businessNatures;
+                this.isLoading = false;
+            },
+            error: (error) => {
+                console.error('Error loading business natures:', error);
+                this.notificationService.showError('Error loading business types');
+                this.isLoading = false;
+            },
+        });
+    }
+
+    loadCurrentCompany(): void {
+        // Super admins can create new companies, regular users can only edit their own
+        if (!this.currentUserIsSuperAdmin) {
+            this.companyService.getCurrentCompany().subscribe({
+                next: (company) => {
+                    this.currentCompany = company;
+                    this.isEditing = true;
+                    this.populateForm(company);
+                },
+                error: (error) => {
+                    console.error('Error loading current company:', error);
+                    // If company doesn't exist, allow creation for regular users too
+                    this.isEditing = false;
+                },
+            });
+        }
+    }
+
+    populateForm(company: any): void {
+        this.companyForm.patchValue({
+            businessNatureId: company.businessNatureId || '',
+            companyName: company.name || '',
+            address: company.address || '',
+            phone: company.phone || '',
+            email: company.email || '',
+            contactPerson: company.contactPerson || '',
+        });
+        this.onBusinessNatureChange();
+    }
+
+    onBusinessNatureChange(): void {
+        const businessNatureId = this.companyForm.get('businessNatureId')?.value;
+        this.selectedBusinessNature = this.businessNatures.find((bn) => bn.id === parseInt(businessNatureId));
+    }
+
+    onSubmit(): void {
+        if (this.companyForm.valid && !this.isSubmitting) {
+            this.isSubmitting = true;
+
+            if (this.isEditing && this.currentCompany) {
+                this.updateCompany();
+            } else {
+                this.createCompany();
+            }
+        } else {
+            this.markFormGroupTouched();
+        }
+    }
+
+    createCompany(): void {
+        const request: CreateCompanyProfileRequest = this.companyForm.value;
+
+        this.companyService.createProfile(request).subscribe({
+            next: (profile) => {
+                console.log('Company profile created:', profile);
+                this.notificationService.showSuccess('Company created successfully!');
+                this.router.navigate(['/dashboard']);
+            },
+            error: (error) => {
+                console.error('Error creating company profile:', error);
+                this.notificationService.showError(
+                    'Error creating company: ' + (error.error?.message || error.message)
+                );
+                this.isSubmitting = false;
+            },
+        });
+    }
+
+    updateCompany(): void {
+        const updateRequest = {
+            id: this.currentCompany.id,
+            name: this.companyForm.value.companyName,
+            address: this.companyForm.value.address,
+            phone: this.companyForm.value.phone,
+            email: this.companyForm.value.email,
+            contactPerson: this.companyForm.value.contactPerson,
+            businessNatureId: parseInt(this.companyForm.value.businessNatureId),
+            isActive: true,
+        };
+
+        this.companyService.update(this.currentCompany.id, updateRequest).subscribe({
+            next: (updatedCompany) => {
+                console.log('Company profile updated:', updatedCompany);
+                this.notificationService.showSuccess('Company updated successfully!');
+                this.currentCompany = updatedCompany;
+                this.isSubmitting = false;
+            },
+            error: (error) => {
+                console.error('Error updating company profile:', error);
+                this.notificationService.showError(
+                    'Error updating company: ' + (error.error?.message || error.message)
+                );
+                this.isSubmitting = false;
+            },
+        });
+    }
+
+    private markFormGroupTouched(): void {
+        Object.keys(this.companyForm.controls).forEach((key) => {
+            const control = this.companyForm.get(key);
+            control?.markAsTouched();
+        });
+    }
+
+    resetForm(): void {
+        this.companyForm.reset();
+        this.selectedBusinessNature = undefined;
+
+        // Reset form to initial state with default values
+        this.companyForm.patchValue({
+            businessNatureId: '',
+            companyName: '',
+            address: '',
+            phone: '',
+            email: '',
+            contactPerson: '',
+        });
+
+        // Clear all validation states
+        this.companyForm.markAsUntouched();
+        this.companyForm.markAsPristine();
+
+        // If editing, reload the current company data
+        if (this.isEditing && this.currentCompany) {
+            this.populateForm(this.currentCompany);
+        }
+    }
+
+    get f() {
+        return this.companyForm.controls;
+    }
 }

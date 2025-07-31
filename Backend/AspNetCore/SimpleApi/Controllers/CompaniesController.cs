@@ -30,6 +30,12 @@ namespace SimpleApi.Controllers
             throw new UnauthorizedAccessException("Unable to determine user's company.");
         }
 
+        private bool GetCurrentUserIsSuperAdmin()
+        {
+            var isSuperAdminClaim = User.FindFirst("IsSuperAdmin")?.Value;
+            return bool.TryParse(isSuperAdminClaim, out bool isSuperAdmin) && isSuperAdmin;
+        }
+
         [HttpGet("current")]
         public async Task<ActionResult<CompanyDto>> GetCurrentCompany()
         {
@@ -59,6 +65,12 @@ namespace SimpleApi.Controllers
         {
             try
             {
+                // Only Super Admins can access any company by ID
+                if (!GetCurrentUserIsSuperAdmin())
+                {
+                    return Forbid("Only Super Admins can access company details by ID.");
+                }
+
                 var result = await _companyService.GetByIdAsync(id);
                 return Ok(result);
             }
@@ -77,6 +89,12 @@ namespace SimpleApi.Controllers
         {
             try
             {
+                // Only Super Admins can create companies
+                if (!GetCurrentUserIsSuperAdmin())
+                {
+                    return Forbid("Only Super Admins can create companies.");
+                }
+
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
 
@@ -98,6 +116,16 @@ namespace SimpleApi.Controllers
         {
             try
             {
+                // Super Admins can update any company, regular users can only update their own company
+                if (!GetCurrentUserIsSuperAdmin())
+                {
+                    var userCompanyId = GetCurrentUserCompanyId();
+                    if (id != userCompanyId)
+                    {
+                        return Forbid("You can only update your own company.");
+                    }
+                }
+
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
 
@@ -120,6 +148,12 @@ namespace SimpleApi.Controllers
         {
             try
             {
+                // Only Super Admins can delete companies
+                if (!GetCurrentUserIsSuperAdmin())
+                {
+                    throw new UnauthorizedAccessException("Only Super Admins can delete companies.");
+                }
+
                 await _companyService.DeleteAsync(id);
             }
             catch (ArgumentException ex)
