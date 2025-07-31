@@ -9,7 +9,7 @@ import { environment } from '../../environments/environment';
   providedIn: 'root'
 })
 export class BusinessNatureService {
-  private readonly apiUrl = `${environment.apiUrl}/api/BusinessNatures`;
+  private readonly apiUrl = `${environment.apiUrl}/BusinessNatures`;
 
   constructor(private http: HttpClient) {}
 
