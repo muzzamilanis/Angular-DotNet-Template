@@ -142,6 +142,33 @@
                 <div *ngIf="companyForm.get('companyName')?.errors?.['maxlength']">Company name must be 200 characters or less</div>
               </div>
             </div>
+
+            <div class="input-group mb-3">
+              <select 
+                class="form-control" 
+                formControlName="businessNatureId"
+                (change)="onBusinessNatureChange($any($event.target).value)"
+                [class.is-invalid]="companyForm.get('businessNatureId')?.invalid && companyForm.get('businessNatureId')?.touched">
+                <option value="">Select Business Type</option>
+                <option *ngFor="let businessNature of businessNatures" [value]="businessNature.id">
+                  {{ businessNature.displayName }}
+                </option>
+              </select>
+              <div class="input-group-append">
+                <div class="input-group-text">
+                  <span class="fas fa-industry"></span>
+                </div>
+              </div>
+              <div class="invalid-feedback" *ngIf="companyForm.get('businessNatureId')?.invalid && companyForm.get('businessNatureId')?.touched">
+                <div *ngIf="companyForm.get('businessNatureId')?.errors?.['required']">Business type is required</div>
+              </div>
+            </div>
+
+            <!-- Business Nature Information Display -->
+            <div *ngIf="selectedBusinessNature" class="alert alert-info" role="alert">
+              <h6><i class="fas fa-info-circle"></i> {{ selectedBusinessNature.displayName }}</h6>
+              <p class="mb-0">{{ selectedBusinessNature.description }}</p>
+            </div>
             
             <div class="input-group mb-3">
               <input 
