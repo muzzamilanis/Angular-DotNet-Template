@@ -1,561 +1,859 @@
 <!-- Sale Order Form -->
 <div class="row">
-  <div class="col-md-12">
-    <div class="card card-primary">
-      <div class="card-header">
-        <h3 class="card-title">{{ editingOrder ? 'Edit' : 'Create' }} Sale Order</h3>
-      </div>
-      <form [formGroup]="saleOrderForm" (ngSubmit)="onSubmit()">
-        <div class="card-body">
-          <div class="row">
-            <div class="col-md-6">
-              <div class="form-group">
-                <label for="orderNumber">Order ID *</label>
-                <input type="text" 
-                       class="form-control" 
-                       id="orderNumber" 
-                       formControlName="orderNumber"
-                       placeholder="Enter order number"
-                       [class.is-invalid]="saleOrderForm.get('orderNumber')?.invalid && saleOrderForm.get('orderNumber')?.touched">
-                <div class="invalid-feedback" *ngIf="saleOrderForm.get('orderNumber')?.invalid && saleOrderForm.get('orderNumber')?.touched">
-                  <div *ngIf="saleOrderForm.get('orderNumber')?.errors?.['required']">Order number is required</div>
-                  <div *ngIf="saleOrderForm.get('orderNumber')?.errors?.['maxlength']">Order number must be 50 characters or less</div>
-                </div>
-              </div>
+    <div class="col-md-12">
+        <div class="card card-primary">
+            <div class="card-header">
+                <h3 class="card-title">{{ editingOrder ? 'Edit' : 'Create' }} Sale Order</h3>
             </div>
-            <div class="col-md-6">
-              <div class="form-group">
-                <label for="orderDate">Date *</label>
-                <input type="date" 
-                       class="form-control" 
-                       id="orderDate" 
-                       formControlName="orderDate"
-                       [class.is-invalid]="saleOrderForm.get('orderDate')?.invalid && saleOrderForm.get('orderDate')?.touched">
-                <div class="invalid-feedback" *ngIf="saleOrderForm.get('orderDate')?.invalid && saleOrderForm.get('orderDate')?.touched">
-                  Order date is required
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Digital Marketing specific fields -->
-          <div class="row" *ngIf="isDigitalMarketing">
-            <div class="col-md-6">
-              <div class="form-group">
-                <label for="projectId">
-                  <i class="fas fa-project-diagram"></i>
-                  Project
-                </label>
-                <select class="form-control" 
-                        id="projectId" 
-                        formControlName="projectId">
-                  <option value="">🎯 Select Project</option>
-                  <option *ngFor="let project of projects" [value]="project.id">
-                    {{ project.projectName }}
-                  </option>
-                </select>
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="form-group">
-                <label for="serviceTypeId">
-                  <i class="fas fa-cogs"></i>
-                  Service Type *
-                </label>
-                <select class="form-control" 
-                        id="serviceTypeId" 
-                        formControlName="serviceTypeId"
-                        [class.is-invalid]="saleOrderForm.get('serviceTypeId')?.invalid && saleOrderForm.get('serviceTypeId')?.touched">
-                  <option value="">🔧 Select Service Type</option>
-                  <option *ngFor="let serviceType of serviceTypes" [value]="serviceType.id">
-                    {{ serviceType.name }}
-                  </option>
-                </select>
-                <div class="invalid-feedback" *ngIf="saleOrderForm.get('serviceTypeId')?.invalid && saleOrderForm.get('serviceTypeId')?.touched">
-                  Service Type is required
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="row" *ngIf="isDigitalMarketing">
-            <div class="col-md-6">
-              <div class="form-group">
-                <label for="clientName">Client Name *</label>
-                <input type="text" 
-                       class="form-control" 
-                       id="clientName" 
-                       formControlName="clientName"
-                       placeholder="Enter client name"
-                       [class.is-invalid]="saleOrderForm.get('clientName')?.invalid && saleOrderForm.get('clientName')?.touched">
-                <div class="invalid-feedback" *ngIf="saleOrderForm.get('clientName')?.invalid && saleOrderForm.get('clientName')?.touched">
-            <div class="col-md-6">
-              <div class="form-group">
-                <label for="wordsOrPages">
-                  <i class="fas fa-file-word"></i>
-                  Words or Pages
-                </label>
-                <input type="text" 
-                       class="form-control" 
-                       id="wordsOrPages" 
-                       formControlName="wordsOrPages"
-                       placeholder="e.g., 500 words, 3 pages"
-                       [class.is-invalid]="saleOrderForm.get('wordsOrPages')?.invalid && saleOrderForm.get('wordsOrPages')?.touched">
-                <div class="invalid-feedback" *ngIf="saleOrderForm.get('wordsOrPages')?.invalid && saleOrderForm.get('wordsOrPages')?.touched">
-                  <div *ngIf="saleOrderForm.get('wordsOrPages')?.errors?.['maxlength']">Words or Pages must be 100 characters or less</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="row" *ngIf="isDigitalMarketing">
-            <div class="col-md-12">
-              <div class="form-group">
-                <label for="orderDetails">
-                  <i class="fas fa-clipboard-list"></i>
-                  Order Details
-                </label>
-                <textarea class="form-control" 
-                          id="orderDetails" 
-                          formControlName="orderDetails"
-                          placeholder="Detailed requirements and specifications for the order"
-                          rows="4"
-                          [class.is-invalid]="saleOrderForm.get('orderDetails')?.invalid && saleOrderForm.get('orderDetails')?.touched"></textarea>
-                <div class="invalid-feedback" *ngIf="saleOrderForm.get('orderDetails')?.invalid && saleOrderForm.get('orderDetails')?.touched">
-                  <div *ngIf="saleOrderForm.get('orderDetails')?.errors?.['maxlength']">Order Details must be 1000 characters or less</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="row" *ngIf="isDigitalMarketing">
-                  <div *ngIf="saleOrderForm.get('clientName')?.errors?.['required']">Client name is required</div>
-                  <div *ngIf="saleOrderForm.get('clientName')?.errors?.['maxlength']">Client name must be 200 characters or less</div>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="form-group">
-                <label for="deadline">Deadline</label>
-                <input type="date" 
-                       class="form-control" 
-                       id="deadline" 
-                       formControlName="deadline">
-              </div>
-            </div>
-          </div>
-
-          <div class="row" *ngIf="isDigitalMarketing">
-            <div class="col-md-4">
-              <div class="form-group">
-                <label for="status">Status</label>
-                <input type="text" 
-                       class="form-control" 
-                       id="status" 
-                       formControlName="status"
-                       placeholder="Enter status"
-                       [class.is-invalid]="saleOrderForm.get('status')?.invalid && saleOrderForm.get('status')?.touched">
-                <div class="invalid-feedback" *ngIf="saleOrderForm.get('status')?.invalid && saleOrderForm.get('status')?.touched">
-                  <div *ngIf="saleOrderForm.get('status')?.errors?.['maxlength']">Status must be 50 characters or less</div>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="form-group">
-                <label for="amountReceived">Advance Amount</label>
-                <input type="number" 
-                       class="form-control" 
-                       id="amountReceived" 
-                       formControlName="amountReceived"
-                       min="0" 
-                       step="0.01"
-                       [class.is-invalid]="saleOrderForm.get('amountReceived')?.invalid && saleOrderForm.get('amountReceived')?.touched">
-                <div class="invalid-feedback" *ngIf="saleOrderForm.get('amountReceived')?.invalid && saleOrderForm.get('amountReceived')?.touched">
-                  <div *ngIf="saleOrderForm.get('amountReceived')?.errors?.['min']">Amount must be 0 or greater</div>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="form-group">
-                <label for="totalPayment">
-                  <i class="fas fa-money-bill-wave"></i>
-                  Total Payment
-                </label>
-                <input type="number" 
-                       class="form-control" 
-                       id="totalPayment" 
-                       formControlName="totalPayment"
-                       min="0" 
-                       step="0.01"
-                       [class.is-invalid]="saleOrderForm.get('totalPayment')?.invalid && saleOrderForm.get('totalPayment')?.touched">
-                <div class="invalid-feedback" *ngIf="saleOrderForm.get('totalPayment')?.invalid && saleOrderForm.get('totalPayment')?.touched">
-                  <div *ngIf="saleOrderForm.get('totalPayment')?.errors?.['min']">Total Payment must be 0 or greater</div>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="form-group">
-                <label for="paymentStatus">Payment Status</label>
-                <input type="text" 
-                       class="form-control" 
-                       id="paymentStatus" 
-                       formControlName="paymentStatus"
-                       placeholder="Enter payment status"
-                       [class.is-invalid]="saleOrderForm.get('paymentStatus')?.invalid && saleOrderForm.get('paymentStatus')?.touched">
-                <div class="invalid-feedback" *ngIf="saleOrderForm.get('paymentStatus')?.invalid && saleOrderForm.get('paymentStatus')?.touched">
-                  <div *ngIf="saleOrderForm.get('paymentStatus')?.errors?.['maxlength']">Payment status must be 50 characters or less</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="row" *ngIf="isDigitalMarketing">
-            <div class="col-md-12">
-              <div class="form-group">
-                <label for="sourceOfPayment">Source of Payment</label>
-                <input type="text" 
-                       class="form-control" 
-                       id="sourceOfPayment" 
-                       formControlName="sourceOfPayment"
-                       placeholder="Enter source of payment"
-                       [class.is-invalid]="saleOrderForm.get('sourceOfPayment')?.invalid && saleOrderForm.get('sourceOfPayment')?.touched">
-                <div class="invalid-feedback" *ngIf="saleOrderForm.get('sourceOfPayment')?.invalid && saleOrderForm.get('sourceOfPayment')?.touched">
-                  <div *ngIf="saleOrderForm.get('sourceOfPayment')?.errors?.['maxlength']">Source of payment must be 100 characters or less</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="row" *ngIf="isDigitalMarketing">
-            <div class="col-md-6">
-              <div class="form-group">
-                <label for="contactEmail">Contact Email</label>
-                <input type="email" 
-                       class="form-control" 
-                       id="contactEmail" 
-                       formControlName="contactEmail"
-                       placeholder="Enter contact email"
-                       [class.is-invalid]="saleOrderForm.get('contactEmail')?.invalid && saleOrderForm.get('contactEmail')?.touched">
-                <div class="invalid-feedback" *ngIf="saleOrderForm.get('contactEmail')?.invalid && saleOrderForm.get('contactEmail')?.touched">
-                  <div *ngIf="saleOrderForm.get('contactEmail')?.errors?.['email']">Please enter a valid email address</div>
-                  <div *ngIf="saleOrderForm.get('contactEmail')?.errors?.['maxlength']">Email must be 200 characters or less</div>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="form-group">
-                <label for="contactPhone">Contact Phone</label>
-                <input type="text" 
-                       class="form-control" 
-                       id="contactPhone" 
-                       formControlName="contactPhone"
-                       placeholder="Enter contact phone"
-                       [class.is-invalid]="saleOrderForm.get('contactPhone')?.invalid && saleOrderForm.get('contactPhone')?.touched">
-                <div class="invalid-feedback" *ngIf="saleOrderForm.get('contactPhone')?.invalid && saleOrderForm.get('contactPhone')?.touched">
-                  <div *ngIf="saleOrderForm.get('contactPhone')?.errors?.['maxlength']">Phone must be 50 characters or less</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="row" *ngIf="isDigitalMarketing">
-            <div class="col-md-12">
-              <div class="form-group">
-                <label for="assignedTo">Task Assigned To</label>
-                <input type="text" 
-                       class="form-control" 
-                       id="assignedTo" 
-                       formControlName="assignedTo"
-                       placeholder="Enter assigned person"
-                       [class.is-invalid]="saleOrderForm.get('assignedTo')?.invalid && saleOrderForm.get('assignedTo')?.touched">
-                <div class="invalid-feedback" *ngIf="saleOrderForm.get('assignedTo')?.invalid && saleOrderForm.get('assignedTo')?.touched">
-                  <div *ngIf="saleOrderForm.get('assignedTo')?.errors?.['maxlength']">Assigned to must be 200 characters or less</div>
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Traditional Customer fields for non-digital marketing companies -->
-          <div class="row" *ngIf="!isDigitalMarketing">
-            <div class="col-md-6">
-              <div class="form-group">
-                <label for="customerName">Customer Name *</label>
-                <input type="text" 
-                       class="form-control" 
-                       id="customerName" 
-                       formControlName="customerName"
-                       placeholder="Enter customer name"
-                       [class.is-invalid]="saleOrderForm.get('customerName')?.invalid && saleOrderForm.get('customerName')?.touched">
-                <div class="invalid-feedback" *ngIf="saleOrderForm.get('customerName')?.invalid && saleOrderForm.get('customerName')?.touched">
-                  <div *ngIf="saleOrderForm.get('customerName')?.errors?.['required']">Customer name is required</div>
-                  <div *ngIf="saleOrderForm.get('customerName')?.errors?.['maxlength']">Customer name must be 200 characters or less</div>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="form-group">
-                <label for="customerAddress">Customer Address</label>
-                <textarea class="form-control" 
-                          id="customerAddress" 
-                          formControlName="customerAddress"
-                          placeholder="Enter customer address"
-                          rows="3"
-                          [class.is-invalid]="saleOrderForm.get('customerAddress')?.invalid && saleOrderForm.get('customerAddress')?.touched"></textarea>
-                <div class="invalid-feedback" *ngIf="saleOrderForm.get('customerAddress')?.invalid && saleOrderForm.get('customerAddress')?.touched">
-                  <div *ngIf="saleOrderForm.get('customerAddress')?.errors?.['maxlength']">Customer address must be 500 characters or less</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Order Items - only for non-digital marketing companies -->
-          <div class="row" *ngIf="!isDigitalMarketing">
-            <div class="col-md-12">
-              <div class="card">
-                <div class="card-header">
-                  <h4 class="card-title">Order Items</h4>
-                  <button type="button" class="btn btn-success btn-sm float-right" (click)="addItem()">
-                    <i class="fas fa-plus"></i> Add Item
-                  </button>
-                </div>
+            <form [formGroup]="saleOrderForm" (ngSubmit)="onSubmit()">
                 <div class="card-body">
-                  <div class="table-responsive">
-                    <table class="table table-bordered">
-                      <thead>
-                        <tr>
-                          <th>Product *</th>
-                          <th>Quantity *</th>
-                          <th>Date *</th>
-                          <th>Price *</th>
-                          <th *ngIf="isDigitalMarketing">Order Details</th>
-                          <th *ngIf="isDigitalMarketing">Paper Type</th>
-                          <th *ngIf="isDigitalMarketing">Service Type</th>
-                          <th *ngIf="isDigitalMarketing">Words or Pages</th>
-                          <th *ngIf="isDigitalMarketing">Page Count</th>
-                          <th *ngIf="isDigitalMarketing">Item Deadline</th>
-                          <th>Line Total</th>
-                          <th>Actions</th>
-                        </tr>
-                      </thead>
-                      <tbody formArrayName="items">
-                        <tr *ngFor="let item of items.controls; let i = index" [formGroupName]="i">
-                          <td>
-                            <select class="form-control" 
-                                    formControlName="productId" 
-                                    (change)="onProductChange(i, $event.target.value)"
-                                    [class.is-invalid]="item.get('productId')?.invalid && item.get('productId')?.touched">
-                              <option value="">📦 Select Product</option>
-                              <option *ngFor="let product of products" [value]="product.id">
-                                {{ product.name }} - ${{ product.price }}
-                              </option>
-                            </select>
-                            <div class="invalid-feedback" *ngIf="item.get('productId')?.invalid && item.get('productId')?.touched">
-                              Product is required
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="orderNumber">Order ID *</label>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="orderNumber"
+                                    formControlName="orderNumber"
+                                    placeholder="Enter order number"
+                                    [class.is-invalid]="
+                                        saleOrderForm.get('orderNumber')?.invalid &&
+                                        saleOrderForm.get('orderNumber')?.touched
+                                    " />
+                                <div
+                                    class="invalid-feedback"
+                                    *ngIf="
+                                        saleOrderForm.get('orderNumber')?.invalid &&
+                                        saleOrderForm.get('orderNumber')?.touched
+                                    ">
+                                    <div *ngIf="saleOrderForm.get('orderNumber')?.errors?.['required']">
+                                        Order number is required
+                                    </div>
+                                    <div *ngIf="saleOrderForm.get('orderNumber')?.errors?.['maxlength']">
+                                        Order number must be 50 characters or less
+                                    </div>
+                                </div>
                             </div>
-                          </td>
-                          <td>
-                            <input type="number" 
-                                   class="form-control" 
-                                   formControlName="quantity" 
-                                   min="1"
-                                   [class.is-invalid]="item.get('quantity')?.invalid && item.get('quantity')?.touched">
-                            <div class="invalid-feedback" *ngIf="item.get('quantity')?.invalid && item.get('quantity')?.touched">
-                              <div *ngIf="item.get('quantity')?.errors?.['required']">Quantity is required</div>
-                              <div *ngIf="item.get('quantity')?.errors?.['min']">Quantity must be at least 1</div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="orderDate">Date *</label>
+                                <input
+                                    type="date"
+                                    class="form-control"
+                                    id="orderDate"
+                                    formControlName="orderDate"
+                                    [class.is-invalid]="
+                                        saleOrderForm.get('orderDate')?.invalid &&
+                                        saleOrderForm.get('orderDate')?.touched
+                                    " />
+                                <div
+                                    class="invalid-feedback"
+                                    *ngIf="
+                                        saleOrderForm.get('orderDate')?.invalid &&
+                                        saleOrderForm.get('orderDate')?.touched
+                                    ">
+                                    Order date is required
+                                </div>
                             </div>
-                          </td>
-                          <td>
-                            <input type="date" 
-                                   class="form-control" 
-                                   formControlName="date"
-                                   [class.is-invalid]="item.get('date')?.invalid && item.get('date')?.touched">
-                            <div class="invalid-feedback" *ngIf="item.get('date')?.invalid && item.get('date')?.touched">
-                              Date is required
+                        </div>
+                    </div>
+
+                    <!-- Digital Marketing specific fields -->
+                    <div class="row" *ngIf="isDigitalMarketing">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="projectId">
+                                    <i class="fas fa-project-diagram"></i>
+                                    Project
+                                </label>
+                                <select class="form-control" id="projectId" formControlName="projectId">
+                                    <option value="">🎯 Select Project</option>
+                                    <option *ngFor="let project of projects" [value]="project.id">
+                                        {{ project.projectName }}
+                                    </option>
+                                </select>
                             </div>
-                          </td>
-                          <td>
-                            <input type="number" 
-                                   class="form-control" 
-                                   formControlName="price" 
-                                   min="0" 
-                                   step="0.01"
-                                   [class.is-invalid]="item.get('price')?.invalid && item.get('price')?.touched">
-                            <div class="invalid-feedback" *ngIf="item.get('price')?.invalid && item.get('price')?.touched">
-                              <div *ngIf="item.get('price')?.errors?.['required']">Price is required</div>
-                              <div *ngIf="item.get('price')?.errors?.['min']">Price must be 0 or greater</div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="serviceTypeId">
+                                    <i class="fas fa-cogs"></i>
+                                    Service Type *
+                                </label>
+                                <select
+                                    class="form-control"
+                                    id="serviceTypeId"
+                                    formControlName="serviceTypeId"
+                                    [class.is-invalid]="
+                                        saleOrderForm.get('serviceTypeId')?.invalid &&
+                                        saleOrderForm.get('serviceTypeId')?.touched
+                                    ">
+                                    <option value="">🔧 Select Service Type</option>
+                                    <option *ngFor="let serviceType of serviceTypes" [value]="serviceType.id">
+                                        {{ serviceType.name }}
+                                    </option>
+                                </select>
+                                <div
+                                    class="invalid-feedback"
+                                    *ngIf="
+                                        saleOrderForm.get('serviceTypeId')?.invalid &&
+                                        saleOrderForm.get('serviceTypeId')?.touched
+                                    ">
+                                    Service Type is required
+                                </div>
                             </div>
-                          </td>
-                          <td *ngIf="isDigitalMarketing">
-                            <input type="text" 
-                                   class="form-control" 
-                                   formControlName="workTitle"
-                                   placeholder="Order Details"
-                                   [class.is-invalid]="item.get('workTitle')?.invalid && item.get('workTitle')?.touched">
-                            <div class="invalid-feedback" *ngIf="item.get('workTitle')?.invalid && item.get('workTitle')?.touched">
-                              <div *ngIf="item.get('workTitle')?.errors?.['maxlength']">Work title must be 200 characters or less</div>
+                        </div>
+                    </div>
+
+                    <div class="row" *ngIf="isDigitalMarketing">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="clientName">Client Name *</label>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="clientName"
+                                    formControlName="clientName"
+                                    placeholder="Enter client name"
+                                    [class.is-invalid]="
+                                        saleOrderForm.get('clientName')?.invalid &&
+                                        saleOrderForm.get('clientName')?.touched
+                                    " />
+                                <div
+                                    class="invalid-feedback"
+                                    *ngIf="
+                                        saleOrderForm.get('clientName')?.invalid &&
+                                        saleOrderForm.get('clientName')?.touched
+                                    ">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="wordsOrPages">
+                                                <i class="fas fa-file-word"></i>
+                                                Words or Pages
+                                            </label>
+                                            <input
+                                                type="text"
+                                                class="form-control"
+                                                id="wordsOrPages"
+                                                formControlName="wordsOrPages"
+                                                placeholder="e.g., 500 words, 3 pages"
+                                                [class.is-invalid]="
+                                                    saleOrderForm.get('wordsOrPages')?.invalid &&
+                                                    saleOrderForm.get('wordsOrPages')?.touched
+                                                " />
+                                            <div
+                                                class="invalid-feedback"
+                                                *ngIf="
+                                                    saleOrderForm.get('wordsOrPages')?.invalid &&
+                                                    saleOrderForm.get('wordsOrPages')?.touched
+                                                ">
+                                                <div *ngIf="saleOrderForm.get('wordsOrPages')?.errors?.['maxlength']">
+                                                    Words or Pages must be 100 characters or less
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row" *ngIf="isDigitalMarketing">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label for="orderDetails">
+                                                <i class="fas fa-clipboard-list"></i>
+                                                Order Details
+                                            </label>
+                                            <textarea
+                                                class="form-control"
+                                                id="orderDetails"
+                                                formControlName="orderDetails"
+                                                placeholder="Detailed requirements and specifications for the order"
+                                                rows="4"
+                                                [class.is-invalid]="
+                                                    saleOrderForm.get('orderDetails')?.invalid &&
+                                                    saleOrderForm.get('orderDetails')?.touched
+                                                "></textarea>
+                                            <div
+                                                class="invalid-feedback"
+                                                *ngIf="
+                                                    saleOrderForm.get('orderDetails')?.invalid &&
+                                                    saleOrderForm.get('orderDetails')?.touched
+                                                ">
+                                                <div *ngIf="saleOrderForm.get('orderDetails')?.errors?.['maxlength']">
+                                                    Order Details must be 1000 characters or less
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row" *ngIf="isDigitalMarketing">
+                                    <div *ngIf="saleOrderForm.get('clientName')?.errors?.['required']">
+                                        Client name is required
+                                    </div>
+                                    <div *ngIf="saleOrderForm.get('clientName')?.errors?.['maxlength']">
+                                        Client name must be 200 characters or less
+                                    </div>
+                                </div>
                             </div>
-                          </td>
-                          <td *ngIf="isDigitalMarketing">
-                            <input type="text" 
-                                   class="form-control" 
-                                   formControlName="paperType"
-                                   placeholder="Paper Type"
-                                   [class.is-invalid]="item.get('paperType')?.invalid && item.get('paperType')?.touched">
-                            <div class="invalid-feedback" *ngIf="item.get('paperType')?.invalid && item.get('paperType')?.touched">
-                              <div *ngIf="item.get('paperType')?.errors?.['maxlength']">Paper type must be 100 characters or less</div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="deadline">Deadline</label>
+                                <input type="date" class="form-control" id="deadline" formControlName="deadline" />
                             </div>
-                          </td>
-                          <td *ngIf="isDigitalMarketing">
-                            <input type="text" 
-                                   class="form-control" 
-                                   formControlName="serviceType"
-                                   placeholder="Service Type"
-                                   [class.is-invalid]="item.get('serviceType')?.invalid && item.get('serviceType')?.touched">
-                            <div class="invalid-feedback" *ngIf="item.get('serviceType')?.invalid && item.get('serviceType')?.touched">
-                              <div *ngIf="item.get('serviceType')?.errors?.['maxlength']">Service type must be 100 characters or less</div>
+                        </div>
+                    </div>
+
+                    <div class="row" *ngIf="isDigitalMarketing">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="status">Status</label>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="status"
+                                    formControlName="status"
+                                    placeholder="Enter status"
+                                    [class.is-invalid]="
+                                        saleOrderForm.get('status')?.invalid && saleOrderForm.get('status')?.touched
+                                    " />
+                                <div
+                                    class="invalid-feedback"
+                                    *ngIf="
+                                        saleOrderForm.get('status')?.invalid && saleOrderForm.get('status')?.touched
+                                    ">
+                                    <div *ngIf="saleOrderForm.get('status')?.errors?.['maxlength']">
+                                        Status must be 50 characters or less
+                                    </div>
+                                </div>
                             </div>
-                          </td>
-                          <td *ngIf="isDigitalMarketing">
-                            <input type="number" 
-                                   class="form-control" 
-                                   formControlName="wordCount"
-                                   placeholder="Words Count"
-                                   min="0"
-                                   [class.is-invalid]="item.get('wordCount')?.invalid && item.get('wordCount')?.touched">
-                            <div class="invalid-feedback" *ngIf="item.get('wordCount')?.invalid && item.get('wordCount')?.touched">
-                              <div *ngIf="item.get('wordCount')?.errors?.['min']">Word count must be 0 or greater</div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="amountReceived">Advance Amount</label>
+                                <input
+                                    type="number"
+                                    class="form-control"
+                                    id="amountReceived"
+                                    formControlName="amountReceived"
+                                    min="0"
+                                    step="0.01"
+                                    [class.is-invalid]="
+                                        saleOrderForm.get('amountReceived')?.invalid &&
+                                        saleOrderForm.get('amountReceived')?.touched
+                                    " />
+                                <div
+                                    class="invalid-feedback"
+                                    *ngIf="
+                                        saleOrderForm.get('amountReceived')?.invalid &&
+                                        saleOrderForm.get('amountReceived')?.touched
+                                    ">
+                                    <div *ngIf="saleOrderForm.get('amountReceived')?.errors?.['min']">
+                                        Amount must be 0 or greater
+                                    </div>
+                                </div>
                             </div>
-                          </td>
-                          <td *ngIf="isDigitalMarketing">
-                            <input type="number" 
-                                   class="form-control" 
-                                   formControlName="pageCount"
-                                   placeholder="Page Count"
-                                   min="0"
-                                   [class.is-invalid]="item.get('pageCount')?.invalid && item.get('pageCount')?.touched">
-                            <div class="invalid-feedback" *ngIf="item.get('pageCount')?.invalid && item.get('pageCount')?.touched">
-                              <div *ngIf="item.get('pageCount')?.errors?.['min']">Page count must be 0 or greater</div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="totalPayment">
+                                    <i class="fas fa-money-bill-wave"></i>
+                                    Total Payment
+                                </label>
+                                <input
+                                    type="number"
+                                    class="form-control"
+                                    id="totalPayment"
+                                    formControlName="totalPayment"
+                                    min="0"
+                                    step="0.01"
+                                    [class.is-invalid]="
+                                        saleOrderForm.get('totalPayment')?.invalid &&
+                                        saleOrderForm.get('totalPayment')?.touched
+                                    " />
+                                <div
+                                    class="invalid-feedback"
+                                    *ngIf="
+                                        saleOrderForm.get('totalPayment')?.invalid &&
+                                        saleOrderForm.get('totalPayment')?.touched
+                                    ">
+                                    <div *ngIf="saleOrderForm.get('totalPayment')?.errors?.['min']">
+                                        Total Payment must be 0 or greater
+                                    </div>
+                                </div>
                             </div>
-                          </td>
-                          <td *ngIf="isDigitalMarketing">
-                            <input type="date" 
-                                   class="form-control" 
-                                   formControlName="itemDeadline"
-                                   placeholder="Item Deadline">
-                          </td>
-                          <td>
-                            <strong>${{ getLineTotal(i).toFixed(2) }}</strong>
-                          </td>
-                          <td>
-                            <button type="button" 
-                                    class="btn btn-danger btn-sm" 
-                                    (click)="removeItem(i)"
-                                    [disabled]="items.length === 1">
-                              <i class="fas fa-trash"></i>
-                            </button>
-                          </td>
-                        </tr>
-                        <tr *ngIf="items.length === 0">
-                          <td [attr.colspan]="isDigitalMarketing ? 12 : 6" class="text-center">No items added yet</td>
-                        </tr>
-                      </tbody>
-                      <tfoot *ngIf="items.length > 0">
-                        <tr>
-                          <td [attr.colspan]="isDigitalMarketing ? 10 : 4" class="text-right"><strong>{{ isDigitalMarketing ? 'Total Payment:' : 'Total Amount:' }}</strong></td>
-                          <td><strong>${{ getTotalAmount().toFixed(2) }}</strong></td>
-                          <td></td>
-                        </tr>
-                      </tfoot>
-                    </table>
-                  </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="paymentStatus">Payment Status</label>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="paymentStatus"
+                                    formControlName="paymentStatus"
+                                    placeholder="Enter payment status"
+                                    [class.is-invalid]="
+                                        saleOrderForm.get('paymentStatus')?.invalid &&
+                                        saleOrderForm.get('paymentStatus')?.touched
+                                    " />
+                                <div
+                                    class="invalid-feedback"
+                                    *ngIf="
+                                        saleOrderForm.get('paymentStatus')?.invalid &&
+                                        saleOrderForm.get('paymentStatus')?.touched
+                                    ">
+                                    <div *ngIf="saleOrderForm.get('paymentStatus')?.errors?.['maxlength']">
+                                        Payment status must be 50 characters or less
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row" *ngIf="isDigitalMarketing">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="sourceOfPayment">Source of Payment</label>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="sourceOfPayment"
+                                    formControlName="sourceOfPayment"
+                                    placeholder="Enter source of payment"
+                                    [class.is-invalid]="
+                                        saleOrderForm.get('sourceOfPayment')?.invalid &&
+                                        saleOrderForm.get('sourceOfPayment')?.touched
+                                    " />
+                                <div
+                                    class="invalid-feedback"
+                                    *ngIf="
+                                        saleOrderForm.get('sourceOfPayment')?.invalid &&
+                                        saleOrderForm.get('sourceOfPayment')?.touched
+                                    ">
+                                    <div *ngIf="saleOrderForm.get('sourceOfPayment')?.errors?.['maxlength']">
+                                        Source of payment must be 100 characters or less
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row" *ngIf="isDigitalMarketing">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="contactEmail">Contact Email</label>
+                                <input
+                                    type="email"
+                                    class="form-control"
+                                    id="contactEmail"
+                                    formControlName="contactEmail"
+                                    placeholder="Enter contact email"
+                                    [class.is-invalid]="
+                                        saleOrderForm.get('contactEmail')?.invalid &&
+                                        saleOrderForm.get('contactEmail')?.touched
+                                    " />
+                                <div
+                                    class="invalid-feedback"
+                                    *ngIf="
+                                        saleOrderForm.get('contactEmail')?.invalid &&
+                                        saleOrderForm.get('contactEmail')?.touched
+                                    ">
+                                    <div *ngIf="saleOrderForm.get('contactEmail')?.errors?.['email']">
+                                        Please enter a valid email address
+                                    </div>
+                                    <div *ngIf="saleOrderForm.get('contactEmail')?.errors?.['maxlength']">
+                                        Email must be 200 characters or less
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="contactPhone">Contact Phone</label>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="contactPhone"
+                                    formControlName="contactPhone"
+                                    placeholder="Enter contact phone"
+                                    [class.is-invalid]="
+                                        saleOrderForm.get('contactPhone')?.invalid &&
+                                        saleOrderForm.get('contactPhone')?.touched
+                                    " />
+                                <div
+                                    class="invalid-feedback"
+                                    *ngIf="
+                                        saleOrderForm.get('contactPhone')?.invalid &&
+                                        saleOrderForm.get('contactPhone')?.touched
+                                    ">
+                                    <div *ngIf="saleOrderForm.get('contactPhone')?.errors?.['maxlength']">
+                                        Phone must be 50 characters or less
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row" *ngIf="isDigitalMarketing">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="assignedTo">Task Assigned To</label>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="assignedTo"
+                                    formControlName="assignedTo"
+                                    placeholder="Enter assigned person"
+                                    [class.is-invalid]="
+                                        saleOrderForm.get('assignedTo')?.invalid &&
+                                        saleOrderForm.get('assignedTo')?.touched
+                                    " />
+                                <div
+                                    class="invalid-feedback"
+                                    *ngIf="
+                                        saleOrderForm.get('assignedTo')?.invalid &&
+                                        saleOrderForm.get('assignedTo')?.touched
+                                    ">
+                                    <div *ngIf="saleOrderForm.get('assignedTo')?.errors?.['maxlength']">
+                                        Assigned to must be 200 characters or less
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Traditional Customer fields for non-digital marketing companies -->
+                    <div class="row" *ngIf="!isDigitalMarketing">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="customerName">Customer Name *</label>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="customerName"
+                                    formControlName="customerName"
+                                    placeholder="Enter customer name"
+                                    [class.is-invalid]="
+                                        saleOrderForm.get('customerName')?.invalid &&
+                                        saleOrderForm.get('customerName')?.touched
+                                    " />
+                                <div
+                                    class="invalid-feedback"
+                                    *ngIf="
+                                        saleOrderForm.get('customerName')?.invalid &&
+                                        saleOrderForm.get('customerName')?.touched
+                                    ">
+                                    <div *ngIf="saleOrderForm.get('customerName')?.errors?.['required']">
+                                        Customer name is required
+                                    </div>
+                                    <div *ngIf="saleOrderForm.get('customerName')?.errors?.['maxlength']">
+                                        Customer name must be 200 characters or less
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="customerAddress">Customer Address</label>
+                                <textarea
+                                    class="form-control"
+                                    id="customerAddress"
+                                    formControlName="customerAddress"
+                                    placeholder="Enter customer address"
+                                    rows="3"
+                                    [class.is-invalid]="
+                                        saleOrderForm.get('customerAddress')?.invalid &&
+                                        saleOrderForm.get('customerAddress')?.touched
+                                    "></textarea>
+                                <div
+                                    class="invalid-feedback"
+                                    *ngIf="
+                                        saleOrderForm.get('customerAddress')?.invalid &&
+                                        saleOrderForm.get('customerAddress')?.touched
+                                    ">
+                                    <div *ngIf="saleOrderForm.get('customerAddress')?.errors?.['maxlength']">
+                                        Customer address must be 500 characters or less
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Order Items - only for non-digital marketing companies -->
+                    <div class="row" *ngIf="!isDigitalMarketing">
+                        <div class="col-md-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h4 class="card-title">Order Items</h4>
+                                    <button
+                                        type="button"
+                                        class="btn btn-success btn-sm float-right"
+                                        (click)="addItem()">
+                                        <i class="fas fa-plus"></i>
+                                        Add Item
+                                    </button>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered">
+                                            <thead>
+                                                <tr>
+                                                    <th>Product *</th>
+                                                    <th>Quantity *</th>
+                                                    <th>Date *</th>
+                                                    <th>Price *</th>
+                                                    <th *ngIf="isDigitalMarketing">Order Details</th>
+                                                    <th *ngIf="isDigitalMarketing">Paper Type</th>
+                                                    <th *ngIf="isDigitalMarketing">Service Type</th>
+                                                    <th *ngIf="isDigitalMarketing">Words or Pages</th>
+                                                    <th *ngIf="isDigitalMarketing">Page Count</th>
+                                                    <th *ngIf="isDigitalMarketing">Item Deadline</th>
+                                                    <th>Line Total</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody formArrayName="items">
+                                                <tr
+                                                    *ngFor="let item of items.controls; let i = index"
+                                                    [formGroupName]="i">
+                                                    <td>
+                                                        <select
+                                                            class="form-control"
+                                                            formControlName="productId"
+                                                            (change)="onProductChange(i, $event.target.value)"
+                                                            [class.is-invalid]="
+                                                                item.get('productId')?.invalid &&
+                                                                item.get('productId')?.touched
+                                                            ">
+                                                            <option value="">📦 Select Product</option>
+                                                            <option
+                                                                *ngFor="let product of products"
+                                                                [value]="product.id">
+                                                                {{ product.name }} - ${{ product.price }}
+                                                            </option>
+                                                        </select>
+                                                        <div
+                                                            class="invalid-feedback"
+                                                            *ngIf="
+                                                                item.get('productId')?.invalid &&
+                                                                item.get('productId')?.touched
+                                                            ">
+                                                            Product is required
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <input
+                                                            type="number"
+                                                            class="form-control"
+                                                            formControlName="quantity"
+                                                            min="1"
+                                                            [class.is-invalid]="
+                                                                item.get('quantity')?.invalid &&
+                                                                item.get('quantity')?.touched
+                                                            " />
+                                                        <div
+                                                            class="invalid-feedback"
+                                                            *ngIf="
+                                                                item.get('quantity')?.invalid &&
+                                                                item.get('quantity')?.touched
+                                                            ">
+                                                            <div *ngIf="item.get('quantity')?.errors?.['required']">
+                                                                Quantity is required
+                                                            </div>
+                                                            <div *ngIf="item.get('quantity')?.errors?.['min']">
+                                                                Quantity must be at least 1
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <input
+                                                            type="date"
+                                                            class="form-control"
+                                                            formControlName="date"
+                                                            [class.is-invalid]="
+                                                                item.get('date')?.invalid && item.get('date')?.touched
+                                                            " />
+                                                        <div
+                                                            class="invalid-feedback"
+                                                            *ngIf="
+                                                                item.get('date')?.invalid && item.get('date')?.touched
+                                                            ">
+                                                            Date is required
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <input
+                                                            type="number"
+                                                            class="form-control"
+                                                            formControlName="price"
+                                                            min="0"
+                                                            step="0.01"
+                                                            [class.is-invalid]="
+                                                                item.get('price')?.invalid && item.get('price')?.touched
+                                                            " />
+                                                        <div
+                                                            class="invalid-feedback"
+                                                            *ngIf="
+                                                                item.get('price')?.invalid && item.get('price')?.touched
+                                                            ">
+                                                            <div *ngIf="item.get('price')?.errors?.['required']">
+                                                                Price is required
+                                                            </div>
+                                                            <div *ngIf="item.get('price')?.errors?.['min']">
+                                                                Price must be 0 or greater
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td *ngIf="isDigitalMarketing">
+                                                        <input
+                                                            type="text"
+                                                            class="form-control"
+                                                            formControlName="workTitle"
+                                                            placeholder="Order Details"
+                                                            [class.is-invalid]="
+                                                                item.get('workTitle')?.invalid &&
+                                                                item.get('workTitle')?.touched
+                                                            " />
+                                                        <div
+                                                            class="invalid-feedback"
+                                                            *ngIf="
+                                                                item.get('workTitle')?.invalid &&
+                                                                item.get('workTitle')?.touched
+                                                            ">
+                                                            <div *ngIf="item.get('workTitle')?.errors?.['maxlength']">
+                                                                Work title must be 200 characters or less
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td *ngIf="isDigitalMarketing">
+                                                        <input
+                                                            type="text"
+                                                            class="form-control"
+                                                            formControlName="paperType"
+                                                            placeholder="Paper Type"
+                                                            [class.is-invalid]="
+                                                                item.get('paperType')?.invalid &&
+                                                                item.get('paperType')?.touched
+                                                            " />
+                                                        <div
+                                                            class="invalid-feedback"
+                                                            *ngIf="
+                                                                item.get('paperType')?.invalid &&
+                                                                item.get('paperType')?.touched
+                                                            ">
+                                                            <div *ngIf="item.get('paperType')?.errors?.['maxlength']">
+                                                                Paper type must be 100 characters or less
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td *ngIf="isDigitalMarketing">
+                                                        <input
+                                                            type="text"
+                                                            class="form-control"
+                                                            formControlName="serviceType"
+                                                            placeholder="Service Type"
+                                                            [class.is-invalid]="
+                                                                item.get('serviceType')?.invalid &&
+                                                                item.get('serviceType')?.touched
+                                                            " />
+                                                        <div
+                                                            class="invalid-feedback"
+                                                            *ngIf="
+                                                                item.get('serviceType')?.invalid &&
+                                                                item.get('serviceType')?.touched
+                                                            ">
+                                                            <div *ngIf="item.get('serviceType')?.errors?.['maxlength']">
+                                                                Service type must be 100 characters or less
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td *ngIf="isDigitalMarketing">
+                                                        <input
+                                                            type="number"
+                                                            class="form-control"
+                                                            formControlName="wordCount"
+                                                            placeholder="Words Count"
+                                                            min="0"
+                                                            [class.is-invalid]="
+                                                                item.get('wordCount')?.invalid &&
+                                                                item.get('wordCount')?.touched
+                                                            " />
+                                                        <div
+                                                            class="invalid-feedback"
+                                                            *ngIf="
+                                                                item.get('wordCount')?.invalid &&
+                                                                item.get('wordCount')?.touched
+                                                            ">
+                                                            <div *ngIf="item.get('wordCount')?.errors?.['min']">
+                                                                Word count must be 0 or greater
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td *ngIf="isDigitalMarketing">
+                                                        <input
+                                                            type="number"
+                                                            class="form-control"
+                                                            formControlName="pageCount"
+                                                            placeholder="Page Count"
+                                                            min="0"
+                                                            [class.is-invalid]="
+                                                                item.get('pageCount')?.invalid &&
+                                                                item.get('pageCount')?.touched
+                                                            " />
+                                                        <div
+                                                            class="invalid-feedback"
+                                                            *ngIf="
+                                                                item.get('pageCount')?.invalid &&
+                                                                item.get('pageCount')?.touched
+                                                            ">
+                                                            <div *ngIf="item.get('pageCount')?.errors?.['min']">
+                                                                Page count must be 0 or greater
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td *ngIf="isDigitalMarketing">
+                                                        <input
+                                                            type="date"
+                                                            class="form-control"
+                                                            formControlName="itemDeadline"
+                                                            placeholder="Item Deadline" />
+                                                    </td>
+                                                    <td>
+                                                        <strong>${{ getLineTotal(i).toFixed(2) }}</strong>
+                                                    </td>
+                                                    <td>
+                                                        <button
+                                                            type="button"
+                                                            class="btn btn-danger btn-sm"
+                                                            (click)="removeItem(i)"
+                                                            [disabled]="items.length === 1">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                                <tr *ngIf="items.length === 0">
+                                                    <td
+                                                        [attr.colspan]="isDigitalMarketing ? 12 : 6"
+                                                        class="text-center">
+                                                        No items added yet
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                            <tfoot *ngIf="items.length > 0">
+                                                <tr>
+                                                    <td [attr.colspan]="isDigitalMarketing ? 10 : 4" class="text-right">
+                                                        <strong>
+                                                            {{
+                                                                isDigitalMarketing ? 'Total Payment:' : 'Total Amount:'
+                                                            }}
+                                                        </strong>
+                                                    </td>
+                                                    <td>
+                                                        <strong>${{ getTotalAmount().toFixed(2) }}</strong>
+                                                    </td>
+                                                    <td></td>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-              </div>
-            </div>
-          </div>
+
+                <div class="card-footer">
+                    <button
+                        type="submit"
+                        class="btn btn-primary"
+                        [disabled]="saleOrderForm.invalid || (!isDigitalMarketing && items.length === 0)">
+                        <i class="fas fa-save"></i>
+                        {{ editingOrder ? 'Update' : 'Create' }} Order
+                    </button>
+                    <button type="button" class="btn btn-secondary ml-2" (click)="resetForm()">
+                        <i class="fas fa-times"></i>
+                        Cancel
+                    </button>
+                </div>
+            </form>
         </div>
-        
-        <div class="card-footer">
-          <button type="submit" 
-                  class="btn btn-primary" 
-                  [disabled]="saleOrderForm.invalid || (!isDigitalMarketing && items.length === 0)">
-            <i class="fas fa-save"></i> {{ editingOrder ? 'Update' : 'Create' }} Order
-          </button>
-          <button type="button" 
-                  class="btn btn-secondary ml-2" 
-                  (click)="resetForm()">
-            <i class="fas fa-times"></i> Cancel
-          </button>
-        </div>
-      </form>
     </div>
-  </div>
 </div>
 
 <!-- Sale Orders List -->
 <div class="row mt-4">
-  <div class="col-md-12">
-    <div class="card">
-      <div class="card-header">
-        <h3 class="card-title">Sale Orders</h3>
-      </div>
-      <div class="card-body">
-        <div class="table-responsive">
-          <table class="table table-bordered table-striped">
-            <thead>
-              <tr>
-                <th>Order ID</th>
-                <th>Date</th>
-                <th *ngIf="isDigitalMarketing">Client Name</th>
-                <th *ngIf="!isDigitalMarketing">Customer Name</th>
-                <th>Company</th>
-                <th *ngIf="isDigitalMarketing">Project</th>
-                <th *ngIf="isDigitalMarketing">Service Type</th>
-                <th *ngIf="isDigitalMarketing">Deadline</th>
-                <th *ngIf="isDigitalMarketing">Status</th>
-                <th *ngIf="isDigitalMarketing">Task Assigned To</th>
-                <th *ngIf="!isDigitalMarketing">Customer Address</th>
-                <th *ngIf="!isDigitalMarketing">Items Count</th>
-                <th *ngIf="isDigitalMarketing">Total Payment</th>
-                <th *ngIf="!isDigitalMarketing">Total Amount</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let order of saleOrders">
-                <td>{{ order.orderNumber }}</td>
-                <td>{{ order.orderDate | date:'short' }}</td>
-                <td *ngIf="isDigitalMarketing">{{ order.clientName || order.customerName || 'N/A' }}</td>
-                <td *ngIf="!isDigitalMarketing">{{ order.customerName }}</td>
-                <td>{{ order.companyName || 'Unknown' }}</td>
-                <td *ngIf="isDigitalMarketing">{{ order.projectName || 'N/A' }}</td>
-                <td *ngIf="isDigitalMarketing">{{ order.serviceTypeName || 'N/A' }}</td>
-                <td *ngIf="isDigitalMarketing">{{ order.deadline ? (order.deadline | date:'short') : 'N/A' }}</td>
-                <td *ngIf="isDigitalMarketing">{{ order.status || 'N/A' }}</td>
-                <td *ngIf="isDigitalMarketing">{{ order.assignedTo || 'N/A' }}</td>
-                <td *ngIf="!isDigitalMarketing">{{ order.customerAddress }}</td>
-                <td *ngIf="!isDigitalMarketing">{{ order.items.length }}</td>
-                <td *ngIf="isDigitalMarketing">${{ (order.totalPayment || order.totalAmount || 0).toFixed(2) }}</td>
-                <td *ngIf="!isDigitalMarketing">${{ order.totalAmount.toFixed(2) }}</td>
-                <td>
-                  <button type="button" 
-                          class="btn btn-warning btn-sm mr-2" 
-                          (click)="editOrder(order)">
-                    <i class="fas fa-edit"></i>
-                  </button>
-                  <button type="button" 
-                          class="btn btn-danger btn-sm" 
-                          (click)="deleteOrder(order)">
-                    <i class="fas fa-trash"></i>
-                  </button>
-                </td>
-              </tr>
-              <tr *ngIf="saleOrders.length === 0">
-                <td [attr.colspan]="isDigitalMarketing ? 9 : 7" class="text-center">No sale orders found</td>
-              </tr>
-            </tbody>
-          </table>
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Sale Orders</h3>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Date</th>
+                                <th *ngIf="isDigitalMarketing">Client Name</th>
+                                <th *ngIf="!isDigitalMarketing">Customer Name</th>
+                                <th>Company</th>
+                                <th *ngIf="isDigitalMarketing">Project</th>
+                                <th *ngIf="isDigitalMarketing">Service Type</th>
+                                <th *ngIf="isDigitalMarketing">Deadline</th>
+                                <th *ngIf="isDigitalMarketing">Status</th>
+                                <th *ngIf="isDigitalMarketing">Task Assigned To</th>
+                                <th *ngIf="!isDigitalMarketing">Customer Address</th>
+                                <th *ngIf="!isDigitalMarketing">Items Count</th>
+                                <th *ngIf="isDigitalMarketing">Total Payment</th>
+                                <th *ngIf="!isDigitalMarketing">Total Amount</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let order of saleOrders">
+                                <td>{{ order.orderNumber }}</td>
+                                <td>{{ order.orderDate | date: 'short' }}</td>
+                                <td *ngIf="isDigitalMarketing">
+                                    {{ order.clientName || order.customerName || 'N/A' }}
+                                </td>
+                                <td *ngIf="!isDigitalMarketing">{{ order.customerName }}</td>
+                                <td>{{ order.companyName || 'Unknown' }}</td>
+                                <td *ngIf="isDigitalMarketing">{{ order.projectName || 'N/A' }}</td>
+                                <td *ngIf="isDigitalMarketing">{{ order.serviceTypeName || 'N/A' }}</td>
+                                <td *ngIf="isDigitalMarketing">
+                                    {{ order.deadline ? (order.deadline | date: 'short') : 'N/A' }}
+                                </td>
+                                <td *ngIf="isDigitalMarketing">{{ order.status || 'N/A' }}</td>
+                                <td *ngIf="isDigitalMarketing">{{ order.assignedTo || 'N/A' }}</td>
+                                <td *ngIf="!isDigitalMarketing">{{ order.customerAddress }}</td>
+                                <td *ngIf="!isDigitalMarketing">{{ order.items.length }}</td>
+                                <td *ngIf="isDigitalMarketing">
+                                    ${{ (order.totalPayment || order.totalAmount || 0).toFixed(2) }}
+                                </td>
+                                <td *ngIf="!isDigitalMarketing">${{ order.totalAmount.toFixed(2) }}</td>
+                                <td>
+                                    <button
+                                        type="button"
+                                        class="btn btn-warning btn-sm mr-2"
+                                        (click)="editOrder(order)">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-danger btn-sm" (click)="deleteOrder(order)">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr *ngIf="saleOrders.length === 0">
+                                <td [attr.colspan]="isDigitalMarketing ? 9 : 7" class="text-center">
+                                    No sale orders found
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
 </div>

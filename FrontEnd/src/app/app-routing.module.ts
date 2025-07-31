@@ -13,33 +13,38 @@ import { ProjectListComponent } from './components/project/project-list.componen
 import { ProjectFormComponent } from './components/project/project-form.component';
 import { ProjectDetailComponent } from './components/project/project-detail.component';
 import { AuthGuard } from './guards/auth.guard';
+import { SuperAdminGuard } from './guards/super-admin.guard';
 
 const routes: Routes = [
-  { path: 'login', component: LoginComponent },
-  { path: 'register', component: RegistrationComponent },
-  { 
-    path: '', 
-    component: MainLayoutComponent,
-    canActivate: [AuthGuard],
-    children: [
-      { path: '', component: DashboardComponent },
-      { path: 'dashboard', component: DashboardComponent },
-      { path: 'transactions/sale-orders', component: SaleOrderComponent },
-      { path: 'masters/products', component: ProductComponent },
-      { path: 'masters/customers', component: CustomerComponent },
-      { path: 'masters/projects', component: ProjectListComponent },
-      { path: 'masters/projects/create', component: ProjectFormComponent },
-      { path: 'masters/projects/edit/:id', component: ProjectFormComponent },
-      { path: 'masters/projects/:id', component: ProjectDetailComponent },
-      { path: 'administration/company-setup', component: CompanySetupComponent },
-      { path: 'administration/user-management', component: UserManagementComponent },
-    ]
-  },
-  { path: '**', redirectTo: '/login' }
+    { path: 'login', component: LoginComponent },
+    { path: 'register', component: RegistrationComponent },
+    {
+        path: '',
+        component: MainLayoutComponent,
+        canActivate: [AuthGuard],
+        children: [
+            { path: '', component: DashboardComponent },
+            { path: 'dashboard', component: DashboardComponent },
+            { path: 'transactions/sale-orders', component: SaleOrderComponent },
+            { path: 'masters/products', component: ProductComponent },
+            { path: 'masters/customers', component: CustomerComponent },
+            { path: 'masters/projects', component: ProjectListComponent },
+            { path: 'masters/projects/create', component: ProjectFormComponent },
+            { path: 'masters/projects/edit/:id', component: ProjectFormComponent },
+            { path: 'masters/projects/:id', component: ProjectDetailComponent },
+            { path: 'administration/company-setup', component: CompanySetupComponent, canActivate: [SuperAdminGuard] },
+            {
+                path: 'administration/user-management',
+                component: UserManagementComponent,
+                canActivate: [SuperAdminGuard],
+            },
+        ],
+    },
+    { path: '**', redirectTo: '/login' },
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+    imports: [RouterModule.forRoot(routes)],
+    exports: [RouterModule],
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}

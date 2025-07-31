@@ -84,7 +84,7 @@ namespace SimpleApi.Data
                 entity.Property(e => e.Email).IsRequired().HasMaxLength(200);
                 entity.Property(e => e.PasswordHash).IsRequired();
                 
-                entity.HasOne<Company>()
+                entity.HasOne(e => e.Company)
                       .WithMany()
                       .HasForeignKey(e => e.CompanyId)
                       .OnDelete(DeleteBehavior.Restrict);

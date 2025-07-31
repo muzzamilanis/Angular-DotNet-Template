@@ -52,7 +52,8 @@ namespace SimpleApi.Services
                 EmailAddress = user.Email,
                 Name = user.Name,
 				Surname = "", // User model doesn't have surname, keeping empty for compatibility
-				CompanyId = user.CompanyId.ToString() // Assuming CompanyId is a string, adjust as necessary
+				CompanyId = user.CompanyId.ToString(), // Assuming CompanyId is a string, adjust as necessary
+                IsSuperAdmin = user.IsSuperAdmin
 			};
 
             var token = GenerateJwtToken(userInfo);
@@ -100,7 +101,8 @@ namespace SimpleApi.Services
                     EmailAddress = user.Email,
                     Name = user.Name,
                     Surname = "", // User model doesn't have surname, keeping empty for compatibility
-                    CompanyId = user.CompanyId.ToString() // Assuming CompanyId is a string, adjust as necessary
+                    CompanyId = user.CompanyId.ToString(), // Assuming CompanyId is a string, adjust as necessary
+                    IsSuperAdmin = user.IsSuperAdmin
 				},
                 Application = new ApplicationInfoDto
                 {
@@ -121,7 +123,8 @@ namespace SimpleApi.Services
                     new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                     new Claim(ClaimTypes.Name, user.UserName),
                     new Claim(ClaimTypes.Email, user.EmailAddress),
-                    new Claim("CompanyId", user.CompanyId)
+                    new Claim("CompanyId", user.CompanyId),
+                    new Claim("IsSuperAdmin", user.IsSuperAdmin.ToString())
                 }),
                 Expires = DateTime.UtcNow.AddHours(24),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),

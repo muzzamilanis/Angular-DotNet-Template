@@ -1,153 +1,148 @@
 <!-- Alert Messages -->
-<div class="alert alert-dismissible fade show" 
-     [class]="'alert-' + alertType" 
-     *ngIf="showAlert"
-     role="alert">
-  {{ alertMessage }}
-  <button type="button" class="btn-close" (click)="closeAlert()"></button>
+<div class="alert alert-dismissible fade show" [class]="'alert-' + alertType" *ngIf="showAlert" role="alert">
+    {{ alertMessage }}
+    <button type="button" class="btn-close" (click)="closeAlert()"></button>
 </div>
 
 <!-- Project Detail Card -->
 <div class="row justify-content-center">
-  <div class="col-lg-10">
-    <div class="card card-primary" *ngIf="!loading && project">
-      <div class="card-header">
-        <h3 class="card-title">
-          <i class="fas fa-project-diagram mr-2"></i>
-          Project Details
-        </h3>
-        <div class="card-tools">
-          <button type="button" 
-                  class="btn btn-outline-light btn-sm mr-2" 
-                  (click)="backToList()">
-            <i class="fas fa-arrow-left mr-1"></i>
-            Back to Projects
-          </button>
-          <button type="button" 
-                  class="btn btn-success btn-sm" 
-                  (click)="editProject()">
-            <i class="fas fa-edit mr-1"></i>
-            Edit Project
-          </button>
-        </div>
-      </div>
-
-      <div class="card-body">
-        <div class="row">
-          <div class="col-md-8">
-            <!-- Project Information -->
-            <div class="project-info">
-              <h2 class="project-title">{{ project.projectName }}</h2>
-              
-              <div class="status-badges mb-3">
-                <span class="badge badge-lg"
-                      [ngClass]="'badge-' + getStatusClass(project.projectStatus)">
-                  {{ getStatusText(project.projectStatus) }}
-                </span>
-                <span class="badge badge-lg ml-2"
-                      [ngClass]="project.isActive ? 'badge-success' : 'badge-secondary'">
-                  {{ project.isActive ? 'Active' : 'Inactive' }}
-                </span>
-              </div>
-
-              <div class="description-section" *ngIf="project.projectDescription">
-                <h5>Description</h5>
-                <p class="description-text">{{ project.projectDescription }}</p>
-              </div>
-
-              <div class="description-section" *ngIf="!project.projectDescription">
-                <p class="text-muted font-italic">No description provided</p>
-              </div>
-            </div>
-          </div>
-
-          <div class="col-md-4">
-            <!-- Project Metadata -->
-            <div class="info-box bg-light">
-              <div class="info-box-content">
-                <h5 class="info-box-title">Project Information</h5>
-                
-                <div class="info-item">
-                  <strong>Company:</strong>
-                  <span class="text-muted ml-2">{{ project.companyName || 'N/A' }}</span>
+    <div class="col-lg-10">
+        <div class="card card-primary" *ngIf="!loading && project">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-project-diagram mr-2"></i>
+                    Project Details
+                </h3>
+                <div class="card-tools">
+                    <button type="button" class="btn btn-outline-light btn-sm mr-2" (click)="backToList()">
+                        <i class="fas fa-arrow-left mr-1"></i>
+                        Back to Projects
+                    </button>
+                    <button type="button" class="btn btn-success btn-sm" (click)="editProject()">
+                        <i class="fas fa-edit mr-1"></i>
+                        Edit Project
+                    </button>
                 </div>
-
-                <div class="info-item">
-                  <strong>Created:</strong>
-                  <span class="text-muted ml-2">{{ project.createdDate | date:'medium' }}</span>
-                </div>
-
-                <div class="info-item">
-                  <strong>Last Updated:</strong>
-                  <span class="text-muted ml-2">{{ project.updatedDate | date:'medium' }}</span>
-                </div>
-
-                <div class="info-item">
-                  <strong>Project ID:</strong>
-                  <span class="text-muted ml-2">#{{ project.id }}</span>
-                </div>
-              </div>
             </div>
 
-            <!-- Quick Actions -->
-            <div class="mt-4">
-              <h6>Quick Actions</h6>
-              <div class="btn-group-vertical w-100">
-                <a class="btn btn-outline-primary btn-sm"
-                   [routerLink]="['/transactions/sale-orders']"
-                   [queryParams]="{ projectId: project.id }">
-                  <i class="fas fa-list mr-1"></i>
-                  View Related Orders
-                </a>
-                <button type="button" 
-                        class="btn btn-outline-info btn-sm mt-2"
-                        (click)="editProject()">
-                  <i class="fas fa-edit mr-1"></i>
-                  Edit Project
-                </button>
-              </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-8">
+                        <!-- Project Information -->
+                        <div class="project-info">
+                            <h2 class="project-title">{{ project.projectName }}</h2>
+
+                            <div class="status-badges mb-3">
+                                <span
+                                    class="badge badge-lg"
+                                    [ngClass]="'badge-' + getStatusClass(project.projectStatus)">
+                                    {{ getStatusText(project.projectStatus) }}
+                                </span>
+                                <span
+                                    class="badge badge-lg ml-2"
+                                    [ngClass]="project.isActive ? 'badge-success' : 'badge-secondary'">
+                                    {{ project.isActive ? 'Active' : 'Inactive' }}
+                                </span>
+                            </div>
+
+                            <div class="description-section" *ngIf="project.projectDescription">
+                                <h5>Description</h5>
+                                <p class="description-text">{{ project.projectDescription }}</p>
+                            </div>
+
+                            <div class="description-section" *ngIf="!project.projectDescription">
+                                <p class="text-muted font-italic">No description provided</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <!-- Project Metadata -->
+                        <div class="info-box bg-light">
+                            <div class="info-box-content">
+                                <h5 class="info-box-title">Project Information</h5>
+
+                                <div class="info-item">
+                                    <strong>Company:</strong>
+                                    <span class="text-muted ml-2">{{ project.companyName || 'N/A' }}</span>
+                                </div>
+
+                                <div class="info-item">
+                                    <strong>Created:</strong>
+                                    <span class="text-muted ml-2">{{ project.createdDate | date: 'medium' }}</span>
+                                </div>
+
+                                <div class="info-item">
+                                    <strong>Last Updated:</strong>
+                                    <span class="text-muted ml-2">{{ project.updatedDate | date: 'medium' }}</span>
+                                </div>
+
+                                <div class="info-item">
+                                    <strong>Project ID:</strong>
+                                    <span class="text-muted ml-2">#{{ project.id }}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Quick Actions -->
+                        <div class="mt-4">
+                            <h6>Quick Actions</h6>
+                            <div class="btn-group-vertical w-100">
+                                <a
+                                    class="btn btn-outline-primary btn-sm"
+                                    [routerLink]="['/transactions/sale-orders']"
+                                    [queryParams]="{ projectId: project.id }">
+                                    <i class="fas fa-list mr-1"></i>
+                                    View Related Orders
+                                </a>
+                                <button type="button" class="btn btn-outline-info btn-sm mt-2" (click)="editProject()">
+                                    <i class="fas fa-edit mr-1"></i>
+                                    Edit Project
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
-      </div>
-    </div>
 
-    <!-- Loading State -->
-    <div class="card card-primary" *ngIf="loading">
-      <div class="card-header">
-        <h3 class="card-title">
-          <i class="fas fa-project-diagram mr-2"></i>
-          Project Details
-        </h3>
-      </div>
-      <div class="card-body text-center">
-        <div class="spinner-border text-primary" role="status">
-          <span class="sr-only">Loading...</span>
+        <!-- Loading State -->
+        <div class="card card-primary" *ngIf="loading">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-project-diagram mr-2"></i>
+                    Project Details
+                </h3>
+            </div>
+            <div class="card-body text-center">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+                <p class="mt-2 text-muted">Loading project details...</p>
+            </div>
         </div>
-        <p class="mt-2 text-muted">Loading project details...</p>
-      </div>
-    </div>
 
-    <!-- Error State -->
-    <div class="card card-danger" *ngIf="!loading && !project">
-      <div class="card-header">
-        <h3 class="card-title">
-          <i class="fas fa-exclamation-triangle mr-2"></i>
-          Project Not Found
-        </h3>
-      </div>
-      <div class="card-body text-center">
-        <div class="text-muted">
-          <i class="fas fa-exclamation-triangle fa-3x mb-3"></i>
-          <br>
-          Project not found or you don't have access to view it.
-          <br><br>
-          <button type="button" class="btn btn-primary" (click)="backToList()">
-            <i class="fas fa-arrow-left mr-1"></i>
-            Back to Projects
-          </button>
+        <!-- Error State -->
+        <div class="card card-danger" *ngIf="!loading && !project">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-exclamation-triangle mr-2"></i>
+                    Project Not Found
+                </h3>
+            </div>
+            <div class="card-body text-center">
+                <div class="text-muted">
+                    <i class="fas fa-exclamation-triangle fa-3x mb-3"></i>
+                    <br />
+                    Project not found or you don't have access to view it.
+                    <br />
+                    <br />
+                    <button type="button" class="btn btn-primary" (click)="backToList()">
+                        <i class="fas fa-arrow-left mr-1"></i>
+                        Back to Projects
+                    </button>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
 </div>
