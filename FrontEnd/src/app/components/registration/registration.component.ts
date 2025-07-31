@@ -81,8 +81,9 @@ export class RegistrationComponent implements OnInit {
     });
   }
 
-  onBusinessNatureChange(businessNatureId: number): void {
-    this.selectedBusinessNature = this.businessNatures.filter(bn => bn.id === businessNatureId)[0] || null;
+  onBusinessNatureChange(businessNatureId: string): void {
+    const id = Number(businessNatureId);
+    this.selectedBusinessNature = this.businessNatures.filter(bn => bn.id === id)[0] || null;
   }
 
   nextStep(): void {

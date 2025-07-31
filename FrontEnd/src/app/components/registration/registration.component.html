@@ -147,7 +147,7 @@
               <select 
                 class="form-control" 
                 formControlName="businessNatureId"
-                (change)="onBusinessNatureChange($event.target.value)"
+                (change)="onBusinessNatureChange($any($event.target).value)"
                 [class.is-invalid]="companyForm.get('businessNatureId')?.invalid && companyForm.get('businessNatureId')?.touched">
                 <option value="">Select Business Type</option>
                 <option *ngFor="let businessNature of businessNatures" [value]="businessNature.id">
