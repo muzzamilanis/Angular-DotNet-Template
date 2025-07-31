@@ -4,6 +4,8 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { RegistrationService, RegistrationDto } from '../../services/registration.service';
 import { NotificationService } from '../../services/notification.service';
+import { BusinessNatureService } from '../../services/business-nature.service';
+import { BusinessNature } from '../../models/multi-tenant.model';
 
 @Component({
   selector: 'app-registration',
@@ -17,17 +19,21 @@ export class RegistrationComponent implements OnInit {
   companyForm!: FormGroup;
   loading = false;
   error = '';
+  businessNatures: BusinessNature[] = [];
+  selectedBusinessNature: BusinessNature | null = null;
 
   constructor(
     private formBuilder: FormBuilder,
     private authService: AuthService,
     private registrationService: RegistrationService,
     private router: Router,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private businessNatureService: BusinessNatureService
   ) {}
 
   ngOnInit(): void {
     this.initializeForms();
+    this.loadBusinessNatures();
   }
 
   private initializeForms(): void {
@@ -47,7 +53,8 @@ export class RegistrationComponent implements OnInit {
       address: ['', [Validators.maxLength(500)]],
       phone: ['', [Validators.maxLength(50)]],
       email: ['', [Validators.email, Validators.maxLength(200)]],
-      contactPerson: ['', [Validators.maxLength(100)]]
+      contactPerson: ['', [Validators.maxLength(100)]],
+      businessNatureId: ['', [Validators.required]]
     });
   }
 
@@ -61,6 +68,21 @@ export class RegistrationComponent implements OnInit {
     }
     
     return null;
+  }
+
+  private loadBusinessNatures(): void {
+    this.businessNatureService.getAll().subscribe({
+      next: (businessNatures) => {
+        this.businessNatures = businessNatures;
+      },
+      error: (error) => {
+        console.error('Error loading business natures:', error);
+      }
+    });
+  }
+
+  onBusinessNatureChange(businessNatureId: number): void {
+    this.selectedBusinessNature = this.businessNatures.filter(bn => bn.id === businessNatureId)[0] || null;
   }
 
   nextStep(): void {
@@ -98,7 +120,8 @@ export class RegistrationComponent implements OnInit {
           address: this.companyForm.value.address,
           phone: this.companyForm.value.phone,
           email: this.companyForm.value.email,
-          contactPerson: this.companyForm.value.contactPerson
+          contactPerson: this.companyForm.value.contactPerson,
+          businessNatureId: this.companyForm.value.businessNatureId
         }
       };
 

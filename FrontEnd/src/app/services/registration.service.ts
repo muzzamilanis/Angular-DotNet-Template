@@ -15,6 +15,7 @@ export interface CompanyRegistrationDto {
   phone?: string;
   email?: string;
   contactPerson?: string;
+  businessNatureId?: number;
 }
 
 export interface RegistrationDto {
