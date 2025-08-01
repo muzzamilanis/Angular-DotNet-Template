@@ -10,7 +10,8 @@ namespace SimpleApi.Services
     {
         Task<CompanyDto> GetCurrentUserCompanyAsync(int companyId);
         Task<CompanyDto> GetByIdAsync(int id);
-        Task<CompanyDto> CreateAsync(CreateCompanyDto input);
+		Task<List<CompanyDto>> Get();
+		Task<CompanyDto> CreateAsync(CreateCompanyDto input);
         Task<CompanyDto> UpdateAsync(UpdateCompanyDto input);
         Task DeleteAsync(int id);
     }
@@ -48,7 +49,18 @@ namespace SimpleApi.Services
             return _mapper.Map<CompanyDto>(company);
         }
 
-        public async Task<CompanyDto> CreateAsync(CreateCompanyDto input)
+		public async Task<List<CompanyDto>> Get()
+		{
+			var company = await _context.Companies.OrderBy(c=>c.Name).ToListAsync();
+			if (company == null)
+			{
+				throw new ArgumentException("Company not found");
+			}
+
+			return _mapper.Map<List<CompanyDto>>(company);
+		}
+
+		public async Task<CompanyDto> CreateAsync(CreateCompanyDto input)
         {
             var company = _mapper.Map<Company>(input);
             company.CreatedAt = DateTime.UtcNow;

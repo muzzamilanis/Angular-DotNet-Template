@@ -60,7 +60,31 @@ namespace SimpleApi.Controllers
             }
         }
 
-        [HttpGet("{id}")]
+		[HttpGet()]
+		public async Task<ActionResult<List<CompanyDto>>> Get()
+		{
+			try
+			{
+				// Only Super Admins can access any company by ID
+				if (!GetCurrentUserIsSuperAdmin())
+				{
+					return Forbid("Only Super Admins can access company details by ID.");
+				}
+
+				var result = await _companyService.Get();
+				return Ok(result);
+			}
+			catch (ArgumentException ex)
+			{
+				return NotFound(ex.Message);
+			}
+			catch (Exception ex)
+			{
+				return BadRequest(ex.Message);
+			}
+		}
+
+		[HttpGet("{id}")]
         public async Task<ActionResult<CompanyDto>> Get(int id)
         {
             try

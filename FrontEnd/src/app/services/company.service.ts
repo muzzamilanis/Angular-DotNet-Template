@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { Company, CreateCompanyDto, UpdateCompanyDto } from '../models/company.model';
 import { CompanyProfile, CreateCompanyProfileRequest, BusinessNature } from '../models/multi-tenant.model';
 import { environment } from '../../environments/environment';
@@ -9,7 +10,7 @@ import { environment } from '../../environments/environment';
     providedIn: 'root',
 })
 export class CompanyService {
-    private apiUrl = `${environment.apiUrl}/api/Companies`;
+    private apiUrl = `${environment.apiUrl}/Companies`;
 
     constructor(private http: HttpClient) {}
 
@@ -36,6 +37,18 @@ export class CompanyService {
     }
 
     getAll(): Observable<Company[]> {
+        return this.http.get<Company[]>(this.apiUrl).pipe(catchError(() => of(this.getMockCompanies())));
+    }
+
+    getById(id: number): Observable<any> {
+        return this.http.get<any>(`${this.apiUrl}/${id}`);
+    }
+
+    create(company: CreateCompanyDto): Observable<Company> {
+        return this.http.post<Company>(this.apiUrl, company);
+    }
+
+    private getMockCompanies(): Company[] {
         // Mock data for demonstration - can be replaced with real API call
         const mockCompanies: Company[] = [
             {
@@ -73,18 +86,6 @@ export class CompanyService {
                 createdDate: new Date('2024-02-15'),
             },
         ];
-
-        return new Observable((observer) => {
-            observer.next(mockCompanies);
-            observer.complete();
-        });
-    }
-
-    getById(id: number): Observable<any> {
-        return this.http.get<any>(`${this.apiUrl}/${id}`);
-    }
-
-    create(company: CreateCompanyDto): Observable<Company> {
-        return this.http.post<Company>(this.apiUrl, company);
+        return mockCompanies;
     }
 }

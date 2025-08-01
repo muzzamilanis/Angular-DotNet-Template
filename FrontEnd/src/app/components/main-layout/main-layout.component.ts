@@ -66,10 +66,39 @@ export class MainLayoutComponent implements OnInit {
         this.sidebarCollapsed = !this.sidebarCollapsed;
     }
 
-    logout(): void {
-        this.authService.logout();
-        this.router.navigate(['/login']);
+    // Logout functionality
+  logout(): void {
+    // Show confirmation dialog (optional)
+    if (confirm('Are you sure you want to logout?')) {
+      this.authService.logout();
+      this.router.navigate(['/login']);
     }
+  }
+
+  // Enhanced logout with loading state
+  async logoutWithLoading(): Promise<void> {
+    try {
+      // Set loading state
+      this.isLoadingUser = true;
+      
+      // Call logout service
+      await this.authService.logout();
+      
+      // Clear current user
+      this.currentUser = null;
+      
+      // Navigate to login
+      this.router.navigate(['/login']);
+      
+    } catch (error) {
+      console.error('Logout error:', error);
+      // Force logout even if service fails
+      this.authService.clearToken();
+      this.router.navigate(['/login']);
+    } finally {
+      this.isLoadingUser = false;
+    }
+  }
 
     // Toggle menu state and prevent default navigation
     toggleMenuState(menu: string, event: Event): void {
