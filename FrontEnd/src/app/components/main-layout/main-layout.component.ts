@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { NotificationService } from '../../services/notification.service';
 
 @Component({
     selector: 'app-main-layout',
@@ -18,7 +19,8 @@ export class MainLayoutComponent implements OnInit {
 
     constructor(
         private router: Router,
-        private authService: AuthService
+        private authService: AuthService,
+        private notificationService: NotificationService
     ) {}
 
     ngOnInit(): void {
@@ -66,39 +68,87 @@ export class MainLayoutComponent implements OnInit {
         this.sidebarCollapsed = !this.sidebarCollapsed;
     }
 
-    // Logout functionality
-  logout(): void {
-    // Show confirmation dialog (optional)
-    if (confirm('Are you sure you want to logout?')) {
-      this.authService.logout();
-      this.router.navigate(['/login']);
+    // Enhanced version with better UX
+    logout(): void {
+        this.notificationService
+            .showConfirm(
+                'Are you sure you want to logout? Your current session will be terminated.',
+                'Logout Confirmation'
+            )
+            .then((confirmed) => {
+                if (confirmed) {
+                    // Positive case - User confirmed logout
+                    this.performLogout();
+                } else {
+                    // Negative case - User cancelled logout
+                    this.handleLogoutCancellation();
+                }
+            })
+            .catch((error) => {
+                // Error case - Dialog error
+                console.error('Confirmation dialog error:', error);
+                this.notificationService.showError('Unable to show logout confirmation', 'Error');
+            });
     }
-  }
 
-  // Enhanced logout with loading state
-  async logoutWithLoading(): Promise<void> {
-    try {
-      // Set loading state
-      this.isLoadingUser = true;
-      
-      // Call logout service
-      await this.authService.logout();
-      
-      // Clear current user
-      this.currentUser = null;
-      
-      // Navigate to login
-      this.router.navigate(['/login']);
-      
-    } catch (error) {
-      console.error('Logout error:', error);
-      // Force logout even if service fails
-      this.authService.clearToken();
-      this.router.navigate(['/login']);
-    } finally {
-      this.isLoadingUser = false;
+    private performLogout(): void {
+        console.log('Performing logout...');
+
+        // Show loading state
+        this.isLoadingUser = true;
+
+        // Optional: Show loading notification
+        this.notificationService.showInfo('Signing you out...', 'Please wait');
+
+        this.authService.logout().subscribe({
+            next: (result) => {
+                console.log('Logout successful:', result);
+
+                // Show success message
+                this.notificationService.showSuccess(
+                    'You have been successfully logged out. Thank you for using our application!',
+                    'Goodbye! 👋'
+                );
+
+                // Clear user data and navigate
+                this.currentUser = null;
+                this.isLoadingUser = false;
+
+                // Small delay for better UX
+                setTimeout(() => {
+                    this.router.navigate(['/login']);
+                }, 1000);
+            },
+            error: (error) => {
+                console.error('Logout error:', error);
+
+                // Show warning for forced logout
+                this.notificationService.showWarning(
+                    'There was an issue during logout, but your session has been cleared for security.',
+                    'Session Ended'
+                );
+
+                // Force logout
+                this.authService.clearToken();
+                this.currentUser = null;
+                this.isLoadingUser = false;
+                this.router.navigate(['/login']);
+            },
+        });
     }
-  }
+
+    private handleLogoutCancellation(): void {
+        console.log('Logout cancelled by user');
+
+        // Option 1: Show subtle info message
+        this.notificationService.showInfo('Logout cancelled. Welcome back!', 'Stayed Logged In');
+
+        // Option 2: No notification (silent cancellation)
+        // Just log it and continue
+
+        // Option 3: Show a friendly message
+        // this.notificationService.showSuccess('Great! You\'re still here with us.', 'Logout Cancelled');
+    }
 
     // Toggle menu state and prevent default navigation
     toggleMenuState(menu: string, event: Event): void {

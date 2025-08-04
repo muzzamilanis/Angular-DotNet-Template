@@ -69,7 +69,6 @@ export class AuthService {
       try {
         // Clear tokens from storage
         this.clearToken();
-        
         // Optionally call backend logout
         // this.http.post(`${this.apiUrl}/auth/logout`, {}).subscribe();
         
