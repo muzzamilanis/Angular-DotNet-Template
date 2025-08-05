@@ -53,7 +53,7 @@ export class UserManagementComponent implements OnInit {
         this.isLoading = true;
         this.userService.getAll().subscribe({
             next: (users) => {
-                console.log('users: ', users)
+                console.log('users: ', users);
                 this.users = users;
                 this.isLoading = false;
             },

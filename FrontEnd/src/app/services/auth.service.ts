@@ -63,31 +63,31 @@ export class AuthService {
     }
 
     // Logout method
-  logout(): Observable<any> {
-    // Call backend logout endpoint (if exists)
-    return new Observable(observer => {
-      try {
-        // Clear tokens from storage
-        this.clearToken();
-        // Optionally call backend logout
-        // this.http.post(`${this.apiUrl}/auth/logout`, {}).subscribe();
-        
-        observer.next({ success: true });
-        observer.complete();
-      } catch (error) {
-        observer.error(error);
-      }
-    });
-  }
+    logout(): Observable<any> {
+        // Call backend logout endpoint (if exists)
+        return new Observable((observer) => {
+            try {
+                // Clear tokens from storage
+                this.clearToken();
+                // Optionally call backend logout
+                // this.http.post(`${this.apiUrl}/auth/logout`, {}).subscribe();
 
-  // Clear authentication token
-  clearToken(): void {
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('token');
-    localStorage.removeItem('access_token');
-    sessionStorage.removeItem('authToken');
-    sessionStorage.removeItem('token');
-  }
+                observer.next({ success: true });
+                observer.complete();
+            } catch (error) {
+                observer.error(error);
+            }
+        });
+    }
+
+    // Clear authentication token
+    clearToken(): void {
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('token');
+        localStorage.removeItem('access_token');
+        sessionStorage.removeItem('authToken');
+        sessionStorage.removeItem('token');
+    }
 
     isAuthenticated(): boolean {
         return !!localStorage.getItem('token');

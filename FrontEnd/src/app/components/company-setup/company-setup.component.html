@@ -6,13 +6,15 @@
                 <div class="card-header">
                     <h3 class="card-title">
                         <i class="fas fa-building mr-2"></i>
-                        {{ isEditing ? 'Edit Company' : 'Company Setup' }}
+                        {{ isProfileMode ? 'Company Profile' : isEditing ? 'Edit Company' : 'Company Setup' }}
                     </h3>
                     <p class="card-text mb-0 mt-2" style="opacity: 0.9">
                         {{
-                            isEditing
-                                ? 'Update your company profile information.'
-                                : 'Set up your company profile to get started with industry-specific features.'
+                            isProfileMode
+                                ? 'View and update your company profile information.'
+                                : isEditing
+                                  ? 'Update company profile information.'
+                                  : 'Set up a new company profile to get started with industry-specific features.'
                         }}
                     </p>
                 </div>
@@ -189,7 +191,9 @@
                                         ? 'Updating...'
                                         : 'Creating...'
                                     : isEditing
-                                      ? 'Update Company'
+                                      ? isProfileMode
+                                          ? 'Update Profile'
+                                          : 'Update Company'
                                       : 'Create Company Profile'
                             }}
                         </button>
@@ -199,7 +203,7 @@
                             (click)="resetForm()"
                             [disabled]="isSubmitting">
                             <i class="fas fa-times mr-2"></i>
-                            Cancel
+                            {{ isProfileMode ? 'Reset' : 'Cancel' }}
                         </button>
                     </div>
                 </form>

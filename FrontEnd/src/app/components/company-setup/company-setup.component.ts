@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { BusinessNature, CreateCompanyProfileRequest } from '../../models/multi-tenant.model';
 import { BusinessNatureService } from '../../services/business-nature.service';
 import { CompanyService } from '../../services/company.service';
@@ -22,10 +22,12 @@ export class CompanySetupComponent implements OnInit {
     isEditing = false;
     currentCompany: any = null;
     currentUserIsSuperAdmin = false;
+    isProfileMode = false; // Flag to indicate if we're in user profile mode
 
     constructor(
         private fb: FormBuilder,
         private router: Router,
+        private route: ActivatedRoute,
         private businessNatureService: BusinessNatureService,
         private companyService: CompanyService,
         private authService: AuthService,
@@ -44,6 +46,10 @@ export class CompanySetupComponent implements OnInit {
 
     ngOnInit(): void {
         this.currentUserIsSuperAdmin = this.authService.isSuperAdmin();
+
+        // Check if we're in profile mode (regular user editing their company)
+        this.isProfileMode = this.router.url.includes('/profile/company');
+
         this.loadBusinessNatures();
         this.loadCurrentCompany();
     }
@@ -64,18 +70,31 @@ export class CompanySetupComponent implements OnInit {
     }
 
     loadCurrentCompany(): void {
-        // Super admins can create new companies, regular users can only edit their own
-        if (!this.currentUserIsSuperAdmin) {
+        // In profile mode, always load the current company for editing
+        // Super admins in administration mode can create new companies
+        if (this.isProfileMode || !this.currentUserIsSuperAdmin) {
             this.companyService.getCurrentCompany().subscribe({
                 next: (company) => {
-                    this.currentCompany = company;
-                    this.isEditing = true;
-                    this.populateForm(company);
+                    if (company) {
+                        this.currentCompany = company;
+                        this.isEditing = true;
+                        this.populateForm(company);
+                    } else if (this.isProfileMode) {
+                        // In profile mode, if no company exists, show error
+                        this.notificationService.showError('No company profile found. Please contact administrator.');
+                        this.router.navigate(['/dashboard']);
+                    }
                 },
                 error: (error) => {
                     console.error('Error loading current company:', error);
-                    // If company doesn't exist, allow creation for regular users too
-                    this.isEditing = false;
+                    if (this.isProfileMode) {
+                        // In profile mode, if company loading fails, redirect to dashboard
+                        this.notificationService.showError('Unable to load company profile.');
+                        this.router.navigate(['/dashboard']);
+                    } else {
+                        // Super admin in administration mode can create new companies
+                        this.isEditing = false;
+                    }
                 },
             });
         }
@@ -104,8 +123,13 @@ export class CompanySetupComponent implements OnInit {
 
             if (this.isEditing && this.currentCompany) {
                 this.updateCompany();
-            } else {
+            } else if (!this.isProfileMode && this.currentUserIsSuperAdmin) {
+                // Only allow creation in administration mode for super admins
                 this.createCompany();
+            } else {
+                // This shouldn't happen in profile mode
+                this.notificationService.showError('Unable to create company in profile mode.');
+                this.isSubmitting = false;
             }
         } else {
             this.markFormGroupTouched();
