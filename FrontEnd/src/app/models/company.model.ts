@@ -14,7 +14,7 @@ export interface Company {
     registrationNumber?: string;
     logo?: string;
     isActive: boolean;
-    companyNature?: string; // "Digital Marketing" or "General"
+    BusinessNatureId?: number; // "Digital Marketing" or "General"
     createdDate?: Date;
     modifiedDate?: Date;
 }
@@ -33,7 +33,7 @@ export interface CreateCompanyDto {
     taxNumber?: string;
     registrationNumber?: string;
     logo?: string;
-    companyNature?: string;
+    BusinessNatureId?: number;
 }
 
 export interface UpdateCompanyDto extends CreateCompanyDto {

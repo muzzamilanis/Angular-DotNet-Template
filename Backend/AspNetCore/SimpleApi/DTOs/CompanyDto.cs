@@ -22,8 +22,7 @@ namespace SimpleApi.DTOs
         [MaxLength(100)]
         public string? ContactPerson { get; set; }
 
-        [MaxLength(100)]
-        public string CompanyNature { get; set; } = "General";
+        public int BusinessNatureId { get; set; }
 
         public bool IsActive { get; set; }
 
@@ -48,9 +47,8 @@ namespace SimpleApi.DTOs
         [MaxLength(100)]
         public string? ContactPerson { get; set; }
 
-        [MaxLength(100)]
-        public string CompanyNature { get; set; } = "General";
-    }
+		public int BusinessNatureId { get; set; }
+	}
 
     public class UpdateCompanyDto
     {
@@ -72,9 +70,8 @@ namespace SimpleApi.DTOs
         [MaxLength(100)]
         public string? ContactPerson { get; set; }
 
-        [MaxLength(100)]
-        public string CompanyNature { get; set; } = "General";
+		public int BusinessNatureId { get; set; }
 
-        public bool IsActive { get; set; } = true;
+		public bool IsActive { get; set; } = true;
     }
 }

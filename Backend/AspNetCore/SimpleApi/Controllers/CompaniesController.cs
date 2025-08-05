@@ -43,7 +43,6 @@ namespace SimpleApi.Controllers
             {
                 var companyId = GetCurrentUserCompanyId();
                 var result = await _companyService.GetCurrentUserCompanyAsync(companyId);
-                result.CompanyNature = await _companyNatureService.GetCompanyNatureAsync(companyId);
                 return Ok(result);
             }
             catch (UnauthorizedAccessException ex)

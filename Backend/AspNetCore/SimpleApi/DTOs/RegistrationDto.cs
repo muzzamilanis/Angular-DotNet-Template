@@ -42,6 +42,7 @@ namespace SimpleApi.DTOs
 
         [MaxLength(100)]
         public string? ContactPerson { get; set; }
+        public int BusinessNatureId { get; set; }
     }
 
     public class RegistrationResponseDto

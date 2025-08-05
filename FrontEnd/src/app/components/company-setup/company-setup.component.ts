@@ -140,6 +140,7 @@ export class CompanySetupComponent implements OnInit {
     }
 
     updateCompany(): void {
+        console.log('CompanyForm: ', this.companyForm)
         const updateRequest = {
             id: this.currentCompany.id,
             name: this.companyForm.value.companyName,

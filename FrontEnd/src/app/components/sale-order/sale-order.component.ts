@@ -13,6 +13,7 @@ import { PaginatedResponse } from '../../models/common.model';
 import { Company } from '../../models/company.model';
 import { Project } from '../../models/project.model';
 import { NotificationService } from '../../services/notification.service';
+import { BusinessNatureType } from '../../models/multi-tenant.model';
 
 @Component({
     selector: 'app-sale-order',
@@ -52,9 +53,10 @@ export class SaleOrderComponent implements OnInit {
         this.companyService.getCurrentCompany().subscribe({
             next: (company) => {
                 this.currentCompany = company;
-                this.isDigitalMarketing = company.companyNature === 'Digital Marketing Agency';
+                console.log('Business Nature', BusinessNatureType.DIGITALMARKETINGAGENCY);
+                this.isDigitalMarketing = company.businessNatureId === BusinessNatureType.DIGITALMARKETINGAGENCY;
                 console.log('Company: ', company);
-                console.log(`IsDigitalMarketing: ${this.isDigitalMarketing}`);
+                console.log('IsDigitalMarketing: ', this.isDigitalMarketing);
                 // Reinitialize form with proper structure
                 this.initializeForm();
 

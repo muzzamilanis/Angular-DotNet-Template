@@ -61,7 +61,8 @@ namespace SimpleApi.Services
                         Email = registrationDto.Company.Email,
                         ContactPerson = registrationDto.Company.ContactPerson,
                         IsActive = true,
-                        CreatedAt = DateTime.UtcNow
+                        CreatedAt = DateTime.UtcNow,
+                        BusinessNatureId = registrationDto.Company.BusinessNatureId
                     };
 
                     _context.Companies.Add(company);
