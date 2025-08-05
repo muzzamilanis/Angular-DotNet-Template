@@ -55,7 +55,9 @@
                         "optimization": false,
                         "namedChunks": true,
                         "browser": "src/main.ts",
-                        "allowedCommonJsDependencies": ["sweetalert2"]
+                        "allowedCommonJsDependencies": [
+                            "sweetalert2"
+                        ]
                     },
                     "configurations": {
                         "production": {

@@ -28,7 +28,7 @@
                         Loading...
                     </span>
                     <span class="ml-2">
-                        <a (click)="logout()" style="cursor: pointer">
+                        <a (click)="logout()" style="cursor: pointer;">
                             <i class="fas fa-sign-out-alt mr-2"></i>
                         </a>
                     </span>
@@ -134,25 +134,6 @@
                                 <a routerLink="/transactions/sale-orders" class="nav-link" routerLinkActive="active">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Sale Orders</p>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-
-                    <!-- Profile -->
-                    <li class="nav-item" [class.menu-open]="isMenuOpen('profile')" *ngIf="!isSuperAdmin()">
-                        <a (click)="toggleMenuState('profile', $event)" class="nav-link">
-                            <i class="nav-icon fas fa-user"></i>
-                            <p>
-                                Profile
-                                <i class="fas fa-angle-left right"></i>
-                            </p>
-                        </a>
-                        <ul class="nav nav-treeview">
-                            <li class="nav-item">
-                                <a routerLink="/profile/company" class="nav-link" routerLinkActive="active">
-                                    <i class="far fa-building nav-icon"></i>
-                                    <p>Company Profile</p>
                                 </a>
                             </li>
                         </ul>

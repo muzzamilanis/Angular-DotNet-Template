@@ -32,7 +32,6 @@ const routes: Routes = [
             { path: 'masters/projects/create', component: ProjectFormComponent },
             { path: 'masters/projects/edit/:id', component: ProjectFormComponent },
             { path: 'masters/projects/:id', component: ProjectDetailComponent },
-            { path: 'profile/company', component: CompanySetupComponent },
             { path: 'administration/company-setup', component: CompanySetupComponent, canActivate: [SuperAdminGuard] },
             {
                 path: 'administration/user-management',

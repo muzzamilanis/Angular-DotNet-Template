@@ -238,15 +238,15 @@
 }
 
 .logout-btn:hover {
-    background-color: #dc3545 !important;
-    color: white !important;
-    transition: all 0.3s ease;
+  background-color: #dc3545 !important;
+  color: white !important;
+  transition: all 0.3s ease;
 }
 
 .logout-btn i {
-    color: #dc3545;
+  color: #dc3545;
 }
 
 .logout-btn:hover i {
-    color: white !important;
+  color: white !important;
 }
