@@ -64,21 +64,24 @@ export class CompanySetupComponent implements OnInit {
     }
 
     loadCurrentCompany(): void {
-        // Super admins can create new companies, regular users can only edit their own
-        if (!this.currentUserIsSuperAdmin) {
-            this.companyService.getCurrentCompany().subscribe({
-                next: (company) => {
+        // Try to load existing company first (for both super admins and regular users)
+        this.companyService.getCurrentCompany().subscribe({
+            next: (company) => {
+                if (company) {
                     this.currentCompany = company;
                     this.isEditing = true;
                     this.populateForm(company);
-                },
-                error: (error) => {
-                    console.error('Error loading current company:', error);
-                    // If company doesn't exist, allow creation for regular users too
+                } else {
+                    // No company exists, allow creation (only super admins can create new companies)
                     this.isEditing = false;
-                },
-            });
-        }
+                }
+            },
+            error: (error) => {
+                console.error('Error loading current company:', error);
+                // If company loading fails, allow creation only for super admins
+                this.isEditing = false;
+            },
+        });
     }
 
     populateForm(company: any): void {
@@ -104,8 +107,13 @@ export class CompanySetupComponent implements OnInit {
 
             if (this.isEditing && this.currentCompany) {
                 this.updateCompany();
-            } else {
+            } else if (this.currentUserIsSuperAdmin) {
+                // Only super admins can create new companies
                 this.createCompany();
+            } else {
+                // Regular users should not be able to create companies
+                this.notificationService.showError('You do not have permission to create companies.');
+                this.isSubmitting = false;
             }
         } else {
             this.markFormGroupTouched();
