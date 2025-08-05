@@ -39,19 +39,10 @@ namespace SimpleApi.Controllers
         {
             try
             {
-                // Only Super Admins can see all users
-                if (GetCurrentUserIsSuperAdmin())
-                {
-                    var allUsers = await _userService.GetAllAsync();
-                    return Ok(allUsers);
-                }
-                else
-                {
-                    // Regular users can only see users from their company
-                    var companyId = GetCurrentUserCompanyId();
-                    var companyUsers = await _userService.GetByCompanyAsync(companyId);
-                    return Ok(companyUsers);
-                }
+                // Both Super Admins and regular users can only see users from their company
+                var companyId = GetCurrentUserCompanyId();
+                var companyUsers = await _userService.GetByCompanyAsync(companyId);
+                return Ok(companyUsers);
             }
             catch (Exception ex)
             {
@@ -66,13 +57,7 @@ namespace SimpleApi.Controllers
             {
                 var user = await _userService.GetByIdAsync(id);
                 
-                // Super Admins can access any user
-                if (GetCurrentUserIsSuperAdmin())
-                {
-                    return Ok(user);
-                }
-                
-                // Regular users can only access users from their company
+                // Both Super Admins and regular users can only access users from their company
                 var userCompanyId = GetCurrentUserCompanyId();
                 if (user.CompanyId != userCompanyId)
                 {
@@ -102,6 +87,13 @@ namespace SimpleApi.Controllers
                     return Forbid("Only Super Admins can create users.");
                 }
 
+                // Super Admins can only create users for their own company
+                var currentUserCompanyId = GetCurrentUserCompanyId();
+                if (input.CompanyId != currentUserCompanyId)
+                {
+                    return Forbid("You can only create users for your company.");
+                }
+
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
 
@@ -127,6 +119,20 @@ namespace SimpleApi.Controllers
                 if (!GetCurrentUserIsSuperAdmin())
                 {
                     return Forbid("Only Super Admins can update users.");
+                }
+
+                // Check if the user being updated is from the same company
+                var existingUser = await _userService.GetByIdAsync(id);
+                var currentUserCompanyId = GetCurrentUserCompanyId();
+                if (existingUser.CompanyId != currentUserCompanyId)
+                {
+                    return Forbid("You can only update users from your company.");
+                }
+
+                // Ensure the user cannot be moved to a different company
+                if (input.CompanyId != currentUserCompanyId)
+                {
+                    return Forbid("You cannot move users to a different company.");
                 }
 
                 if (!ModelState.IsValid)
@@ -157,6 +163,14 @@ namespace SimpleApi.Controllers
                     return Forbid("Only Super Admins can delete users.");
                 }
 
+                // Check if the user being deleted is from the same company
+                var existingUser = await _userService.GetByIdAsync(id);
+                var currentUserCompanyId = GetCurrentUserCompanyId();
+                if (existingUser.CompanyId != currentUserCompanyId)
+                {
+                    return Forbid("You can only delete users from your company.");
+                }
+
                 await _userService.DeleteAsync(id);
                 return NoContent();
             }
@@ -179,6 +193,14 @@ namespace SimpleApi.Controllers
                 if (!GetCurrentUserIsSuperAdmin())
                 {
                     return Forbid("Only Super Admins can activate users.");
+                }
+
+                // Check if the user being activated is from the same company
+                var existingUser = await _userService.GetByIdAsync(id);
+                var currentUserCompanyId = GetCurrentUserCompanyId();
+                if (existingUser.CompanyId != currentUserCompanyId)
+                {
+                    return Forbid("You can only activate users from your company.");
                 }
 
                 var result = await _userService.ActivateAsync(id);
@@ -205,6 +227,14 @@ namespace SimpleApi.Controllers
                     return Forbid("Only Super Admins can deactivate users.");
                 }
 
+                // Check if the user being deactivated is from the same company
+                var existingUser = await _userService.GetByIdAsync(id);
+                var currentUserCompanyId = GetCurrentUserCompanyId();
+                if (existingUser.CompanyId != currentUserCompanyId)
+                {
+                    return Forbid("You can only deactivate users from your company.");
+                }
+
                 var result = await _userService.DeactivateAsync(id);
                 return Ok(result);
             }
@@ -227,6 +257,14 @@ namespace SimpleApi.Controllers
                 if (!GetCurrentUserIsSuperAdmin())
                 {
                     return Forbid("Only Super Admins can reset passwords.");
+                }
+
+                // Check if the user being updated is from the same company
+                var existingUser = await _userService.GetByIdAsync(id);
+                var currentUserCompanyId = GetCurrentUserCompanyId();
+                if (existingUser.CompanyId != currentUserCompanyId)
+                {
+                    return Forbid("You can only reset passwords for users from your company.");
                 }
 
                 if (!ModelState.IsValid)
