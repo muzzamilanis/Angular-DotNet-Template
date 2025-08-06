@@ -6,7 +6,7 @@ namespace SimpleApi.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class ServiceTypesController : ControllerBase
+    public class ServiceTypesController : BaseController
     {
         private readonly IServiceTypeService _serviceTypeService;
 
@@ -20,7 +20,8 @@ namespace SimpleApi.Controllers
         {
             try
             {
-                var result = await _serviceTypeService.GetServiceTypesAsync(input);
+                var company_id = GetCurrentUserCompanyId();
+                var result = await _serviceTypeService.GetServiceTypesAsync(input, company_id);
                 return Ok(result);
             }
             catch (Exception ex)
@@ -43,26 +44,13 @@ namespace SimpleApi.Controllers
             }
         }
 
-        [HttpGet("company/{companyId}")]
-        public async Task<ActionResult<List<ServiceTypeDto>>> GetServiceTypesByCompany(int companyId)
-        {
-            try
-            {
-                var result = await _serviceTypeService.GetServiceTypesByCompanyAsync(companyId);
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
         [HttpPost]
         public async Task<ActionResult<ServiceTypeDto>> CreateServiceType(CreateServiceTypeDto input)
         {
             try
             {
-                var result = await _serviceTypeService.CreateServiceTypeAsync(input);
+				input.CompanyId = GetCurrentUserCompanyId();
+				var result = await _serviceTypeService.CreateServiceTypeAsync(input);
                 return CreatedAtAction(nameof(GetServiceType), new { id = result.Id }, result);
             }
             catch (Exception ex)
@@ -76,7 +64,8 @@ namespace SimpleApi.Controllers
         {
             try
             {
-                var result = await _serviceTypeService.UpdateServiceTypeAsync(id, input);
+				input.CompanyId = GetCurrentUserCompanyId();
+				var result = await _serviceTypeService.UpdateServiceTypeAsync(id, input);
                 return Ok(result);
             }
             catch (Exception ex)

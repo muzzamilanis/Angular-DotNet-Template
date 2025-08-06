@@ -7,7 +7,7 @@ namespace SimpleApi.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class BusinessNaturesController : ControllerBase
+    public class BusinessNaturesController : BaseController
     {
         private readonly ApplicationDbContext _context;
 

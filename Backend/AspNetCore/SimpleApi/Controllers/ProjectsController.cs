@@ -9,7 +9,7 @@ namespace SimpleApi.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class ProjectsController : ControllerBase
+    public class ProjectsController : BaseController
     {
         private readonly IProjectService _projectService;
         private readonly ICompanyNatureService _companyNatureService;
@@ -18,16 +18,6 @@ namespace SimpleApi.Controllers
         {
             _projectService = projectService;
             _companyNatureService = companyNatureService;
-        }
-
-        private int GetCurrentUserCompanyId()
-        {
-            var companyIdClaim = User.FindFirst("CompanyId")?.Value;
-            if (int.TryParse(companyIdClaim, out int companyId))
-            {
-                return companyId;
-            }
-            throw new UnauthorizedAccessException("Unable to determine user's company.");
         }
 
         /// <summary>

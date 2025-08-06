@@ -321,6 +321,7 @@ namespace SimpleApi.DTOs
 
         [StringLength(200)]
         public string? Description { get; set; }
+        public int CompanyId { get; set; }
 
         public bool IsActive { get; set; } = true;
     }

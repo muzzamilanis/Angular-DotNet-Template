@@ -9,7 +9,7 @@ namespace SimpleApi.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class CompaniesController : ControllerBase
+    public class CompaniesController : BaseController
     {
         private readonly ICompanyService _companyService;
         private readonly ICompanyNatureService _companyNatureService;
@@ -18,16 +18,6 @@ namespace SimpleApi.Controllers
         {
             _companyService = companyService;
             _companyNatureService = companyNatureService;
-        }
-
-        private int GetCurrentUserCompanyId()
-        {
-            var companyIdClaim = User.FindFirst("CompanyId")?.Value;
-            if (int.TryParse(companyIdClaim, out int companyId))
-            {
-                return companyId;
-            }
-            throw new UnauthorizedAccessException("Unable to determine user's company.");
         }
 
         private bool GetCurrentUserIsSuperAdmin()

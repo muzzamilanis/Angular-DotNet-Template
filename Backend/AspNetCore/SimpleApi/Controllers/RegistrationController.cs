@@ -6,7 +6,7 @@ namespace SimpleApi.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class RegistrationController : ControllerBase
+    public class RegistrationController : BaseController
     {
         private readonly IRegistrationService _registrationService;
 

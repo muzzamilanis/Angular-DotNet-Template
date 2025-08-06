@@ -7,7 +7,7 @@ namespace SimpleApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class TokenAuthController : ControllerBase
+    public class TokenAuthController : BaseController
     {
         private readonly IAuthService _authService;
 

@@ -8,12 +8,11 @@ namespace SimpleApi.Services
 {
     public interface IServiceTypeService
     {
-        Task<PagedResultDto<ServiceTypeDto>> GetServiceTypesAsync(PagedResultRequestDto input);
+        Task<PagedResultDto<ServiceTypeDto>> GetServiceTypesAsync(PagedResultRequestDto input, int companyId);
         Task<ServiceTypeDto> GetServiceTypeAsync(int id);
         Task<ServiceTypeDto> CreateServiceTypeAsync(CreateServiceTypeDto input);
         Task<ServiceTypeDto> UpdateServiceTypeAsync(int id, CreateServiceTypeDto input);
         Task DeleteServiceTypeAsync(int id);
-        Task<List<ServiceTypeDto>> GetServiceTypesByCompanyAsync(int companyId);
     }
 
     public class ServiceTypeService : IServiceTypeService
@@ -27,10 +26,10 @@ namespace SimpleApi.Services
             _mapper = mapper;
         }
 
-        public async Task<PagedResultDto<ServiceTypeDto>> GetServiceTypesAsync(PagedResultRequestDto input)
+        public async Task<PagedResultDto<ServiceTypeDto>> GetServiceTypesAsync(PagedResultRequestDto input, int companyId)
         {
             var query = _context.ServiceTypes
-                .Where(x => x.IsActive)
+                .Where(x => x.IsActive && x.CompanyId == companyId)
                 .AsQueryable();
 
             if (!string.IsNullOrEmpty(input.Filter))
@@ -94,13 +93,12 @@ namespace SimpleApi.Services
 
         public async Task<ServiceTypeDto> CreateServiceTypeAsync(CreateServiceTypeDto input)
         {
-            // For now, use CompanyId = 1 as default. In a real app, this would come from the current user's context
             var serviceType = new ServiceType
             {
                 Name = input.Name,
                 Description = input.Description,
                 IsActive = input.IsActive,
-                CompanyId = 1, // This should be dynamic based on current user
+                CompanyId = input.CompanyId,
                 CreatedAt = DateTime.UtcNow
             };
 
@@ -119,8 +117,9 @@ namespace SimpleApi.Services
             serviceType.Name = input.Name;
             serviceType.Description = input.Description;
             serviceType.IsActive = input.IsActive;
+            serviceType.CompanyId = input.CompanyId;
 
-            await _context.SaveChangesAsync();
+			await _context.SaveChangesAsync();
 
             return await GetServiceTypeAsync(serviceType.Id);
         }
@@ -133,23 +132,6 @@ namespace SimpleApi.Services
 
             serviceType.IsActive = false;
             await _context.SaveChangesAsync();
-        }
-
-        public async Task<List<ServiceTypeDto>> GetServiceTypesByCompanyAsync(int companyId)
-        {
-            return await _context.ServiceTypes
-                .Where(x => x.CompanyId == companyId && x.IsActive)
-                .Select(x => new ServiceTypeDto
-                {
-                    Id = x.Id,
-                    Name = x.Name,
-                    Description = x.Description,
-                    IsActive = x.IsActive,
-                    CompanyId = x.CompanyId,
-                    CompanyName = x.Company != null ? x.Company.Name : null
-                })
-                .OrderBy(x => x.Name)
-                .ToListAsync();
         }
     }
 }

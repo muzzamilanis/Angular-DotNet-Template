@@ -9,23 +9,13 @@ namespace SimpleApi.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class SaleOrdersController : ControllerBase
+    public class SaleOrdersController : BaseController
     {
         private readonly ISaleOrderService _saleOrderService;
 
         public SaleOrdersController(ISaleOrderService saleOrderService)
         {
             _saleOrderService = saleOrderService;
-        }
-
-        private int GetCurrentUserCompanyId()
-        {
-            var companyIdClaim = User.FindFirst("CompanyId")?.Value;
-            if (int.TryParse(companyIdClaim, out int companyId))
-            {
-                return companyId;
-            }
-            throw new UnauthorizedAccessException("Unable to determine user's company.");
         }
 
         [HttpGet]

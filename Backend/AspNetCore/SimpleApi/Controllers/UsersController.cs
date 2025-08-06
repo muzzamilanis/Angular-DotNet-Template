@@ -9,29 +9,13 @@ namespace SimpleApi.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class UsersController : ControllerBase
+    public class UsersController : BaseController
     {
         private readonly IUserService _userService;
 
         public UsersController(IUserService userService)
         {
             _userService = userService;
-        }
-
-        private bool GetCurrentUserIsSuperAdmin()
-        {
-            var isSuperAdminClaim = User.FindFirst("IsSuperAdmin")?.Value;
-            return bool.TryParse(isSuperAdminClaim, out bool isSuperAdmin) && isSuperAdmin;
-        }
-
-        private int GetCurrentUserCompanyId()
-        {
-            var companyIdClaim = User.FindFirst("CompanyId")?.Value;
-            if (int.TryParse(companyIdClaim, out int companyId))
-            {
-                return companyId;
-            }
-            throw new UnauthorizedAccessException("Unable to determine user's company.");
         }
 
         [HttpGet]
