@@ -19,6 +19,7 @@ import { ProjectComponent } from './components/project/project.component';
 import { ProjectListComponent } from './components/project/project-list.component';
 import { ProjectFormComponent } from './components/project/project-form.component';
 import { ProjectDetailComponent } from './components/project/project-detail.component';
+import { ServiceTypeComponent } from './components/service-type/service-type.component';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
 
 @NgModule({
@@ -37,6 +38,7 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
         ProjectListComponent,
         ProjectFormComponent,
         ProjectDetailComponent,
+        ServiceTypeComponent,
     ],
     imports: [
         BrowserModule,
