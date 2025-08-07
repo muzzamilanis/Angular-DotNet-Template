@@ -3,7 +3,7 @@
     "version": 1,
     "newProjectRoot": "projects",
     "projects": {
-        "AbpProjectName": {
+        "SmartBizApp": {
             "root": "",
             "sourceRoot": "src",
             "projectType": "application",
@@ -99,21 +99,21 @@
                 "serve": {
                     "builder": "@angular-devkit/build-angular:dev-server",
                     "options": {
-                        "buildTarget": "AbpProjectName:build"
+                        "buildTarget": "SmartBizApp:build"
                     },
                     "configurations": {
                         "production": {
-                            "buildTarget": "AbpProjectName:build:production"
+                            "buildTarget": "SmartBizApp:build:production"
                         },
                         "hmr": {
-                            "buildTarget": "AbpProjectName:build:hmr"
+                            "buildTarget": "SmartBizApp:build:hmr"
                         }
                     }
                 },
                 "extract-i18n": {
                     "builder": "@angular-devkit/build-angular:extract-i18n",
                     "options": {
-                        "buildTarget": "AbpProjectName:build"
+                        "buildTarget": "SmartBizApp:build"
                     }
                 },
                 "test": {
@@ -160,7 +160,7 @@
                 }
             }
         },
-        "AbpProjectName-e2e": {
+        "SmartBizApp-e2e": {
             "root": "",
             "sourceRoot": "",
             "projectType": "application",
@@ -169,7 +169,7 @@
                     "builder": "@angular-devkit/build-angular:protractor",
                     "options": {
                         "protractorConfig": "./protractor.conf.js",
-                        "devServerTarget": "AbpProjectName:serve"
+                        "devServerTarget": "SmartBizApp:serve"
                     }
                 }
             }
@@ -179,11 +179,11 @@
         "@schematics/angular:component": {
             "prefix": "app",
             "style": "css",
-            "project": "AbpProjectName"
+            "project": "SmartBizApp"
         },
         "@schematics/angular:directive": {
             "prefix": "app",
-            "project": "AbpProjectName"
+            "project": "SmartBizApp"
         }
     },
     "cli": {

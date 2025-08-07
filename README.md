@@ -1,15 +1,24 @@
-# Important
+# SmartBizApp
 
-Issues of this repository are tracked on https://github.com/aspnetboilerplate/aspnetboilerplate. Please create your issues on https://github.com/aspnetboilerplate/aspnetboilerplate/issues.
+SmartBizApp is a modern business management application built with **ASP.NET Core** backend and **Angular** frontend, designed to streamline business operations and enhance productivity.
 
-# Introduction
+## Features
 
-This is a template to create **ASP.NET Core MVC / Angular** based startup projects for [ASP.NET Boilerplate](https://aspnetboilerplate.com/Pages/Documents). It has 2 different versions:
+- **User Management**: Comprehensive user administration with role-based access control
+- **Dashboard**: Real-time business insights and analytics
+- **Company Setup**: Easy configuration and setup workflows
+- **Master Data Management**: Manage products, customers, and other core business entities
+- **Transaction Processing**: Handle sales orders and business transactions
+- **Modern UI**: Responsive design based on AdminLTE theme
+- **Secure Authentication**: JWT-based authentication with advanced security features
 
-1. [ASP.NET Core MVC & jQuery](https://aspnetboilerplate.com/Pages/Documents/Zero/Startup-Template-Core) (server rendered multi-page application).
-2. [ASP.NET Core & Angular](https://aspnetboilerplate.com/Pages/Documents/Zero/Startup-Template-Angular) (single page application).
- 
-User Interface is based on [AdminLTE theme](https://github.com/ColorlibHQ/AdminLTE).
+## Technology Stack
+
+- **Backend**: ASP.NET Core Web API
+- **Frontend**: Angular with TypeScript
+- **Database**: SQL Server with Entity Framework Core
+- **UI Framework**: AdminLTE theme with Bootstrap
+- **Authentication**: JWT tokens with refresh token support
 
 # Default Login Credentials
 
@@ -20,28 +29,90 @@ After setting up the project and running the database migrations, you can log in
 
 > ⚠️ **Security Warning**: These are default credentials for development purposes only. **Always change the default password immediately** after first login, especially in production environments.
 
-The default admin user is created during database seeding with the email `admin@aspnetboilerplate.com`.
- 
-# Download
+The default admin user is created during database seeding with the email `admin@smartbizapp.com`.
 
-Create & download your project from https://aspnetboilerplate.com/Templates
+## Getting Started
+
+### Prerequisites
+
+- .NET 8.0 SDK or later
+- Node.js 18+ and npm
+- SQL Server (LocalDB, Express, or full version)
+
+### Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd SmartBizApp
+   ```
+
+2. **Backend Setup**
+   ```bash
+   cd Backend
+   dotnet restore
+   dotnet ef database update
+   dotnet run
+   ```
+
+3. **Frontend Setup**
+   ```bash
+   cd FrontEnd
+   npm install
+   npm start
+   ```
+
+4. **Access the Application**
+   - Frontend: http://localhost:4200
+   - Backend API: http://localhost:5000
 
 # Screenshots
 
-#### Sample Dashboard Page
+#### Dashboard
 ![](_screenshots/module-zero-core-template-ui-home.png)
 
-#### User Creation Modal
+#### User Management
 ![](_screenshots/module-zero-core-template-ui-user-create-modal.png)
 
 #### Login Page
-
 ![](_screenshots/module-zero-core-template-ui-login.png)
 
-# Documentation
+## Development
 
-* [ASP.NET Core MVC & jQuery version.](https://aspnetboilerplate.com/Pages/Documents/Zero/Startup-Template-Core)
-* [ASP.NET Core & Angular  version.](https://aspnetboilerplate.com/Pages/Documents/Zero/Startup-Template-Angular)
+### Project Structure
+
+```
+SmartBizApp/
+├── Backend/           # ASP.NET Core Web API
+├── FrontEnd/         # Angular application
+├── _screenshots/     # Application screenshots
+└── README.md
+```
+
+### Building for Production
+
+**Backend:**
+```bash
+cd Backend
+dotnet publish -c Release
+```
+
+**Frontend:**
+```bash
+cd FrontEnd
+npm run build
+```
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Submit a pull request
+
+## Support
+
+For support and questions, please create an issue in the repository.
 
 # License
 

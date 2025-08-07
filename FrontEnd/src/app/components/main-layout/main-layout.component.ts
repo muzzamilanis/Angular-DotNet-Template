@@ -183,4 +183,9 @@ export class MainLayoutComponent implements OnInit {
         // return !url.includes('/administration/company-setup'); // Hide breadcrumb on setup pages
         return true;
     }
+
+    // Get current year for dynamic copyright display
+    getCurrentYear(): number {
+        return new Date().getFullYear();
+    }
 }
