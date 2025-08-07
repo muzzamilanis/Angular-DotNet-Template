@@ -23,12 +23,43 @@ namespace SimpleApi.Services
         {
             try
             {
-                var smtpHost = _configuration["Email:SmtpHost"] ?? "localhost";
-                var smtpPort = int.Parse(_configuration["Email:SmtpPort"] ?? "587");
-                var smtpUsername = _configuration["Email:Username"] ?? "";
-                var smtpPassword = _configuration["Email:Password"] ?? "";
-                var fromEmail = _configuration["Email:FromEmail"] ?? "noreply@company.com";
+                var smtpHost = _configuration["Email:SmtpHost"];
+                var smtpPortStr = _configuration["Email:SmtpPort"];
+                var smtpUsername = _configuration["Email:Username"];
+                var smtpPassword = _configuration["Email:Password"];
+                var fromEmail = _configuration["Email:FromEmail"];
                 var fromName = _configuration["Email:FromName"] ?? "Sale Order System";
+
+                // Validate email configuration
+                if (string.IsNullOrEmpty(smtpHost))
+                {
+                    _logger.LogError("Email configuration error: SmtpHost is not configured");
+                    return;
+                }
+
+                if (string.IsNullOrEmpty(smtpPortStr) || !int.TryParse(smtpPortStr, out int smtpPort))
+                {
+                    _logger.LogError("Email configuration error: SmtpPort is not configured or invalid");
+                    return;
+                }
+
+                if (string.IsNullOrEmpty(smtpUsername))
+                {
+                    _logger.LogError("Email configuration error: Username is not configured");
+                    return;
+                }
+
+                if (string.IsNullOrEmpty(smtpPassword))
+                {
+                    _logger.LogError("Email configuration error: Password is not configured");
+                    return;
+                }
+
+                if (string.IsNullOrEmpty(fromEmail))
+                {
+                    _logger.LogError("Email configuration error: FromEmail is not configured");
+                    return;
+                }
 
                 using var smtpClient = new SmtpClient(smtpHost, smtpPort)
                 {
