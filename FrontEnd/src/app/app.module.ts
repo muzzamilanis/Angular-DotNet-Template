@@ -14,6 +14,7 @@ import { CustomerComponent } from './components/customer/customer.component';
 import { CompanySetupComponent } from './components/company-setup/company-setup.component';
 import { UserManagementComponent } from './components/user-management/user-management.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
+import { DeadlineNotificationsComponent } from './components/dashboard/deadline-notifications/deadline-notifications.component';
 import { RegistrationComponent } from './components/registration/registration.component';
 import { ProjectComponent } from './components/project/project.component';
 import { ProjectListComponent } from './components/project/project-list.component';
@@ -33,6 +34,7 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
         CompanySetupComponent,
         UserManagementComponent,
         DashboardComponent,
+        DeadlineNotificationsComponent,
         RegistrationComponent,
         ProjectComponent,
         ProjectListComponent,

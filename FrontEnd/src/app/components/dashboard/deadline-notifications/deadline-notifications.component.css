@@ -1,0 +1,43 @@
+.notifications-container {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.alert-heading {
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.fa-spin {
+    animation: fa-spin 1s infinite linear;
+}
+
+@keyframes fa-spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.card-header .btn {
+    transition: all 0.2s ease-in-out;
+}
+
+.card-header .btn:hover {
+    transform: translateY(-1px);
+}
+
+.notification-item {
+    transition: all 0.2s ease-in-out;
+}
+
+.notification-item:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.badge-pill {
+    font-size: 0.75rem;
+}
