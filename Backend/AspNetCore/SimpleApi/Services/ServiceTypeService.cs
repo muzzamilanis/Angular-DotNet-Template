@@ -10,7 +10,9 @@ namespace SimpleApi.Services
     {
         Task<PagedResultDto<ServiceTypeDto>> GetServiceTypesAsync(PagedResultRequestDto input, int companyId);
         Task<ServiceTypeDto> GetServiceTypeAsync(int id);
-        Task<ServiceTypeDto> CreateServiceTypeAsync(CreateServiceTypeDto input);
+        Task<List<ServiceTypeDto>> GetServiceTypesByCompanyAsync(int companyId);
+
+		Task<ServiceTypeDto> CreateServiceTypeAsync(CreateServiceTypeDto input);
         Task<ServiceTypeDto> UpdateServiceTypeAsync(int id, CreateServiceTypeDto input);
         Task DeleteServiceTypeAsync(int id);
     }
@@ -133,5 +135,23 @@ namespace SimpleApi.Services
             serviceType.IsActive = false;
             await _context.SaveChangesAsync();
         }
-    }
+
+		public async Task<List<ServiceTypeDto>> GetServiceTypesByCompanyAsync(int companyId)
+		{
+			return await _context.ServiceTypes
+				.Where(x => x.CompanyId == companyId && x.IsActive)
+				.Select(x => new ServiceTypeDto
+				{
+					Id = x.Id,
+					Name = x.Name,
+					Description = x.Description,
+					IsActive = x.IsActive,
+					CompanyId = x.CompanyId,
+					CompanyName = x.Company != null ? x.Company.Name : null
+				})
+				.OrderBy(x => x.Name)
+				.ToListAsync();
+		}
+
+	}
 }

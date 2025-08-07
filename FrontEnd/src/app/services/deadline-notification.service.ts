@@ -26,7 +26,7 @@ export interface DashboardNotificationResponseDto {
     providedIn: 'root',
 })
 export class DeadlineNotificationService {
-    private apiUrl = `${environment.apiUrl}/api/notifications`;
+    private apiUrl = `${environment.apiUrl}/notifications`;
 
     constructor(private http: HttpClient) {}
 

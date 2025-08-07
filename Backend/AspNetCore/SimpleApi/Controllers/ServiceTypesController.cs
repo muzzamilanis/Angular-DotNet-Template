@@ -44,7 +44,21 @@ namespace SimpleApi.Controllers
             }
         }
 
-        [HttpPost]
+		[HttpGet("company/{companyId}")]
+        public async Task<ActionResult<List<ServiceTypeDto>>> GetServiceTypesByCompany(int companyId)
+		{
+			try
+			{
+				var result = await _serviceTypeService.GetServiceTypesByCompanyAsync(companyId);
+				return Ok(result);
+			}
+			catch (Exception ex)
+			{
+				return BadRequest(ex.Message);
+			}
+		}
+
+		[HttpPost]
         public async Task<ActionResult<ServiceTypeDto>> CreateServiceType(CreateServiceTypeDto input)
         {
             try
