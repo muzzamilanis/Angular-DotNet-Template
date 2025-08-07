@@ -13,6 +13,8 @@ namespace SimpleApi.Services
         Task<SaleOrderDto> CreateAsync(CreateSaleOrderDto input, int companyId);
         Task<SaleOrderDto> UpdateAsync(UpdateSaleOrderDto input, int companyId);
         Task DeleteAsync(int id, int companyId);
+        Task<List<SaleOrder>> GetDeadlineApproachingOrdersAsync();
+        bool IsDeadlineApproaching(SaleOrder order);
     }
 
     public class SaleOrderService : ISaleOrderService
@@ -278,6 +280,26 @@ namespace SimpleApi.Services
                 await transaction.RollbackAsync();
                 throw;
             }
+        }
+
+        public async Task<List<SaleOrder>> GetDeadlineApproachingOrdersAsync()
+        {
+            var deadlineThreshold = DateTime.Today.AddDays(3);
+            
+            return await _context.SaleOrders
+                .Where(so => so.Status == "In Progress" && 
+                            so.Deadline.HasValue && 
+                            so.Deadline.Value <= deadlineThreshold)
+                .Include(so => so.Company)
+                .ToListAsync();
+        }
+
+        public bool IsDeadlineApproaching(SaleOrder order)
+        {
+            if (!order.Deadline.HasValue || order.Status != "In Progress")
+                return false;
+                
+            return order.Deadline.Value <= DateTime.Today.AddDays(3);
         }
     }
 }
