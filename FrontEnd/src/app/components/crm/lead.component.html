@@ -1,0 +1,215 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">CRM - Lead Management</h3>
+                </div>
+                <div class="card-body">
+                    
+                    <!-- Lead Form -->
+                    <div class="row mb-4">
+                        <div class="col-md-12">
+                            <form [formGroup]="leadForm" (ngSubmit)="onSubmit()">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="fullName" class="form-label">Full Name *</label>
+                                            <input 
+                                                type="text" 
+                                                class="form-control" 
+                                                id="fullName" 
+                                                formControlName="fullName"
+                                                [class.is-invalid]="leadForm.get('fullName')?.invalid && leadForm.get('fullName')?.touched">
+                                            <div *ngIf="leadForm.get('fullName')?.invalid && leadForm.get('fullName')?.touched" class="invalid-feedback">
+                                                Full name is required and must be less than 200 characters.
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="email" class="form-label">Email *</label>
+                                            <input 
+                                                type="email" 
+                                                class="form-control" 
+                                                id="email" 
+                                                formControlName="email"
+                                                [class.is-invalid]="leadForm.get('email')?.invalid && leadForm.get('email')?.touched">
+                                            <div *ngIf="leadForm.get('email')?.invalid && leadForm.get('email')?.touched" class="invalid-feedback">
+                                                Valid email is required.
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="phone" class="form-label">Phone</label>
+                                            <input 
+                                                type="text" 
+                                                class="form-control" 
+                                                id="phone" 
+                                                formControlName="phone">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="source" class="form-label">Source</label>
+                                            <input 
+                                                type="text" 
+                                                class="form-control" 
+                                                id="source" 
+                                                formControlName="source"
+                                                placeholder="e.g., Website, Referral, Social Media">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="status" class="form-label">Status *</label>
+                                            <select 
+                                                class="form-select" 
+                                                id="status" 
+                                                formControlName="status"
+                                                [class.is-invalid]="leadForm.get('status')?.invalid && leadForm.get('status')?.touched">
+                                                <option [value]="LeadStatus.New">New</option>
+                                                <option [value]="LeadStatus.Contacted">Contacted</option>
+                                                <option [value]="LeadStatus.Qualified">Qualified</option>
+                                                <option [value]="LeadStatus.Proposal">Proposal</option>
+                                                <option [value]="LeadStatus.Negotiation">Negotiation</option>
+                                                <option [value]="LeadStatus.Converted">Converted</option>
+                                                <option [value]="LeadStatus.Lost">Lost</option>
+                                                <option [value]="LeadStatus.Unqualified">Unqualified</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="businessNatureId" class="form-label">Business Nature *</label>
+                                            <select 
+                                                class="form-select" 
+                                                id="businessNatureId" 
+                                                formControlName="businessNatureId"
+                                                [class.is-invalid]="leadForm.get('businessNatureId')?.invalid && leadForm.get('businessNatureId')?.touched">
+                                                <option value="">Select Business Nature</option>
+                                                <option *ngFor="let nature of businessNatures" [value]="nature.id">
+                                                    {{ nature.displayName }}
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="mb-3">
+                                            <label for="notes" class="form-label">Notes</label>
+                                            <textarea 
+                                                class="form-control" 
+                                                id="notes" 
+                                                formControlName="notes"
+                                                rows="3"
+                                                placeholder="Additional notes about the lead"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-check mb-3">
+                                            <input 
+                                                class="form-check-input" 
+                                                type="checkbox" 
+                                                id="isActive" 
+                                                formControlName="isActive">
+                                            <label class="form-check-label" for="isActive">
+                                                Active
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <button 
+                                            type="submit" 
+                                            class="btn btn-primary me-2" 
+                                            [disabled]="!leadForm.valid || loading">
+                                            <span *ngIf="loading" class="spinner-border spinner-border-sm me-1"></span>
+                                            {{ editingLead ? 'Update' : 'Create' }} Lead
+                                        </button>
+                                        <button 
+                                            type="button" 
+                                            class="btn btn-secondary" 
+                                            (click)="resetForm()"
+                                            [disabled]="loading">
+                                            Cancel
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Leads Table -->
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h5>Leads List</h5>
+                            <div *ngIf="loading && leads.length === 0" class="text-center">
+                                <div class="spinner-border" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                            </div>
+                            <div *ngIf="!loading && leads.length === 0" class="alert alert-info">
+                                No leads found. Create your first lead using the form above.
+                            </div>
+                            <div *ngIf="leads.length > 0" class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Email</th>
+                                            <th>Phone</th>
+                                            <th>Source</th>
+                                            <th>Status</th>
+                                            <th>Business Nature</th>
+                                            <th>Created</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let lead of leads">
+                                            <td>{{ lead.fullName }}</td>
+                                            <td>{{ lead.email }}</td>
+                                            <td>{{ lead.phone || '-' }}</td>
+                                            <td>{{ lead.source || '-' }}</td>
+                                            <td>
+                                                <span [class]="getStatusClass(lead.status)">
+                                                    {{ getStatusText(lead.status) }}
+                                                </span>
+                                            </td>
+                                            <td>{{ lead.businessNatureName || '-' }}</td>
+                                            <td>{{ lead.createdAt | date:'short' }}</td>
+                                            <td>
+                                                <button 
+                                                    class="btn btn-sm btn-outline-primary me-1" 
+                                                    (click)="editLead(lead)"
+                                                    [disabled]="loading">
+                                                    Edit
+                                                </button>
+                                                <button 
+                                                    class="btn btn-sm btn-outline-danger" 
+                                                    (click)="deleteLead(lead.id)"
+                                                    [disabled]="loading">
+                                                    Delete
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,214 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">CRM - Dynamic Form Templates</h3>
+                </div>
+                <div class="card-body">
+                    
+                    <!-- Template Form -->
+                    <div class="row mb-4">
+                        <div class="col-md-12">
+                            <form [formGroup]="templateForm" (ngSubmit)="onSubmit()">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="name" class="form-label">Template Name *</label>
+                                            <input 
+                                                type="text" 
+                                                class="form-control" 
+                                                id="name" 
+                                                formControlName="name"
+                                                placeholder="e.g., Digital Marketing Inquiry Form"
+                                                [class.is-invalid]="templateForm.get('name')?.invalid && templateForm.get('name')?.touched">
+                                            <div *ngIf="templateForm.get('name')?.invalid && templateForm.get('name')?.touched" class="invalid-feedback">
+                                                Template name is required and must be less than 200 characters.
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="businessNatureId" class="form-label">Business Nature *</label>
+                                            <select 
+                                                class="form-select" 
+                                                id="businessNatureId" 
+                                                formControlName="businessNatureId"
+                                                [class.is-invalid]="templateForm.get('businessNatureId')?.invalid && templateForm.get('businessNatureId')?.touched">
+                                                <option value="">Select Business Nature</option>
+                                                <option *ngFor="let nature of businessNatures" [value]="nature.id">
+                                                    {{ nature.displayName }}
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="mb-3">
+                                            <label for="description" class="form-label">Description</label>
+                                            <textarea 
+                                                class="form-control" 
+                                                id="description" 
+                                                formControlName="description"
+                                                rows="2"
+                                                placeholder="Brief description of the form template"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="mb-3">
+                                            <label for="jsonSchema" class="form-label">JSON Schema *</label>
+                                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                                <small class="text-muted">Define the form structure using JSON Schema format</small>
+                                                <button 
+                                                    type="button" 
+                                                    class="btn btn-sm btn-outline-info" 
+                                                    (click)="useSampleSchema()">
+                                                    Use Sample Schema
+                                                </button>
+                                            </div>
+                                            <textarea 
+                                                class="form-control font-monospace" 
+                                                id="jsonSchema" 
+                                                formControlName="jsonSchema"
+                                                rows="15"
+                                                [class.is-invalid]="templateForm.get('jsonSchema')?.invalid && templateForm.get('jsonSchema')?.touched"></textarea>
+                                            <div *ngIf="templateForm.get('jsonSchema')?.invalid && templateForm.get('jsonSchema')?.touched" class="invalid-feedback">
+                                                JSON Schema is required and must be valid JSON.
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-check mb-3">
+                                            <input 
+                                                class="form-check-input" 
+                                                type="checkbox" 
+                                                id="isActive" 
+                                                formControlName="isActive">
+                                            <label class="form-check-label" for="isActive">
+                                                Active
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <button 
+                                            type="submit" 
+                                            class="btn btn-primary me-2" 
+                                            [disabled]="!templateForm.valid || loading">
+                                            <span *ngIf="loading" class="spinner-border spinner-border-sm me-1"></span>
+                                            {{ editingTemplate ? 'Update' : 'Create' }} Template
+                                        </button>
+                                        <button 
+                                            type="button" 
+                                            class="btn btn-secondary" 
+                                            (click)="resetForm()"
+                                            [disabled]="loading">
+                                            Cancel
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Templates Table -->
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h5>Form Templates</h5>
+                            <div *ngIf="loading && templates.length === 0" class="text-center">
+                                <div class="spinner-border" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                            </div>
+                            <div *ngIf="!loading && templates.length === 0" class="alert alert-info">
+                                No form templates found. Create your first template using the form above.
+                            </div>
+                            <div *ngIf="templates.length > 0" class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Description</th>
+                                            <th>Business Nature</th>
+                                            <th>Status</th>
+                                            <th>Created</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let template of templates">
+                                            <td>{{ template.name }}</td>
+                                            <td>{{ template.description || '-' }}</td>
+                                            <td>{{ template.businessNatureName || '-' }}</td>
+                                            <td>
+                                                <span [class]="template.isActive ? 'badge bg-success' : 'badge bg-secondary'">
+                                                    {{ template.isActive ? 'Active' : 'Inactive' }}
+                                                </span>
+                                            </td>
+                                            <td>{{ template.createdAt | date:'short' }}</td>
+                                            <td>
+                                                <button 
+                                                    class="btn btn-sm btn-outline-info me-1" 
+                                                    (click)="viewTemplate(template)"
+                                                    [disabled]="loading">
+                                                    View
+                                                </button>
+                                                <button 
+                                                    class="btn btn-sm btn-outline-primary me-1" 
+                                                    (click)="editTemplate(template)"
+                                                    [disabled]="loading">
+                                                    Edit
+                                                </button>
+                                                <button 
+                                                    class="btn btn-sm btn-outline-danger" 
+                                                    (click)="deleteTemplate(template.id)"
+                                                    [disabled]="loading">
+                                                    Delete
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Template View Modal -->
+<div *ngIf="selectedTemplate" class="modal-backdrop">
+    <div class="modal d-block" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">{{ selectedTemplate.name }}</h5>
+                    <button type="button" class="btn-close" (click)="closeTemplateView()"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <strong>Description:</strong> {{ selectedTemplate.description || 'No description' }}
+                    </div>
+                    <div class="mb-3">
+                        <strong>Business Nature:</strong> {{ selectedTemplate.businessNatureName }}
+                    </div>
+                    <div class="mb-3">
+                        <strong>JSON Schema:</strong>
+                        <pre class="bg-light p-3 rounded"><code>{{ formatJsonSchema(selectedTemplate.jsonSchema) }}</code></pre>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" (click)="closeTemplateView()">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
