@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace SimpleApi.Controllers
 {
@@ -16,7 +17,7 @@ namespace SimpleApi.Controllers
 
 		internal int GetCurrentUserId()
 		{
-			var userIdClaim = User.FindFirst("UserId")?.Value;
+			var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 			if (int.TryParse(userIdClaim, out int userId))
 			{
 				return userId;
