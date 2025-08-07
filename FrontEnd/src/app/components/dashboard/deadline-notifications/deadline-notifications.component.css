@@ -41,3 +41,43 @@
 .badge-pill {
     font-size: 0.75rem;
 }
+
+/* Modal styling */
+.modal {
+    z-index: 1050;
+}
+
+.modal-backdrop {
+    z-index: 1040;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal.show {
+    opacity: 1;
+}
+
+.modal-backdrop.show {
+    opacity: 0.5;
+}
+
+.modal-header {
+    border-bottom: 1px solid #dee2e6;
+    background-color: #f8f9fa;
+}
+
+.modal-title {
+    color: #495057;
+}
+
+.modal-footer {
+    border-top: 1px solid #dee2e6;
+    background-color: #f8f9fa;
+}
+
+.btn-group .btn {
+    margin-left: 0;
+}
+
+.btn-group .btn:not(:first-child) {
+    margin-left: -1px;
+}

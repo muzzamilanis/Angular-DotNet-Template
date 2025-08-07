@@ -22,6 +22,21 @@ export interface DashboardNotificationResponseDto {
     hasCriticalNotifications: boolean;
 }
 
+export interface TestEmailDto {
+    toEmail?: string;
+    subject?: string;
+    body?: string;
+}
+
+export interface ManualNotificationResponseDto {
+    message: string;
+    ordersFound?: number;
+    notificationsSent?: number;
+    sentTo?: string;
+    sentAt?: string;
+    count?: number;
+}
+
 @Injectable({
     providedIn: 'root',
 })
@@ -32,5 +47,13 @@ export class DeadlineNotificationService {
 
     getDashboardNotifications(): Observable<DashboardNotificationResponseDto> {
         return this.http.get<DashboardNotificationResponseDto>(`${this.apiUrl}/dashboard`);
+    }
+
+    sendDeadlineNotifications(): Observable<ManualNotificationResponseDto> {
+        return this.http.post<ManualNotificationResponseDto>(`${this.apiUrl}/send-deadline-notifications`, {});
+    }
+
+    testEmail(testEmailDto?: TestEmailDto): Observable<ManualNotificationResponseDto> {
+        return this.http.post<ManualNotificationResponseDto>(`${this.apiUrl}/test-email`, testEmailDto || {});
     }
 }
