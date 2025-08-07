@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using SimpleApi.Models;
+using SimpleApi.Models.CRM;
 
 namespace SimpleApi.Data
 {
@@ -18,6 +19,14 @@ namespace SimpleApi.Data
         public DbSet<Project> Projects { get; set; }
         public DbSet<BusinessNature> BusinessNatures { get; set; }
         public DbSet<ServiceType> ServiceTypes { get; set; }
+
+        // CRM DbSets
+        public DbSet<Lead> Leads { get; set; }
+        public DbSet<Contact> Contacts { get; set; }
+        public DbSet<Deal> Deals { get; set; }
+        public DbSet<CrmTask> CrmTasks { get; set; }
+        public DbSet<CrmFormTemplate> CrmFormTemplates { get; set; }
+        public DbSet<CrmFormSubmission> CrmFormSubmissions { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -238,6 +247,176 @@ namespace SimpleApi.Data
                 new ServiceType { Id = 6, Name = "SEO", Description = "Search engine optimization services", IsActive = true, CompanyId = 2, CreatedAt = DateTime.UtcNow },
                 new ServiceType { Id = 7, Name = "Writing Service", Description = "General writing and content creation", IsActive = true, CompanyId = 2, CreatedAt = DateTime.UtcNow }
             );
+
+            // Configure CRM entities
+            ConfigureCrmEntities(modelBuilder);
+        }
+
+        private void ConfigureCrmEntities(ModelBuilder modelBuilder)
+        {
+            // Configure Lead
+            modelBuilder.Entity<Lead>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.FullName).IsRequired().HasMaxLength(200);
+                entity.Property(e => e.Email).IsRequired().HasMaxLength(200);
+                entity.Property(e => e.Phone).HasMaxLength(50);
+                entity.Property(e => e.Source).HasMaxLength(200);
+                entity.Property(e => e.Notes).HasMaxLength(500);
+                entity.Property(e => e.Status).IsRequired();
+                entity.Property(e => e.BusinessNatureId).IsRequired();
+                entity.Property(e => e.CompanyId).IsRequired();
+
+                entity.HasOne(e => e.BusinessNature)
+                      .WithMany()
+                      .HasForeignKey(e => e.BusinessNatureId)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(e => e.Company)
+                      .WithMany()
+                      .HasForeignKey(e => e.CompanyId)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasIndex(e => e.Email);
+            });
+
+            // Configure Contact
+            modelBuilder.Entity<Contact>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.FirstName).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.LastName).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.Email).IsRequired().HasMaxLength(200);
+                entity.Property(e => e.Phone).HasMaxLength(50);
+                entity.Property(e => e.JobTitle).HasMaxLength(100);
+                entity.Property(e => e.Notes).HasMaxLength(500);
+                entity.Property(e => e.CompanyId).IsRequired();
+
+                entity.HasOne(e => e.Lead)
+                      .WithMany(e => e.Contacts)
+                      .HasForeignKey(e => e.LeadId)
+                      .OnDelete(DeleteBehavior.SetNull);
+
+                entity.HasOne(e => e.Company)
+                      .WithMany()
+                      .HasForeignKey(e => e.CompanyId)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasIndex(e => e.Email);
+            });
+
+            // Configure Deal
+            modelBuilder.Entity<Deal>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Title).IsRequired().HasMaxLength(200);
+                entity.Property(e => e.Description).HasMaxLength(1000);
+                entity.Property(e => e.Value).HasColumnType("decimal(18,2)");
+                entity.Property(e => e.Status).IsRequired();
+                entity.Property(e => e.CompanyId).IsRequired();
+
+                entity.HasOne(e => e.Lead)
+                      .WithMany(e => e.Deals)
+                      .HasForeignKey(e => e.LeadId)
+                      .OnDelete(DeleteBehavior.SetNull);
+
+                entity.HasOne(e => e.Contact)
+                      .WithMany(e => e.Deals)
+                      .HasForeignKey(e => e.ContactId)
+                      .OnDelete(DeleteBehavior.SetNull);
+
+                entity.HasOne(e => e.Company)
+                      .WithMany()
+                      .HasForeignKey(e => e.CompanyId)
+                      .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            // Configure CrmTask
+            modelBuilder.Entity<CrmTask>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Title).IsRequired().HasMaxLength(200);
+                entity.Property(e => e.Description).HasMaxLength(1000);
+                entity.Property(e => e.Status).IsRequired();
+                entity.Property(e => e.Priority).IsRequired();
+                entity.Property(e => e.AssignedToUserId).IsRequired();
+                entity.Property(e => e.CompanyId).IsRequired();
+
+                entity.HasOne(e => e.AssignedToUser)
+                      .WithMany()
+                      .HasForeignKey(e => e.AssignedToUserId)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(e => e.Lead)
+                      .WithMany(e => e.Tasks)
+                      .HasForeignKey(e => e.LeadId)
+                      .OnDelete(DeleteBehavior.SetNull);
+
+                entity.HasOne(e => e.Contact)
+                      .WithMany(e => e.Tasks)
+                      .HasForeignKey(e => e.ContactId)
+                      .OnDelete(DeleteBehavior.SetNull);
+
+                entity.HasOne(e => e.Deal)
+                      .WithMany(e => e.Tasks)
+                      .HasForeignKey(e => e.DealId)
+                      .OnDelete(DeleteBehavior.SetNull);
+
+                entity.HasOne(e => e.Company)
+                      .WithMany()
+                      .HasForeignKey(e => e.CompanyId)
+                      .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            // Configure CrmFormTemplate
+            modelBuilder.Entity<CrmFormTemplate>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Name).IsRequired().HasMaxLength(200);
+                entity.Property(e => e.Description).HasMaxLength(1000);
+                entity.Property(e => e.JsonSchema).IsRequired();
+                entity.Property(e => e.BusinessNatureId).IsRequired();
+                entity.Property(e => e.CompanyId).IsRequired();
+
+                entity.HasOne(e => e.BusinessNature)
+                      .WithMany()
+                      .HasForeignKey(e => e.BusinessNatureId)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(e => e.Company)
+                      .WithMany()
+                      .HasForeignKey(e => e.CompanyId)
+                      .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            // Configure CrmFormSubmission
+            modelBuilder.Entity<CrmFormSubmission>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.FormTemplateId).IsRequired();
+                entity.Property(e => e.SubmittedData).IsRequired();
+                entity.Property(e => e.CompanyId).IsRequired();
+
+                entity.HasOne(e => e.FormTemplate)
+                      .WithMany(e => e.FormSubmissions)
+                      .HasForeignKey(e => e.FormTemplateId)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(e => e.Lead)
+                      .WithMany(e => e.FormSubmissions)
+                      .HasForeignKey(e => e.LeadId)
+                      .OnDelete(DeleteBehavior.SetNull);
+
+                entity.HasOne(e => e.Contact)
+                      .WithMany(e => e.FormSubmissions)
+                      .HasForeignKey(e => e.ContactId)
+                      .OnDelete(DeleteBehavior.SetNull);
+
+                entity.HasOne(e => e.Company)
+                      .WithMany()
+                      .HasForeignKey(e => e.CompanyId)
+                      .OnDelete(DeleteBehavior.Restrict);
+            });
         }
     }
 }
