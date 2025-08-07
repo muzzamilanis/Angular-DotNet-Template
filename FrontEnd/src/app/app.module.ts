@@ -20,6 +20,8 @@ import { ProjectListComponent } from './components/project/project-list.componen
 import { ProjectFormComponent } from './components/project/project-form.component';
 import { ProjectDetailComponent } from './components/project/project-detail.component';
 import { ServiceTypeComponent } from './components/service-type/service-type.component';
+import { LeadComponent } from './components/crm/lead.component';
+import { CrmFormComponent } from './components/crm/crm-form.component';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
 
 @NgModule({
@@ -39,6 +41,8 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
         ProjectFormComponent,
         ProjectDetailComponent,
         ServiceTypeComponent,
+        LeadComponent,
+        CrmFormComponent,
     ],
     imports: [
         BrowserModule,

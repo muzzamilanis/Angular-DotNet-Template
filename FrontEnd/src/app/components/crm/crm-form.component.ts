@@ -93,7 +93,7 @@ export class CrmFormComponent implements OnInit {
     }
 
     private loadBusinessNatures(): void {
-        this.businessNatureService.getBusinessNatures().subscribe({
+        this.businessNatureService.getAll().subscribe({
             next: (businessNatures) => {
                 this.businessNatures = businessNatures;
             },

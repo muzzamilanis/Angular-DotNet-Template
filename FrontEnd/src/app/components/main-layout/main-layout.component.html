@@ -145,6 +145,31 @@
                         </ul>
                     </li>
 
+                    <!-- CRM -->
+                    <li class="nav-item" [class.menu-open]="isMenuOpen('crm')">
+                        <a (click)="toggleMenuState('crm', $event)" class="nav-link">
+                            <i class="nav-icon fas fa-users"></i>
+                            <p>
+                                CRM
+                                <i class="fas fa-angle-left right"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a routerLink="/crm/leads" class="nav-link" routerLinkActive="active">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Leads</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a routerLink="/crm/form-templates" class="nav-link" routerLinkActive="active">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Form Templates</p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
                     <!-- Administration -->
                     <li class="nav-item" [class.menu-open]="isMenuOpen('administration')" *ngIf="isSuperAdmin()">
                         <a (click)="toggleMenuState('administration', $event)" class="nav-link">

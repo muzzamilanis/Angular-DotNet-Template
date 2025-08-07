@@ -174,6 +174,10 @@ export class MainLayoutComponent implements OnInit {
             return 'Sale Orders';
         } else if (url.includes('/administration/user-management')) {
             return 'User Management';
+        } else if (url.includes('/crm/leads')) {
+            return 'Lead Management';
+        } else if (url.includes('/crm/form-templates')) {
+            return 'CRM Form Templates';
         }
         return 'Dashboard';
     }
