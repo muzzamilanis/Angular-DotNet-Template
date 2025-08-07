@@ -20,9 +20,6 @@ namespace SimpleApi.Services
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            // Run immediately on startup, then periodically
-            await ProcessDeadlineNotificationsAsync();
-
             while (!stoppingToken.IsCancellationRequested)
             {
                 await Task.Delay(_period, stoppingToken);
