@@ -31,5 +31,10 @@ namespace SimpleApi.Controllers
 			return bool.TryParse(isSuperAdminClaim, out bool isSuperAdmin) && isSuperAdmin;
 		}
 
+		internal string? GetCurrentUserEmail()
+		{
+			return User.FindFirst(ClaimTypes.Email)?.Value;
+		}
+
 	}
 }
