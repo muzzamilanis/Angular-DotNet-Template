@@ -16,16 +16,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddHttpContextAccessor();
 
 // Add Entity Framework
-if (builder.Environment.IsDevelopment())
-{
-    builder.Services.AddDbContext<ApplicationDbContext>(options =>
-        options.UseSqlite("Data Source=testdb.sqlite"));
-}
-else
-{
-    builder.Services.AddDbContext<ApplicationDbContext>(options =>
-        options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-}
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+	   options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Add AutoMapper
 builder.Services.AddAutoMapper(typeof(MappingProfile));
