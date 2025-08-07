@@ -1,6 +1,8 @@
 using AutoMapper;
 using SimpleApi.DTOs;
+using SimpleApi.DTOs.CRM;
 using SimpleApi.Models;
+using SimpleApi.Models.CRM;
 
 namespace SimpleApi.Services
 {
@@ -51,6 +53,60 @@ namespace SimpleApi.Services
             CreateMap<ServiceType, ServiceTypeDto>()
                 .ForMember(dest => dest.CompanyName, opt => opt.MapFrom(src => src.Company!.Name));
             CreateMap<CreateServiceTypeDto, ServiceType>();
+
+            // CRM mappings
+            ConfigureCrmMappings();
+        }
+
+        private void ConfigureCrmMappings()
+        {
+            // Lead mappings
+            CreateMap<Lead, LeadDto>()
+                .ForMember(dest => dest.BusinessNatureName, opt => opt.MapFrom(src => src.BusinessNature!.DisplayName))
+                .ForMember(dest => dest.CompanyName, opt => opt.MapFrom(src => src.Company!.Name));
+            CreateMap<CreateLeadDto, Lead>();
+            CreateMap<UpdateLeadDto, Lead>();
+
+            // Contact mappings
+            CreateMap<Contact, ContactDto>()
+                .ForMember(dest => dest.LeadName, opt => opt.MapFrom(src => src.Lead!.FullName))
+                .ForMember(dest => dest.CompanyName, opt => opt.MapFrom(src => src.Company!.Name));
+            CreateMap<CreateContactDto, Contact>();
+            CreateMap<UpdateContactDto, Contact>();
+
+            // Deal mappings
+            CreateMap<Deal, DealDto>()
+                .ForMember(dest => dest.LeadName, opt => opt.MapFrom(src => src.Lead!.FullName))
+                .ForMember(dest => dest.ContactName, opt => opt.MapFrom(src => src.Contact != null ? $"{src.Contact.FirstName} {src.Contact.LastName}" : null))
+                .ForMember(dest => dest.CompanyName, opt => opt.MapFrom(src => src.Company!.Name));
+            CreateMap<CreateDealDto, Deal>();
+            CreateMap<UpdateDealDto, Deal>();
+
+            // CrmTask mappings
+            CreateMap<CrmTask, CrmTaskDto>()
+                .ForMember(dest => dest.AssignedToUserName, opt => opt.MapFrom(src => src.AssignedToUser!.Name))
+                .ForMember(dest => dest.LeadName, opt => opt.MapFrom(src => src.Lead!.FullName))
+                .ForMember(dest => dest.ContactName, opt => opt.MapFrom(src => src.Contact != null ? $"{src.Contact.FirstName} {src.Contact.LastName}" : null))
+                .ForMember(dest => dest.DealTitle, opt => opt.MapFrom(src => src.Deal!.Title))
+                .ForMember(dest => dest.CompanyName, opt => opt.MapFrom(src => src.Company!.Name));
+            CreateMap<CreateCrmTaskDto, CrmTask>();
+            CreateMap<UpdateCrmTaskDto, CrmTask>();
+
+            // CrmFormTemplate mappings
+            CreateMap<CrmFormTemplate, CrmFormTemplateDto>()
+                .ForMember(dest => dest.BusinessNatureName, opt => opt.MapFrom(src => src.BusinessNature!.DisplayName))
+                .ForMember(dest => dest.CompanyName, opt => opt.MapFrom(src => src.Company!.Name));
+            CreateMap<CreateCrmFormTemplateDto, CrmFormTemplate>();
+            CreateMap<UpdateCrmFormTemplateDto, CrmFormTemplate>();
+
+            // CrmFormSubmission mappings
+            CreateMap<CrmFormSubmission, CrmFormSubmissionDto>()
+                .ForMember(dest => dest.FormTemplateName, opt => opt.MapFrom(src => src.FormTemplate!.Name))
+                .ForMember(dest => dest.LeadName, opt => opt.MapFrom(src => src.Lead!.FullName))
+                .ForMember(dest => dest.ContactName, opt => opt.MapFrom(src => src.Contact != null ? $"{src.Contact.FirstName} {src.Contact.LastName}" : null))
+                .ForMember(dest => dest.CompanyName, opt => opt.MapFrom(src => src.Company!.Name));
+            CreateMap<CreateCrmFormSubmissionDto, CrmFormSubmission>();
+            CreateMap<UpdateCrmFormSubmissionDto, CrmFormSubmission>();
         }
     }
 }

@@ -34,6 +34,14 @@ builder.Services.AddScoped<IRegistrationService, RegistrationService>();
 builder.Services.AddScoped<IServiceTypeService, ServiceTypeService>();
 builder.Services.AddScoped<IUserService, UserService>();
 
+// Add CRM services
+builder.Services.AddScoped<SimpleApi.Services.CRM.ILeadService, SimpleApi.Services.CRM.LeadService>();
+builder.Services.AddScoped<SimpleApi.Services.CRM.IContactService, SimpleApi.Services.CRM.ContactService>();
+builder.Services.AddScoped<SimpleApi.Services.CRM.IDealService, SimpleApi.Services.CRM.DealService>();
+builder.Services.AddScoped<SimpleApi.Services.CRM.ICrmTaskService, SimpleApi.Services.CRM.CrmTaskService>();
+builder.Services.AddScoped<SimpleApi.Services.CRM.ICrmFormTemplateService, SimpleApi.Services.CRM.CrmFormTemplateService>();
+builder.Services.AddScoped<SimpleApi.Services.CRM.ICrmFormSubmissionService, SimpleApi.Services.CRM.CrmFormSubmissionService>();
+
 // Add CORS
 builder.Services.AddCors(options =>
 {
