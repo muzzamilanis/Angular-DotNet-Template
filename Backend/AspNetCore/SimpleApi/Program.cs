@@ -35,6 +35,11 @@ builder.Services.AddScoped<IServiceTypeService, ServiceTypeService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
+builder.Services.AddScoped<ICurrencyService, CurrencyService>();
+builder.Services.AddScoped<IExchangeRateService, ExchangeRateService>();
+
+// Add HttpClient for external API calls
+builder.Services.AddHttpClient<IExchangeRateService, ExchangeRateService>();
 
 // Add background services
 builder.Services.AddHostedService<DeadlineNotificationService>();
