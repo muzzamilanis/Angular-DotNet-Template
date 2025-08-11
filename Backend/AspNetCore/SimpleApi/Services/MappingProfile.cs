@@ -51,6 +51,11 @@ namespace SimpleApi.Services
             CreateMap<ServiceType, ServiceTypeDto>()
                 .ForMember(dest => dest.CompanyName, opt => opt.MapFrom(src => src.Company!.Name));
             CreateMap<CreateServiceTypeDto, ServiceType>();
+
+            // Currency mappings
+            CreateMap<Currency, CurrencyDto>();
+            CreateMap<CreateCurrencyDto, Currency>();
+            CreateMap<UpdateCurrencyDto, Currency>();
         }
     }
 }

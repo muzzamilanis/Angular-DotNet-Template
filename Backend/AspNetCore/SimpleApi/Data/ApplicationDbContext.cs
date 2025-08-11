@@ -18,6 +18,7 @@ namespace SimpleApi.Data
         public DbSet<Project> Projects { get; set; }
         public DbSet<BusinessNature> BusinessNatures { get; set; }
         public DbSet<ServiceType> ServiceTypes { get; set; }
+        public DbSet<Currency> Currencies { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -69,6 +70,19 @@ namespace SimpleApi.Data
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
                 entity.Property(e => e.Description).HasMaxLength(200);
+                
+                entity.HasOne(e => e.Company)
+                      .WithMany()
+                      .HasForeignKey(e => e.CompanyId)
+                      .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            // Configure Currency
+            modelBuilder.Entity<Currency>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.Symbol).IsRequired().HasMaxLength(10);
                 
                 entity.HasOne(e => e.Company)
                       .WithMany()

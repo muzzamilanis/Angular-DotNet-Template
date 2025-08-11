@@ -13,6 +13,7 @@ import { ProjectListComponent } from './components/project/project-list.componen
 import { ProjectFormComponent } from './components/project/project-form.component';
 import { ProjectDetailComponent } from './components/project/project-detail.component';
 import { ServiceTypeComponent } from './components/service-type/service-type.component';
+// import { CurrencySetupComponent } from './components/currency-setup/currency-setup.component';
 import { AuthGuard } from './guards/auth.guard';
 import { SuperAdminGuard } from './guards/super-admin.guard';
 
@@ -34,6 +35,10 @@ const routes: Routes = [
             { path: 'masters/projects/edit/:id', component: ProjectFormComponent },
             { path: 'masters/projects/:id', component: ProjectDetailComponent },
             { path: 'masters/service-types', component: ServiceTypeComponent },
+            { 
+                path: 'masters/currency-setup', 
+                loadComponent: () => import('./components/currency-setup/currency-setup.component').then(m => m.CurrencySetupComponent)
+            },
             { path: 'administration/company-setup', component: CompanySetupComponent, canActivate: [SuperAdminGuard] },
             {
                 path: 'administration/user-management',

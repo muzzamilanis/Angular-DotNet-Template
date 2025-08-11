@@ -1,0 +1,138 @@
+<div class="currency-setup-container">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Currency Setup</h4>
+                </div>
+                <div class="card-body">
+                    <form [formGroup]="currencyForm" (ngSubmit)="onSubmit()">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Currency Name *</label>
+                            <input
+                                type="text"
+                                class="form-control"
+                                id="name"
+                                formControlName="name"
+                                placeholder="e.g., US Dollar"
+                                [class.is-invalid]="currencyForm.get('name')?.invalid && currencyForm.get('name')?.touched">
+                            <div class="invalid-feedback" *ngIf="currencyForm.get('name')?.invalid && currencyForm.get('name')?.touched">
+                                <div *ngIf="currencyForm.get('name')?.errors?.['required']">Currency name is required</div>
+                                <div *ngIf="currencyForm.get('name')?.errors?.['maxlength']">Currency name cannot exceed 100 characters</div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="symbol" class="form-label">Currency Symbol *</label>
+                            <input
+                                type="text"
+                                class="form-control"
+                                id="symbol"
+                                formControlName="symbol"
+                                placeholder="e.g., USD"
+                                [class.is-invalid]="currencyForm.get('symbol')?.invalid && currencyForm.get('symbol')?.touched">
+                            <div class="invalid-feedback" *ngIf="currencyForm.get('symbol')?.invalid && currencyForm.get('symbol')?.touched">
+                                <div *ngIf="currencyForm.get('symbol')?.errors?.['required']">Currency symbol is required</div>
+                                <div *ngIf="currencyForm.get('symbol')?.errors?.['maxlength']">Currency symbol cannot exceed 10 characters</div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="exchangeRate" class="form-label">
+                                Live Exchange Rate to PKR
+                                <button type="button" class="btn btn-link btn-sm p-0 ms-2" (click)="refreshExchangeRate()" [disabled]="isLoadingRate">
+                                    <i class="fas fa-sync-alt" [class.fa-spin]="isLoadingRate"></i> Refresh
+                                </button>
+                            </label>
+                            <div class="input-group">
+                                <select class="form-select" [(ngModel)]="selectedCurrencyCode" (change)="onCurrencyCodeChange(selectedCurrencyCode)" [ngModelOptions]="{standalone: true}">
+                                    <option value="USD">USD</option>
+                                    <option value="EUR">EUR</option>
+                                    <option value="GBP">GBP</option>
+                                    <option value="JPY">JPY</option>
+                                    <option value="CAD">CAD</option>
+                                    <option value="AUD">AUD</option>
+                                    <option value="CHF">CHF</option>
+                                    <option value="CNY">CNY</option>
+                                    <option value="INR">INR</option>
+                                    <option value="SAR">SAR</option>
+                                    <option value="AED">AED</option>
+                                </select>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="exchangeRate"
+                                    formControlName="exchangeRate"
+                                    readonly
+                                    placeholder="Loading exchange rate...">
+                            </div>
+                            <div class="text-danger small mt-1" *ngIf="exchangeRateError">
+                                {{ exchangeRateError }}
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary" [disabled]="!isFormValid || isLoading">
+                                <i class="fas fa-save"></i> {{ editingCurrency ? 'Update' : 'Save' }} Currency
+                            </button>
+                            <button type="button" class="btn btn-secondary" (click)="resetForm()" *ngIf="editingCurrency">
+                                <i class="fas fa-times"></i> Cancel
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Saved Currencies</h4>
+                </div>
+                <div class="card-body">
+                    <div *ngIf="isLoading" class="text-center">
+                        <div class="spinner-border" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+
+                    <div *ngIf="!isLoading && currencies.length === 0" class="text-center text-muted">
+                        No currencies configured yet.
+                    </div>
+
+                    <div *ngIf="!isLoading && currencies.length > 0" class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Symbol</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let currency of currencies">
+                                    <td>{{ currency.name }}</td>
+                                    <td>{{ currency.symbol }}</td>
+                                    <td>
+                                        <span class="badge" [class.bg-success]="currency.isActive" [class.bg-secondary]="!currency.isActive">
+                                            {{ currency.isActive ? 'Active' : 'Inactive' }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary me-2" (click)="editCurrency(currency)" title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-danger" (click)="deleteCurrency(currency.id!)" title="Delete">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
