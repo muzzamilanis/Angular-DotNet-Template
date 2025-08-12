@@ -24,7 +24,7 @@ namespace SimpleApi.Services
             try
             {
                 // Using ExchangeRate-API (free tier) - base currency PKR
-                var response = await _httpClient.GetAsync($"https://api.exchangerate-api.com/v4/latest/PKR");
+                var response = await _httpClient.GetAsync($"https://api.exchangerate-api.com/v4/latest/{currencyCode}");
                 
                 if (!response.IsSuccessStatusCode)
                 {
@@ -42,13 +42,13 @@ namespace SimpleApi.Services
                     throw new ArgumentException($"Currency code '{currencyCode}' not found");
                 }
 
-                var rate = exchangeData.Rates[currencyCode.ToUpper()];
+                var rate = exchangeData.Rates["PKR"];
 
                 return new ExchangeRateResponseDto
                 {
                     CurrencyCode = currencyCode.ToUpper(),
                     ExchangeRate = rate,
-                    BaseCurrency = "PKR",
+                    BaseCurrency = currencyCode.ToUpper(),
                     LastUpdated = DateTime.UtcNow
                 };
             }

@@ -21,6 +21,6 @@ namespace SimpleApi.Models
         public int CompanyId { get; set; }
 
         // Navigation properties
-        public virtual Company Company { get; set; } = null!;
+        public virtual Company? Company { get; set; } = null!;
     }
 }
