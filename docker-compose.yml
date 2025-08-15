@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+  api:
+    build:
+      context: ./Backend/AspNetCore/SimpleApi
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+      - "8081:8081"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:8080;https://+:8081
+      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=BusinessDB;User Id=sa;Password=YourStrong@Passw0rd;TrustServerCertificate=true;MultipleActiveResultSets=true;
+      - Jwt__Key=your-secret-key-must-be-at-least-256-bits-long-for-security-in-production-environment
+      - Jwt__Issuer=SimpleApi
+      - Jwt__Audience=SimpleApi
+      # Email configuration (optional - set your own values)
+      - Email__SmtpHost=smtp.gmail.com
+      - Email__SmtpPort=587
+      - Email__Username=
+      - Email__Password=
+      - Email__FromEmail=
+      - Email__FromName=SmartBizApp
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=YourStrong@Passw0rd
+      - MSSQL_PID=Express
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+    networks:
+      - app-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P YourStrong@Passw0rd -Q 'SELECT 1'"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+volumes:
+  sqlserver_data:
+    driver: local
+
+networks:
+  app-network:
+    driver: bridge

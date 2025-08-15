@@ -19,6 +19,7 @@ SmartBizApp is a modern business management application built with **ASP.NET Cor
 - **Database**: SQL Server with Entity Framework Core
 - **UI Framework**: AdminLTE theme with Bootstrap
 - **Authentication**: JWT tokens with refresh token support
+- **Deployment**: Docker support for containerized deployment
 
 # Default Login Credentials
 
@@ -38,8 +39,11 @@ The default admin user is created during database seeding with the email `admin@
 - .NET 8.0 SDK or later
 - Node.js 18+ and npm
 - SQL Server (LocalDB, Express, or full version)
+- Docker (optional, for containerized deployment)
 
 ### Installation
+
+#### Option 1: Traditional Setup
 
 1. **Clone the repository**
    ```bash
@@ -49,7 +53,7 @@ The default admin user is created during database seeding with the email `admin@
 
 2. **Backend Setup**
    ```bash
-   cd Backend
+   cd Backend/AspNetCore/SimpleApi
    dotnet restore
    dotnet ef database update
    dotnet run
@@ -65,6 +69,20 @@ The default admin user is created during database seeding with the email `admin@
 4. **Access the Application**
    - Frontend: http://localhost:4200
    - Backend API: http://localhost:5000
+
+#### Option 2: Docker Deployment
+
+For easy deployment using Docker, see [DOCKER_README.md](DOCKER_README.md) for complete instructions.
+
+**Quick Start with Docker:**
+```bash
+# Run the complete stack (API + SQL Server)
+docker-compose up --build
+
+# Access the API at:
+# HTTP: http://localhost:8080
+# HTTPS: http://localhost:8081
+```
 
 # Screenshots
 
