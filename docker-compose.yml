@@ -11,7 +11,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://+:8080;https://+:8081
-      - ConnectionStrings__DefaultConnection=Host=postgres;Database=BusinessDB;Username=postgres;Password=postgres
+      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=BusinessDB;User Id=sa;Password=YourPassword123;TrustServerCertificate=true;
       - Jwt__Key=your-secret-key-must-be-at-least-256-bits-long-for-security-in-production-environment
       - Jwt__Issuer=SimpleApi
       - Jwt__Audience=SimpleApi
@@ -23,34 +23,34 @@ services:
       - Email__FromEmail=
       - Email__FromName=SmartBizApp
     depends_on:
-      postgres:
+      sqlserver:
         condition: service_healthy
     networks:
       - app-network
     restart: unless-stopped
 
-  postgres:
-    image: postgres:16
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
     environment:
-      - POSTGRES_DB=BusinessDB
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=YourPassword123
+      - MSSQL_PID=Express
     ports:
-      - "5432:5432"
+      - "1433:1433"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - sqlserver_data:/var/opt/mssql
     networks:
       - app-network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: ["CMD-SHELL", "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P YourPassword123 -Q 'SELECT 1'"]
       interval: 30s
       timeout: 10s
       retries: 5
       start_period: 30s
 
 volumes:
-  postgres_data:
+  sqlserver_data:
     driver: local
 
 networks:

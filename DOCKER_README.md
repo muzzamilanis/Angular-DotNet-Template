@@ -88,14 +88,14 @@ For production deployments, consider:
 ## Security Considerations
 
 1. **JWT Secret**: Use a strong, randomly generated key of at least 256 bits
-2. **Database Password**: Use strong passwords for PostgreSQL
+2. **Database Password**: Use strong passwords for SQL Server
 3. **Email Credentials**: Store email credentials securely
 4. **HTTPS**: Configure proper SSL certificates for production
 
 ## Volumes
 
-The docker-compose setup creates a persistent volume for PostgreSQL data:
-- `postgres_data` - Stores PostgreSQL database files
+The docker-compose setup creates a persistent volume for SQL Server data:
+- `sqlserver_data` - Stores SQL Server database files
 
 ## Network
 
@@ -116,9 +116,9 @@ View application logs:
 docker-compose logs api
 ```
 
-View PostgreSQL logs:
+View SQL Server logs:
 ```bash
-docker-compose logs postgres
+docker-compose logs sqlserver
 ```
 
 ## Production Considerations

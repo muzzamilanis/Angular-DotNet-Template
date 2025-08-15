@@ -2,8 +2,8 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using SimpleApi.Data;
 
 #nullable disable
@@ -18,37 +18,37 @@ namespace SimpleApi.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "9.0.0")
-                .HasAnnotation("Relational:MaxIdentifierLength", 63);
+                .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
-            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
             modelBuilder.Entity("SimpleApi.Models.BusinessNature", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
                         .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<string>("DisplayName")
                         .IsRequired()
                         .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("boolean");
+                        .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("nvarchar(100)");
 
                     b.HasKey("Id");
 
@@ -58,7 +58,7 @@ namespace SimpleApi.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2025, 8, 15, 13, 54, 24, 556, DateTimeKind.Utc).AddTicks(6697),
+                            CreatedAt = new DateTime(2025, 8, 15, 15, 48, 50, 586, DateTimeKind.Utc).AddTicks(2224),
                             Description = "Digital marketing and content creation services",
                             DisplayName = "Digital Marketing Agency",
                             IsActive = true,
@@ -67,7 +67,7 @@ namespace SimpleApi.Migrations
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2025, 8, 15, 13, 54, 24, 556, DateTimeKind.Utc).AddTicks(7117),
+                            CreatedAt = new DateTime(2025, 8, 15, 15, 48, 50, 586, DateTimeKind.Utc).AddTicks(2843),
                             Description = "Automotive industry and vehicle-related services",
                             DisplayName = "Automobile",
                             IsActive = true,
@@ -76,7 +76,7 @@ namespace SimpleApi.Migrations
                         new
                         {
                             Id = 3,
-                            CreatedAt = new DateTime(2025, 8, 15, 13, 54, 24, 556, DateTimeKind.Utc).AddTicks(7119),
+                            CreatedAt = new DateTime(2025, 8, 15, 15, 48, 50, 586, DateTimeKind.Utc).AddTicks(2846),
                             Description = "General business operations and services",
                             DisplayName = "General",
                             IsActive = true,
@@ -85,7 +85,7 @@ namespace SimpleApi.Migrations
                         new
                         {
                             Id = 4,
-                            CreatedAt = new DateTime(2025, 8, 15, 13, 54, 24, 556, DateTimeKind.Utc).AddTicks(7121),
+                            CreatedAt = new DateTime(2025, 8, 15, 15, 48, 50, 586, DateTimeKind.Utc).AddTicks(2848),
                             Description = "Traditional retail and online commerce operations",
                             DisplayName = "Retail & E-commerce",
                             IsActive = true,
@@ -94,7 +94,7 @@ namespace SimpleApi.Migrations
                         new
                         {
                             Id = 5,
-                            CreatedAt = new DateTime(2025, 8, 15, 13, 54, 24, 556, DateTimeKind.Utc).AddTicks(7123),
+                            CreatedAt = new DateTime(2025, 8, 15, 15, 48, 50, 586, DateTimeKind.Utc).AddTicks(2850),
                             Description = "Manufacturing and production businesses",
                             DisplayName = "Manufacturing",
                             IsActive = true,
@@ -106,39 +106,39 @@ namespace SimpleApi.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Address")
                         .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<int>("BusinessNatureId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<string>("ContactPerson")
                         .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
                         .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("boolean");
+                        .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<string>("Phone")
                         .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
 
@@ -153,7 +153,7 @@ namespace SimpleApi.Migrations
                             Address = "123 Business St",
                             BusinessNatureId = 3,
                             ContactPerson = "System Admin",
-                            CreatedAt = new DateTime(2025, 8, 15, 13, 54, 24, 557, DateTimeKind.Utc).AddTicks(9245),
+                            CreatedAt = new DateTime(2025, 8, 15, 15, 48, 50, 588, DateTimeKind.Utc).AddTicks(1481),
                             Email = "admin@defaultcompany.com",
                             IsActive = true,
                             Name = "Default Company",
@@ -165,7 +165,7 @@ namespace SimpleApi.Migrations
                             Address = "456 Marketing Ave",
                             BusinessNatureId = 1,
                             ContactPerson = "Marketing Manager",
-                            CreatedAt = new DateTime(2025, 8, 15, 13, 54, 24, 557, DateTimeKind.Utc).AddTicks(9945),
+                            CreatedAt = new DateTime(2025, 8, 15, 15, 48, 50, 588, DateTimeKind.Utc).AddTicks(2159),
                             Email = "admin@digitalmarketingpro.com",
                             IsActive = true,
                             Name = "Digital Marketing Pro",
@@ -177,28 +177,28 @@ namespace SimpleApi.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("CompanyId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("boolean");
+                        .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("Symbol")
                         .IsRequired()
                         .HasMaxLength(10)
-                        .HasColumnType("character varying(10)");
+                        .HasColumnType("nvarchar(10)");
 
                     b.HasKey("Id");
 
@@ -211,32 +211,32 @@ namespace SimpleApi.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Address")
                         .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<int>("CompanyId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<string>("Email")
                         .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("boolean");
+                        .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<string>("Phone")
                         .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
 
@@ -271,24 +271,24 @@ namespace SimpleApi.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("CompanyId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<string>("Description")
                         .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("boolean");
+                        .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
@@ -333,33 +333,33 @@ namespace SimpleApi.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("CompanyId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("boolean");
+                        .HasColumnType("bit");
 
                     b.Property<string>("ProjectDescription")
                         .HasMaxLength(1000)
-                        .HasColumnType("character varying(1000)");
+                        .HasColumnType("nvarchar(1000)");
 
                     b.Property<string>("ProjectName")
                         .IsRequired()
                         .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<int>("ProjectStatus")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("UpdatedDate")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
@@ -372,45 +372,45 @@ namespace SimpleApi.Migrations
                         {
                             Id = 1,
                             CompanyId = 1,
-                            CreatedDate = new DateTime(2025, 8, 15, 13, 54, 24, 563, DateTimeKind.Utc).AddTicks(6804),
+                            CreatedDate = new DateTime(2025, 8, 15, 15, 48, 50, 596, DateTimeKind.Utc).AddTicks(9303),
                             IsActive = true,
                             ProjectDescription = "Corporate website development project",
                             ProjectName = "Website Development",
                             ProjectStatus = 1,
-                            UpdatedDate = new DateTime(2025, 8, 15, 13, 54, 24, 563, DateTimeKind.Utc).AddTicks(7208)
+                            UpdatedDate = new DateTime(2025, 8, 15, 15, 48, 50, 596, DateTimeKind.Utc).AddTicks(9943)
                         },
                         new
                         {
                             Id = 2,
                             CompanyId = 1,
-                            CreatedDate = new DateTime(2025, 8, 15, 13, 54, 24, 563, DateTimeKind.Utc).AddTicks(8669),
+                            CreatedDate = new DateTime(2025, 8, 15, 15, 48, 50, 597, DateTimeKind.Utc).AddTicks(2327),
                             IsActive = true,
                             ProjectDescription = "Search engine optimization campaign",
                             ProjectName = "SEO Campaign",
                             ProjectStatus = 1,
-                            UpdatedDate = new DateTime(2025, 8, 15, 13, 54, 24, 563, DateTimeKind.Utc).AddTicks(8670)
+                            UpdatedDate = new DateTime(2025, 8, 15, 15, 48, 50, 597, DateTimeKind.Utc).AddTicks(2328)
                         },
                         new
                         {
                             Id = 3,
                             CompanyId = 2,
-                            CreatedDate = new DateTime(2025, 8, 15, 13, 54, 24, 563, DateTimeKind.Utc).AddTicks(8673),
+                            CreatedDate = new DateTime(2025, 8, 15, 15, 48, 50, 597, DateTimeKind.Utc).AddTicks(2331),
                             IsActive = true,
                             ProjectDescription = "Comprehensive social media marketing strategy",
                             ProjectName = "Social Media Marketing",
                             ProjectStatus = 1,
-                            UpdatedDate = new DateTime(2025, 8, 15, 13, 54, 24, 563, DateTimeKind.Utc).AddTicks(8673)
+                            UpdatedDate = new DateTime(2025, 8, 15, 15, 48, 50, 597, DateTimeKind.Utc).AddTicks(2332)
                         },
                         new
                         {
                             Id = 4,
                             CompanyId = 2,
-                            CreatedDate = new DateTime(2025, 8, 15, 13, 54, 24, 563, DateTimeKind.Utc).AddTicks(8676),
+                            CreatedDate = new DateTime(2025, 8, 15, 15, 48, 50, 597, DateTimeKind.Utc).AddTicks(2465),
                             IsActive = true,
                             ProjectDescription = "Blog and content creation for digital presence",
                             ProjectName = "Content Creation Campaign",
                             ProjectStatus = 3,
-                            UpdatedDate = new DateTime(2025, 8, 15, 13, 54, 24, 563, DateTimeKind.Utc).AddTicks(8676)
+                            UpdatedDate = new DateTime(2025, 8, 15, 15, 48, 50, 597, DateTimeKind.Utc).AddTicks(2465)
                         });
                 });
 
@@ -418,84 +418,84 @@ namespace SimpleApi.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("AcademicLevel")
                         .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<decimal?>("AmountReceived")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("AssignedTo")
                         .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<string>("ClientName")
                         .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<string>("Code")
                         .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<int>("CompanyId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<string>("ContactEmail")
                         .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<string>("ContactPhone")
                         .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("Country")
                         .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("CustomerAddress")
                         .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<string>("CustomerName")
                         .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<DateTime?>("Deadline")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime>("OrderDate")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("OrderDetails")
                         .HasMaxLength(1000)
-                        .HasColumnType("character varying(1000)");
+                        .HasColumnType("nvarchar(1000)");
 
                     b.Property<string>("OrderNumber")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("PaymentStatus")
                         .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<int?>("ProjectId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int?>("ServiceTypeId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<string>("SourceOfPayment")
                         .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("Status")
                         .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<decimal>("TotalAmount")
                         .HasColumnType("decimal(18,2)");
@@ -505,7 +505,7 @@ namespace SimpleApi.Migrations
 
                     b.Property<string>("WordsOrPages")
                         .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("nvarchar(100)");
 
                     b.HasKey("Id");
 
@@ -522,42 +522,42 @@ namespace SimpleApi.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime?>("ItemDeadline")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("PageCount")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<string>("PaperType")
                         .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("ProductId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("Quantity")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("SaleOrderId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<string>("ServiceType")
                         .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<int?>("WordCount")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<string>("WorkTitle")
                         .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
+                        .HasColumnType("nvarchar(200)");
 
                     b.HasKey("Id");
 
@@ -572,27 +572,27 @@ namespace SimpleApi.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("CompanyId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
                         .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("boolean");
+                        .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("nvarchar(100)");
 
                     b.HasKey("Id");
 
@@ -605,7 +605,7 @@ namespace SimpleApi.Migrations
                         {
                             Id = 1,
                             CompanyId = 1,
-                            CreatedAt = new DateTime(2025, 8, 15, 13, 54, 24, 564, DateTimeKind.Utc).AddTicks(1451),
+                            CreatedAt = new DateTime(2025, 8, 15, 15, 48, 50, 597, DateTimeKind.Utc).AddTicks(6748),
                             Description = "Blog posts, articles, and other written content",
                             IsActive = true,
                             Name = "Content Writing"
@@ -614,7 +614,7 @@ namespace SimpleApi.Migrations
                         {
                             Id = 2,
                             CompanyId = 1,
-                            CreatedAt = new DateTime(2025, 8, 15, 13, 54, 24, 564, DateTimeKind.Utc).AddTicks(1837),
+                            CreatedAt = new DateTime(2025, 8, 15, 15, 48, 50, 597, DateTimeKind.Utc).AddTicks(7377),
                             Description = "Website design and development services",
                             IsActive = true,
                             Name = "Web Design"
@@ -623,7 +623,7 @@ namespace SimpleApi.Migrations
                         {
                             Id = 3,
                             CompanyId = 1,
-                            CreatedAt = new DateTime(2025, 8, 15, 13, 54, 24, 564, DateTimeKind.Utc).AddTicks(1839),
+                            CreatedAt = new DateTime(2025, 8, 15, 15, 48, 50, 597, DateTimeKind.Utc).AddTicks(7379),
                             Description = "Search engine optimized content creation",
                             IsActive = true,
                             Name = "SEO Writing"
@@ -632,7 +632,7 @@ namespace SimpleApi.Migrations
                         {
                             Id = 4,
                             CompanyId = 1,
-                            CreatedAt = new DateTime(2025, 8, 15, 13, 54, 24, 564, DateTimeKind.Utc).AddTicks(1841),
+                            CreatedAt = new DateTime(2025, 8, 15, 15, 48, 50, 597, DateTimeKind.Utc).AddTicks(7381),
                             Description = "Digital marketing strategy development",
                             IsActive = true,
                             Name = "Strategy Planning"
@@ -641,7 +641,7 @@ namespace SimpleApi.Migrations
                         {
                             Id = 5,
                             CompanyId = 1,
-                            CreatedAt = new DateTime(2025, 8, 15, 13, 54, 24, 564, DateTimeKind.Utc).AddTicks(1842),
+                            CreatedAt = new DateTime(2025, 8, 15, 15, 48, 50, 597, DateTimeKind.Utc).AddTicks(7383),
                             Description = "Email campaign development and management",
                             IsActive = true,
                             Name = "Email Marketing"
@@ -650,7 +650,7 @@ namespace SimpleApi.Migrations
                         {
                             Id = 6,
                             CompanyId = 2,
-                            CreatedAt = new DateTime(2025, 8, 15, 13, 54, 24, 564, DateTimeKind.Utc).AddTicks(1844),
+                            CreatedAt = new DateTime(2025, 8, 15, 15, 48, 50, 597, DateTimeKind.Utc).AddTicks(7385),
                             Description = "Search engine optimization services",
                             IsActive = true,
                             Name = "SEO"
@@ -659,7 +659,7 @@ namespace SimpleApi.Migrations
                         {
                             Id = 7,
                             CompanyId = 2,
-                            CreatedAt = new DateTime(2025, 8, 15, 13, 54, 24, 564, DateTimeKind.Utc).AddTicks(1846),
+                            CreatedAt = new DateTime(2025, 8, 15, 15, 48, 50, 597, DateTimeKind.Utc).AddTicks(7386),
                             Description = "General writing and content creation",
                             IsActive = true,
                             Name = "Writing Service"
@@ -670,35 +670,35 @@ namespace SimpleApi.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("CompanyId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("boolean");
+                        .HasColumnType("bit");
 
                     b.Property<bool>("IsSuperAdmin")
-                        .HasColumnType("boolean");
+                        .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("PasswordHash")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -714,7 +714,7 @@ namespace SimpleApi.Migrations
                         {
                             Id = 1,
                             CompanyId = 1,
-                            CreatedAt = new DateTime(2025, 8, 15, 13, 54, 24, 562, DateTimeKind.Utc).AddTicks(6365),
+                            CreatedAt = new DateTime(2025, 8, 15, 15, 48, 50, 595, DateTimeKind.Utc).AddTicks(539),
                             Email = "admin@aspnetboilerplate.com",
                             IsActive = true,
                             IsSuperAdmin = true,

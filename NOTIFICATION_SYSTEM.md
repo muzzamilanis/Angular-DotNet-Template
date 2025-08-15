@@ -42,10 +42,10 @@ Three new API endpoints have been added to the Notifications controller:
 - **Better Error Handling**: Logs specific configuration errors instead of generic failures
 - **Detailed Logging**: Provides clear feedback on email send status
 
-### 4. Development Environment Support
-- **Added SQLite Support**: For development/testing environments
-- **Environment-Specific Database**: Uses SQLite in development, SQL Server in production
-- **Easier Testing**: No need for SQL Server setup during development
+### 4. Database Configuration
+- **SQL Server Support**: Uses SQL Server for data persistence  
+- **Entity Framework**: Properly configured with migrations
+- **Connection Management**: Robust database connection handling
 
 ## Email Configuration
 
