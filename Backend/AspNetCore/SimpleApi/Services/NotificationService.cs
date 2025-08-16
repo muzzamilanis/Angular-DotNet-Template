@@ -30,12 +30,16 @@ namespace SimpleApi.Services
                 return new DashboardNotificationResponseDto();
             }
 
-            // Get orders with approaching deadlines
-            var approachingOrders = await _context.SaleOrders
+			// Get the current date in UTC for PostgreSQL consistency
+			var currentDateUtc = DateTime.UtcNow.Date;
+			var deadlineLimitUtc = currentDateUtc.AddDays(3);
+
+			// Get orders with approaching deadlines
+			var approachingOrders = await _context.SaleOrders
                 .Where(so => so.CompanyId == companyId && 
                             so.Status == "In Progress" && 
                             so.Deadline.HasValue && 
-                            so.Deadline.Value <= DateTime.Today.AddDays(3))
+                            so.Deadline.Value.ToUniversalTime() <= deadlineLimitUtc)
                 .ToListAsync();
 
             var notifications = new List<NotificationDto>();
@@ -47,7 +51,7 @@ namespace SimpleApi.Services
                     continue;
 
                 var daysUntilDeadline = order.Deadline.HasValue 
-                    ? (order.Deadline.Value.Date - DateTime.Today).Days 
+                    ? (order.Deadline.Value.Date - currentDateUtc).Days 
                     : 0;
 
                 var notification = new NotificationDto
@@ -55,7 +59,7 @@ namespace SimpleApi.Services
                     SaleOrderId = order.Id,
                     OrderNumber = order.OrderNumber,
                     ClientName = order.ClientName ?? order.CustomerName,
-                    Deadline = order.Deadline,
+                    Deadline = order.Deadline?.ToUniversalTime(),
                     DaysUntilDeadline = daysUntilDeadline,
                     AssignedTo = order.AssignedTo,
                     TotalAmount = order.TotalAmount,

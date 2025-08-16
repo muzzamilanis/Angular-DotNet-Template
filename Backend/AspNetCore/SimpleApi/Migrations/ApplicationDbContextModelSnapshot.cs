@@ -58,7 +58,7 @@ namespace SimpleApi.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2025, 8, 15, 13, 54, 24, 556, DateTimeKind.Utc).AddTicks(6697),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Description = "Digital marketing and content creation services",
                             DisplayName = "Digital Marketing Agency",
                             IsActive = true,
@@ -67,7 +67,7 @@ namespace SimpleApi.Migrations
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2025, 8, 15, 13, 54, 24, 556, DateTimeKind.Utc).AddTicks(7117),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Description = "Automotive industry and vehicle-related services",
                             DisplayName = "Automobile",
                             IsActive = true,
@@ -76,7 +76,7 @@ namespace SimpleApi.Migrations
                         new
                         {
                             Id = 3,
-                            CreatedAt = new DateTime(2025, 8, 15, 13, 54, 24, 556, DateTimeKind.Utc).AddTicks(7119),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Description = "General business operations and services",
                             DisplayName = "General",
                             IsActive = true,
@@ -85,7 +85,7 @@ namespace SimpleApi.Migrations
                         new
                         {
                             Id = 4,
-                            CreatedAt = new DateTime(2025, 8, 15, 13, 54, 24, 556, DateTimeKind.Utc).AddTicks(7121),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Description = "Traditional retail and online commerce operations",
                             DisplayName = "Retail & E-commerce",
                             IsActive = true,
@@ -94,7 +94,7 @@ namespace SimpleApi.Migrations
                         new
                         {
                             Id = 5,
-                            CreatedAt = new DateTime(2025, 8, 15, 13, 54, 24, 556, DateTimeKind.Utc).AddTicks(7123),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Description = "Manufacturing and production businesses",
                             DisplayName = "Manufacturing",
                             IsActive = true,
@@ -153,7 +153,7 @@ namespace SimpleApi.Migrations
                             Address = "123 Business St",
                             BusinessNatureId = 3,
                             ContactPerson = "System Admin",
-                            CreatedAt = new DateTime(2025, 8, 15, 13, 54, 24, 557, DateTimeKind.Utc).AddTicks(9245),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "admin@defaultcompany.com",
                             IsActive = true,
                             Name = "Default Company",
@@ -165,7 +165,7 @@ namespace SimpleApi.Migrations
                             Address = "456 Marketing Ave",
                             BusinessNatureId = 1,
                             ContactPerson = "Marketing Manager",
-                            CreatedAt = new DateTime(2025, 8, 15, 13, 54, 24, 557, DateTimeKind.Utc).AddTicks(9945),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "admin@digitalmarketingpro.com",
                             IsActive = true,
                             Name = "Digital Marketing Pro",
@@ -372,45 +372,45 @@ namespace SimpleApi.Migrations
                         {
                             Id = 1,
                             CompanyId = 1,
-                            CreatedDate = new DateTime(2025, 8, 15, 13, 54, 24, 563, DateTimeKind.Utc).AddTicks(6804),
+                            CreatedDate = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             IsActive = true,
                             ProjectDescription = "Corporate website development project",
                             ProjectName = "Website Development",
                             ProjectStatus = 1,
-                            UpdatedDate = new DateTime(2025, 8, 15, 13, 54, 24, 563, DateTimeKind.Utc).AddTicks(7208)
+                            UpdatedDate = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
                         },
                         new
                         {
                             Id = 2,
                             CompanyId = 1,
-                            CreatedDate = new DateTime(2025, 8, 15, 13, 54, 24, 563, DateTimeKind.Utc).AddTicks(8669),
+                            CreatedDate = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             IsActive = true,
                             ProjectDescription = "Search engine optimization campaign",
                             ProjectName = "SEO Campaign",
                             ProjectStatus = 1,
-                            UpdatedDate = new DateTime(2025, 8, 15, 13, 54, 24, 563, DateTimeKind.Utc).AddTicks(8670)
+                            UpdatedDate = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
                         },
                         new
                         {
                             Id = 3,
                             CompanyId = 2,
-                            CreatedDate = new DateTime(2025, 8, 15, 13, 54, 24, 563, DateTimeKind.Utc).AddTicks(8673),
+                            CreatedDate = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             IsActive = true,
                             ProjectDescription = "Comprehensive social media marketing strategy",
                             ProjectName = "Social Media Marketing",
                             ProjectStatus = 1,
-                            UpdatedDate = new DateTime(2025, 8, 15, 13, 54, 24, 563, DateTimeKind.Utc).AddTicks(8673)
+                            UpdatedDate = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
                         },
                         new
                         {
                             Id = 4,
                             CompanyId = 2,
-                            CreatedDate = new DateTime(2025, 8, 15, 13, 54, 24, 563, DateTimeKind.Utc).AddTicks(8676),
+                            CreatedDate = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             IsActive = true,
                             ProjectDescription = "Blog and content creation for digital presence",
                             ProjectName = "Content Creation Campaign",
                             ProjectStatus = 3,
-                            UpdatedDate = new DateTime(2025, 8, 15, 13, 54, 24, 563, DateTimeKind.Utc).AddTicks(8676)
+                            UpdatedDate = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
                         });
                 });
 
@@ -605,7 +605,7 @@ namespace SimpleApi.Migrations
                         {
                             Id = 1,
                             CompanyId = 1,
-                            CreatedAt = new DateTime(2025, 8, 15, 13, 54, 24, 564, DateTimeKind.Utc).AddTicks(1451),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Description = "Blog posts, articles, and other written content",
                             IsActive = true,
                             Name = "Content Writing"
@@ -614,7 +614,7 @@ namespace SimpleApi.Migrations
                         {
                             Id = 2,
                             CompanyId = 1,
-                            CreatedAt = new DateTime(2025, 8, 15, 13, 54, 24, 564, DateTimeKind.Utc).AddTicks(1837),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Description = "Website design and development services",
                             IsActive = true,
                             Name = "Web Design"
@@ -623,7 +623,7 @@ namespace SimpleApi.Migrations
                         {
                             Id = 3,
                             CompanyId = 1,
-                            CreatedAt = new DateTime(2025, 8, 15, 13, 54, 24, 564, DateTimeKind.Utc).AddTicks(1839),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Description = "Search engine optimized content creation",
                             IsActive = true,
                             Name = "SEO Writing"
@@ -632,7 +632,7 @@ namespace SimpleApi.Migrations
                         {
                             Id = 4,
                             CompanyId = 1,
-                            CreatedAt = new DateTime(2025, 8, 15, 13, 54, 24, 564, DateTimeKind.Utc).AddTicks(1841),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Description = "Digital marketing strategy development",
                             IsActive = true,
                             Name = "Strategy Planning"
@@ -641,7 +641,7 @@ namespace SimpleApi.Migrations
                         {
                             Id = 5,
                             CompanyId = 1,
-                            CreatedAt = new DateTime(2025, 8, 15, 13, 54, 24, 564, DateTimeKind.Utc).AddTicks(1842),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Description = "Email campaign development and management",
                             IsActive = true,
                             Name = "Email Marketing"
@@ -650,7 +650,7 @@ namespace SimpleApi.Migrations
                         {
                             Id = 6,
                             CompanyId = 2,
-                            CreatedAt = new DateTime(2025, 8, 15, 13, 54, 24, 564, DateTimeKind.Utc).AddTicks(1844),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Description = "Search engine optimization services",
                             IsActive = true,
                             Name = "SEO"
@@ -659,7 +659,7 @@ namespace SimpleApi.Migrations
                         {
                             Id = 7,
                             CompanyId = 2,
-                            CreatedAt = new DateTime(2025, 8, 15, 13, 54, 24, 564, DateTimeKind.Utc).AddTicks(1846),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Description = "General writing and content creation",
                             IsActive = true,
                             Name = "Writing Service"
@@ -714,7 +714,7 @@ namespace SimpleApi.Migrations
                         {
                             Id = 1,
                             CompanyId = 1,
-                            CreatedAt = new DateTime(2025, 8, 15, 13, 54, 24, 562, DateTimeKind.Utc).AddTicks(6365),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "admin@aspnetboilerplate.com",
                             IsActive = true,
                             IsSuperAdmin = true,

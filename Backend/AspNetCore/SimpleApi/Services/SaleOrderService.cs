@@ -284,12 +284,12 @@ namespace SimpleApi.Services
 
         public async Task<List<SaleOrder>> GetDeadlineApproachingOrdersAsync()
         {
-            var deadlineThreshold = DateTime.Today.AddDays(3);
+            var deadlineThreshold = DateTime.UtcNow.Date.AddDays(3);
             
             return await _context.SaleOrders
                 .Where(so => so.Status == "In Progress" && 
                             so.Deadline.HasValue && 
-                            so.Deadline.Value <= deadlineThreshold)
+                            so.Deadline.Value.ToUniversalTime() <= deadlineThreshold)
                 .Include(so => so.Company)
                 .ToListAsync();
         }
