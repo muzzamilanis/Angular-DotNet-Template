@@ -8,6 +8,26 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Only enforce HTTPS in Development
+if (builder.Environment.IsDevelopment())
+{
+	builder.WebHost.ConfigureKestrel(options =>
+	{
+		options.ListenAnyIP(5000); // HTTP
+		options.ListenAnyIP(5001, listenOptions =>
+		{
+			listenOptions.UseHttps(); // only for local dev cert
+		});
+	});
+}
+else
+{
+	builder.WebHost.ConfigureKestrel(options =>
+	{
+		options.ListenAnyIP(5000); // only HTTP in production
+	});
+}
+
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

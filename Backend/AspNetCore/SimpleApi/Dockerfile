@@ -20,7 +20,7 @@ EXPOSE 8080
 EXPOSE 8081
 
 # Set environment variables
-ENV ASPNETCORE_URLS=http://+:8080;https://+:8081
+ENV ASPNETCORE_URLS=http://+:8080
 ENV ASPNETCORE_ENVIRONMENT=Production
 
 # Default environment variables (can be overridden)
