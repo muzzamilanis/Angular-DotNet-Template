@@ -93,7 +93,9 @@ builder.Services.AddCors(options =>
 
 // Add JWT Authentication
 var jwtKey = builder.Configuration["Jwt:Key"] ?? "your-secret-key-must-be-at-least-256-bits-long-for-security";
-var key = Encoding.ASCII.GetBytes(jwtKey);
+Console.WriteLine($"JWT Key length: {builder.Configuration["JWT:Key"]?.Length}");
+Console.WriteLine($"JWT Key value: {jwtKey}");
+var key = Encoding.UTF8.GetBytes(jwtKey);
 
 builder.Services.AddAuthentication(x =>
 {
