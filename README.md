@@ -139,6 +139,19 @@ docker-compose up --build
 # HTTPS: http://localhost:8081
 ```
 
+#### Option 3: Render.com Deployment
+
+For deploying to Render.com, set these environment variables in your Render service:
+
+**Required Environment Variables:**
+- `ConnectionStrings__DefaultConnection` - Your PostgreSQL connection string
+- `Jwt__Key` - JWT signing key (minimum 256 bits)
+
+**Example PostgreSQL connection string format for Render:**
+```
+Host=your-postgres-host;Database=your-db-name;Username=your-username;Password=your-password;Port=5432;SSL Mode=Require;Trust Server Certificate=true
+```
+
 ## Latest Features & Architecture
 
 ### Role-Based Access Control (RBAC)
