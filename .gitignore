@@ -10,3 +10,7 @@ aspnet-core/src/AbpCompanyName.AbpProjectName.Migrator/Logs/Logs.txt
 aspnet-core/build/outputs/
 aspnet-core/docker/mvc/Mvc-Logs/
 
+# Environment variables
+*.env
+
+

@@ -23,6 +23,18 @@ EXPOSE 8081
 ENV ASPNETCORE_URLS=http://+:8080;https://+:8081
 ENV ASPNETCORE_ENVIRONMENT=Production
 
+# Default environment variables (can be overridden)
+ENV ConnectionStrings__DefaultConnection=""
+ENV Jwt__Key=""
+ENV Jwt__Issuer="SimpleApi"
+ENV Jwt__Audience="SimpleApi"
+ENV Email__SmtpHost=""
+ENV Email__SmtpPort="587"
+ENV Email__Username=""
+ENV Email__Password=""
+ENV Email__FromEmail=""
+ENV Email__FromName="SmartBizApp"
+
 # Create a non-root user for security
 RUN adduser --disabled-password --gecos '' appuser && chown -R appuser /app
 USER appuser

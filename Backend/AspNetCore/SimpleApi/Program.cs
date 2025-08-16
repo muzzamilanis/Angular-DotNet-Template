@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using SimpleApi.Data;
 using SimpleApi.Services;
+using System;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,8 +17,15 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddHttpContextAccessor();
 
 // Add Entity Framework
+builder.Configuration
+	.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+	.AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true)
+	.AddEnvironmentVariables();
+
+var connectionString = builder.Configuration.GetConnectionString("Default");
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-	   options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+	options.UseNpgsql(connectionString));
 
 // Add AutoMapper
 builder.Services.AddAutoMapper(typeof(MappingProfile));
