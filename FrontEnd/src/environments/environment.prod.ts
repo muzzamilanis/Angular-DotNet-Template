@@ -1,4 +1,4 @@
 export const environment = {
     production: true,
-    apiUrl: 'https://sbs.somee.com/api',
+    apiUrl: 'https://angular-dotnet-template.onrender.com/api',
 };
