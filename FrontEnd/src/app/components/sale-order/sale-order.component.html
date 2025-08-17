@@ -17,6 +17,7 @@
                                     id="orderNumber"
                                     formControlName="orderNumber"
                                     placeholder="Enter order number"
+                                    [disabled]="isFormReadonly()"
                                     [class.is-invalid]="
                                         saleOrderForm.get('orderNumber')?.invalid &&
                                         saleOrderForm.get('orderNumber')?.touched
@@ -396,6 +397,95 @@
                         </div>
                     </div>
 
+                    <!-- Currency Section for Digital Marketing -->
+                    <div class="row" *ngIf="isDigitalMarketing">
+                        <div class="col-md-12">
+                            <h5 class="text-primary mb-3">
+                                <i class="fas fa-money-bill-wave"></i>
+                                Currency & Payment Information
+                            </h5>
+                        </div>
+                    </div>
+
+                    <div class="row" *ngIf="isDigitalMarketing">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="country">
+                                    <i class="fas fa-globe"></i>
+                                    Country
+                                </label>
+                                <select 
+                                    class="form-control" 
+                                    id="country" 
+                                    (change)="onCountryChange($event.target.value)"
+                                    [value]="selectedCountry"
+                                    [disabled]="isFormReadonly()">
+                                    <option value="">🌍 Select Country</option>
+                                    <option *ngFor="let country of countries" [value]="country.code">
+                                        {{ country.name }} ({{ country.currency }})
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="currencyCode">
+                                    <i class="fas fa-coins"></i>
+                                    Currency Code
+                                </label>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="currencyCode"
+                                    formControlName="currencyCode"
+                                    readonly
+                                    placeholder="Auto-selected based on country" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row" *ngIf="isDigitalMarketing && selectedCurrencyCode">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="foreignCurrencyAmount">
+                                    <i class="fas fa-dollar-sign"></i>
+                                    Amount ({{ selectedCurrencyCode }})
+                                </label>
+                                <input
+                                    type="number"
+                                    class="form-control"
+                                    id="foreignCurrencyAmount"
+                                    formControlName="foreignCurrencyAmount"
+                                    placeholder="Enter amount in {{ selectedCurrencyCode }}"
+                                    step="0.01"
+                                    min="0"
+                                    (input)="onForeignAmountChange()"
+                                    [disabled]="isFormReadonly()" />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="pkrAmount">
+                                    <i class="fas fa-rupee-sign"></i>
+                                    PKR Equivalent
+                                    <span *ngIf="isLoadingRate" class="text-muted">
+                                        <i class="fas fa-spinner fa-spin"></i> Loading rate...
+                                    </span>
+                                    <span *ngIf="currentExchangeRate > 0" class="text-muted">
+                                        (Rate: 1 {{ selectedCurrencyCode }} = {{ currentExchangeRate }} PKR)
+                                    </span>
+                                </label>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="pkrAmount"
+                                    formControlName="pkrAmount"
+                                    readonly
+                                    placeholder="Auto-calculated PKR amount" />
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="row" *ngIf="isDigitalMarketing">
                         <div class="col-md-12">
                             <div class="form-group">
@@ -768,7 +858,7 @@
                     <button
                         type="submit"
                         class="btn btn-primary"
-                        [disabled]="saleOrderForm.invalid || (!isDigitalMarketing && items.length === 0)">
+                        [disabled]="saleOrderForm.invalid || (!isDigitalMarketing && items.length === 0) || isFormReadonly()">>
                         <i class="fas fa-save"></i>
                         {{ editingOrder ? 'Update' : 'Create' }} Order
                     </button>

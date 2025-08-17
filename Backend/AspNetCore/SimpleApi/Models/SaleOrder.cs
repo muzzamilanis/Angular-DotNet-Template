@@ -74,6 +74,16 @@ namespace SimpleApi.Models
 
         [StringLength(100)]
         public string? Country { get; set; }
+
+        // Currency-related fields for Digital Marketing companies
+        [StringLength(10)]
+        public string? CurrencyCode { get; set; }
+
+        public decimal? ForeignCurrencyAmount { get; set; }
+
+        public decimal? PkrAmount { get; set; }
+
+        public decimal? ExchangeRateUsed { get; set; }
         
         public virtual ICollection<SaleOrderItem> Items { get; set; } = new List<SaleOrderItem>();
     }

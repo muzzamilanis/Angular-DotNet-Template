@@ -456,6 +456,10 @@ namespace SimpleApi.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
+                    b.Property<string>("CurrencyCode")
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)");
+
                     b.Property<string>("CustomerAddress")
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)");
@@ -466,6 +470,12 @@ namespace SimpleApi.Migrations
 
                     b.Property<DateTime?>("Deadline")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<decimal?>("ExchangeRateUsed")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal?>("ForeignCurrencyAmount")
+                        .HasColumnType("numeric");
 
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("timestamp with time zone");
@@ -482,6 +492,9 @@ namespace SimpleApi.Migrations
                     b.Property<string>("PaymentStatus")
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
+
+                    b.Property<decimal?>("PkrAmount")
+                        .HasColumnType("numeric");
 
                     b.Property<int?>("ProjectId")
                         .HasColumnType("integer");

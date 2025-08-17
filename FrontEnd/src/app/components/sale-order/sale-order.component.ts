@@ -5,6 +5,7 @@ import { ProductService } from '../../services/product.service';
 import { CompanyService } from '../../services/company.service';
 import { ProjectService } from '../../services/project.service';
 import { ServiceTypeService } from '../../services/service-type.service';
+import { CurrencyService } from '../../services/currency.service';
 import { Product } from '../../models/product.model';
 import { ServiceType } from '../../models/service-type.model';
 import { SaleOrder, CreateSaleOrderDto } from '../../models/sale-order.model';
@@ -31,6 +32,13 @@ export class SaleOrderComponent implements OnInit {
     currentCompany: Company | null = null;
     isDigitalMarketing = false;
 
+    // Currency-related properties
+    countries: any[] = [];
+    selectedCountry = '';
+    selectedCurrencyCode = '';
+    currentExchangeRate = 0;
+    isLoadingRate = false;
+
     constructor(
         private fb: FormBuilder,
         private saleOrderService: SaleOrderService,
@@ -38,9 +46,11 @@ export class SaleOrderComponent implements OnInit {
         private companyService: CompanyService,
         private projectService: ProjectService,
         private serviceTypeService: ServiceTypeService,
+        private currencyService: CurrencyService,
         private notificationService: NotificationService
     ) {
         this.initializeForm();
+        this.initializeCountries();
     }
 
     ngOnInit(): void {
@@ -128,6 +138,13 @@ export class SaleOrderComponent implements OnInit {
             formControls.contactPhone = ['', [Validators.maxLength(50)]];
             formControls.orderDetails = ['', [Validators.maxLength(1000)]];
             formControls.wordsOrPages = ['', [Validators.maxLength(100)]];
+
+            // Currency-related fields
+            formControls.country = ['', [Validators.maxLength(100)]];
+            formControls.currencyCode = ['', [Validators.maxLength(10)]];
+            formControls.foreignCurrencyAmount = [0, [Validators.min(0)]];
+            formControls.pkrAmount = [{ value: 0, disabled: true }];
+            formControls.exchangeRateUsed = [0];
         } else {
             // For non-digital marketing companies, use traditional fields and items
             formControls.customerName = ['', [Validators.required, Validators.maxLength(200)]];
@@ -178,13 +195,17 @@ export class SaleOrderComponent implements OnInit {
     }
 
     getProjectName(projectId: number | null | undefined): string {
-        if (!projectId) return '';
+        if (!projectId) {
+            return '';
+        }
         const project = this.projects.find((p) => p.id === projectId);
         return project ? project.projectName : '';
     }
 
     getServiceTypeName(serviceTypeId: number | null | undefined): string {
-        if (!serviceTypeId) return '';
+        if (!serviceTypeId) {
+            return '';
+        }
         const serviceType = this.serviceTypes.find((st) => st.id === serviceTypeId);
         return serviceType ? serviceType.name : '';
     }
@@ -255,6 +276,13 @@ export class SaleOrderComponent implements OnInit {
                 saleOrder.assignedTo = formValue.assignedTo;
                 saleOrder.orderDetails = formValue.orderDetails;
                 saleOrder.wordsOrPages = formValue.wordsOrPages;
+
+                // Currency-related fields
+                saleOrder.country = formValue.country;
+                saleOrder.currencyCode = formValue.currencyCode;
+                saleOrder.foreignCurrencyAmount = formValue.foreignCurrencyAmount;
+                saleOrder.pkrAmount = formValue.pkrAmount;
+                saleOrder.exchangeRateUsed = formValue.exchangeRateUsed;
             }
 
             if (this.editingOrder) {
@@ -316,6 +344,23 @@ export class SaleOrderComponent implements OnInit {
             formValue.assignedTo = order.assignedTo || '';
             formValue.orderDetails = order.orderDetails || '';
             formValue.wordsOrPages = order.wordsOrPages || '';
+
+            // Currency-related fields
+            formValue.country = order.country || '';
+            formValue.currencyCode = order.currencyCode || '';
+            formValue.foreignCurrencyAmount = order.foreignCurrencyAmount || 0;
+            formValue.pkrAmount = order.pkrAmount || 0;
+            formValue.exchangeRateUsed = order.exchangeRateUsed || 0;
+
+            // Set component properties for currency
+            if (order.country) {
+                const country = this.countries.find((c) => c.name === order.country);
+                if (country) {
+                    this.selectedCountry = country.code;
+                    this.selectedCurrencyCode = country.currency;
+                    this.currentExchangeRate = order.exchangeRateUsed || 0;
+                }
+            }
         } else {
             formValue.customerName = order.customerName;
             formValue.customerAddress = order.customerAddress;
@@ -443,5 +488,71 @@ export class SaleOrderComponent implements OnInit {
                 console.error('Error loading sale orders:', error);
             },
         });
+    }
+
+    private initializeCountries(): void {
+        this.countries = [
+            { name: 'United Arab Emirates', code: 'UAE', currency: 'AED' },
+            { name: 'Saudi Arabia', code: 'SA', currency: 'SAR' },
+            { name: 'United States', code: 'US', currency: 'USD' },
+            { name: 'United Kingdom', code: 'UK', currency: 'GBP' },
+            { name: 'European Union', code: 'EU', currency: 'EUR' },
+            { name: 'Canada', code: 'CA', currency: 'CAD' },
+            { name: 'Australia', code: 'AU', currency: 'AUD' },
+            { name: 'Switzerland', code: 'CH', currency: 'CHF' },
+            { name: 'China', code: 'CN', currency: 'CNY' },
+            { name: 'India', code: 'IN', currency: 'INR' },
+            { name: 'Japan', code: 'JP', currency: 'JPY' },
+        ];
+    }
+
+    onCountryChange(countryCode: string): void {
+        const country = this.countries.find((c) => c.code === countryCode);
+        if (country) {
+            this.selectedCountry = countryCode;
+            this.selectedCurrencyCode = country.currency;
+            this.saleOrderForm.get('country')?.setValue(country.name);
+            this.saleOrderForm.get('currencyCode')?.setValue(country.currency);
+            this.loadExchangeRate(country.currency);
+        }
+    }
+
+    private loadExchangeRate(currencyCode: string): void {
+        if (!currencyCode || currencyCode === 'PKR') {
+            this.currentExchangeRate = 1;
+            this.saleOrderForm.get('exchangeRateUsed')?.setValue(1);
+            this.calculatePkrAmount();
+            return;
+        }
+
+        this.isLoadingRate = true;
+        this.currencyService.getExchangeRate(currencyCode).subscribe({
+            next: (response) => {
+                this.currentExchangeRate = response.exchangeRate;
+                this.saleOrderForm.get('exchangeRateUsed')?.setValue(response.exchangeRate);
+                this.calculatePkrAmount();
+                this.isLoadingRate = false;
+            },
+            error: (error) => {
+                console.error('Error loading exchange rate:', error);
+                this.notificationService.showError('Failed to load exchange rate. Please try again.', 'Error');
+                this.isLoadingRate = false;
+            },
+        });
+    }
+
+    onForeignAmountChange(): void {
+        this.calculatePkrAmount();
+    }
+
+    private calculatePkrAmount(): void {
+        const foreignAmount = this.saleOrderForm.get('foreignCurrencyAmount')?.value || 0;
+        const exchangeRate = this.currentExchangeRate || 0;
+        const pkrAmount = foreignAmount * exchangeRate;
+        this.saleOrderForm.get('pkrAmount')?.setValue(pkrAmount.toFixed(2));
+    }
+
+    isFormReadonly(): boolean {
+        return this.editingOrder?.status?.toLowerCase() === 'completed';
     }
 }
