@@ -35,6 +35,12 @@ export interface SaleOrder {
     totalPayment?: number;
     academicLevel?: string;
     country?: string;
+    
+    // Currency-related fields for Digital Marketing companies
+    currencyCode?: string;
+    foreignCurrencyAmount?: number;
+    pkrAmount?: number;
+    exchangeRateUsed?: number;
 }
 
 export interface CreateSaleOrderDto {
@@ -65,6 +71,12 @@ export interface CreateSaleOrderDto {
     wordsOrPages?: string;
     totalPayment?: number;
     country?: string;
+    
+    // Currency-related fields for Digital Marketing companies
+    currencyCode?: string;
+    foreignCurrencyAmount?: number;
+    pkrAmount?: number;
+    exchangeRateUsed?: number;
 }
 
 export interface UpdateSaleOrderDto {
@@ -96,4 +108,10 @@ export interface UpdateSaleOrderDto {
     orderDetails?: string;
     wordsOrPages?: string;
     totalPayment?: number;
+    
+    // Currency-related fields for Digital Marketing companies
+    currencyCode?: string;
+    foreignCurrencyAmount?: number;
+    pkrAmount?: number;
+    exchangeRateUsed?: number;
 }

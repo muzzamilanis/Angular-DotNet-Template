@@ -73,6 +73,16 @@ namespace SimpleApi.DTOs
 
         [StringLength(100)]
         public string? Country { get; set; }
+
+        // Currency-related fields for Digital Marketing companies
+        [StringLength(10)]
+        public string? CurrencyCode { get; set; }
+
+        public decimal? ForeignCurrencyAmount { get; set; }
+
+        public decimal? PkrAmount { get; set; }
+
+        public decimal? ExchangeRateUsed { get; set; }
         
         public List<SaleOrderItemDto> Items { get; set; } = new List<SaleOrderItemDto>();
     }
@@ -136,6 +146,16 @@ namespace SimpleApi.DTOs
 
         [StringLength(100)]
         public string? Country { get; set; }
+
+        // Currency-related fields for Digital Marketing companies
+        [StringLength(10)]
+        public string? CurrencyCode { get; set; }
+
+        public decimal? ForeignCurrencyAmount { get; set; }
+
+        public decimal? PkrAmount { get; set; }
+
+        public decimal? ExchangeRateUsed { get; set; }
         
         public List<CreateSaleOrderItemDto> Items { get; set; } = new List<CreateSaleOrderItemDto>();
     }
@@ -201,6 +221,16 @@ namespace SimpleApi.DTOs
 
         [StringLength(100)]
         public string? Country { get; set; }
+
+        // Currency-related fields for Digital Marketing companies
+        [StringLength(10)]
+        public string? CurrencyCode { get; set; }
+
+        public decimal? ForeignCurrencyAmount { get; set; }
+
+        public decimal? PkrAmount { get; set; }
+
+        public decimal? ExchangeRateUsed { get; set; }
         
         public List<CreateSaleOrderItemDto> Items { get; set; } = new List<CreateSaleOrderItemDto>();
     }
