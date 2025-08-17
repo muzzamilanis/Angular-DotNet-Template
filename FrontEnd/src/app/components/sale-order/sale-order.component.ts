@@ -143,7 +143,7 @@ export class SaleOrderComponent implements OnInit {
             formControls.country = ['', [Validators.maxLength(100)]];
             formControls.currencyCode = ['', [Validators.maxLength(10)]];
             formControls.foreignCurrencyAmount = [0, [Validators.min(0)]];
-            formControls.pkrAmount = [{ value: 0, disabled: true }];
+            formControls.pkrAmount = [0, [Validators.min(0)]];
             formControls.exchangeRateUsed = [0];
         } else {
             // For non-digital marketing companies, use traditional fields and items
@@ -284,7 +284,7 @@ export class SaleOrderComponent implements OnInit {
                 saleOrder.pkrAmount = formValue.pkrAmount;
                 saleOrder.exchangeRateUsed = formValue.exchangeRateUsed;
             }
-
+            console.log('sale order:', saleOrder);
             if (this.editingOrder) {
                 // Update existing order
                 this.saleOrderService

@@ -190,9 +190,9 @@
                                 </div>
 
                                 <div class="row" *ngIf="isDigitalMarketing">
-                                    <div *ngIf="saleOrderForm.get('clientName')?.errors?.['required']">
+                                    <!-- <div *ngIf="saleOrderForm.get('clientName')?.errors?.['required']">
                                         Client name is required
-                                    </div>
+                                    </div> -->
                                     <div *ngIf="saleOrderForm.get('clientName')?.errors?.['maxlength']">
                                         Client name must be 200 characters or less
                                     </div>
@@ -858,7 +858,7 @@
                     <button
                         type="submit"
                         class="btn btn-primary"
-                        [disabled]="saleOrderForm.invalid || (!isDigitalMarketing && items.length === 0) || isFormReadonly()">>
+                        [disabled]="saleOrderForm.invalid || (!isDigitalMarketing && items.length === 0) || isFormReadonly()">
                         <i class="fas fa-save"></i>
                         {{ editingOrder ? 'Update' : 'Create' }} Order
                     </button>
@@ -894,6 +894,7 @@
                                 <th *ngIf="isDigitalMarketing">Deadline</th>
                                 <th *ngIf="isDigitalMarketing">Status</th>
                                 <th *ngIf="isDigitalMarketing">Task Assigned To</th>
+                                <th *ngIf="isDigitalMarketing">Advance Payment</th>
                                 <th *ngIf="!isDigitalMarketing">Customer Address</th>
                                 <th *ngIf="!isDigitalMarketing">Items Count</th>
                                 <th *ngIf="isDigitalMarketing">Total Payment</th>
@@ -920,14 +921,16 @@
                                 <td *ngIf="!isDigitalMarketing">{{ order.customerAddress }}</td>
                                 <td *ngIf="!isDigitalMarketing">{{ order.items.length }}</td>
                                 <td *ngIf="isDigitalMarketing">
-                                    ${{ (order.totalPayment || order.totalAmount || 0).toFixed(2) }}
+                                    {{ (order.AdvancePayment || 0).toFixed(2) }}
+                                </td>
+                                <td *ngIf="isDigitalMarketing">
+                                    {{ (order.pkrAmount || 0).toFixed(2) }}
                                 </td>
                                 <td *ngIf="!isDigitalMarketing">${{ order.totalAmount.toFixed(2) }}</td>
                                 <td>
-                                    <button
-                                        type="button"
-                                        class="btn btn-warning btn-sm mr-2"
-                                        (click)="editOrder(order)">
+                                    <button type="button"
+                                            class="btn btn-warning btn-sm mr-2"
+                                            (click)="editOrder(order)">
                                         <i class="fas fa-edit"></i>
                                     </button>
                                     <button type="button" class="btn btn-danger btn-sm" (click)="deleteOrder(order)">
