@@ -31,13 +31,13 @@ export class SaleOrderComponent implements OnInit {
     editingOrder: SaleOrder | null = null;
     currentCompany: Company | null = null;
     isDigitalMarketing = false;
-    
+
     // Currency-related properties
     countries: any[] = [];
-    selectedCountry: string = '';
-    selectedCurrencyCode: string = '';
-    currentExchangeRate: number = 0;
-    isLoadingRate: boolean = false;
+    selectedCountry = '';
+    selectedCurrencyCode = '';
+    currentExchangeRate = 0;
+    isLoadingRate = false;
 
     constructor(
         private fb: FormBuilder,
@@ -138,7 +138,7 @@ export class SaleOrderComponent implements OnInit {
             formControls.contactPhone = ['', [Validators.maxLength(50)]];
             formControls.orderDetails = ['', [Validators.maxLength(1000)]];
             formControls.wordsOrPages = ['', [Validators.maxLength(100)]];
-            
+
             // Currency-related fields
             formControls.country = ['', [Validators.maxLength(100)]];
             formControls.currencyCode = ['', [Validators.maxLength(10)]];
@@ -195,13 +195,17 @@ export class SaleOrderComponent implements OnInit {
     }
 
     getProjectName(projectId: number | null | undefined): string {
-        if (!projectId) return '';
+        if (!projectId) {
+            return '';
+        }
         const project = this.projects.find((p) => p.id === projectId);
         return project ? project.projectName : '';
     }
 
     getServiceTypeName(serviceTypeId: number | null | undefined): string {
-        if (!serviceTypeId) return '';
+        if (!serviceTypeId) {
+            return '';
+        }
         const serviceType = this.serviceTypes.find((st) => st.id === serviceTypeId);
         return serviceType ? serviceType.name : '';
     }
@@ -272,7 +276,7 @@ export class SaleOrderComponent implements OnInit {
                 saleOrder.assignedTo = formValue.assignedTo;
                 saleOrder.orderDetails = formValue.orderDetails;
                 saleOrder.wordsOrPages = formValue.wordsOrPages;
-                
+
                 // Currency-related fields
                 saleOrder.country = formValue.country;
                 saleOrder.currencyCode = formValue.currencyCode;
@@ -340,17 +344,17 @@ export class SaleOrderComponent implements OnInit {
             formValue.assignedTo = order.assignedTo || '';
             formValue.orderDetails = order.orderDetails || '';
             formValue.wordsOrPages = order.wordsOrPages || '';
-            
+
             // Currency-related fields
             formValue.country = order.country || '';
             formValue.currencyCode = order.currencyCode || '';
             formValue.foreignCurrencyAmount = order.foreignCurrencyAmount || 0;
             formValue.pkrAmount = order.pkrAmount || 0;
             formValue.exchangeRateUsed = order.exchangeRateUsed || 0;
-            
+
             // Set component properties for currency
             if (order.country) {
-                const country = this.countries.find(c => c.name === order.country);
+                const country = this.countries.find((c) => c.name === order.country);
                 if (country) {
                     this.selectedCountry = country.code;
                     this.selectedCurrencyCode = country.currency;
@@ -498,12 +502,12 @@ export class SaleOrderComponent implements OnInit {
             { name: 'Switzerland', code: 'CH', currency: 'CHF' },
             { name: 'China', code: 'CN', currency: 'CNY' },
             { name: 'India', code: 'IN', currency: 'INR' },
-            { name: 'Japan', code: 'JP', currency: 'JPY' }
+            { name: 'Japan', code: 'JP', currency: 'JPY' },
         ];
     }
 
     onCountryChange(countryCode: string): void {
-        const country = this.countries.find(c => c.code === countryCode);
+        const country = this.countries.find((c) => c.code === countryCode);
         if (country) {
             this.selectedCountry = countryCode;
             this.selectedCurrencyCode = country.currency;
@@ -533,7 +537,7 @@ export class SaleOrderComponent implements OnInit {
                 console.error('Error loading exchange rate:', error);
                 this.notificationService.showError('Failed to load exchange rate. Please try again.', 'Error');
                 this.isLoadingRate = false;
-            }
+            },
         });
     }
 

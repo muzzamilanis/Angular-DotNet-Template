@@ -53,7 +53,17 @@ if (string.IsNullOrEmpty(connectionString))
 }
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-	options.UseNpgsql(connectionString));
+{
+    // Use SQLite for development/testing when PostgreSQL is not available
+    if (builder.Environment.IsDevelopment())
+    {
+        options.UseSqlite("Data Source=testdb.sqlite");
+    }
+    else
+    {
+        options.UseNpgsql(connectionString);
+    }
+});
 
 // Add AutoMapper
 builder.Services.AddAutoMapper(typeof(MappingProfile));
