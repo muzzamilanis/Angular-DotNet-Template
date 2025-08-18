@@ -86,8 +86,10 @@ export class WriterAssignmentsComponent implements OnInit {
     }
 
     downloadAttachment(filename: string): void {
+        console.log('Attempting to download file:', filename);
         this.saleOrderService.downloadFile(filename).subscribe({
             next: (blob) => {
+                console.log('File download successful, blob size:', blob.size);
                 const url = window.URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
@@ -99,7 +101,18 @@ export class WriterAssignmentsComponent implements OnInit {
             },
             error: (error) => {
                 console.error('Error downloading file:', error);
-                alert('Error downloading file.');
+                console.error('Error status:', error.status);
+                console.error('Error message:', error.message);
+                
+                if (error.status === 403) {
+                    alert('Access denied. You do not have permission to download this file.');
+                } else if (error.status === 404) {
+                    alert('File not found. The attachment may have been deleted.');
+                } else if (error.status === 401) {
+                    alert('Authentication required. Please log in again.');
+                } else {
+                    alert(`Error downloading file: ${error.message || 'Unknown error'}`);
+                }
             }
         });
     }

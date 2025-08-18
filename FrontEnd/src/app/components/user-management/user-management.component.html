@@ -104,12 +104,14 @@
                                     <i class="fas fa-building"></i>
                                     Company
                                     <span class="text-danger">*</span>
+                                    <span *ngIf="!currentUserIsSuperAdmin" class="text-muted">(Auto-selected)</span>
                                 </label>
                                 <select
                                     class="form-control"
                                     id="companyId"
                                     formControlName="companyId"
-                                    [class.is-invalid]="isFieldInvalid('companyId')">
+                                    [class.is-invalid]="isFieldInvalid('companyId')"
+                                    [disabled]="!currentUserIsSuperAdmin">
                                     <option value="">🏢 Select Company</option>
                                     <option *ngFor="let company of companies" [value]="company.id">
                                         {{ company.name }}
@@ -118,6 +120,9 @@
                                 <div class="invalid-feedback" *ngIf="isFieldInvalid('companyId')">
                                     {{ getFieldError('companyId') }}
                                 </div>
+                                <small class="form-text text-muted" *ngIf="!currentUserIsSuperAdmin">
+                                    Company is automatically set to your organization
+                                </small>
                             </div>
 
                             <!-- Role Selection -->
@@ -159,8 +164,12 @@
                                         <i class="fas fa-crown mr-1 text-warning"></i>
                                         Super Administrator
                                     </label>
-                                    <small class="form-text text-muted">
+                                    <small class="form-text text-muted" *ngIf="userForm.get('isSuperAdmin')?.enabled">
                                         Super admins have full access to all system features
+                                    </small>
+                                    <small class="form-text text-warning" *ngIf="userForm.get('isSuperAdmin')?.disabled">
+                                        <i class="fas fa-exclamation-triangle mr-1"></i>
+                                        Super Admin access only available when "Super Admin" role is selected
                                     </small>
                                 </div>
                             </div>
