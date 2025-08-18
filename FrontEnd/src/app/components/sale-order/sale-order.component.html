@@ -550,15 +550,28 @@
                     <div class="row" *ngIf="isDigitalMarketing">
                         <div class="col-md-12">
                             <div class="form-group">
-                                <label for="attachments">Attachments</label>
-                                <input
-                                    type="file"
-                                    class="form-control"
-                                    id="attachments"
-                                    multiple
-                                    (change)="onFilesSelected($event)"
-                                    accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png">
-                                <small class="text-muted">Supported formats: PDF, DOC, DOCX, TXT, JPG, PNG</small>
+                                <label for="attachments">
+                                    <i class="fas fa-paperclip mr-2"></i>
+                                    Attachments
+                                </label>
+                                <div class="file-upload-container">
+                                    <input
+                                        type="file"
+                                        class="file-input"
+                                        id="attachments"
+                                        multiple
+                                        (change)="onFilesSelected($event)"
+                                        accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png"
+                                        #fileInput>
+                                    <label for="attachments" class="file-upload-btn">
+                                        <i class="fas fa-cloud-upload-alt mr-2"></i>
+                                        Choose Files
+                                    </label>
+                                </div>
+                                <small class="text-muted">
+                                    <i class="fas fa-info-circle mr-1"></i>
+                                    Supported formats: PDF, DOC, DOCX, TXT, JPG, PNG
+                                </small>
                                 
                                 <!-- Show selected files -->
                                 <div *ngIf="selectedFiles.length > 0" class="mt-2">

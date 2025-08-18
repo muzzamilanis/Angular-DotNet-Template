@@ -70,6 +70,7 @@ export interface CreateBackendUserDto {
     email: string;
     password: string;
     isSuperAdmin: boolean;
+    role: UserRole;
     companyId: number;
 }
 
@@ -79,6 +80,7 @@ export interface UpdateBackendUserDto {
     email: string;
     isActive: boolean;
     isSuperAdmin: boolean;
+    role: UserRole;
     companyId: number;
 }
 

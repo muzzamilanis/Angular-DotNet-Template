@@ -135,6 +135,13 @@ export interface UpdateSaleOrderDto {
 }
 
 // Writer Portal specific interfaces
+export interface WriterDto {
+    id: number;
+    name: string;
+    email: string;
+    isActive: boolean;
+}
+
 export interface WriterSubmissionDto {
     saleOrderId: number;
     submissionStatus: string; // "Completed" or "Need clarity"
