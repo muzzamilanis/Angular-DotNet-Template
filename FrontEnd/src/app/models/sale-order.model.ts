@@ -25,6 +25,7 @@ export interface SaleOrder {
     deadline?: Date;
     status?: string;
     amountReceived?: number;
+    amountReceivedInPkr?: number;
     paymentStatus?: string;
     sourceOfPayment?: string;
     contactEmail?: string;
@@ -61,6 +62,7 @@ export interface CreateSaleOrderDto {
     deadline?: Date;
     status?: string;
     amountReceived?: number;
+    amountReceivedInPkr?: number;
     paymentStatus?: string;
     sourceOfPayment?: string;
     contactEmail?: string;
@@ -98,6 +100,7 @@ export interface UpdateSaleOrderDto {
     deadline?: Date;
     status?: string;
     amountReceived?: number;
+    amountReceivedInPkr?: number;
     paymentStatus?: string;
     sourceOfPayment?: string;
     contactEmail?: string;

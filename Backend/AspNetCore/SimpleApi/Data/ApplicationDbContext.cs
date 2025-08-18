@@ -144,6 +144,7 @@ namespace SimpleApi.Data
 				entity.Property(e => e.CustomerAddress).HasMaxLength(500);
 				entity.Property(e => e.TotalAmount).HasColumnType("decimal(18,2)");
 				entity.Property(e => e.AmountReceived).HasColumnType("decimal(18,2)");
+				entity.Property(e => e.AmountReceivedInPkr).HasColumnType("decimal(18,2)");
 				entity.Property(e => e.TotalPayment).HasColumnType("decimal(18,2)");
 
 				// Digital marketing specific field configurations

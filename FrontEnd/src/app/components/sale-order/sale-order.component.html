@@ -109,7 +109,8 @@
                     </div>
 
                     <div class="row" *ngIf="isDigitalMarketing">
-                        <div class="col-md-6">
+                        
+                        <div class="col-md-4">
                             <div class="form-group">
                                 <label for="clientName">Client Name *</label>
                                 <input
@@ -128,65 +129,7 @@
                                         saleOrderForm.get('clientName')?.invalid &&
                                         saleOrderForm.get('clientName')?.touched
                                     ">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="wordsOrPages">
-                                                <i class="fas fa-file-word"></i>
-                                                Words or Pages
-                                            </label>
-                                            <input
-                                                type="text"
-                                                class="form-control"
-                                                id="wordsOrPages"
-                                                formControlName="wordsOrPages"
-                                                placeholder="e.g., 500 words, 3 pages"
-                                                [class.is-invalid]="
-                                                    saleOrderForm.get('wordsOrPages')?.invalid &&
-                                                    saleOrderForm.get('wordsOrPages')?.touched
-                                                " />
-                                            <div
-                                                class="invalid-feedback"
-                                                *ngIf="
-                                                    saleOrderForm.get('wordsOrPages')?.invalid &&
-                                                    saleOrderForm.get('wordsOrPages')?.touched
-                                                ">
-                                                <div *ngIf="saleOrderForm.get('wordsOrPages')?.errors?.['maxlength']">
-                                                    Words or Pages must be 100 characters or less
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
 
-                                <div class="row" *ngIf="isDigitalMarketing">
-                                    <div class="col-md-12">
-                                        <div class="form-group">
-                                            <label for="orderDetails">
-                                                <i class="fas fa-clipboard-list"></i>
-                                                Order Details
-                                            </label>
-                                            <textarea
-                                                class="form-control"
-                                                id="orderDetails"
-                                                formControlName="orderDetails"
-                                                placeholder="Detailed requirements and specifications for the order"
-                                                rows="4"
-                                                [class.is-invalid]="
-                                                    saleOrderForm.get('orderDetails')?.invalid &&
-                                                    saleOrderForm.get('orderDetails')?.touched
-                                                "></textarea>
-                                            <div
-                                                class="invalid-feedback"
-                                                *ngIf="
-                                                    saleOrderForm.get('orderDetails')?.invalid &&
-                                                    saleOrderForm.get('orderDetails')?.touched
-                                                ">
-                                                <div *ngIf="saleOrderForm.get('orderDetails')?.errors?.['maxlength']">
-                                                    Order Details must be 1000 characters or less
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
                                 </div>
 
                                 <div class="row" *ngIf="isDigitalMarketing">
@@ -199,150 +142,8 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="deadline">Deadline</label>
-                                <input type="date" class="form-control" id="deadline" formControlName="deadline" />
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row" *ngIf="isDigitalMarketing">
+                        
                         <div class="col-md-4">
-                            <div class="form-group">
-                                <label for="status">Status</label>
-                                <input
-                                    type="text"
-                                    class="form-control"
-                                    id="status"
-                                    formControlName="status"
-                                    placeholder="Enter status"
-                                    [class.is-invalid]="
-                                        saleOrderForm.get('status')?.invalid && saleOrderForm.get('status')?.touched
-                                    " />
-                                <div
-                                    class="invalid-feedback"
-                                    *ngIf="
-                                        saleOrderForm.get('status')?.invalid && saleOrderForm.get('status')?.touched
-                                    ">
-                                    <div *ngIf="saleOrderForm.get('status')?.errors?.['maxlength']">
-                                        Status must be 50 characters or less
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label for="amountReceived">Advance Amount</label>
-                                <input
-                                    type="number"
-                                    class="form-control"
-                                    id="amountReceived"
-                                    formControlName="amountReceived"
-                                    min="0"
-                                    step="0.01"
-                                    [class.is-invalid]="
-                                        saleOrderForm.get('amountReceived')?.invalid &&
-                                        saleOrderForm.get('amountReceived')?.touched
-                                    " />
-                                <div
-                                    class="invalid-feedback"
-                                    *ngIf="
-                                        saleOrderForm.get('amountReceived')?.invalid &&
-                                        saleOrderForm.get('amountReceived')?.touched
-                                    ">
-                                    <div *ngIf="saleOrderForm.get('amountReceived')?.errors?.['min']">
-                                        Amount must be 0 or greater
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label for="totalPayment">
-                                    <i class="fas fa-money-bill-wave"></i>
-                                    Total Payment
-                                </label>
-                                <input
-                                    type="number"
-                                    class="form-control"
-                                    id="totalPayment"
-                                    formControlName="totalPayment"
-                                    min="0"
-                                    step="0.01"
-                                    [class.is-invalid]="
-                                        saleOrderForm.get('totalPayment')?.invalid &&
-                                        saleOrderForm.get('totalPayment')?.touched
-                                    " />
-                                <div
-                                    class="invalid-feedback"
-                                    *ngIf="
-                                        saleOrderForm.get('totalPayment')?.invalid &&
-                                        saleOrderForm.get('totalPayment')?.touched
-                                    ">
-                                    <div *ngIf="saleOrderForm.get('totalPayment')?.errors?.['min']">
-                                        Total Payment must be 0 or greater
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label for="paymentStatus">Payment Status</label>
-                                <input
-                                    type="text"
-                                    class="form-control"
-                                    id="paymentStatus"
-                                    formControlName="paymentStatus"
-                                    placeholder="Enter payment status"
-                                    [class.is-invalid]="
-                                        saleOrderForm.get('paymentStatus')?.invalid &&
-                                        saleOrderForm.get('paymentStatus')?.touched
-                                    " />
-                                <div
-                                    class="invalid-feedback"
-                                    *ngIf="
-                                        saleOrderForm.get('paymentStatus')?.invalid &&
-                                        saleOrderForm.get('paymentStatus')?.touched
-                                    ">
-                                    <div *ngIf="saleOrderForm.get('paymentStatus')?.errors?.['maxlength']">
-                                        Payment status must be 50 characters or less
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row" *ngIf="isDigitalMarketing">
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <label for="sourceOfPayment">Source of Payment</label>
-                                <input
-                                    type="text"
-                                    class="form-control"
-                                    id="sourceOfPayment"
-                                    formControlName="sourceOfPayment"
-                                    placeholder="Enter source of payment"
-                                    [class.is-invalid]="
-                                        saleOrderForm.get('sourceOfPayment')?.invalid &&
-                                        saleOrderForm.get('sourceOfPayment')?.touched
-                                    " />
-                                <div
-                                    class="invalid-feedback"
-                                    *ngIf="
-                                        saleOrderForm.get('sourceOfPayment')?.invalid &&
-                                        saleOrderForm.get('sourceOfPayment')?.touched
-                                    ">
-                                    <div *ngIf="saleOrderForm.get('sourceOfPayment')?.errors?.['maxlength']">
-                                        Source of payment must be 100 characters or less
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row" *ngIf="isDigitalMarketing">
-                        <div class="col-md-6">
                             <div class="form-group">
                                 <label for="contactEmail">Contact Email</label>
                                 <input
@@ -370,7 +171,8 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-6">
+                        
+                        <div class="col-md-4">
                             <div class="form-group">
                                 <label for="contactPhone">Contact Phone</label>
                                 <input
@@ -391,6 +193,131 @@
                                     ">
                                     <div *ngIf="saleOrderForm.get('contactPhone')?.errors?.['maxlength']">
                                         Phone must be 50 characters or less
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row" *ngIf="isDigitalMarketing">
+
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="orderDetails">
+                                    <i class="fas fa-clipboard-list"></i>
+                                    Order Details
+                                </label>
+                                <textarea
+                                    class="form-control"
+                                    id="orderDetails"
+                                    formControlName="orderDetails"
+                                    placeholder="Detailed requirements and specifications for the order"
+                                    rows="4"
+                                    [class.is-invalid]="
+                                        saleOrderForm.get('orderDetails')?.invalid &&
+                                        saleOrderForm.get('orderDetails')?.touched
+                                    "></textarea>
+                                <div
+                                    class="invalid-feedback"
+                                    *ngIf="
+                                        saleOrderForm.get('orderDetails')?.invalid &&
+                                        saleOrderForm.get('orderDetails')?.touched
+                                    ">
+                                    <div *ngIf="saleOrderForm.get('orderDetails')?.errors?.['maxlength']">
+                                        Order Details must be 1000 characters or less
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row" *ngIf="isDigitalMarketing">
+
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="wordsOrPages">
+                                    <i class="fas fa-file-word"></i>
+                                    Words or Pages
+                                </label>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="wordsOrPages"
+                                    formControlName="wordsOrPages"
+                                    placeholder="e.g., 500 words, 3 pages"
+                                    [class.is-invalid]="
+                                        saleOrderForm.get('wordsOrPages')?.invalid &&
+                                        saleOrderForm.get('wordsOrPages')?.touched
+                                    " />
+                                <div
+                                    class="invalid-feedback"
+                                    *ngIf="
+                                        saleOrderForm.get('wordsOrPages')?.invalid &&
+                                        saleOrderForm.get('wordsOrPages')?.touched
+                                    ">
+                                    <div *ngIf="saleOrderForm.get('wordsOrPages')?.errors?.['maxlength']">
+                                        Words or Pages must be 100 characters or less
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="deadline">Deadline</label>
+                                <input type="date" class="form-control" id="deadline" formControlName="deadline" />
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="status">Status</label>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="status"
+                                    formControlName="status"
+                                    placeholder="Enter status"
+                                    [class.is-invalid]="
+                                        saleOrderForm.get('status')?.invalid && saleOrderForm.get('status')?.touched
+                                    " />
+                                <div
+                                    class="invalid-feedback"
+                                    *ngIf="
+                                        saleOrderForm.get('status')?.invalid && saleOrderForm.get('status')?.touched
+                                    ">
+                                    <div *ngIf="saleOrderForm.get('status')?.errors?.['maxlength']">
+                                        Status must be 50 characters or less
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4" style="visibility: hidden">
+                            <div class="form-group">
+                                <label for="totalPayment">
+                                    <i class="fas fa-money-bill-wave"></i>
+                                    Total Payment
+                                </label>
+                                <input
+                                    type="number"
+                                    class="form-control"
+                                    id="totalPayment"
+                                    formControlName="totalPayment"
+                                    min="0"
+                                    step="0.01"
+                                    [class.is-invalid]="
+                                        saleOrderForm.get('totalPayment')?.invalid &&
+                                        saleOrderForm.get('totalPayment')?.touched
+                                    " />
+                                <div
+                                    class="invalid-feedback"
+                                    *ngIf="
+                                        saleOrderForm.get('totalPayment')?.invalid &&
+                                        saleOrderForm.get('totalPayment')?.touched
+                                    ">
+                                    <div *ngIf="saleOrderForm.get('totalPayment')?.errors?.['min']">
+                                        Total Payment must be 0 or greater
                                     </div>
                                 </div>
                             </div>
@@ -445,7 +372,7 @@
                     </div>
 
                     <div class="row" *ngIf="isDigitalMarketing && selectedCurrencyCode">
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <div class="form-group">
                                 <label for="foreignCurrencyAmount">
                                     <i class="fas fa-dollar-sign"></i>
@@ -463,7 +390,8 @@
                                     [disabled]="isFormReadonly()" />
                             </div>
                         </div>
-                        <div class="col-md-6">
+
+                        <div class="col-md-4">
                             <div class="form-group">
                                 <label for="pkrAmount">
                                     <i class="fas fa-rupee-sign"></i>
@@ -484,6 +412,115 @@
                                     placeholder="Auto-calculated PKR amount" />
                             </div>
                         </div>
+
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="amountReceived">Advance Amount</label>
+                                <input
+                                    type="number"
+                                    class="form-control"
+                                    id="amountReceived"
+                                    formControlName="amountReceived"
+                                    min="0"
+                                    step="0.01"
+                                    (input)="onAdvanceAmountChange()"
+                                    [class.is-invalid]="
+                                        saleOrderForm.get('amountReceived')?.invalid &&
+                                        saleOrderForm.get('amountReceived')?.touched
+                                    " />
+                                <div
+                                    class="invalid-feedback"
+                                    *ngIf="
+                                        saleOrderForm.get('amountReceived')?.invalid &&
+                                        saleOrderForm.get('amountReceived')?.touched
+                                    ">
+                                    <div *ngIf="saleOrderForm.get('amountReceived')?.errors?.['min']">
+                                        Amount must be 0 or greater
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="amountReceivedInPkr">Advance Amount In Pkr</label>
+                                <input
+                                    type="number"
+                                    class="form-control"
+                                    id="amountReceivedInPkr"
+                                    formControlName="amountReceivedInPkr"
+                                    min="0"
+                                    step="0.01"
+                                    readonly
+                                    [class.is-invalid]="
+                                        saleOrderForm.get('amountReceivedInPkr')?.invalid &&
+                                        saleOrderForm.get('amountReceivedInPkr')?.touched
+                                    " />
+                                <div
+                                    class="invalid-feedback"
+                                    *ngIf="
+                                        saleOrderForm.get('amountReceivedInPkr')?.invalid &&
+                                        saleOrderForm.get('amountReceivedInPkr')?.touched
+                                    ">
+                                    <div *ngIf="saleOrderForm.get('amountReceivedInPkr')?.errors?.['min']">
+                                        Amount must be 0 or greater
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="paymentStatus">Payment Status</label>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="paymentStatus"
+                                    formControlName="paymentStatus"
+                                    placeholder="Enter payment status"
+                                    [class.is-invalid]="
+                                        saleOrderForm.get('paymentStatus')?.invalid &&
+                                        saleOrderForm.get('paymentStatus')?.touched
+                                    " />
+                                <div
+                                    class="invalid-feedback"
+                                    *ngIf="
+                                        saleOrderForm.get('paymentStatus')?.invalid &&
+                                        saleOrderForm.get('paymentStatus')?.touched
+                                    ">
+                                    <div *ngIf="saleOrderForm.get('paymentStatus')?.errors?.['maxlength']">
+                                        Payment status must be 50 characters or less
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="sourceOfPayment">Source of Payment</label>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="sourceOfPayment"
+                                    formControlName="sourceOfPayment"
+                                    placeholder="Enter source of payment"
+                                    [class.is-invalid]="
+                                        saleOrderForm.get('sourceOfPayment')?.invalid &&
+                                        saleOrderForm.get('sourceOfPayment')?.touched
+                                    " />
+                                <div
+                                    class="invalid-feedback"
+                                    *ngIf="
+                                        saleOrderForm.get('sourceOfPayment')?.invalid &&
+                                        saleOrderForm.get('sourceOfPayment')?.touched
+                                    ">
+                                    <div *ngIf="saleOrderForm.get('sourceOfPayment')?.errors?.['maxlength']">
+                                        Source of payment must be 100 characters or less
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
 
                     <div class="row" *ngIf="isDigitalMarketing">

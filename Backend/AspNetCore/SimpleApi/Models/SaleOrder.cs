@@ -45,8 +45,9 @@ namespace SimpleApi.Models
         public string? Status { get; set; }
 
         public decimal? AmountReceived { get; set; }
+		public decimal? AmountReceivedInPkr { get; set; }
 
-        public decimal? TotalPayment { get; set; }
+		public decimal? TotalPayment { get; set; }
 
         [StringLength(50)]
         public string? PaymentStatus { get; set; }

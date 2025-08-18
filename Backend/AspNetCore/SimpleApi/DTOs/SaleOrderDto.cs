@@ -45,8 +45,9 @@ namespace SimpleApi.DTOs
         public string? Status { get; set; }
 
         public decimal? AmountReceived { get; set; }
+		public decimal? AmountReceivedInPkr { get; set; }
 
-        [StringLength(50)]
+		[StringLength(50)]
         public string? PaymentStatus { get; set; }
         [StringLength(100)]
         public string? SourceOfPayment { get; set; }
@@ -119,8 +120,9 @@ namespace SimpleApi.DTOs
         public string? Status { get; set; }
 
         public decimal? AmountReceived { get; set; }
+		public decimal? AmountReceivedInPkr { get; set; }
 
-        [StringLength(50)]
+		[StringLength(50)]
         public string? PaymentStatus { get; set; }
         [StringLength(100)]
         public string? SourceOfPayment { get; set; }
@@ -194,8 +196,9 @@ namespace SimpleApi.DTOs
         public string? Status { get; set; }
 
         public decimal? AmountReceived { get; set; }
+		public decimal? AmountReceivedInPkr { get; set; }
 
-        [StringLength(50)]
+		[StringLength(50)]
         public string? PaymentStatus { get; set; }
         [StringLength(100)]
         public string? SourceOfPayment { get; set; }

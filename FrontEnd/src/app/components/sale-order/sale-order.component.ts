@@ -130,6 +130,7 @@ export class SaleOrderComponent implements OnInit {
             formControls.deadline = [''];
             formControls.status = ['', [Validators.maxLength(50)]];
             formControls.amountReceived = [0, [Validators.min(0)]];
+            formControls.amountReceivedInPkr = [0, [Validators.min(0)]];
             formControls.totalPayment = [0, [Validators.min(0)]];
             formControls.paymentStatus = ['', [Validators.maxLength(50)]];
             formControls.sourceOfPayment = ['', [Validators.maxLength(100)]];
@@ -268,6 +269,7 @@ export class SaleOrderComponent implements OnInit {
                 saleOrder.deadline = formValue.deadline ? new Date(formValue.deadline) : undefined;
                 saleOrder.status = formValue.status;
                 saleOrder.amountReceived = formValue.amountReceived;
+                saleOrder.amountReceivedInPkr = formValue.amountReceivedInPkr;
                 saleOrder.totalPayment = formValue.totalPayment;
                 saleOrder.paymentStatus = formValue.paymentStatus;
                 saleOrder.sourceOfPayment = formValue.sourceOfPayment;
@@ -336,6 +338,7 @@ export class SaleOrderComponent implements OnInit {
             formValue.deadline = order.deadline ? new Date(order.deadline).toISOString().substring(0, 10) : '';
             formValue.status = order.status || '';
             formValue.amountReceived = order.amountReceived || 0;
+            formValue.amountReceivedInPkr = order.amountReceivedInPkr || 0;
             formValue.totalPayment = order.totalPayment || 0;
             formValue.paymentStatus = order.paymentStatus || '';
             formValue.sourceOfPayment = order.sourceOfPayment || '';
@@ -541,6 +544,10 @@ export class SaleOrderComponent implements OnInit {
         });
     }
 
+    onAdvanceAmountChange(): void {
+        this.calculateAdvanceInPkrAmount();
+    }
+
     onForeignAmountChange(): void {
         this.calculatePkrAmount();
     }
@@ -550,6 +557,13 @@ export class SaleOrderComponent implements OnInit {
         const exchangeRate = this.currentExchangeRate || 0;
         const pkrAmount = foreignAmount * exchangeRate;
         this.saleOrderForm.get('pkrAmount')?.setValue(pkrAmount.toFixed(2));
+    }
+
+    private calculateAdvanceInPkrAmount(): void {
+        const advanceAmount = this.saleOrderForm.get('amountReceived')?.value || 0;
+        const exchangeRate = this.currentExchangeRate || 0;
+        const advancePkrAmount = advanceAmount * exchangeRate;
+        this.saleOrderForm.get('amountReceivedInPkr')?.setValue(advancePkrAmount.toFixed(2));
     }
 
     isFormReadonly(): boolean {

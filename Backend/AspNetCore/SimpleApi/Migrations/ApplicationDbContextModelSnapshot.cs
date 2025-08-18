@@ -429,6 +429,9 @@ namespace SimpleApi.Migrations
                     b.Property<decimal?>("AmountReceived")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<decimal?>("AmountReceivedInPkr")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<string>("AssignedTo")
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
