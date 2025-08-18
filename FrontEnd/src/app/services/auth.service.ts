@@ -114,6 +114,7 @@ export class AuthService {
     }
 
     isWriter(): boolean {
+        console.log('CurrentUserInfo: ', this.currentUserInfo)
         return this.currentUserInfo?.role === 'Writer' || this.currentUserInfo?.role === 4; // Writer enum value
     }
 

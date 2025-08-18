@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using SimpleApi.Models;
 
 namespace SimpleApi.DTOs
 {
@@ -27,6 +28,7 @@ namespace SimpleApi.DTOs
         public string Surname { get; set; } = string.Empty;
         public string CompanyId { get; set; } = string.Empty;
         public bool IsSuperAdmin { get; set; } = false;
+        public UserRole Role { get; set; }
     }
 
     public class SessionInfoDto

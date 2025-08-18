@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 using SimpleApi.Models;
 
 namespace SimpleApi.DTOs
@@ -20,7 +21,8 @@ namespace SimpleApi.DTOs
 
         public bool IsSuperAdmin { get; set; } = false;
 
-        public UserRole Role { get; set; }
+		[JsonConverter(typeof(JsonStringEnumConverter))]
+		public UserRole Role { get; set; }
 
         public DateTime CreatedAt { get; set; }
 
@@ -46,7 +48,8 @@ namespace SimpleApi.DTOs
 
         public bool IsSuperAdmin { get; set; } = false;
 
-        public UserRole Role { get; set; }
+		[JsonConverter(typeof(JsonStringEnumConverter))]
+		public UserRole Role { get; set; }
 
         public int CompanyId { get; set; }
     }
@@ -68,7 +71,8 @@ namespace SimpleApi.DTOs
 
         public bool IsSuperAdmin { get; set; } = false;
 
-        public UserRole Role { get; set; }
+		[JsonConverter(typeof(JsonStringEnumConverter))]
+		public UserRole Role { get; set; }
 
         public int CompanyId { get; set; }
     }

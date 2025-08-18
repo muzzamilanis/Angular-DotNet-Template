@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { WriterDto, WriterAssignmentDto, WriterSubmissionDto } from '../models/sale-order.model';
+import { WriterAssignmentDto, WriterSubmissionDto } from '../models/sale-order.model';
+import { User } from '../models/user.model';
 import { environment } from '../../environments/environment';
 
 @Injectable({
@@ -12,8 +13,8 @@ export class WriterService {
 
   constructor(private http: HttpClient) { }
 
-  getWriters(): Observable<WriterDto[]> {
-    return this.http.get<WriterDto[]>(`${this.apiUrl}/list`);
+  getWriters(): Observable<User[]> {
+    return this.http.get<User[]>(`${this.apiUrl}/list`);
   }
 
   getAssignments(): Observable<WriterAssignmentDto[]> {

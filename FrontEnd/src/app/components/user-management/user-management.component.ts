@@ -25,6 +25,16 @@ export class UserManagementComponent implements OnInit {
     // Make UserRole accessible in template
     UserRole = UserRole;
 
+    readonly roleOptions: { value: UserRole; label: string }[] = [
+        { value: UserRole.User, label: 'User' },
+        { value: UserRole.Manager, label: 'Manager' },
+        { value: UserRole.CompanyAdmin, label: 'Company Admin' },
+        { value: UserRole.Writer, label: 'Writer' },
+        { value: UserRole.SuperAdmin, label: 'Super Admin' },
+    ];
+
+    trackByRoleValue = (_: number, opt: { value: UserRole; label: string }) => opt.value;
+
     constructor(
         private fb: FormBuilder,
         private userService: UserService,
@@ -113,6 +123,7 @@ export class UserManagementComponent implements OnInit {
 
     createUser(user: CreateBackendUserDto): void {
         this.isLoading = true;
+        
         this.userService.create(user).subscribe({
             next: (newUser) => {
                 this.users.push(newUser);
@@ -312,15 +323,5 @@ export class UserManagementComponent implements OnInit {
             default:
                 return 'User';
         }
-    }
-
-    getRoleOptions(): { value: UserRole; label: string }[] {
-        return [
-            { value: UserRole.User, label: 'User' },
-            { value: UserRole.Manager, label: 'Manager' },
-            { value: UserRole.CompanyAdmin, label: 'Company Admin' },
-            { value: UserRole.Writer, label: 'Writer' },
-            { value: UserRole.SuperAdmin, label: 'Super Admin' },
-        ];
     }
 }

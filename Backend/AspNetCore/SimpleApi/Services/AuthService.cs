@@ -102,7 +102,8 @@ namespace SimpleApi.Services
                     Name = user.Name,
                     Surname = "", // User model doesn't have surname, keeping empty for compatibility
                     CompanyId = user.CompanyId.ToString(), // Assuming CompanyId is a string, adjust as necessary
-                    IsSuperAdmin = user.IsSuperAdmin
+                    IsSuperAdmin = user.IsSuperAdmin,
+                    Role = user.Role
 				},
                 Application = new ApplicationInfoDto
                 {

@@ -133,7 +133,9 @@
                                     formControlName="role"
                                     [class.is-invalid]="isFieldInvalid('role')">
                                     <option value="">👤 Select Role</option>
-                                    <option *ngFor="let roleOption of getRoleOptions()" [value]="roleOption.value">
+                                    <option
+                                        *ngFor="let roleOption of roleOptions; trackBy: trackByRoleValue"
+                                        [ngValue]="roleOption.value">
                                         {{ roleOption.label }}
                                     </option>
                                 </select>

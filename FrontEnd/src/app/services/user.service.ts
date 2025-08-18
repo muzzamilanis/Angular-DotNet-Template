@@ -30,6 +30,7 @@ export class UserService {
     }
 
     create(user: CreateBackendUserDto): Observable<BackendUser> {
+        console.log('user', user);
         return this.http.post<BackendUser>(this.apiUrl, user);
     }
 
