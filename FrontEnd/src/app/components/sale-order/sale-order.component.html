@@ -472,21 +472,17 @@
                                   class="form-control"
                                   formControlName="paymentStatus"
                                   [class.is-invalid]="
-                                    saleOrderForm.get('paymentStatus')?.invalid &&
-                                    saleOrderForm.get('paymentStatus')?.touched
+                                    (saleOrderForm.get('paymentStatus')?.touched || saleOrderForm.touched) &&
+                                    (saleOrderForm.hasError('advancePendingConflict') || saleOrderForm.hasError('fullPaidMustEqualTotal'))
                                   ">
                                   <option value="">Select Payment Status</option>
                                   <option *ngFor="let p of paymentStatusOptions" [value]="p">{{ p }}</option>
                                 </select>
-                                <div
-                                  class="invalid-feedback"
-                                  *ngIf="
-                                    saleOrderForm.get('paymentStatus')?.invalid &&
-                                    saleOrderForm.get('paymentStatus')?.touched
-                                  ">
-                                  <div *ngIf="saleOrderForm.get('paymentStatus')?.errors?.['maxlength']">
-                                    Payment status must be 50 characters or less
-                                  </div>
+                                <div class="invalid-feedback" *ngIf="saleOrderForm.hasError('advancePendingConflict')">
+                                  Payment cannot be Pending when an advance amount is greater than 0.
+                                </div>
+                                <div class="invalid-feedback" *ngIf="saleOrderForm.hasError('fullPaidMustEqualTotal')">
+                                  For Full Paid, Advance Amount must equal Total Amount (PKR).
                                 </div>
                               </div>
                         </div>

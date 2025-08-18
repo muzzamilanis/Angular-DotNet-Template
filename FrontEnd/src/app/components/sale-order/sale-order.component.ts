@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ValidatorFn, AbstractControl, ValidationErrors, FormArray } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router'; // <-- add
 import { SaleOrderService } from '../../services/sale-order.service';
 import { ProductService } from '../../services/product.service';
@@ -156,46 +156,99 @@ export class SaleOrderComponent implements OnInit {
         }
     }
 
-    private initializeForm(): void {
-        const formControls: any = {
-            orderNumber: ['', [Validators.required, Validators.maxLength(50)]],
-            orderDate: [new Date().toISOString().substring(0, 10), Validators.required],
-            items: this.fb.array([]),
+    // Group-level validator for payment rules
+    private paymentRulesValidator(
+        paymentCtrl: string,
+        totalPkrCtrl: string,
+        ...advanceCtrls: string[]
+    ): ValidatorFn {
+        return (group: AbstractControl): ValidationErrors | null => {
+            const payment = (group.get(paymentCtrl)?.value ?? '').toString().trim().toLowerCase();
+            const totalPkr = Number(group.get(totalPkrCtrl)?.value) || 0;
+            const totalAdvance = advanceCtrls
+                .map(c => Number(group.get(c)?.value) || 0)
+                .reduce((a, b) => a + b, 0);
+
+            // Rule 1: Pending cannot have any advance
+            if (payment === 'pending' && totalAdvance > 0) {
+                return { advancePendingConflict: true };
+            }
+
+            // Rule 2: FullPaid requires advance == total (use small epsilon for decimals)
+            const approxEqual = totalAdvance < totalPkr;
+            console.log('approx equal: ', approxEqual);
+            if (payment === 'fullpaid' && approxEqual) {
+                return { fullPaidMustEqualTotal: true };
+            }
+
+            return null;
         };
+    }
+
+    private initializeForm(): void {
+        this.saleOrderForm = this.fb.group(
+            {
+                orderNumber: ['', [Validators.required, Validators.maxLength(50)]],
+                orderDate: [new Date().toISOString().substring(0, 10), Validators.required],
+                items: this.fb.array([]),
+                // Make sure these control names match your form:
+                // advanceAmount, advanceAmountPkr (or adjust names below)
+                amountReceived: [0],
+                amountReceivedInPkr: [0],
+                paymentStatus: [this.saleOrderForm?.get('paymentStatus')?.value ?? ''],
+                // Make sure these names match your form controls:
+                advanceAmount: [this.saleOrderForm?.get('amountReceived')?.value ?? 0],
+                advanceAmountPkr: [this.saleOrderForm?.get('amountReceivedInPkr')?.value ?? 0],
+                pkrAmount: [this.saleOrderForm?.get('pkrAmount')?.value ?? 0], // total in PKR
+            },
+            {
+                validators: this.paymentRulesValidator(
+                    'paymentStatus',
+                    'pkrAmount',            // total PKR control (change if yours is different)
+                    'amountReceived',        // summed with...
+                    'amountReceivedInPkr'      // ...this (adjust names if different)
+                ),
+            }
+        );
+
+        // Re-evaluate when relevant fields change
+        ['paymentStatus', 'advanceAmount', 'advanceAmountPkr', 'pkrAmount'].forEach(name => {
+            this.saleOrderForm.get(name)?.valueChanges.subscribe(() => {
+                this.saleOrderForm.updateValueAndValidity({ onlySelf: false, emitEvent: false });
+            });
+        });
 
         // Add Digital Marketing specific fields if company is Digital Marketing
         if (this.isDigitalMarketing) {
             // For digital marketing, we use clientName instead of customerName
-            formControls.clientName = ['', [Validators.required, Validators.maxLength(200)]];
-            formControls.projectId = [''];
-            formControls.serviceTypeId = [''];
-            formControls.deadline = [''];
-            formControls.status = ['', [Validators.maxLength(50)]];
-            formControls.amountReceived = [0, [Validators.min(0)]];
-            formControls.amountReceivedInPkr = [0, [Validators.min(0)]];
-            formControls.totalPayment = [0, [Validators.min(0)]];
-            formControls.paymentStatus = ['', [Validators.maxLength(50)]];
-            formControls.sourceOfPayment = ['', [Validators.maxLength(100)]];
-            formControls.assignedTo = ['', [Validators.maxLength(200)]];
-            formControls.contactEmail = ['', [Validators.email, Validators.maxLength(200)]];
-            formControls.contactPhone = ['', [Validators.maxLength(50)]];
-            formControls.orderDetails = ['', [Validators.maxLength(1000)]];
-            formControls.wordsOrPages = ['', [Validators.maxLength(100)]];
+            this.saleOrderForm.addControl('clientName', this.fb.control('', [Validators.required, Validators.maxLength(200)]));
+            this.saleOrderForm.addControl('projectId', this.fb.control(''));
+            this.saleOrderForm.addControl('serviceTypeId', this.fb.control(''));
+            this.saleOrderForm.addControl('deadline', this.fb.control(''));
+            this.saleOrderForm.addControl('status', this.fb.control('', [Validators.maxLength(50)]));
+            this.saleOrderForm.addControl('amountReceived', this.fb.control(0, [Validators.min(0)]));
+            this.saleOrderForm.addControl('amountReceivedInPkr', this.fb.control(0, [Validators.min(0)]));
+            this.saleOrderForm.addControl('totalPayment', this.fb.control(0, [Validators.min(0)]));
+            this.saleOrderForm.addControl('paymentStatus', this.fb.control('', [Validators.maxLength(50)]));
+            this.saleOrderForm.addControl('sourceOfPayment', this.fb.control('', [Validators.maxLength(100)]));
+            this.saleOrderForm.addControl('assignedTo', this.fb.control('', [Validators.maxLength(200)]));
+            this.saleOrderForm.addControl('contactEmail', this.fb.control('', [Validators.email, Validators.maxLength(200)]));
+            this.saleOrderForm.addControl('contactPhone', this.fb.control('', [Validators.maxLength(50)]));
+            this.saleOrderForm.addControl('orderDetails', this.fb.control('', [Validators.maxLength(1000)]));
+            this.saleOrderForm.addControl('wordsOrPages', this.fb.control('', [Validators.maxLength(100)]));
 
             // Currency-related fields
-            formControls.country = ['', [Validators.maxLength(100)]];
-            formControls.currencyCode = ['', [Validators.maxLength(10)]];
-            formControls.foreignCurrencyAmount = [0, [Validators.min(0)]];
-            formControls.pkrAmount = [0, [Validators.min(0)]];
-            formControls.exchangeRateUsed = [0];
+            this.saleOrderForm.addControl('country', this.fb.control('', [Validators.maxLength(100)]));
+            this.saleOrderForm.addControl('currencyCode', this.fb.control('', [Validators.maxLength(10)]));
+            this.saleOrderForm.addControl('foreignCurrencyAmount', this.fb.control(0, [Validators.min(0)]));
+            this.saleOrderForm.addControl('pkrAmount', this.fb.control(0, [Validators.min(0)]));
+            this.saleOrderForm.addControl('exchangeRateUsed', this.fb.control(0));
         } else {
             // For non-digital marketing companies, use traditional fields and items
-            formControls.customerName = ['', [Validators.required, Validators.maxLength(200)]];
-            formControls.customerAddress = ['', [Validators.maxLength(500)]];
-            formControls.items = this.fb.array([]);
+            this.saleOrderForm.addControl('customerName', this.fb.control('', [Validators.required, Validators.maxLength(200)]));
+            this.saleOrderForm.addControl('customerAddress', this.fb.control('', [Validators.maxLength(500)]));
+            this.saleOrderForm.addControl('items', this.fb.array([]));
         }
-
-        this.saleOrderForm = this.fb.group(formControls);
     }
 
     get items(): FormArray {
@@ -268,99 +321,131 @@ export class SaleOrderComponent implements OnInit {
         return total;
     }
 
+    private isAdvancePendingConflict(): boolean {
+        return this.saleOrderForm?.hasError('advancePendingConflict') ?? false;
+    }
+    private hasAdvancePendingConflict(): boolean {
+        return this.saleOrderForm?.hasError('advancePendingConflict') ?? false;
+    }
+    private hasFullPaidMismatch(): boolean {
+        return this.saleOrderForm?.hasError('fullPaidMustEqualTotal') ?? false;
+    }
+
     onSubmit(): void {
-        if (this.saleOrderForm.valid) {
-            const formValue = this.saleOrderForm.value;
-            const saleOrder: CreateSaleOrderDto = {
-                orderNumber: formValue.orderNumber,
-                orderDate: new Date(formValue.orderDate),
-                customerName: this.isDigitalMarketing ? formValue.clientName || '' : formValue.customerName,
-                customerAddress: this.isDigitalMarketing ? '' : formValue.customerAddress || '',
-                items: this.isDigitalMarketing
-                    ? []
-                    : formValue.items.map((item: any) => {
-                          const baseItem: CreateSaleOrderItemDto = {
-                              productId: item.productId,
-                              quantity: item.quantity,
-                              date: new Date(item.date),
-                              price: item.price,
-                          };
+        if (!this.saleOrderForm) return;
 
-                          // Add Digital Marketing specific fields if company is Digital Marketing
-                          if (this.isDigitalMarketing) {
-                              return {
-                                  ...baseItem,
-                                  workTitle: item.workTitle,
-                                  paperType: item.paperType,
-                                  serviceType: item.serviceType,
-                                  wordCount: item.wordCount,
-                                  pageCount: item.pageCount,
-                                  itemDeadline: item.itemDeadline ? new Date(item.itemDeadline) : undefined,
-                              };
-                          }
+        this.saleOrderForm.updateValueAndValidity();
 
-                          return baseItem;
-                      }),
-            };
-
-            // Add Digital Marketing specific fields to sale order if company is Digital Marketing
-            if (this.isDigitalMarketing) {
-                saleOrder.projectId = formValue.projectId || null;
-                saleOrder.serviceTypeId = formValue.serviceTypeId || null;
-                saleOrder.clientName = formValue.clientName;
-                saleOrder.deadline = formValue.deadline ? new Date(formValue.deadline) : undefined;
-                saleOrder.status = formValue.status;
-                saleOrder.amountReceived = formValue.amountReceived;
-                saleOrder.amountReceivedInPkr = formValue.amountReceivedInPkr;
-                saleOrder.totalPayment = formValue.totalPayment;
-                saleOrder.paymentStatus = formValue.paymentStatus;
-                saleOrder.sourceOfPayment = formValue.sourceOfPayment;
-                saleOrder.contactEmail = formValue.contactEmail;
-                saleOrder.contactPhone = formValue.contactPhone;
-                saleOrder.assignedTo = formValue.assignedTo;
-                saleOrder.orderDetails = formValue.orderDetails;
-                saleOrder.wordsOrPages = formValue.wordsOrPages;
-
-                // Currency-related fields
-                saleOrder.country = formValue.country;
-                saleOrder.currencyCode = formValue.currencyCode;
-                saleOrder.foreignCurrencyAmount = formValue.foreignCurrencyAmount;
-                saleOrder.pkrAmount = formValue.pkrAmount;
-                saleOrder.exchangeRateUsed = formValue.exchangeRateUsed;
+        if (this.saleOrderForm.invalid || this.hasAdvancePendingConflict() || this.hasFullPaidMismatch()) {
+            if (this.hasAdvancePendingConflict()) {
+                this.notificationService.showWarning(
+                    'Payment status is Pending but an advance amount is greater than 0. Set advance to 0 or change payment status.',
+                    'Validation'
+                );
             }
-            console.log('sale order:', saleOrder);
-            if (this.editingOrder) {
-                // Update existing order
-                this.saleOrderService
-                    .updateSaleOrder(this.editingOrder.id, {
-                        ...saleOrder,
-                        id: this.editingOrder.id,
-                    })
-                    .subscribe({
-                        next: (response) => {
-                            this.loadSaleOrders();
-                            this.resetForm();
-                            this.notificationService.showSuccess('Sale order updated successfully!');
-                        },
-                        error: (error) => {
-                            console.error('Error updating sale order:', error);
-                            this.notificationService.showError('Error updating sale order. Please try again.');
-                        },
-                    });
-            } else {
-                // Create new order
-                this.saleOrderService.createSaleOrder(saleOrder).subscribe({
+            if (this.hasFullPaidMismatch()) {
+                this.notificationService.showWarning(
+                    'For Full Paid, Advance Amount must be equal to Total Amount (PKR).',
+                    'Validation'
+                );
+            }
+            // mark touched for related fields
+            ['paymentStatus', 'advanceAmount', 'advanceAmountPkr', 'pkrAmount'].forEach(n =>
+                this.saleOrderForm.get(n)?.markAsTouched()
+            );
+            return;
+        }
+
+        const formValue = this.saleOrderForm.getRawValue();
+        const saleOrder: CreateSaleOrderDto = {
+            orderNumber: formValue.orderNumber,
+            orderDate: new Date(formValue.orderDate),
+            customerName: this.isDigitalMarketing ? formValue.clientName || '' : formValue.customerName,
+            customerAddress: this.isDigitalMarketing ? '' : formValue.customerAddress || '',
+            items: this.isDigitalMarketing
+                ? []
+                : formValue.items.map((item: any) => {
+                      const baseItem: CreateSaleOrderItemDto = {
+                          productId: item.productId,
+                          quantity: item.quantity,
+                          date: new Date(item.date),
+                          price: item.price,
+                      };
+
+                      // Add Digital Marketing specific fields if company is Digital Marketing
+                      if (this.isDigitalMarketing) {
+                          return {
+                              ...baseItem,
+                              workTitle: item.workTitle,
+                              paperType: item.paperType,
+                              serviceType: item.serviceType,
+                              wordCount: item.wordCount,
+                              pageCount: item.pageCount,
+                              itemDeadline: item.itemDeadline ? new Date(item.itemDeadline) : undefined,
+                          };
+                      }
+
+                      return baseItem;
+                  }),
+        };
+
+        // Add Digital Marketing specific fields to sale order if company is Digital Marketing
+        if (this.isDigitalMarketing) {
+            saleOrder.projectId = formValue.projectId || null;
+            saleOrder.serviceTypeId = formValue.serviceTypeId || null;
+            saleOrder.clientName = formValue.clientName;
+            saleOrder.deadline = formValue.deadline ? new Date(formValue.deadline) : undefined;
+            saleOrder.status = formValue.status;
+            saleOrder.amountReceived = formValue.amountReceived;
+            saleOrder.amountReceivedInPkr = formValue.amountReceivedInPkr;
+            saleOrder.totalPayment = formValue.totalPayment;
+            saleOrder.paymentStatus = formValue.paymentStatus;
+            saleOrder.sourceOfPayment = formValue.sourceOfPayment;
+            saleOrder.contactEmail = formValue.contactEmail;
+            saleOrder.contactPhone = formValue.contactPhone;
+            saleOrder.assignedTo = formValue.assignedTo;
+            saleOrder.orderDetails = formValue.orderDetails;
+            saleOrder.wordsOrPages = formValue.wordsOrPages;
+
+            // Currency-related fields
+            saleOrder.country = formValue.country;
+            saleOrder.currencyCode = formValue.currencyCode;
+            saleOrder.foreignCurrencyAmount = formValue.foreignCurrencyAmount;
+            saleOrder.pkrAmount = formValue.pkrAmount;
+            saleOrder.exchangeRateUsed = formValue.exchangeRateUsed;
+        }
+        console.log('sale order:', saleOrder);
+        if (this.editingOrder) {
+            // Update existing order
+            this.saleOrderService
+                .updateSaleOrder(this.editingOrder.id, {
+                    ...saleOrder,
+                    id: this.editingOrder.id,
+                })
+                .subscribe({
                     next: (response) => {
                         this.loadSaleOrders();
                         this.resetForm();
-                        this.notificationService.showSuccess('Sale order created successfully!');
+                        this.notificationService.showSuccess('Sale order updated successfully!');
                     },
                     error: (error) => {
-                        console.error('Error creating sale order:', error);
-                        this.notificationService.showError('Error creating sale order. Please try again.');
+                        console.error('Error updating sale order:', error);
+                        this.notificationService.showError('Error updating sale order. Please try again.');
                     },
                 });
-            }
+        } else {
+            // Create new order
+            this.saleOrderService.createSaleOrder(saleOrder).subscribe({
+                next: (response) => {
+                    this.loadSaleOrders();
+                    this.resetForm();
+                    this.notificationService.showSuccess('Sale order created successfully!');
+                },
+                error: (error) => {
+                    console.error('Error creating sale order:', error);
+                    this.notificationService.showError('Error creating sale order. Please try again.');
+                },
+            });
         }
     }
 
