@@ -1,4 +1,5 @@
 using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using SimpleApi.Data;
 using SimpleApi.DTOs;
@@ -15,6 +16,10 @@ namespace SimpleApi.Services
         Task DeleteAsync(int id, int companyId);
         Task<List<SaleOrder>> GetDeadlineApproachingOrdersAsync();
         bool IsDeadlineApproaching(SaleOrder order);
+        
+        // Writer Portal methods
+        Task<List<WriterAssignmentDto>> GetWriterAssignmentsAsync(int writerId);
+        Task SubmitWriterWorkAsync(WriterSubmissionDto submission, IFormFile? submittedFile, int writerId);
     }
 
     public class SaleOrderService : ISaleOrderService
@@ -37,6 +42,7 @@ namespace SimpleApi.Services
                 .Include(so => so.Project)
                 .Include(so => so.ServiceType)
                 .Include(so => so.Company)
+                .Include(so => so.AssignedWriter)
                 .AsQueryable();
 
             // Apply filtering
@@ -105,6 +111,7 @@ namespace SimpleApi.Services
                 .ThenInclude(i => i.Product)
                 .Include(so => so.Project)
                 .Include(so => so.ServiceType)
+                .Include(so => so.AssignedWriter)
                 .FirstOrDefaultAsync();
 
             if (saleOrder == null)
@@ -300,6 +307,75 @@ namespace SimpleApi.Services
                 return false;
                 
             return order.Deadline.Value <= DateTime.Today.AddDays(3);
+        }
+
+        public async Task<List<WriterAssignmentDto>> GetWriterAssignmentsAsync(int writerId)
+        {
+            var assignments = await _context.SaleOrders
+                .Where(so => so.AssignedWriterId == writerId)
+                .Select(so => new WriterAssignmentDto
+                {
+                    Id = so.Id,
+                    OrderNumber = so.OrderNumber,
+                    OrderDate = so.OrderDate,
+                    ClientName = so.ClientName,
+                    Deadline = so.Deadline,
+                    Status = so.Status,
+                    OrderDetails = so.OrderDetails,
+                    WordsOrPages = so.WordsOrPages,
+                    AcademicLevel = so.AcademicLevel,
+                    AttachmentFilenames = so.AttachmentFilenames,
+                    SubmissionStatus = so.SubmissionStatus,
+                    SubmissionDate = so.SubmissionDate,
+                    SubmittedFilename = so.SubmittedFilename
+                })
+                .ToListAsync();
+
+            return assignments;
+        }
+
+        public async Task SubmitWriterWorkAsync(WriterSubmissionDto submission, IFormFile? submittedFile, int writerId)
+        {
+            var saleOrder = await _context.SaleOrders
+                .FirstOrDefaultAsync(so => so.Id == submission.SaleOrderId && so.AssignedWriterId == writerId);
+
+            if (saleOrder == null)
+                throw new ArgumentException("Sale order not found or not assigned to this writer");
+
+            // Handle file upload if provided
+            string? submittedFilename = null;
+            if (submittedFile != null && submittedFile.Length > 0)
+            {
+                // Create assets directory if it doesn't exist
+                var assetsPath = Path.Combine(Directory.GetCurrentDirectory(), "Assets");
+                if (!Directory.Exists(assetsPath))
+                    Directory.CreateDirectory(assetsPath);
+
+                // Generate unique filename
+                var fileName = $"{Guid.NewGuid()}_{submittedFile.FileName}";
+                var filePath = Path.Combine(assetsPath, fileName);
+
+                // Save file
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await submittedFile.CopyToAsync(stream);
+                }
+
+                submittedFilename = fileName;
+            }
+
+            // Update sale order with submission details
+            saleOrder.SubmissionStatus = submission.SubmissionStatus;
+            saleOrder.SubmissionDate = DateTime.UtcNow;
+            saleOrder.SubmittedFilename = submittedFilename ?? submission.SubmittedFilename;
+
+            // Update status based on submission
+            if (submission.SubmissionStatus == "Completed")
+            {
+                saleOrder.Status = "workSubmittedByWriter";
+            }
+
+            await _context.SaveChangesAsync();
         }
     }
 }

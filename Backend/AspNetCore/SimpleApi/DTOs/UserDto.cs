@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using SimpleApi.Models;
 
 namespace SimpleApi.DTOs
 {
@@ -18,6 +19,8 @@ namespace SimpleApi.DTOs
         public bool IsActive { get; set; } = true;
 
         public bool IsSuperAdmin { get; set; } = false;
+
+        public UserRole Role { get; set; } = UserRole.User;
 
         public DateTime CreatedAt { get; set; }
 
@@ -43,6 +46,8 @@ namespace SimpleApi.DTOs
 
         public bool IsSuperAdmin { get; set; } = false;
 
+        public UserRole Role { get; set; } = UserRole.User;
+
         public int CompanyId { get; set; }
     }
 
@@ -62,6 +67,8 @@ namespace SimpleApi.DTOs
         public bool IsActive { get; set; } = true;
 
         public bool IsSuperAdmin { get; set; } = false;
+
+        public UserRole Role { get; set; } = UserRole.User;
 
         public int CompanyId { get; set; }
     }

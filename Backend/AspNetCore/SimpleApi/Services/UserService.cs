@@ -18,6 +18,11 @@ namespace SimpleApi.Services
         Task<UserDto> ActivateAsync(int id);
         Task<UserDto> DeactivateAsync(int id);
         Task ResetPasswordAsync(ChangePasswordDto input);
+        
+        // Writer Portal methods
+        Task<List<WriterDto>> GetWritersAsync(int companyId);
+        Task<List<UserDto>> GetSuperAdminsAsync(int companyId);
+        Task<UserDto> GetUserByIdAsync(int userId);
     }
 
     public class UserService : IUserService
@@ -40,6 +45,7 @@ namespace SimpleApi.Services
                     Email = u.Email,
                     IsActive = u.IsActive,
                     IsSuperAdmin = u.IsSuperAdmin,
+                    Role = u.Role,
                     CreatedAt = u.CreatedAt,
                     CompanyId = u.CompanyId,
                     CompanyName = u.Company != null ? u.Company.Name : null
@@ -61,6 +67,7 @@ namespace SimpleApi.Services
                     Email = u.Email,
                     IsActive = u.IsActive,
                     IsSuperAdmin = u.IsSuperAdmin,
+                    Role = u.Role,
                     CreatedAt = u.CreatedAt,
                     CompanyId = u.CompanyId,
                     CompanyName = u.Company != null ? u.Company.Name : null
@@ -86,6 +93,7 @@ namespace SimpleApi.Services
                 Email = user.Email,
                 IsActive = user.IsActive,
                 IsSuperAdmin = user.IsSuperAdmin,
+                Role = user.Role,
                 CreatedAt = user.CreatedAt,
                 CompanyId = user.CompanyId,
                 CompanyName = user.Company?.Name
@@ -112,6 +120,7 @@ namespace SimpleApi.Services
                 Email = input.Email,
                 PasswordHash = hashedPassword,
                 IsSuperAdmin = input.IsSuperAdmin,
+                Role = input.Role,
                 CompanyId = input.CompanyId,
                 IsActive = true,
                 CreatedAt = DateTime.UtcNow
@@ -127,6 +136,7 @@ namespace SimpleApi.Services
                 Email = user.Email,
                 IsActive = user.IsActive,
                 IsSuperAdmin = user.IsSuperAdmin,
+                Role = user.Role,
                 CreatedAt = user.CreatedAt,
                 CompanyId = user.CompanyId,
                 CompanyName = company.Name
@@ -157,6 +167,7 @@ namespace SimpleApi.Services
             user.Email = input.Email;
             user.IsActive = input.IsActive;
             user.IsSuperAdmin = input.IsSuperAdmin;
+            user.Role = input.Role;
             user.CompanyId = input.CompanyId;
 
             await _context.SaveChangesAsync();
@@ -168,6 +179,7 @@ namespace SimpleApi.Services
                 Email = user.Email,
                 IsActive = user.IsActive,
                 IsSuperAdmin = user.IsSuperAdmin,
+                Role = user.Role,
                 CreatedAt = user.CreatedAt,
                 CompanyId = user.CompanyId,
                 CompanyName = company.Name
@@ -203,6 +215,7 @@ namespace SimpleApi.Services
                 Email = user.Email,
                 IsActive = user.IsActive,
                 IsSuperAdmin = user.IsSuperAdmin,
+                Role = user.Role,
                 CreatedAt = user.CreatedAt,
                 CompanyId = user.CompanyId,
                 CompanyName = user.Company?.Name
@@ -228,6 +241,7 @@ namespace SimpleApi.Services
                 Email = user.Email,
                 IsActive = user.IsActive,
                 IsSuperAdmin = user.IsSuperAdmin,
+                Role = user.Role,
                 CreatedAt = user.CreatedAt,
                 CompanyId = user.CompanyId,
                 CompanyName = user.Company?.Name
@@ -242,6 +256,69 @@ namespace SimpleApi.Services
 
             user.PasswordHash = HashPassword(input.NewPassword);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<List<WriterDto>> GetWritersAsync(int companyId)
+        {
+            var writers = await _context.Users
+                .Include(u => u.Company)
+                .Where(u => u.CompanyId == companyId && u.Role == UserRole.Writer && u.IsActive)
+                .Select(u => new WriterDto
+                {
+                    Id = u.Id,
+                    Name = u.Name,
+                    Email = u.Email,
+                    IsActive = u.IsActive,
+                    CompanyName = u.Company != null ? u.Company.Name : null
+                })
+                .ToListAsync();
+
+            return writers;
+        }
+
+        public async Task<List<UserDto>> GetSuperAdminsAsync(int companyId)
+        {
+            var superAdmins = await _context.Users
+                .Include(u => u.Company)
+                .Where(u => u.CompanyId == companyId && u.IsSuperAdmin && u.IsActive)
+                .Select(u => new UserDto
+                {
+                    Id = u.Id,
+                    Name = u.Name,
+                    Email = u.Email,
+                    IsActive = u.IsActive,
+                    IsSuperAdmin = u.IsSuperAdmin,
+                    Role = u.Role,
+                    CreatedAt = u.CreatedAt,
+                    CompanyId = u.CompanyId,
+                    CompanyName = u.Company != null ? u.Company.Name : null
+                })
+                .ToListAsync();
+
+            return superAdmins;
+        }
+
+        public async Task<UserDto> GetUserByIdAsync(int userId)
+        {
+            var user = await _context.Users
+                .Include(u => u.Company)
+                .FirstOrDefaultAsync(u => u.Id == userId);
+
+            if (user == null)
+                throw new ArgumentException("User not found");
+
+            return new UserDto
+            {
+                Id = user.Id,
+                Name = user.Name,
+                Email = user.Email,
+                IsActive = user.IsActive,
+                IsSuperAdmin = user.IsSuperAdmin,
+                Role = user.Role,
+                CreatedAt = user.CreatedAt,
+                CompanyId = user.CompanyId,
+                CompanyName = user.Company?.Name
+            };
         }
 
         private string HashPassword(string password)

@@ -436,6 +436,13 @@ namespace SimpleApi.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
 
+                    b.Property<int?>("AssignedWriterId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("AttachmentFilenames")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)");
+
                     b.Property<string>("ClientName")
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
@@ -513,6 +520,17 @@ namespace SimpleApi.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
 
+                    b.Property<DateTime?>("SubmissionDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("SubmissionStatus")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("SubmittedFilename")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
                     b.Property<decimal>("TotalAmount")
                         .HasColumnType("decimal(18,2)");
 
@@ -524,6 +542,8 @@ namespace SimpleApi.Migrations
                         .HasColumnType("character varying(100)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AssignedWriterId");
 
                     b.HasIndex("CompanyId");
 
@@ -716,6 +736,9 @@ namespace SimpleApi.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int>("Role")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CompanyId");
@@ -735,7 +758,8 @@ namespace SimpleApi.Migrations
                             IsActive = true,
                             IsSuperAdmin = true,
                             Name = "System Administrator",
-                            PasswordHash = "+/s4bv6mfoFvLdoKjJSpjrIDdXrrs/VfGDdVoZLURGc="
+                            PasswordHash = "+/s4bv6mfoFvLdoKjJSpjrIDdXrrs/VfGDdVoZLURGc=",
+                            Role = 0
                         });
                 });
 
@@ -796,6 +820,10 @@ namespace SimpleApi.Migrations
 
             modelBuilder.Entity("SimpleApi.Models.SaleOrder", b =>
                 {
+                    b.HasOne("SimpleApi.Models.User", "AssignedWriter")
+                        .WithMany()
+                        .HasForeignKey("AssignedWriterId");
+
                     b.HasOne("SimpleApi.Models.Company", "Company")
                         .WithMany()
                         .HasForeignKey("CompanyId")
@@ -811,6 +839,8 @@ namespace SimpleApi.Migrations
                         .WithMany()
                         .HasForeignKey("ServiceTypeId")
                         .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("AssignedWriter");
 
                     b.Navigation("Company");
 

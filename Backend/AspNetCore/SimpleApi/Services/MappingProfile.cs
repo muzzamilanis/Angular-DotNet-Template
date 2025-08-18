@@ -36,7 +36,8 @@ namespace SimpleApi.Services
             CreateMap<SaleOrder, SaleOrderDto>()
                 .ForMember(dest => dest.ProjectName, opt => opt.MapFrom(src => src.Project!.ProjectName))
                 .ForMember(dest => dest.ServiceTypeName, opt => opt.MapFrom(src => src.ServiceType!.Name))
-                .ForMember(dest => dest.CompanyName, opt => opt.MapFrom(src => src.Company!.Name));
+                .ForMember(dest => dest.CompanyName, opt => opt.MapFrom(src => src.Company!.Name))
+                .ForMember(dest => dest.AssignedWriterName, opt => opt.MapFrom(src => src.AssignedWriter!.Name));
             CreateMap<CreateSaleOrderDto, SaleOrder>()
                 .ForMember(dest => dest.Items, opt => opt.Ignore()); // Handle items manually
             CreateMap<UpdateSaleOrderDto, SaleOrder>()

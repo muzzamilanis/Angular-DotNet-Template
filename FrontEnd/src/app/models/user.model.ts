@@ -43,6 +43,7 @@ export enum UserRole {
     CompanyAdmin = 'CompanyAdmin',
     User = 'User',
     Manager = 'Manager',
+    Writer = 'Writer',
 }
 
 export interface ChangePasswordDto {
