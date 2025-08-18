@@ -64,6 +64,19 @@ namespace SimpleApi.Models
         [StringLength(200)]
         public string? AssignedTo { get; set; }
 
+
+
+        [StringLength(2000)]
+        public string? AttachmentFilenames { get; set; } // Comma-separated filenames
+
+        [StringLength(500)]
+        public string? SubmittedFilename { get; set; } // File submitted by writer
+
+        [StringLength(50)]
+        public string? SubmissionStatus { get; set; } // Completed, Need clarity
+
+        public DateTime? SubmissionDate { get; set; }
+
         [StringLength(1000)]
         public string? OrderDetails { get; set; }
 

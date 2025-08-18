@@ -32,4 +32,17 @@ export class SaleOrderService {
     deleteSaleOrder(id: number): Observable<void> {
         return this.http.delete<void>(`${this.apiUrl}/${id}`);
     }
+
+    uploadAttachments(saleOrderId: number, files: File[]): Observable<any> {
+        const formData = new FormData();
+        files.forEach(file => {
+            formData.append('files', file);
+        });
+        
+        return this.http.post(`${this.apiUrl}/${saleOrderId}/upload-attachments`, formData);
+    }
+
+    downloadFile(filename: string): Observable<Blob> {
+        return this.http.get(`${this.apiUrl}/download/${filename}`, { responseType: 'blob' });
+    }
 }

@@ -2,6 +2,15 @@ using System.ComponentModel.DataAnnotations;
 
 namespace SimpleApi.Models
 {
+    public enum UserRole
+    {
+        User = 0,
+        Manager = 1,
+        CompanyAdmin = 2,
+        SuperAdmin = 3,
+        Writer = 4
+    }
+
     public class User
     {
         public int Id { get; set; }
@@ -21,6 +30,8 @@ namespace SimpleApi.Models
         public bool IsActive { get; set; } = true;
 
         public bool IsSuperAdmin { get; set; } = false;
+
+        public UserRole Role { get; set; } = UserRole.User;
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 

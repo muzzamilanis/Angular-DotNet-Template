@@ -61,6 +61,19 @@ namespace SimpleApi.DTOs
         [StringLength(200)]
         public string? AssignedTo { get; set; }
 
+
+
+        [StringLength(2000)]
+        public string? AttachmentFilenames { get; set; }
+
+        [StringLength(500)]
+        public string? SubmittedFilename { get; set; }
+
+        [StringLength(50)]
+        public string? SubmissionStatus { get; set; }
+
+        public DateTime? SubmissionDate { get; set; }
+
         [StringLength(1000)]
         public string? OrderDetails { get; set; }
 
@@ -135,6 +148,11 @@ namespace SimpleApi.DTOs
 
         [StringLength(200)]
         public string? AssignedTo { get; set; }
+
+
+        [StringLength(2000)]
+        public string? AttachmentFilenames { get; set; }
+
         [StringLength(1000)]
         public string? OrderDetails { get; set; }
 
@@ -216,8 +234,21 @@ namespace SimpleApi.DTOs
         public string? WordsOrPages { get; set; }
 
         public decimal? TotalPayment { get; set; }
+
         [StringLength(200)]
         public string? AssignedTo { get; set; }
+
+        // Writer Portal fields
+        [StringLength(2000)]
+        public string? AttachmentFilenames { get; set; }
+
+        [StringLength(500)]
+        public string? SubmittedFilename { get; set; }
+
+        [StringLength(50)]
+        public string? SubmissionStatus { get; set; }
+
+        public DateTime? SubmissionDate { get; set; }
 
         [StringLength(100)]
         public string? AcademicLevel { get; set; }
@@ -357,4 +388,38 @@ namespace SimpleApi.DTOs
         public int CompanyId { get; set; }
 
         public bool IsActive { get; set; } = true;
+    }
+
+    // Writer Portal specific DTOs
+    public class WriterSubmissionDto
+    {
+        [Required]
+        public int SaleOrderId { get; set; }
+
+        [Required]
+        [StringLength(50)]
+        public string SubmissionStatus { get; set; } = string.Empty; // "Completed" or "Need clarity"
+
+        [StringLength(500)]
+        public string? SubmittedFilename { get; set; }
+
+        [StringLength(1000)]
+        public string? Notes { get; set; }
+    }
+
+    public class WriterAssignmentDto
+    {
+        public int Id { get; set; }
+        public string OrderNumber { get; set; } = string.Empty;
+        public DateTime OrderDate { get; set; }
+        public string? ClientName { get; set; }
+        public DateTime? Deadline { get; set; }
+        public string? Status { get; set; }
+        public string? OrderDetails { get; set; }
+        public string? WordsOrPages { get; set; }
+        public string? AcademicLevel { get; set; }
+        public string? AttachmentFilenames { get; set; }
+        public string? SubmissionStatus { get; set; }
+        public DateTime? SubmissionDate { get; set; }
+        public string? SubmittedFilename { get; set; }
     }

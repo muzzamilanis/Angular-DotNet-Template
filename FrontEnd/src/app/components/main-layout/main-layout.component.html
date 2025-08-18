@@ -82,15 +82,23 @@
                     role="menu"
                     data-accordion="false">
                     <!-- Dashboard -->
-                    <li class="nav-item">
+                    <li class="nav-item" *ngIf="!isWriter()">
                         <a routerLink="/dashboard" class="nav-link" routerLinkActive="active">
                             <i class="nav-icon fas fa-tachometer-alt"></i>
                             <p>Dashboard</p>
                         </a>
                     </li>
 
-                    <!-- Masters -->
-                    <li class="nav-item" [class.menu-open]="isMenuOpen('masters')">
+                    <!-- Writer Portal - Only visible to Writers -->
+                    <li class="nav-item" *ngIf="isWriter()">
+                        <a routerLink="/writer/assignments" class="nav-link" routerLinkActive="active">
+                            <i class="nav-icon fas fa-tasks"></i>
+                            <p>Assignments</p>
+                        </a>
+                    </li>
+
+                    <!-- Masters - Hidden from Writers -->
+                    <li class="nav-item" [class.menu-open]="isMenuOpen('masters')" *ngIf="!isWriter()">
                         <a (click)="toggleMenuState('masters', $event)" class="nav-link">
                             <i class="nav-icon fas fa-database"></i>
                             <p>
@@ -132,8 +140,8 @@
                         </ul>
                     </li>
 
-                    <!-- Transactions -->
-                    <li class="nav-item" [class.menu-open]="isMenuOpen('transactions')">
+                    <!-- Transactions - Hidden from Writers -->
+                    <li class="nav-item" [class.menu-open]="isMenuOpen('transactions')" *ngIf="!isWriter()">
                         <a (click)="toggleMenuState('transactions', $event)" class="nav-link">
                             <i class="nav-icon fas fa-shopping-cart"></i>
                             <p>
@@ -182,8 +190,8 @@
                         </ul>
                     </li>
 
-                    <!-- Reports -->
-                    <li class="nav-item">
+                    <!-- Reports - Hidden from Writers -->
+                    <li class="nav-item" *ngIf="!isWriter()">
                         <a href="#" class="nav-link">
                             <i class="nav-icon fas fa-chart-bar"></i>
                             <p>

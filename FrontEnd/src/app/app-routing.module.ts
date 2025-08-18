@@ -13,9 +13,11 @@ import { ProjectListComponent } from './components/project/project-list.componen
 import { ProjectFormComponent } from './components/project/project-form.component';
 import { ProjectDetailComponent } from './components/project/project-detail.component';
 import { ServiceTypeComponent } from './components/service-type/service-type.component';
+import { WriterAssignmentsComponent } from './components/writer-portal/writer-assignments.component';
 // import { CurrencySetupComponent } from './components/currency-setup/currency-setup.component';
 import { AuthGuard } from './guards/auth.guard';
 import { SuperAdminGuard } from './guards/super-admin.guard';
+import { WriterGuard } from './guards/writer.guard';
 
 const routes: Routes = [
     { path: 'login', component: LoginComponent },
@@ -44,6 +46,11 @@ const routes: Routes = [
                 path: 'administration/user-management',
                 component: UserManagementComponent,
                 canActivate: [SuperAdminGuard],
+            },
+            { 
+                path: 'writer/assignments', 
+                component: WriterAssignmentsComponent, 
+                canActivate: [WriterGuard] 
             },
         ],
     },

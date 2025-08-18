@@ -113,6 +113,14 @@ export class AuthService {
         return this.currentUserInfo?.isSuperAdmin === true;
     }
 
+    isWriter(): boolean {
+        return this.currentUserInfo?.role === 'Writer' || this.currentUserInfo?.role === 4; // Writer enum value
+    }
+
+    getUserRole(): string | number {
+        return this.currentUserInfo?.role;
+    }
+
     getCurrentUser(): any {
         return this.currentUserInfo;
     }

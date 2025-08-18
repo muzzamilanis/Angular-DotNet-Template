@@ -31,6 +31,12 @@ export interface SaleOrder {
     contactEmail?: string;
     contactPhone?: string;
     assignedTo?: string;
+    
+    attachmentFilenames?: string;
+    submittedFilename?: string;
+    submissionStatus?: string;
+    submissionDate?: Date;
+    
     orderDetails?: string;
     wordsOrPages?: string;
     totalPayment?: number;
@@ -68,6 +74,9 @@ export interface CreateSaleOrderDto {
     contactEmail?: string;
     contactPhone?: string;
     assignedTo?: string;
+    
+    attachmentFilenames?: string;
+    
     academicLevel?: string;
     orderDetails?: string;
     wordsOrPages?: string;
@@ -106,6 +115,12 @@ export interface UpdateSaleOrderDto {
     contactEmail?: string;
     contactPhone?: string;
     assignedTo?: string;
+    
+    attachmentFilenames?: string;
+    submittedFilename?: string;
+    submissionStatus?: string;
+    submissionDate?: Date;
+    
     academicLevel?: string;
     country?: string;
     orderDetails?: string;
@@ -117,4 +132,28 @@ export interface UpdateSaleOrderDto {
     foreignCurrencyAmount?: number;
     pkrAmount?: number;
     exchangeRateUsed?: number;
+}
+
+// Writer Portal specific interfaces
+export interface WriterSubmissionDto {
+    saleOrderId: number;
+    submissionStatus: string; // "Completed" or "Need clarity"
+    submittedFilename?: string;
+    notes?: string;
+}
+
+export interface WriterAssignmentDto {
+    id: number;
+    orderNumber: string;
+    orderDate: Date;
+    clientName?: string;
+    deadline?: Date;
+    status?: string;
+    orderDetails?: string;
+    wordsOrPages?: string;
+    academicLevel?: string;
+    attachmentFilenames?: string;
+    submissionStatus?: string;
+    submissionDate?: Date;
+    submittedFilename?: string;
 }

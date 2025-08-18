@@ -436,6 +436,10 @@ namespace SimpleApi.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
 
+                    b.Property<string>("AttachmentFilenames")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)");
+
                     b.Property<string>("ClientName")
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
@@ -512,6 +516,17 @@ namespace SimpleApi.Migrations
                     b.Property<string>("Status")
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
+
+                    b.Property<DateTime?>("SubmissionDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("SubmissionStatus")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("SubmittedFilename")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
 
                     b.Property<decimal>("TotalAmount")
                         .HasColumnType("decimal(18,2)");
@@ -716,6 +731,9 @@ namespace SimpleApi.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int>("Role")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CompanyId");
@@ -735,7 +753,8 @@ namespace SimpleApi.Migrations
                             IsActive = true,
                             IsSuperAdmin = true,
                             Name = "System Administrator",
-                            PasswordHash = "+/s4bv6mfoFvLdoKjJSpjrIDdXrrs/VfGDdVoZLURGc="
+                            PasswordHash = "+/s4bv6mfoFvLdoKjJSpjrIDdXrrs/VfGDdVoZLURGc=",
+                            Role = 0
                         });
                 });
 

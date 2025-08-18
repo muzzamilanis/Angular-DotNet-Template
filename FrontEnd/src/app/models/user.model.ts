@@ -43,6 +43,7 @@ export enum UserRole {
     CompanyAdmin = 'CompanyAdmin',
     User = 'User',
     Manager = 'Manager',
+    Writer = 'Writer',
 }
 
 export interface ChangePasswordDto {
@@ -58,6 +59,7 @@ export interface BackendUser {
     email: string;
     isActive: boolean;
     isSuperAdmin: boolean;
+    role: UserRole;
     createdAt?: Date;
     companyId: number;
     companyName?: string;
