@@ -201,7 +201,6 @@ namespace SimpleApi.Controllers
                     WordsOrPages = saleOrder.WordsOrPages,
                     TotalPayment = saleOrder.TotalPayment,
                     AssignedTo = saleOrder.AssignedTo,
-                    AssignedWriterId = saleOrder.AssignedWriterId,
                     AttachmentFilenames = string.Join(",", existingAttachments),
                     AcademicLevel = saleOrder.AcademicLevel,
                     Country = saleOrder.Country,

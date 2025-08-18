@@ -20,7 +20,7 @@ namespace SimpleApi.DTOs
 
         public bool IsSuperAdmin { get; set; } = false;
 
-        public UserRole Role { get; set; } = UserRole.User;
+        public UserRole Role { get; set; }
 
         public DateTime CreatedAt { get; set; }
 
@@ -46,7 +46,7 @@ namespace SimpleApi.DTOs
 
         public bool IsSuperAdmin { get; set; } = false;
 
-        public UserRole Role { get; set; } = UserRole.User;
+        public UserRole Role { get; set; }
 
         public int CompanyId { get; set; }
     }
@@ -68,7 +68,7 @@ namespace SimpleApi.DTOs
 
         public bool IsSuperAdmin { get; set; } = false;
 
-        public UserRole Role { get; set; } = UserRole.User;
+        public UserRole Role { get; set; }
 
         public int CompanyId { get; set; }
     }

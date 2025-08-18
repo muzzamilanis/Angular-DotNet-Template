@@ -518,17 +518,20 @@
                     <div class="row" *ngIf="isDigitalMarketing">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="assignedTo">Task Assigned To (Legacy)</label>
-                                <input
-                                    type="text"
+                                <label for="assignedTo">Assigned To</label>
+                                <select
                                     class="form-control"
                                     id="assignedTo"
                                     formControlName="assignedTo"
-                                    placeholder="Enter assigned person"
                                     [class.is-invalid]="
                                         saleOrderForm.get('assignedTo')?.invalid &&
                                         saleOrderForm.get('assignedTo')?.touched
-                                    " />
+                                    ">
+                                    <option value="">Select Writer</option>
+                                    <option *ngFor="let writer of writers" [value]="writer.name">
+                                        {{ writer.name }} ({{ writer.email }})
+                                    </option>
+                                </select>
                                 <div
                                     class="invalid-feedback"
                                     *ngIf="
@@ -539,20 +542,6 @@
                                         Assigned to must be 200 characters or less
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="assignedWriterId">Assigned Writer</label>
-                                <select
-                                    class="form-control"
-                                    id="assignedWriterId"
-                                    formControlName="assignedWriterId">
-                                    <option value="">Select Writer</option>
-                                    <option *ngFor="let writer of writers" [value]="writer.id">
-                                        {{ writer.name }} ({{ writer.email }})
-                                    </option>
-                                </select>
                             </div>
                         </div>
                     </div>

@@ -61,9 +61,7 @@ namespace SimpleApi.DTOs
         [StringLength(200)]
         public string? AssignedTo { get; set; }
 
-        // Writer Portal fields
-        public int? AssignedWriterId { get; set; }
-        public string? AssignedWriterName { get; set; }
+
 
         [StringLength(2000)]
         public string? AttachmentFilenames { get; set; }
@@ -151,8 +149,6 @@ namespace SimpleApi.DTOs
         [StringLength(200)]
         public string? AssignedTo { get; set; }
 
-        // Writer Portal fields
-        public int? AssignedWriterId { get; set; }
 
         [StringLength(2000)]
         public string? AttachmentFilenames { get; set; }
@@ -243,8 +239,6 @@ namespace SimpleApi.DTOs
         public string? AssignedTo { get; set; }
 
         // Writer Portal fields
-        public int? AssignedWriterId { get; set; }
-
         [StringLength(2000)]
         public string? AttachmentFilenames { get; set; }
 
@@ -397,15 +391,6 @@ namespace SimpleApi.DTOs
     }
 
     // Writer Portal specific DTOs
-    public class WriterDto
-    {
-        public int Id { get; set; }
-        public string Name { get; set; } = string.Empty;
-        public string Email { get; set; } = string.Empty;
-        public bool IsActive { get; set; }
-        public string? CompanyName { get; set; }
-    }
-
     public class WriterSubmissionDto
     {
         [Required]

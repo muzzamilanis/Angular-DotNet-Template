@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ValidatorFn, AbstractControl, ValidationErrors, FormArray } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router'; // <-- add
 import { SaleOrderService } from '../../services/sale-order.service';
-import { WriterService } from '../../services/writer.service';
+import { UserService } from '../../services/user.service';
 import { ProductService } from '../../services/product.service';
 import { CompanyService } from '../../services/company.service';
 import { ProjectService } from '../../services/project.service';
@@ -10,7 +10,8 @@ import { ServiceTypeService } from '../../services/service-type.service';
 import { CurrencyService } from '../../services/currency.service';
 import { Product } from '../../models/product.model';
 import { ServiceType } from '../../models/service-type.model';
-import { SaleOrder, CreateSaleOrderDto, WriterDto } from '../../models/sale-order.model';
+import { SaleOrder, CreateSaleOrderDto } from '../../models/sale-order.model';
+import { BackendUser, UserRole } from '../../models/user.model';
 import { CreateSaleOrderItemDto } from '../../models/sale-order-item.model';
 import { PaginatedResponse } from '../../models/common.model';
 import { Company } from '../../models/company.model';
@@ -36,7 +37,7 @@ export class SaleOrderComponent implements OnInit {
     isDigitalMarketing = false;
 
     // Writer Portal properties
-    writers: WriterDto[] = [];
+    writers: BackendUser[] = [];
     selectedFiles: File[] = [];
 
     // Currency-related properties
@@ -54,7 +55,7 @@ export class SaleOrderComponent implements OnInit {
     constructor(
         private fb: FormBuilder,
         private saleOrderService: SaleOrderService,
-        private writerService: WriterService,
+        private userService: UserService,
         private productService: ProductService,
         private companyService: CompanyService,
         private projectService: ProjectService,
@@ -240,7 +241,6 @@ export class SaleOrderComponent implements OnInit {
             this.saleOrderForm.addControl('paymentStatus', this.fb.control('', [Validators.maxLength(50)]));
             this.saleOrderForm.addControl('sourceOfPayment', this.fb.control('', [Validators.maxLength(100)]));
             this.saleOrderForm.addControl('assignedTo', this.fb.control('', [Validators.maxLength(200)]));
-            this.saleOrderForm.addControl('assignedWriterId', this.fb.control(''));
             this.saleOrderForm.addControl('contactEmail', this.fb.control('', [Validators.email, Validators.maxLength(200)]));
             this.saleOrderForm.addControl('contactPhone', this.fb.control('', [Validators.maxLength(50)]));
             this.saleOrderForm.addControl('orderDetails', this.fb.control('', [Validators.maxLength(1000)]));
@@ -413,7 +413,6 @@ export class SaleOrderComponent implements OnInit {
             saleOrder.contactEmail = formValue.contactEmail;
             saleOrder.contactPhone = formValue.contactPhone;
             saleOrder.assignedTo = formValue.assignedTo;
-            saleOrder.assignedWriterId = formValue.assignedWriterId;
             saleOrder.orderDetails = formValue.orderDetails;
             saleOrder.wordsOrPages = formValue.wordsOrPages;
 
@@ -509,7 +508,6 @@ export class SaleOrderComponent implements OnInit {
             formValue.contactEmail = order.contactEmail || '';
             formValue.contactPhone = order.contactPhone || '';
             formValue.assignedTo = order.assignedTo || '';
-            formValue.assignedWriterId = order.assignedWriterId || '';
             formValue.orderDetails = order.orderDetails || '';
             formValue.wordsOrPages = order.wordsOrPages || '';
 
@@ -741,9 +739,10 @@ export class SaleOrderComponent implements OnInit {
 
     // Writer Portal methods
     private loadWriters(): void {
-        this.writerService.getWriters().subscribe({
-            next: (writers) => {
-                this.writers = writers;
+        this.userService.getAll().subscribe({
+            next: (users) => {
+                // Filter users with Writer role
+                this.writers = users.filter(user => user.role === UserRole.Writer && user.isActive);
             },
             error: (error) => {
                 console.error('Error loading writers:', error);

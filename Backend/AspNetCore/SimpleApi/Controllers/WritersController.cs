@@ -23,7 +23,7 @@ namespace SimpleApi.Controllers
         }
 
         [HttpGet("list")]
-        public async Task<ActionResult<List<WriterDto>>> GetWriters()
+        public async Task<ActionResult<List<UserDto>>> GetWriters()
         {
             try
             {

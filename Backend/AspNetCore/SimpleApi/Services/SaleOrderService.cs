@@ -42,7 +42,6 @@ namespace SimpleApi.Services
                 .Include(so => so.Project)
                 .Include(so => so.ServiceType)
                 .Include(so => so.Company)
-                .Include(so => so.AssignedWriter)
                 .AsQueryable();
 
             // Apply filtering
@@ -111,7 +110,6 @@ namespace SimpleApi.Services
                 .ThenInclude(i => i.Product)
                 .Include(so => so.Project)
                 .Include(so => so.ServiceType)
-                .Include(so => so.AssignedWriter)
                 .FirstOrDefaultAsync();
 
             if (saleOrder == null)
@@ -311,8 +309,13 @@ namespace SimpleApi.Services
 
         public async Task<List<WriterAssignmentDto>> GetWriterAssignmentsAsync(int writerId)
         {
+            // Get the writer's name first
+            var writer = await _context.Users.FindAsync(writerId);
+            if (writer == null)
+                throw new ArgumentException("Writer not found");
+
             var assignments = await _context.SaleOrders
-                .Where(so => so.AssignedWriterId == writerId)
+                .Where(so => so.AssignedTo == writer.Name)
                 .Select(so => new WriterAssignmentDto
                 {
                     Id = so.Id,
@@ -336,8 +339,13 @@ namespace SimpleApi.Services
 
         public async Task SubmitWriterWorkAsync(WriterSubmissionDto submission, IFormFile? submittedFile, int writerId)
         {
+            // Get the writer's name first
+            var writer = await _context.Users.FindAsync(writerId);
+            if (writer == null)
+                throw new ArgumentException("Writer not found");
+
             var saleOrder = await _context.SaleOrders
-                .FirstOrDefaultAsync(so => so.Id == submission.SaleOrderId && so.AssignedWriterId == writerId);
+                .FirstOrDefaultAsync(so => so.Id == submission.SaleOrderId && so.AssignedTo == writer.Name);
 
             if (saleOrder == null)
                 throw new ArgumentException("Sale order not found or not assigned to this writer");

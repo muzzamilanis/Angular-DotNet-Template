@@ -32,9 +32,6 @@ export interface SaleOrder {
     contactPhone?: string;
     assignedTo?: string;
     
-    // Writer Portal fields
-    assignedWriterId?: number;
-    assignedWriterName?: string;
     attachmentFilenames?: string;
     submittedFilename?: string;
     submissionStatus?: string;
@@ -78,8 +75,6 @@ export interface CreateSaleOrderDto {
     contactPhone?: string;
     assignedTo?: string;
     
-    // Writer Portal fields
-    assignedWriterId?: number;
     attachmentFilenames?: string;
     
     academicLevel?: string;
@@ -121,8 +116,6 @@ export interface UpdateSaleOrderDto {
     contactPhone?: string;
     assignedTo?: string;
     
-    // Writer Portal fields
-    assignedWriterId?: number;
     attachmentFilenames?: string;
     submittedFilename?: string;
     submissionStatus?: string;
@@ -142,14 +135,6 @@ export interface UpdateSaleOrderDto {
 }
 
 // Writer Portal specific interfaces
-export interface WriterDto {
-    id: number;
-    name: string;
-    email: string;
-    isActive: boolean;
-    companyName?: string;
-}
-
 export interface WriterSubmissionDto {
     saleOrderId: number;
     submissionStatus: string; // "Completed" or "Need clarity"

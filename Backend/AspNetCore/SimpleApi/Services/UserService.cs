@@ -20,7 +20,7 @@ namespace SimpleApi.Services
         Task ResetPasswordAsync(ChangePasswordDto input);
         
         // Writer Portal methods
-        Task<List<WriterDto>> GetWritersAsync(int companyId);
+        Task<List<UserDto>> GetWritersAsync(int companyId);
         Task<List<UserDto>> GetSuperAdminsAsync(int companyId);
         Task<UserDto> GetUserByIdAsync(int userId);
     }
@@ -258,17 +258,21 @@ namespace SimpleApi.Services
             await _context.SaveChangesAsync();
         }
 
-        public async Task<List<WriterDto>> GetWritersAsync(int companyId)
+        public async Task<List<UserDto>> GetWritersAsync(int companyId)
         {
             var writers = await _context.Users
                 .Include(u => u.Company)
                 .Where(u => u.CompanyId == companyId && u.Role == UserRole.Writer && u.IsActive)
-                .Select(u => new WriterDto
+                .Select(u => new UserDto
                 {
                     Id = u.Id,
                     Name = u.Name,
                     Email = u.Email,
                     IsActive = u.IsActive,
+                    IsSuperAdmin = u.IsSuperAdmin,
+                    Role = u.Role,
+                    CreatedAt = u.CreatedAt,
+                    CompanyId = u.CompanyId,
                     CompanyName = u.Company != null ? u.Company.Name : null
                 })
                 .ToListAsync();
