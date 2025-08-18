@@ -375,7 +375,7 @@
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label for="foreignCurrencyAmount">
-                                    <i class="fas fa-dollar-sign"></i>
+                                    {{ selectedCurrencySymbol }}
                                     Amount ({{ selectedCurrencyCode }})
                                 </label>
                                 <input
@@ -958,7 +958,7 @@
                                 <td *ngIf="!isDigitalMarketing">{{ order.customerAddress }}</td>
                                 <td *ngIf="!isDigitalMarketing">{{ order.items.length }}</td>
                                 <td *ngIf="isDigitalMarketing">
-                                    {{ (order.AdvancePayment || 0).toFixed(2) }}
+                                    {{ (order.amountReceivedInPkr || 0).toFixed(2) }}
                                 </td>
                                 <td *ngIf="isDigitalMarketing">
                                     {{ (order.pkrAmount || 0).toFixed(2) }}

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router'; // <-- add
 import { SaleOrderService } from '../../services/sale-order.service';
 import { ProductService } from '../../services/product.service';
 import { CompanyService } from '../../services/company.service';
@@ -36,6 +37,7 @@ export class SaleOrderComponent implements OnInit {
     countries: any[] = [];
     selectedCountry = '';
     selectedCurrencyCode = '';
+    selectedCurrencySymbol = '';
     currentExchangeRate = 0;
     isLoadingRate = false;
 
@@ -47,7 +49,9 @@ export class SaleOrderComponent implements OnInit {
         private projectService: ProjectService,
         private serviceTypeService: ServiceTypeService,
         private currencyService: CurrencyService,
-        private notificationService: NotificationService
+        private notificationService: NotificationService,
+        private route: ActivatedRoute,   // <-- add
+        private router: Router           // <-- optional (to clear query params)
     ) {
         this.initializeForm();
         this.initializeCountries();
@@ -57,6 +61,37 @@ export class SaleOrderComponent implements OnInit {
         this.loadCurrentCompany();
         this.loadProducts();
         this.loadSaleOrders();
+        // do NOT handle params here yet; wait for company/form init inside loadCurrentCompany
+    }
+
+    private handleQueryParams(): void {
+        this.route.queryParamMap.subscribe(params => {
+            const idParam = params.get('id');
+            const projectIdParam = params.get('projectId');
+
+            // Prefill project for Digital Marketing flow
+            if (projectIdParam && this.isDigitalMarketing) {
+                this.saleOrderForm?.get('projectId')?.setValue(+projectIdParam);
+            }
+
+            // Open specific order for editing
+            if (idParam) {
+                const id = +idParam;
+                if (!Number.isNaN(id)) {
+                    this.saleOrderService.getSaleOrder(id).subscribe({
+                        next: (order) => {
+                            this.editOrder(order);
+                            // optional: clear the query param after loading
+                            this.router.navigate([], { queryParams: {}, replaceUrl: true });
+                        },
+                        error: (err) => {
+                            console.error('Failed to load sale order by id from query params:', err);
+                            this.notificationService.showError('Unable to load the requested order.');
+                        }
+                    });
+                }
+            }
+        });
     }
 
     private loadCurrentCompany(): void {
@@ -79,6 +114,9 @@ export class SaleOrderComponent implements OnInit {
                 if (!this.isDigitalMarketing) {
                     this.addItem();
                 }
+
+                // call handleQueryParams() so the form structure is ready:
+                this.handleQueryParams(); // <-- add here
             },
             error: (error) => {
                 console.error('Error loading current company:', error);
@@ -361,6 +399,7 @@ export class SaleOrderComponent implements OnInit {
                 if (country) {
                     this.selectedCountry = country.code;
                     this.selectedCurrencyCode = country.currency;
+                    this.selectedCurrencySymbol = country.symbol || '';
                     this.currentExchangeRate = order.exchangeRateUsed || 0;
                 }
             }
@@ -495,17 +534,17 @@ export class SaleOrderComponent implements OnInit {
 
     private initializeCountries(): void {
         this.countries = [
-            { name: 'United Arab Emirates', code: 'UAE', currency: 'AED' },
-            { name: 'Saudi Arabia', code: 'SA', currency: 'SAR' },
-            { name: 'United States', code: 'US', currency: 'USD' },
-            { name: 'United Kingdom', code: 'UK', currency: 'GBP' },
-            { name: 'European Union', code: 'EU', currency: 'EUR' },
-            { name: 'Canada', code: 'CA', currency: 'CAD' },
-            { name: 'Australia', code: 'AU', currency: 'AUD' },
-            { name: 'Switzerland', code: 'CH', currency: 'CHF' },
-            { name: 'China', code: 'CN', currency: 'CNY' },
-            { name: 'India', code: 'IN', currency: 'INR' },
-            { name: 'Japan', code: 'JP', currency: 'JPY' },
+            { name: 'United Arab Emirates', code: 'UAE', currency: 'AED', symbol: 'د.إ' },
+            { name: 'Saudi Arabia', code: 'SA', currency: 'SAR', symbol: '﷼' },
+            { name: 'United States', code: 'US', currency: 'USD', symbol: '$' },
+            { name: 'United Kingdom', code: 'UK', currency: 'GBP', symbol: '£' },
+            { name: 'European Union', code: 'EU', currency: 'EUR', symbol: '€' },
+            { name: 'Canada', code: 'CA', currency: 'CAD', symbol: 'C$' },
+            { name: 'Australia', code: 'AU', currency: 'AUD', symbol: 'A$' },
+            { name: 'Switzerland', code: 'CH', currency: 'CHF', symbol: 'CHF' },
+            { name: 'China', code: 'CN', currency: 'CNY', symbol: '¥' },
+            { name: 'India', code: 'IN', currency: 'INR', symbol: '₹' },
+            { name: 'Japan', code: 'JP', currency: 'JPY', symbol: '¥' },
         ];
     }
 
@@ -514,6 +553,7 @@ export class SaleOrderComponent implements OnInit {
         if (country) {
             this.selectedCountry = countryCode;
             this.selectedCurrencyCode = country.currency;
+            this.selectedCurrencySymbol = country.symbol || '';
             this.saleOrderForm.get('country')?.setValue(country.name);
             this.saleOrderForm.get('currencyCode')?.setValue(country.currency);
             this.loadExchangeRate(country.currency);
