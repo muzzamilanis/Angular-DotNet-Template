@@ -8,27 +8,34 @@ import { Router } from '@angular/router';
 export class AuthInterceptor implements HttpInterceptor {
   constructor(private router: Router) {}
 
-  intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    // Get token directly from localStorage
-    const token = this.getStoredToken();
+  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    const token = localStorage.getItem('authToken') || localStorage.getItem('token');
     
-    // Skip token for login/register requests
-    const isAuthRequest = request.url.includes('/auth/') || 
-                          request.url.includes('/login') || 
-                          request.url.includes('/register');
-
-    if (token && !isAuthRequest) {
-      request = request.clone({
+    let clonedReq: HttpRequest<any>;
+    
+    if (req.body instanceof FormData) {
+      // CRITICAL: Do NOT set Content-Type for FormData
+      // Browser will automatically set: multipart/form-data; boundary=...
+      clonedReq = req.clone({
+        setHeaders: token ? { Authorization: `Bearer ${token}` } : {}
+      });
+    } else {
+      // For JSON requests only
+      clonedReq = req.clone({
         setHeaders: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {})
+        }
       });
     }
-
-    return next.handle(request).pipe(
+    
+    return next.handle(clonedReq).pipe(
       catchError((error: HttpErrorResponse) => {
         // Handle 401 Unauthorized errors
+        const isAuthRequest = req.url.includes('/auth/') || 
+                              req.url.includes('/login') || 
+                              req.url.includes('/register');
+
         if (error.status === 401 && !isAuthRequest) {
           // Clear invalid token
           localStorage.removeItem('authToken');
@@ -41,14 +48,5 @@ export class AuthInterceptor implements HttpInterceptor {
         return throwError(() => error);
       })
     );
-  }
-
-  private getStoredToken(): string | null {
-    // Try different possible token keys
-    return localStorage.getItem('authToken') || 
-           localStorage.getItem('token') || 
-           localStorage.getItem('access_token') ||
-           sessionStorage.getItem('authToken') ||
-           null;
   }
 }

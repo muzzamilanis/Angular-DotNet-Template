@@ -48,7 +48,7 @@ export class SaleOrderComponent implements OnInit {
     currentExchangeRate = 0;
     isLoadingRate = false;
 
-    readonly statusOptions = ['New', 'InProgress', 'Completed', 'Abandon'];
+    readonly statusOptions = ['New', 'InProgress', 'Completed', 'Abandon', 'workSubmittedByWriter'];
     readonly paymentStatusOptions = ['Pending', 'PartialPaid', 'FullPaid'];
     readonly sourceOfPaymentOptions = ['Website', 'Payoneer', 'OnlineTransfer'];
 

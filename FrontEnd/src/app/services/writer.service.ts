@@ -23,21 +23,22 @@ export class WriterService {
 
   submitWork(submission: WriterSubmissionDto, file?: File): Observable<any> {
     const formData = new FormData();
-    formData.append('saleOrderId', submission.saleOrderId.toString());
-    formData.append('submissionStatus', submission.submissionStatus);
+    
+    // Match your DTO property names exactly
+    formData.append('saleOrderId', String(submission.saleOrderId));
+    formData.append('submissionStatus', String(submission.submissionStatus));
     
     if (submission.submittedFilename) {
       formData.append('submittedFilename', submission.submittedFilename);
     }
-    
     if (submission.notes) {
       formData.append('notes', submission.notes);
     }
-    
     if (file) {
-      formData.append('submittedFile', file);
+      formData.append('submittedFile', file, file.name); // Must match IFormFile parameter name
     }
-
+    
+    // Do NOT pass any headers - let browser set multipart/form-data
     return this.http.post(`${this.apiUrl}/submit`, formData);
   }
 }

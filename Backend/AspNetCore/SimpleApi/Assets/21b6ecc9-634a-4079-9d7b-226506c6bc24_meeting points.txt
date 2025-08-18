@@ -1,0 +1,1442 @@
+
+AI-generated content may be incorrect
+
+Muzzamil Nagda started transcription
+MN
+
+Muzzamil Nagda
+0 minutes 3 seconds0:03
+Muzzamil Nagda 0 minutes 3 seconds
+In in in just one hour or so or not. So these two issue we have taken already we have taken care of these two issues and.
+M
+
+Madhu (NSI)
+0 minutes 7 seconds0:07
+Madhu (NSI) 0 minutes 7 seconds
+Mm hmm.
+MN
+
+Muzzamil Nagda
+0 minutes 14 seconds0:14
+Muzzamil Nagda 0 minutes 14 seconds
+Then the I mean the next PR which we will be providing it will contain this issue.
+Muzzamil Nagda 0 minutes 19 seconds
+But I have one suggestion that if we can test on Dev RC first.
+M
+
+Madhu (NSI)
+0 minutes 26 seconds0:26
+Madhu (NSI) 0 minutes 26 seconds
+But how do we test it? You know, I definitely will be interested.
+MN
+
+Muzzamil Nagda
+0 minutes 30 seconds0:30
+Muzzamil Nagda 0 minutes 30 seconds
+Yeah. So they're the the only thing which is the problematic is that we don't have SSL on dev RC.
+M
+
+Madhu (NSI)
+0 minutes 38 seconds0:38
+Madhu (NSI) 0 minutes 38 seconds
+Yeah.
+MN
+
+Muzzamil Nagda
+0 minutes 38 seconds0:38
+Muzzamil Nagda 0 minutes 38 seconds
+So we just have to click on the advanced thing and it will load the PIF for Dev RC as well.
+M
+
+Madhu (NSI)
+0 minutes 46 seconds0:46
+Madhu (NSI) 0 minutes 46 seconds
+Right.
+MN
+
+Muzzamil Nagda
+0 minutes 46 seconds0:46
+Muzzamil Nagda 0 minutes 46 seconds
+I have tested, tested, tested it on my end.
+
+Muzzamil Nagda 0 minutes 49 seconds
+That's that's why I'm saying.
+M
+Madhu (NSI)
+0 minutes 50 seconds0:50
+Madhu (NSI) 0 minutes 50 seconds
+We can definitely do that if this is the only thing that is stopping you.
+MN
+Muzzamil Nagda
+0 minutes 53 seconds0:53
+Muzzamil Nagda 0 minutes 53 seconds
+Yeah, actually the reason why I'm saying that because it contains multiple scenarios, right?
+Muzzamil Nagda 0 minutes 58 seconds
+So and rather than going again and again for QA, first we at least get comfortable with that hub size.
+Muzzamil Nagda 1 minute 6 seconds
+Comfortable me and someone is also comfortable.
+M
+Madhu (NSI)
+1 minute 6 seconds1:06
+Madhu (NSI) 1 minute 6 seconds
+Yeah.
+MN
+Muzzamil Nagda
+1 minute 9 seconds1:09
+Muzzamil Nagda 1 minute 9 seconds
+Yeah. OK.
+Muzzamil Nagda 1 minute 10 seconds
+All the scenarios are covered and then it would be good to go on QS so that we can final Test on QA and then we can release it.
+M
+Madhu (NSI)
+1 minute 18 seconds1:18
+Madhu (NSI) 1 minute 18 seconds
+Can you show it to us?
+Madhu (NSI) 1 minute 19 seconds
+Can you show it to see if it that's in the case?
+MN
+Muzzamil Nagda
+1 minute 19 seconds1:19
+Muzzamil Nagda 1 minute 19 seconds
+Yeah, yeah, sure, sure.
+MN
+Muzzamil Nagda
+4 minutes 14 seconds4:14
+Muzzamil Nagda 4 minutes 14 seconds
+Yeah, exactly, exactly.
+M
+Madhu (NSI)
+4 minutes 17 seconds4:17
+Madhu (NSI) 4 minutes 17 seconds
+Everything and we don't expect any issue in the QA. Then QA would be very fast.
+MN
+Muzzamil Nagda
+4 minutes 22 seconds4:22
+Muzzamil Nagda 4 minutes 22 seconds
+Yeah, actually.
+M
+Madhu (NSI)
+4 minutes 23 seconds4:23
+Madhu (NSI) 4 minutes 23 seconds
+Margin and.
+MN
+Muzzamil Nagda
+4 minutes 24 seconds4:24
+Muzzamil Nagda 4 minutes 24 seconds
+That is the thing.
+Muzzamil Nagda 4 minutes 25 seconds
+Because right now what I was also facing that this again if we give the fix and we go to QA it's like 1 1/2 date which will be spent on this thing no.
+M
+Madhu (NSI)
+4 minutes 28 seconds4:28
+Madhu (NSI) 4 minutes 28 seconds
+Hmm.
+Madhu (NSI) 4 minutes 32 seconds
+Mm.
+MN
+Muzzamil Nagda
+4 minutes 37 seconds4:37
+Muzzamil Nagda 4 minutes 37 seconds
+It's consumes a lot of time for this hotfix as well.
+M
+Madhu (NSI)
+5 minutes 28 seconds5:28
+Madhu (NSI) 5 minutes 28 seconds
+A bit of time for three minutes.
+Madhu (NSI) 5 minutes 31 seconds
+Pist to because we don't do it every instant, like, you know, at least it takes 2-3 seconds before it goes.
+Madhu (NSI) 5 minutes 45 seconds
+OK.
+Madhu (NSI) 5 minutes 45 seconds
+So while it's doing Salman, what's your update?
+SK
+Salman Khatri
+5 minutes 51 seconds5:51
+Salman Khatri 5 minutes 51 seconds
+Hi ma'am.
+Salman Khatri 5 minutes 52 seconds
+Today I'm just fixing the box final issue regarding the.
+M
+Madhu (NSI)
+5 minutes 52 seconds5:52
+Madhu (NSI) 5 minutes 52 seconds
+Yeah.
+MN
+Muzzamil Nagda
+5 minutes 54 seconds5:54
+Muzzamil Nagda 5 minutes 54 seconds
+Yeah, here it is.
+Muzzamil Nagda 5 minutes 55 seconds
+Focus. Wait, wait. So long.
+Muzzamil Nagda 5 minutes 56 seconds
+It's sorry, Madhu Salman.
+Muzzamil Nagda 5 minutes 58 seconds
+Here is the link.
+M
+Madhu (NSI)
+5 minutes 58 seconds5:58
+Madhu (NSI) 5 minutes 58 seconds
+Mm hmm.
+MN
+Muzzamil Nagda
+6 minutes6:00
+Muzzamil Nagda 6 minutes
+If I click on this.
+Muzzamil Nagda 6 minutes 5 seconds
+It is opening the Dev RC Sonic dot health.
+M
+Madhu (NSI)
+6 minutes 8 seconds6:08
+Madhu (NSI) 6 minutes 8 seconds
+OK.
+MN
+Muzzamil Nagda
+6 minutes 10 seconds6:10
+Muzzamil Nagda 6 minutes 10 seconds
+It's the first time what it will.
+Muzzamil Nagda 6 minutes 12 seconds
+It will ask for that the you know that if it we don't have that.
+M
+Madhu (NSI)
+6 minutes 14 seconds6:14
+Madhu (NSI) 6 minutes 14 seconds
+OK, OK. So you will have to try on your computer.
+Madhu (NSI) 6 minutes 18 seconds
+So you have to try on your computer. Basically, when we say issues then you say advanced setting and then say continue.
+MN
+Muzzamil Nagda
+6 minutes 24 seconds6:24
+Muzzamil Nagda 6 minutes 24 seconds
+Yeah, exactly. Exactly, exactly.
+M
+Madhu (NSI)
+6 minutes 25 seconds6:25
+Madhu (NSI) 6 minutes 25 seconds
+And first time you do then after that it's OK.
+Madhu (NSI) 6 minutes 28 seconds
+OK.
+MN
+Muzzamil Nagda
+6 minutes 28 seconds6:28
+Muzzamil Nagda 6 minutes 28 seconds
+Yeah, exactly.
+M
+Madhu (NSI)
+6 minutes 29 seconds6:29
+Madhu (NSI) 6 minutes 29 seconds
+Great. OK. Then then we can definitely do selecting the advanced setting from when it will come on your browser when you will do it OK then you will try your because he has already done that. It's not.
+Madhu (NSI) 6 minutes 41 seconds
+It's not coming on his computer, right? OK.
+Madhu (NSI) 6 minutes 45 seconds
+So OK, that we will try.
+Madhu (NSI) 6 minutes 47 seconds
+Now let's look at the issues now.
+Madhu (NSI) 6 minutes 49 seconds
+So what are the issues in the let's let's do so you say you fixed 1 by 1. Why? Why one right?
+MN
+Muzzamil Nagda
+6 minutes 49 seconds6:49
+Muzzamil Nagda 6 minutes 49 seconds
+Yeah, sure.
+M
+Madhu (NSI)
+6 minutes 55 seconds6:55
+Madhu (NSI) 6 minutes 55 seconds
+So first thing are the tickets created for all those issues?
+Madhu (NSI) 6 minutes 58 seconds
+That's what I will be interested mujerin.
+MN
+Muzzamil Nagda
+7 minutes 3 seconds7:03
+Muzzamil Nagda 7 minutes 3 seconds
+No mother tickets are not created right now.
+M
+Madhu (NSI)
+7 minutes 6 seconds7:06
+Madhu (NSI) 7 minutes 6 seconds
+Because then tickets are not created.
+MN
+Muzzamil Nagda
+7 minutes 6 seconds7:06
+Muzzamil Nagda 7 minutes 6 seconds
+Because this is no, no, no these issues.
+M
+Madhu (NSI)
+7 minutes 7 seconds7:07
+Madhu (NSI) 7 minutes 7 seconds
+Then we.
+Madhu (NSI) 7 minutes 9 seconds
+Not not this one.
+Madhu (NSI) 7 minutes 10 seconds
+Not this one. Not this one.
+Madhu (NSI) 7 minutes 11 seconds
+Not treatment.
+Madhu (NSI) 7 minutes 12 seconds
+And I'm talking about only PIF, PIF related first.
+MN
+Muzzamil Nagda
+7 minutes 16 seconds7:16
+Muzzamil Nagda 7 minutes 16 seconds
+These ticket right Pi have dropped down and all these thing.
+M
+Madhu (NSI)
+7 minutes 20 seconds7:20
+Madhu (NSI) 7 minutes 20 seconds
+Yeah.
+Madhu (NSI) 7 minutes 22 seconds
+Hotfix relative so.
+MN
+Muzzamil Nagda
+8 minutes 5 seconds8:05
+Muzzamil Nagda 8 minutes 5 seconds
+Not not on the release card in the in the bug bug ticket, Hafsa, because it was related to bug.
+Muzzamil Nagda 8 minutes 10 seconds
+No release card will have only the bug ticket number. If you can open that.
+M
+Madhu (NSI)
+8 minutes 14 seconds8:14
+Madhu (NSI) 8 minutes 14 seconds
+So even the foot, the foot thing I opened, it's it was empty.
+Madhu (NSI) 8 minutes 19 seconds
+Can you show it that where is the Excel sheet bug ticket?
+Madhu (NSI) 8 minutes 22 seconds
+What is where I went also then what is a problem?
+Madhu (NSI) 8 minutes 26 seconds
+Why is not able to see?
+Madhu (NSI) 8 minutes 28 seconds
+Can you show foot?
+MN
+Muzzamil Nagda
+8 minutes 30 seconds8:30
+Muzzamil Nagda 8 minutes 30 seconds
+Yeah, it is.
+M
+Madhu (NSI)
+8 minutes 32 seconds8:32
+Madhu (NSI) 8 minutes 32 seconds
+Show the release card.
+Madhu (NSI) 8 minutes 35 seconds
+And then just go to the ticket and show that this is where it is.
+Madhu (NSI) 8 minutes 38 seconds
+I looked at it yesterday.
+Madhu (NSI) 8 minutes 39 seconds
+Not today though.
+Madhu (NSI) 8 minutes 40 seconds
+I don't know if you updated.
+Madhu (NSI) 8 minutes 42 seconds
+Maybe we'll let you know.
+MN
+Muzzamil Nagda
+8 minutes 42 seconds8:42
+Muzzamil Nagda 8 minutes 42 seconds
+No, no, it's was I.
+Muzzamil Nagda 8 minutes 43 seconds
+I is the screen is shared or I.
+M
+Madhu (NSI)
+8 minutes 47 seconds8:47
+Madhu (NSI) 8 minutes 47 seconds
+Pardon.
+MN
+Muzzamil Nagda
+8 minutes 49 seconds8:49
+Muzzamil Nagda 8 minutes 49 seconds
+Are you able to see my screen?
+M
+Madhu (NSI)
+8 minutes 49 seconds8:49
+Madhu (NSI) 8 minutes 49 seconds
+No, no, it's a my screen.
+Madhu (NSI) 8 minutes 53 seconds
+No, you have to share your screen.
+MN
+Muzzamil Nagda
+8 minutes 55 seconds8:55
+Muzzamil Nagda 8 minutes 55 seconds
+OK, sorry.
+Muzzamil Nagda 9 minutes 10 seconds
+Here it is the bug number 12950 currently which we are working on it right and here it is the last thing the test cases bug and this is the Excel sheet.
+M
+Madhu (NSI)
+9 minutes 15 seconds9:15
+Madhu (NSI) 9 minutes 15 seconds
+MMM.
+Madhu (NSI) 9 minutes 17 seconds
+Mm hmm.
+Madhu (NSI) 9 minutes 20 seconds
+So why is this ticket is not there in the release card?
+Madhu (NSI) 9 minutes 24 seconds
+Can you look into the release card you go through release card, right?
+MN
+Muzzamil Nagda
+9 minutes 24 seconds9:24
+Muzzamil Nagda 9 minutes 24 seconds
+It is. No, no, no, no, no.
+Muzzamil Nagda 9 minutes 27 seconds
+Yeah. Yeah, it doesn't.
+M
+Madhu (NSI)
+9 minutes 29 seconds9:29
+Madhu (NSI) 9 minutes 29 seconds
+No, no, no.
+Madhu (NSI) 9 minutes 29 seconds
+Go through the release card you have, create a hotfix release card, right?
+MN
+Muzzamil Nagda
+9 minutes 34 seconds9:34
+Muzzamil Nagda 9 minutes 34 seconds
+Yeah, yeah, yeah. Let let me open.
+M
+Madhu (NSI)
+9 minutes 35 seconds9:35
+Madhu (NSI) 9 minutes 35 seconds
+QA.
+Madhu (NSI) 9 minutes 35 seconds
+Go to that QA release card.
+Madhu (NSI) 9 minutes 45 seconds
+This is the release card.
+Madhu (NSI) 9 minutes 46 seconds
+This is what you were looking into, right, Hafsa?
+Madhu (NSI) 9 minutes 48 seconds
+Yeah. Now in this there are two tickets.
+Madhu (NSI) 9 minutes 50 seconds
+Have you checked both of?
+Madhu (NSI) 9 minutes 51 seconds
+There is only 1 ticket right?
+Madhu (NSI) 9 minutes 54 seconds
+Now if you click on this ticket, yeah.
+MN
+Muzzamil Nagda
+9 minutes 54 seconds9:54
+Muzzamil Nagda 9 minutes 54 seconds
+This is the same ticket.
+M
+Madhu (NSI)
+10 minutes10:00
+Madhu (NSI) 10 minutes
+So this is what he's saying.
+Madhu (NSI) 10 minutes 2 seconds
+What is you saying?
+Madhu (NSI) 10 minutes 3 seconds
+You say OK.
+Madhu (NSI) 10 minutes 4 seconds
+So I was not.
+Madhu (NSI) 10 minutes 5 seconds
+Can you can you go back to the the bug?
+MN
+Muzzamil Nagda
+10 minutes 10 seconds10:10
+Muzzamil Nagda 10 minutes 10 seconds
+Yeah, it is bug ticket no.
+M
+Madhu (NSI)
+10 minutes 13 seconds10:13
+Madhu (NSI) 10 minutes 13 seconds
+No. Can you go to the release card?
+MN
+Muzzamil Nagda
+10 minutes 16 seconds10:16
+Muzzamil Nagda 10 minutes 16 seconds
+Yeah, release card.
+M
+Madhu (NSI)
+10 minutes 18 seconds10:18
+Madhu (NSI) 10 minutes 18 seconds
+Yes, I was not looking at this 12950. I was looking at the feet 2 foot.
+Madhu (NSI) 10 minutes 24 seconds
+No, no, but this.
+MN
+Muzzamil Nagda
+10 minutes 25 seconds10:25
+Muzzamil Nagda 10 minutes 25 seconds
+Better.
+M
+Madhu (NSI)
+10 minutes 25 seconds10:25
+Madhu (NSI) 10 minutes 25 seconds
+This is a release card.
+Madhu (NSI) 10 minutes 27 seconds
+This is what is released.
+Madhu (NSI) 10 minutes 28 seconds
+This is what you give to us. So this is the your starting point, right?
+Madhu (NSI) 10 minutes 32 seconds
+Can you come now?
+Madhu (NSI) 10 minutes 33 seconds
+So which ticket were you looking?
+Madhu (NSI) 10 minutes 35 seconds
+Can you come down?
+Madhu (NSI) 10 minutes 35 seconds
+No, I wasn't looking at this one.
+Madhu (NSI) 10 minutes 39 seconds
+This release card, did you share this release card with me?
+Madhu (NSI) 10 minutes 41 seconds
+I was looking at the old release card that no, no. Why were you looking into the old release card?
+Madhu (NSI) 10 minutes 46 seconds
+This is what you have to look into because this is a hotfix, right?
+Madhu (NSI) 10 minutes 50 seconds
+Where did you show the share this release card number?
+Madhu (NSI) 10 minutes 53 seconds
+Zamil, it's there in all the emails to teams and it it always goes into e-mail teams.
+MN
+Muzzamil Nagda
+10 minutes 54 seconds10:54
+Muzzamil Nagda 10 minutes 54 seconds
+The e-mail in e-mail.
+M
+Madhu (NSI)
+11 minutes 1 second11:01
+Madhu (NSI) 11 minutes 1 second
+Kind of WhatsApp everywhere. It's the same number.
+Madhu (NSI) 11 minutes 6 seconds
+Because that part is closed now.
+Madhu (NSI) 11 minutes 8 seconds
+Whatever we deployed, we deployed, right? OK. I was looking at that one. So I did not know.
+Madhu (NSI) 11 minutes 13 seconds
+So this is coming in emails like when they no no see I am saying that it comes everywhere.
+Madhu (NSI) 11 minutes 19 seconds
+See you if you go to Mujahmail's e-mail.
+Madhu (NSI) 11 minutes 24 seconds
+No, it's by default coming like when it's created or this.
+Madhu (NSI) 11 minutes 28 seconds
+Or did he share it with me?
+Madhu (NSI) 11 minutes 30 seconds
+No, that's what I'm saying. It's it.
+Madhu (NSI) 11 minutes 31 seconds
+He's sharing explicitly also and there is this release card query.
+MN
+Muzzamil Nagda
+11 minutes 35 seconds11:35
+Muzzamil Nagda 11 minutes 35 seconds
+Yeah. Here. Here it is.
+M
+Madhu (NSI)
+11 minutes 36 seconds11:36
+Madhu (NSI) 11 minutes 36 seconds
+You can go there also see see this is a. This is a release card, right?
+MN
+Muzzamil Nagda
+11 minutes 37 seconds11:37
+Muzzamil Nagda 11 minutes 37 seconds
+The e-mail right now.
+Muzzamil Nagda 11 minutes 39 seconds
+Following this.
+M
+Madhu (NSI)
+11 minutes 41 seconds11:41
+Madhu (NSI) 11 minutes 41 seconds
+This is shared and it it's giving that this is AQA release card production release card.
+Madhu (NSI) 11 minutes 46 seconds
+It's given in the link.
+Madhu (NSI) 11 minutes 49 seconds
+Yeah, I did not go here.
+Madhu (NSI) 11 minutes 52 seconds
+This is the I do not know.
+Madhu (NSI) 11 minutes 53 seconds
+This is where we need to go.
+Madhu (NSI) 11 minutes 55 seconds
+I was looking at the older one.
+Madhu (NSI) 11 minutes 56 seconds
+See old one is closed now.
+Madhu (NSI) 11 minutes 58 seconds
+OK, old tickets are closed, old. We want if the ticket is closed, we're not going to work on that.
+Madhu (NSI) 12 minutes 4 seconds
+We will open a new ticket and create and work on that.
+Madhu (NSI) 12 minutes 8 seconds
+It's a old one.
+Madhu (NSI) 12 minutes 9 seconds
+Everything is closed now.
+Madhu (NSI) 12 minutes 12 seconds
+The deployment ticket has closed, right?
+Madhu (NSI) 12 minutes 14 seconds
+This has closed.
+Madhu (NSI) 12 minutes 15 seconds
+Everything is closed now.
+Madhu (NSI) 12 minutes 18 seconds
+OK so I have to go in this one and tight and this is for production when we will deploy in production then this is a one for production's also created we create in advance because because in order to optimize on time with Rohit we keep on creat.
+Madhu (NSI) 12 minutes 33 seconds
+But definitely it will not go less than until I approve it and we do it to. So it's like an empty release card.
+Madhu (NSI) 12 minutes 40 seconds
+Create no, it's a release card with the ticket.
+Madhu (NSI) 12 minutes 43 seconds
+It's not empty.
+Madhu (NSI) 12 minutes 44 seconds
+You click here and you will figure out.
+Madhu (NSI) 12 minutes 49 seconds
+It's same as AQA with empty, but it's they we keep on creating in advance that is not an issue because but it clearly says that this has to be tested in prod. This has to be tested in QA. If there is a dev RC then you will see.
+Madhu (NSI) 13 minutes 3 seconds
+Dev RC.
+Madhu (NSI) 13 minutes 4 seconds
+Yeah. So that means this has to be tested in Dev RC. Everything is very clearly mentioned here. Since this is done from the release like this branch. This hotfix is done.
+Madhu (NSI) 13 minutes 16 seconds
+By taking the code that is deployed deployed in the production.
+Madhu (NSI) 13 minutes 20 seconds
+That is released in the production.
+Madhu (NSI) 13 minutes 22 seconds
+So you see here it says release.
+Madhu (NSI) 13 minutes 24 seconds
+That means this was the release that we deployed in the production, the very last one, release 12991, and we are creating a hotfix from there.
+Madhu (NSI) 13 minutes 36 seconds
+We are taking that code.
+Madhu (NSI) 13 minutes 37 seconds
+We are modifying and we are deploying.
+Madhu (NSI) 13 minutes 39 seconds
+We are not taking our development branch because in the development we are doing other changes also.
+Madhu (NSI) 13 minutes 44 seconds
+So it ensures that we are not deploying unnecessarily. Release 01 is for the hotfix.
+Madhu (NSI) 13 minutes 49 seconds
+Yeah, because it's a. What is the original?
+Madhu (NSI) 13 minutes 55 seconds
+OK.
+Madhu (NSI) 13 minutes 58 seconds
+OK, Zamil, that's my bad.
+Madhu (NSI) 14 minutes
+I was looking at the wrong release card.
+MN
+Muzzamil Nagda
+14 minutes 2 seconds14:02
+Muzzamil Nagda 14 minutes 2 seconds
+Problem no problem so.
+M
+Madhu (NSI)
+14 minutes 4 seconds14:04
+Madhu (NSI) 14 minutes 4 seconds
+OK.
+Madhu (NSI) 14 minutes 4 seconds
+So this is done now.
+MN
+Muzzamil Nagda
+14 minutes 5 seconds14:05
+Muzzamil Nagda 14 minutes 5 seconds
+So.
+M
+Madhu (NSI)
+14 minutes 5 seconds14:05
+Madhu (NSI) 14 minutes 5 seconds
+Now let's talk about this.
+MN
+Muzzamil Nagda
+14 minutes 6 seconds14:06
+Muzzamil Nagda 14 minutes 6 seconds
+Yeah. So, Madhu, you were discussing the issues. So if you can share the screen and then we can discuss.
+M
+Madhu (NSI)
+14 minutes 9 seconds14:09
+Madhu (NSI) 14 minutes 9 seconds
+Yeah.
+MN
+Muzzamil Nagda
+14 minutes 13 seconds14:13
+Muzzamil Nagda 14 minutes 13 seconds
+Hmm.
+M
+Madhu (NSI)
+14 minutes 19 seconds14:19
+Madhu (NSI) 14 minutes 19 seconds
+OK so.
+Madhu (NSI) 14 minutes 22 seconds
+So this vast value we now we are saying we are just sticking to it that OK, no first no. If the VAS is not taken on the first treatment, then second, third, we are not going to take it on 2nd, 3rd, 4th, 5th. It will only go up.
+MN
+Muzzamil Nagda
+14 minutes 36 seconds14:36
+Muzzamil Nagda 14 minutes 36 seconds
+OK.
+M
+Madhu (NSI)
+14 minutes 36 seconds14:36
+Madhu (NSI) 14 minutes 36 seconds
+To the 6th now. Yeah, but here the you got the issue which I have mentioned here that it's not taking on the 2nd, 3rd, 4th, 5th but when we do it on the 6th 1:00.
+Madhu (NSI) 14 minutes 47 seconds
+The the vast values go into the assessment form instead of the assessment.
+MN
+Muzzamil Nagda
+14 minutes 48 seconds14:48
+Muzzamil Nagda 14 minutes 48 seconds
+Right. Actually the the scenario is that it doesn't matter that if you take on 6th or 5th or 4th, it's the basically that the moment the setting is on.
+Muzzamil Nagda 14 minutes 58 seconds
+The next session, which is the next session for pretreatment, it will pop up for us no matter.
+Muzzamil Nagda 15 minutes 4 seconds
+It's second or third, sixth or first.
+Muzzamil Nagda 15 minutes 6 seconds
+So we have to control it that.
+M
+Madhu (NSI)
+15 minutes 7 seconds15:07
+Madhu (NSI) 15 minutes 7 seconds
+But that's not that's not going to control it, yeah.
+MN
+Muzzamil Nagda
+15 minutes 11 seconds15:11
+Muzzamil Nagda 15 minutes 11 seconds
+Yeah. Yeah, we have to control it.
+M
+Madhu (NSI)
+15 minutes 12 seconds15:12
+Madhu (NSI) 15 minutes 12 seconds
+OK.
+MN
+Muzzamil Nagda
+15 minutes 12 seconds15:12
+Muzzamil Nagda 15 minutes 12 seconds
+That either it shows on 1st or on the OR on the 6th, not in between, right, right.
+M
+Madhu (NSI)
+15 minutes 18 seconds15:18
+Madhu (NSI) 15 minutes 18 seconds
+Yeah. And the 6th one should go in re assessment, not in assessment.
+MN
+Muzzamil Nagda
+15 minutes 24 seconds15:24
+Muzzamil Nagda 15 minutes 24 seconds
+Yeah, yeah, exactly right.
+M
+Madhu (NSI)
+15 minutes 24 seconds15:24
+Madhu (NSI) 15 minutes 24 seconds
+Right now it's going in assessment.
+Madhu (NSI) 15 minutes 27 seconds
+Right. And the second thing is that now in the reassessment form on the patient intake, you need to look into that also because there is no first, there's no pre first treatment.
+MN
+Muzzamil Nagda
+15 minutes 33 seconds15:33
+Muzzamil Nagda 15 minutes 33 seconds
+Mm hmm.
+Muzzamil Nagda 15 minutes 35 seconds
+Mm hmm.
+M
+Madhu (NSI)
+15 minutes 39 seconds15:39
+Madhu (NSI) 15 minutes 39 seconds
+Vas values how is the reassessment form is going to behave?
+Madhu (NSI) 15 minutes 44 seconds
+Because normally in the RE assessment form we cannot add more.
+MN
+Muzzamil Nagda
+15 minutes 44 seconds15:44
+Muzzamil Nagda 15 minutes 44 seconds
+So Madhu, yeah.
+M
+Madhu (NSI)
+15 minutes 47 seconds15:47
+Madhu (NSI) 15 minutes 47 seconds
+It can be only whatever is available. Right now there is Novas.
+Madhu (NSI) 15 minutes 50 seconds
+So what are you going to? So you need to put a condition saying that if Novas is taken on the first treatment then all should be available.
+MN
+Muzzamil Nagda
+15 minutes 57 seconds15:57
+Muzzamil Nagda 15 minutes 57 seconds
+Mm hmm.
+M
+Madhu (NSI)
+15 minutes 58 seconds15:58
+Madhu (NSI) 15 minutes 58 seconds
+Basically that part but all is coming at this point in time.
+Madhu (NSI) 16 minutes 2 seconds
+It's coming condition.
+Madhu (NSI) 16 minutes 3 seconds
+All are coming not for clinician.
+MN
+Muzzamil Nagda
+16 minutes 5 seconds16:05
+Muzzamil Nagda 16 minutes 5 seconds
+Yeah, that's that's the.
+M
+Madhu (NSI)
+16 minutes 5 seconds16:05
+Madhu (NSI) 16 minutes 5 seconds
+I'm talking into the reassessment form also.
+Madhu (NSI) 16 minutes 9 seconds
+In the reassessment form for patient?
+Madhu (NSI) 16 minutes 12 seconds
+OK.
+Madhu (NSI) 16 minutes 14 seconds
+For the patient to make the selection.
+MN
+Muzzamil Nagda
+16 minutes 18 seconds16:18
+Muzzamil Nagda 16 minutes 18 seconds
+So, Madhu, I have a point to discuss.
+Muzzamil Nagda 16 minutes 20 seconds
+I tested this thing because we fixed today in our day, which we were working.
+Muzzamil Nagda 16 minutes 26 seconds
+Me and Salman, we were working and Salman Bhai has fixed this condition and this behavior which you are asking that for example we didn't take Vas on first session and we have put in the condition then now it will display on 6th session and it will be re.
+M
+Madhu (NSI)
+16 minutes 27 seconds16:27
+Madhu (NSI) 16 minutes 27 seconds
+Yeah.
+Madhu (NSI) 16 minutes 37 seconds
+Hmm.
+MN
+Muzzamil Nagda
+16 minutes 42 seconds16:42
+Muzzamil Nagda 16 minutes 42 seconds
+Not the assessment form, so it will.
+M
+Madhu (NSI)
+16 minutes 44 seconds16:44
+Madhu (NSI) 16 minutes 44 seconds
+Mm hmm.
+MN
+Muzzamil Nagda
+16 minutes 44 seconds16:44
+Muzzamil Nagda 16 minutes 44 seconds
+It was populating proper.
+Muzzamil Nagda 16 minutes 47 seconds
+Form I mean by proper it was showing the Sonic reassessment.
+Muzzamil Nagda 16 minutes 50 seconds
+And.
+Muzzamil Nagda 16 minutes 52 seconds
+And the consent was there first. We accept that consent and then it was showing the main consent form and the rest of the form was there, right?
+Muzzamil Nagda 16 minutes 59 seconds
+Salman bhai.
+
+Madhu (NSI) 36 minutes 8 seconds
+Muzzammi is OK.
+MN
+Muzzamil Nagda
+36 minutes 8 seconds36:08
+Muzzamil Nagda 36 minutes 8 seconds
+You. No, no. That is also resolved.
+Muzzamil Nagda 36 minutes 10 seconds
+You'll you'll just see.
+Muzzamil Nagda 36 minutes 11 seconds
+You'll just see.
+Muzzamil Nagda 36 minutes 12 seconds
+Just give me a minute now.
+M
+Madhu (NSI)
+36 minutes 16 seconds36:16
+Madhu (NSI) 36 minutes 16 seconds
+It's not coming now.
+Madhu (NSI) 36 minutes 16 seconds
+Which treatment is this now?
+Madhu (NSI) 36 minutes 18 seconds
+The see on the 5th treatment you didn't get, you didn't get Vas now, right?
+MN
+Muzzamil Nagda
+36 minutes 21 seconds36:21
+Muzzamil Nagda 36 minutes 21 seconds
+No, no, no, Madhu.
+Muzzamil Nagda 36 minutes 22 seconds
+No, no, no.
+Muzzamil Nagda 36 minutes 22 seconds
+Actually the setting is off.
+Muzzamil Nagda 36 minutes 24 seconds
+But our Sonic intelligence is running now, so we need to restart.
+M
+Madhu (NSI)
+36 minutes 27 seconds36:27
+Madhu (NSI) 36 minutes 27 seconds
+If we restart SIS.
+MN
+Muzzamil Nagda
+36 minutes 28 seconds36:28
+Muzzamil Nagda 36 minutes 28 seconds
+I mean log out and log in.
+Muzzamil Nagda 36 minutes 29 seconds
+Log in, log out and log in, and then you can say that it is not coming because right now it's working.
+M
+Madhu (NSI)
+36 minutes 34 seconds36:34
+Madhu (NSI) 36 minutes 34 seconds
+OK.
+Madhu (NSI) 36 minutes 34 seconds
+So we I don't want to see this.
+Madhu (NSI) 36 minutes 36 seconds
+You see.
+Madhu (NSI) 36 minutes 36 seconds
+You know that you look into, I give my requirement you first check it, test it and then I would like to see it, right. We but we understand and requirement is very clear.
+Madhu (NSI) 36 minutes 47 seconds
+Pretreatment 1st, 7th and 13th, 13th ACCEPTA.
+Madhu (NSI) 36 minutes 52 seconds
+You will get the thing if someone didn't take it. It's missed because of any issue it's missed.
+Madhu (NSI) 36 minutes 59 seconds
+It will not come into any of other sessions on the PIF form.
+MN
+Muzzamil Nagda
+36 minutes 59 seconds36:59
+Muzzamil Nagda 36 minutes 59 seconds
+Yeah, you're right.
+M
+Madhu (NSI)
+37 minutes 3 seconds37:03
+Madhu (NSI) 37 minutes 3 seconds
+If we didn't take the PIF on, the first treatment was then we are not taking it then on the RE assessment, send all the forms and based because now VAS is not taken on the 1st.
+Madhu (NSI) 37 minutes 16 seconds
+That means they have to select the PN score on the 6th if they are selecting it on the 6th. Then based on that you should be controlling the subsequent screen.
+Madhu (NSI) 37 minutes 27 seconds
+That's what I want.
+Madhu (NSI) 37 minutes 30 seconds
+OK.
+MN
+Muzzamil Nagda
+37 minutes 32 seconds37:32
+Muzzamil Nagda 37 minutes 32 seconds
+OK.
+M
+Madhu (NSI)
+37 minutes 33 seconds37:33
+Madhu (NSI) 37 minutes 33 seconds
+OK.
+Madhu (NSI) 37 minutes 36 seconds
+And it's OK now.
+Madhu (NSI) 37 minutes 37 seconds
+Yeah, I think that's OK.
+Madhu (NSI) 37 minutes 40 seconds
+Fix this first.
+Madhu (NSI) 37 minutes 41 seconds
+Let's farm up.
+Madhu (NSI) 37 minutes 42 seconds
+Then we will look into that.
+Madhu (NSI) 37 minutes 43 seconds
+What more changes we are need to do in the whole system, but this is this is an issue we don't want to find if you know make it bigger and bigger and bigger. Yeah, right.
+Madhu (NSI) 37 minutes 52 seconds
+We will.
+Madhu (NSI) 37 minutes 53 seconds
+We will again after reflect.
+MN
+Muzzamil Nagda
+37 minutes 54 seconds37:54
+Muzzamil Nagda 37 minutes 54 seconds
+So, Madhu, let let me recall, recall.
+Muzzamil Nagda 37 minutes 56 seconds
+So you're saying that if the missed on 1st, now the VAS popup will populate on the 7th session, right?
+M
+Madhu (NSI)
+37 minutes 59 seconds37:59
+Madhu (NSI) 37 minutes 59 seconds
+Hmm.
+MN
+Muzzamil Nagda
+38 minutes 4 seconds38:04
+Muzzamil Nagda 38 minutes 4 seconds
+And the e-mail will trigger on 6th, 1st completed session, right?
+M
+Madhu (NSI)
+38 minutes 4 seconds38:04
+Madhu (NSI) 38 minutes 4 seconds
+Right.
+MN
+Muzzamil Nagda
+38 minutes 7 seconds38:07
+Muzzamil Nagda 38 minutes 7 seconds
+This is the workflow we need to right?
+M
+Madhu (NSI)
+38 minutes 8 seconds38:08
+Madhu (NSI) 38 minutes 8 seconds
+Correct.
+Madhu (NSI) 38 minutes 9 seconds
+Yeah.
+MN
+Muzzamil Nagda
+38 minutes 10 seconds38:10
+Muzzamil Nagda 38 minutes 10 seconds
+And if the VAS is not taken and PIF is not filled on the first session, then reassessment form will contain all the forms and we have to handle that which form need to be assured based on the concern selected, right?
+M
+Madhu (NSI)
+38 minutes 23 seconds38:23
+Madhu (NSI) 38 minutes 23 seconds
+It I mean just to simplify the process, you can send all the form all the time right?
+MN
+Muzzamil Nagda
+38 minutes 28 seconds38:28
+Muzzamil Nagda 38 minutes 28 seconds
+Mm hmm.
+Muzzamil Nagda 38 minutes 30 seconds
+Yeah. Yeah, right.
+Muzzamil Nagda 38 minutes 31 seconds
+We have to send all the form.
+M
+Madhu (NSI)
+38 minutes 32 seconds38:32
+Madhu (NSI) 38 minutes 32 seconds
+It's up to you which which is to be which values is to be taken, which screen is to be shown to the customer and which is not to be shown and what validation that would simplify the process, but it's up to you. Like I don't know how you.
+Madhu (NSI) 38 minutes 46 seconds
+Have done the development.
+MN
+Muzzamil Nagda
+38 minutes 48 seconds38:48
+Muzzamil Nagda 38 minutes 48 seconds
+OK. OK, madhu.
+M
+Madhu (NSI)
+38 minutes 50 seconds38:50
+Madhu (NSI) 38 minutes 50 seconds
+So that you know the problem is always on one side now like from here you are sending everything whatever data you have now.
+Madhu (NSI) 38 minutes 58 seconds
+After that you are controlling.
+Madhu (NSI) 39 minutes
+So at least if there is an issue, the issue is only in one side now, right?
+MN
+Muzzamil Nagda
+39 minutes 3 seconds39:03
+Muzzamil Nagda 39 minutes 3 seconds
+Mm hmm.
+M
+Madhu (NSI)
+39 minutes 4 seconds39:04
+Madhu (NSI) 39 minutes 4 seconds
+It's not a two sided all the time.
+MN
+Muzzamil Nagda
+39 minutes 5 seconds39:05
+Muzzamil Nagda 39 minutes 5 seconds
+Right.
+Muzzamil Nagda 39 minutes 8 seconds
+No, we yeah, it will be on every time.
+Muzzamil Nagda 39 minutes 11 seconds
+It will be in PIF if the form is not properly loaded, so that we need to check on that thing.
+M
+Madhu (NSI)
+39 minutes 15 seconds39:15
+Madhu (NSI) 39 minutes 15 seconds
+Yeah, yeah. OK. Anything else?
+MN
+Muzzamil Nagda
+39 minutes 18 seconds39:18
+Muzzamil Nagda 39 minutes 18 seconds
+If you can, if yeah. Madhu, if if PIF is running.
+M
+Madhu (NSI)
+39 minutes 18 seconds39:18
+Madhu (NSI) 39 minutes 18 seconds
+I'm sorry, you need to discuss with them.
+MN
+Muzzamil Nagda
+39 minutes 24 seconds39:24
+Muzzamil Nagda 39 minutes 24 seconds
+If you can give me, I mean only 5 minutes because the ID assessment form is there.
+Muzzamil Nagda 39 minutes 29 seconds
+I just need to understand one thing.
+M
+Madhu (NSI)
+39 minutes 33 seconds39:33
+Madhu (NSI) 39 minutes 33 seconds
+OK.
+Madhu (NSI) 39 minutes 33 seconds
+Yo. Sure you whatever you want to understand.
+Madhu (NSI) 39 minutes 36 seconds
+Now we have to take, I mean we have to contain this issue, right?
+MN
+Muzzamil Nagda
+39 minutes 37 seconds39:37
+Muzzamil Nagda 39 minutes 37 seconds
+Yeah, I I just.
+Muzzamil Nagda 39 minutes 38 seconds
+I just want to.
+Muzzamil Nagda 39 minutes 39 seconds
+Yeah. I just want to understand.
+Muzzamil Nagda 39 minutes 42 seconds
+Look here on the 6th session I received the e-mail on the 1st completed session and I haven't submitted the I mean the anything on Pio right?
+M
+Madhu (NSI)
+39 minutes 42 seconds39:42
+Madhu (NSI) 39 minutes 42 seconds
+Thank you.
+Madhu (NSI) 39 minutes 48 seconds
+Mm hmm.
+MN
+Muzzamil Nagda
+39 minutes 53 seconds39:53
+Muzzamil Nagda 39 minutes 53 seconds
+I'm clicking this thing.
+M
+Madhu (NSI)
+39 minutes 53 seconds39:53
+Madhu (NSI) 39 minutes 53 seconds
+Correct Navya you received the e-mail on 6th session after completing 6th session, no in the sixth session when the first treatment is completed.
+Madhu (NSI) 40 minutes 3 seconds
+Yeah. Then you get the treatment. If they don't complete, not complete. Because first treatment is completed.
+Madhu (NSI) 40 minutes 9 seconds
+Miss something?
+Madhu (NSI) 40 minutes 10 seconds
+Some treatment has been done.
+Madhu (NSI) 40 minutes 11 seconds
+OK, now after that he can do 2nd, 3rd, 4th, 5th but we don't.
+Madhu (NSI) 40 minutes 16 seconds
+We are not waiting.
+Madhu (NSI) 40 minutes 17 seconds
+We the first read the moment first treatment is completed we send the form.
+Madhu (NSI) 40 minutes 21 seconds
+In the sixth itself, yeah, in the 6th.
+Madhu (NSI) 40 minutes 24 seconds
+In the sixth session, he can do 1035 treatments.
+
+Madhu (NSI) 40 minutes 33 seconds
+What clinicians he may choose for the second, he may not do it.
+Madhu (NSI) 40 minutes 36 seconds
+Yeah, but the vast values will appear only on the 7th, 7 for the clinician, right?
+Madhu (NSI) 40 minutes 41 seconds
+That's that's also we need to discuss right now it's appearing on the 7th, but we need to discuss with Doctor Khan because he was not accepting this.
+MN
+Muzzamil Nagda
+40 minutes 49 seconds40:49
+Muzzamil Nagda 40 minutes 49 seconds
+So Madhu, here it is, the PIF.
+M
+Madhu (NSI)
+40 minutes 49 seconds40:49
+Madhu (NSI) 40 minutes 49 seconds
+Then we we don't even have any solution, yeah.
+MN
+Muzzamil Nagda
+40 minutes 51 seconds40:51
+Muzzamil Nagda 40 minutes 51 seconds
+Pif is not selected.
+Muzzamil Nagda 40 minutes 53 seconds
+I mean not done anything.
+M
+Madhu (NSI)
+40 minutes 54 seconds40:54
+Madhu (NSI) 40 minutes 54 seconds
+Mm hmm.
+MN
+Muzzamil Nagda
+40 minutes 55 seconds40:55
+Muzzamil Nagda 40 minutes 55 seconds
+So first on the reassessment, he asked for the consent, OK.
+M
+Madhu (NSI)
+40 minutes 59 seconds40:59
+Madhu (NSI) 40 minutes 59 seconds
+Mm hmm.
+MN
+Muzzamil Nagda
+41 minutes41:00
+Muzzamil Nagda 41 minutes
+I have given the consent accept it is giving me this VAS reassess Sonic reassessment form, right?
+M
+Madhu (NSI)
+41 minutes 7 seconds41:07
+Madhu (NSI) 41 minutes 7 seconds
+Mm H.
+MN
+Muzzamil Nagda
+41 minutes 7 seconds41:07
+Muzzamil Nagda 41 minutes 7 seconds
+And now we have all the consent.
+Muzzamil Nagda 41 minutes 9 seconds
+Now what you are saying if back pain is there, it should show and the back pain related thing, right?
+M
+Madhu (NSI)
+41 minutes 15 seconds41:15
+Madhu (NSI) 41 minutes 15 seconds
+Right. And if neck pain is there, it sure neck pain. So you click on neck pain.
+MN
+Muzzamil Nagda
+41 minutes 19 seconds41:19
+Muzzamil Nagda 41 minutes 19 seconds
+At least one concern neck pain, OK.
+M
+Madhu (NSI)
+41 minutes 19 seconds41:19
+Madhu (NSI) 41 minutes 19 seconds
+Also, right neck pain.
+Madhu (NSI) 41 minutes 22 seconds
+Click on neck pain.
+Madhu (NSI) 41 minutes 23 seconds
+Click on foot pain.
+MN
+Muzzamil Nagda
+41 minutes 25 seconds41:25
+Muzzamil Nagda 41 minutes 25 seconds
+Click on foot pain.
+M
+Madhu (NSI)
+41 minutes 27 seconds41:27
+Madhu (NSI) 41 minutes 27 seconds
+Yeah. And now say next.
+MN
+Muzzamil Nagda
+41 minutes 39 seconds41:39
+Muzzamil Nagda 41 minutes 39 seconds
+It should go next.
+Muzzamil Nagda 41 minutes 40 seconds
+Now it is not going, so it should go next.
+M
+Madhu (NSI)
+41 minutes 41 seconds41:41
+Madhu (NSI) 41 minutes 41 seconds
+Next.
+MN
+Muzzamil Nagda
+41 minutes 41 seconds41:41
+Muzzamil Nagda 41 minutes 41 seconds
+This is the requirement.
+M
+Madhu (NSI)
+41 minutes 43 seconds41:43
+Madhu (NSI) 41 minutes 43 seconds
+This is the probe.
+MN
+Muzzamil Nagda
+41 minutes 43 seconds41:43
+Muzzamil Nagda 41 minutes 43 seconds
+OK. OK. OK.
+M
+Madhu (NSI)
+41 minutes 45 seconds41:45
+Madhu (NSI) 41 minutes 45 seconds
+Because there is nothing like, there is no form.
+Madhu (NSI) 41 minutes 47 seconds
+That's why it's you don't know what to when you click on next.
+Madhu (NSI) 41 minutes 49 seconds
+What's happening now?
+MN
+Muzzamil Nagda
+41 minutes 53 seconds41:53
+Muzzamil Nagda 41 minutes 53 seconds
+This needs to be fixed focus.
+Muzzamil Nagda 41 minutes 54 seconds
+Thank you for your time, Madhu.
+M
+Madhu (NSI)
+41 minutes 55 seconds41:55
+Madhu (NSI) 41 minutes 55 seconds
+This is the Vertigo thing 6.
+MN
+Muzzamil Nagda
+41 minutes 55 seconds41:55
+Muzzamil Nagda 41 minutes 55 seconds
+Actually I want to understand the scenario.
+Muzzamil Nagda 41 minutes 57 seconds
+That's why I wait and ask you to fit.
+M
+Madhu (NSI)
+41 minutes 58 seconds41:58
+Madhu (NSI) 41 minutes 58 seconds
+Bucks.
+MN
+Muzzamil Nagda
+42 minutes42:00
+Muzzamil Nagda 42 minutes
+OK, madhu.
+M
+Madhu (NSI)
+42 minutes 1 second42:01
+Madhu (NSI) 42 minutes 1 second
+OK.
+MN
+Muzzamil Nagda
+42 minutes 1 second42:01
+Muzzamil Nagda 42 minutes 1 second
+Thank you. Thank you.
+Muzzamil Nagda 42 minutes 2 seconds
+I'll, I'll handle this thing.
+M
+Madhu (NSI)
+42 minutes 4 seconds42:04
+Madhu (NSI) 42 minutes 4 seconds
+OK.
+MN
+Muzzamil Nagda
+42 minutes 5 seconds42:05
+Muzzamil Nagda 42 minutes 5 seconds
+OK.
+Muzzamil Nagda 42 minutes 5 seconds
+Thank you.
+M
+Madhu (NSI)
+42 minutes 7 seconds42:07
+Madhu (NSI) 42 minutes 7 seconds
+It's a small issue. That's what I'm saying.
+Madhu (NSI) 42 minutes 9 seconds
+How complicated it?
+Madhu (NSI) 42 minutes 10 seconds
+Yeah, because that's how it's very important to analyze once a issue occurred that existing data.
+Madhu (NSI) 42 minutes 17 seconds
+Look for company.
+Madhu (NSI) 42 minutes 18 seconds
+Is it also a good idea to sign? OK said man. Yeah. Yeah. What? What do you say? See, is it the midnight?
+
+
+Madhu (NSI) 40 minutes 33 seconds
+What clinicians he may choose for the second, he may not do it.
+Madhu (NSI) 40 minutes 36 seconds
+Yeah, but the vast values will appear only on the 7th, 7 for the clinician, right?
+Madhu (NSI) 40 minutes 41 seconds
+That's that's also we need to discuss right now it's appearing on the 7th, but we need to discuss with Doctor Khan because he was not accepting this.
+MN
+Muzzamil Nagda
+40 minutes 49 seconds40:49
+Muzzamil Nagda 40 minutes 49 seconds
+So Madhu, here it is, the PIF.
+M
+Madhu (NSI)
+40 minutes 49 seconds40:49
+Madhu (NSI) 40 minutes 49 seconds
+Then we we don't even have any solution, yeah.
+MN
+Muzzamil Nagda
+40 minutes 51 seconds40:51
+Muzzamil Nagda 40 minutes 51 seconds
+Pif is not selected.
+Muzzamil Nagda 40 minutes 53 seconds
+I mean not done anything.
+M
+Madhu (NSI)
+40 minutes 54 seconds40:54
+Madhu (NSI) 40 minutes 54 seconds
+Mm hmm.
+MN
+Muzzamil Nagda
+40 minutes 55 seconds40:55
+Muzzamil Nagda 40 minutes 55 seconds
+So first on the reassessment, he asked for the consent, OK.
+M
+Madhu (NSI)
+40 minutes 59 seconds40:59
+Madhu (NSI) 40 minutes 59 seconds
+Mm hmm.
+MN
+Muzzamil Nagda
+41 minutes41:00
+Muzzamil Nagda 41 minutes
+I have given the consent accept it is giving me this VAS reassess Sonic reassessment form, right?
+M
+Madhu (NSI)
+41 minutes 7 seconds41:07
+Madhu (NSI) 41 minutes 7 seconds
+Mm H.
+MN
+Muzzamil Nagda
+41 minutes 7 seconds41:07
+Muzzamil Nagda 41 minutes 7 seconds
+And now we have all the consent.
+Muzzamil Nagda 41 minutes 9 seconds
+Now what you are saying if back pain is there, it should show and the back pain related thing, right?
+M
+Madhu (NSI)
+41 minutes 15 seconds41:15
+Madhu (NSI) 41 minutes 15 seconds
+Right. And if neck pain is there, it sure neck pain. So you click on neck pain.
+MN
+Muzzamil Nagda
+41 minutes 19 seconds41:19
+Muzzamil Nagda 41 minutes 19 seconds
+At least one concern neck pain, OK.
+M
+Madhu (NSI)
+41 minutes 19 seconds41:19
+Madhu (NSI) 41 minutes 19 seconds
+Also, right neck pain.
+Madhu (NSI) 41 minutes 22 seconds
+Click on neck pain.
+Madhu (NSI) 41 minutes 23 seconds
+Click on foot pain.
+MN
+Muzzamil Nagda
+41 minutes 25 seconds41:25
+Muzzamil Nagda 41 minutes 25 seconds
+Click on foot pain.
+M
+Madhu (NSI)
+41 minutes 27 seconds41:27
+Madhu (NSI) 41 minutes 27 seconds
+Yeah. And now say next.
+MN
+Muzzamil Nagda
+41 minutes 39 seconds41:39
+Muzzamil Nagda 41 minutes 39 seconds
+It should go next.
+Muzzamil Nagda 41 minutes 40 seconds
+Now it is not going, so it should go next.
+M
+Madhu (NSI)
+41 minutes 41 seconds41:41
+Madhu (NSI) 41 minutes 41 seconds
+Next.
+MN
+Muzzamil Nagda
+41 minutes 41 seconds41:41
+Muzzamil Nagda 41 minutes 41 seconds
+This is the requirement.
+M
+Madhu (NSI)
+41 minutes 43 seconds41:43
+Madhu (NSI) 41 minutes 43 seconds
+This is the probe.
+MN
+Muzzamil Nagda
+41 minutes 43 seconds41:43
+Muzzamil Nagda 41 minutes 43 seconds
+OK. OK. OK.
+M
+Madhu (NSI)
+41 minutes 45 seconds41:45
+Madhu (NSI) 41 minutes 45 seconds
+Because there is nothing like, there is no form.
+Madhu (NSI) 41 minutes 47 seconds
+That's why it's you don't know what to when you click on next.
+Madhu (NSI) 41 minutes 49 seconds
+What's happening now?
+MN
+Muzzamil Nagda
+41 minutes 53 seconds41:53
+Muzzamil Nagda 41 minutes 53 seconds
+This needs to be fixed focus.
+Muzzamil Nagda 41 minutes 54 seconds
+Thank you for your time, Madhu.
+M
+Madhu (NSI)
+41 minutes 55 seconds41:55
+Madhu (NSI) 41 minutes 55 seconds
+This is the Vertigo thing 6.
+MN
+Muzzamil Nagda
+41 minutes 55 seconds41:55
+Muzzamil Nagda 41 minutes 55 seconds
+Actually I want to understand the scenario.
+Muzzamil Nagda 41 minutes 57 seconds
+That's why I wait and ask you to fit.
+M
+Madhu (NSI)
+41 minutes 58 seconds41:58
+Madhu (NSI) 41 minutes 58 seconds
+Bucks.
+MN
+Muzzamil Nagda
+42 minutes42:00
+Muzzamil Nagda 42 minutes
+OK, madhu.
+M
+Madhu (NSI)
+42 minutes 1 second42:01
+Madhu (NSI) 42 minutes 1 second
+OK.
+MN
+Muzzamil Nagda
+42 minutes 1 second42:01
+Muzzamil Nagda 42 minutes 1 second
+Thank you. Thank you.
+Muzzamil Nagda 42 minutes 2 seconds
+I'll, I'll handle this thing.
+M
+Madhu (NSI)
+42 minutes 4 seconds42:04
+Madhu (NSI) 42 minutes 4 seconds
+OK.
+MN
+Muzzamil Nagda
+42 minutes 5 seconds42:05
+Muzzamil Nagda 42 minutes 5 seconds
+OK.
+Muzzamil Nagda 42 minutes 5 seconds
+Thank you.
+M
+Madhu (NSI)
+42 minutes 7 seconds42:07
+Madhu (NSI) 42 minutes 7 seconds
+It's a small issue. That's what I'm saying.
+Madhu (NSI) 42 minutes 9 seconds
+How complicated it?
+Madhu (NSI) 42 minutes 10 seconds
+Yeah, because that's how it's very important to analyze once a issue occurred that existing data.
+Madhu (NSI) 42 minutes 17 seconds
+Look for company.
+Madhu (NSI) 42 minutes 18 seconds
+Is it also a good idea to sign? OK said man. Yeah. Yeah. What? What do you say? See, is it the midnight?
+
+Muzzamil Nagda stopped transcription
