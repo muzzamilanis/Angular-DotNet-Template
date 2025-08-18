@@ -272,25 +272,20 @@
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label for="status">Status</label>
-                                <input
-                                    type="text"
-                                    class="form-control"
-                                    id="status"
-                                    formControlName="status"
-                                    placeholder="Enter status"
-                                    [class.is-invalid]="
-                                        saleOrderForm.get('status')?.invalid && saleOrderForm.get('status')?.touched
-                                    " />
-                                <div
-                                    class="invalid-feedback"
-                                    *ngIf="
-                                        saleOrderForm.get('status')?.invalid && saleOrderForm.get('status')?.touched
-                                    ">
-                                    <div *ngIf="saleOrderForm.get('status')?.errors?.['maxlength']">
-                                        Status must be 50 characters or less
-                                    </div>
+                                <select
+                                  id="status"
+                                  class="form-control"
+                                  formControlName="status"
+                                  [class.is-invalid]="saleOrderForm.get('status')?.invalid && saleOrderForm.get('status')?.touched">
+                                  <option value="">Select Status</option>
+                                  <option *ngFor="let s of statusOptions" [value]="s">{{ s }}</option>
+                                </select>
+                                <div class="invalid-feedback" *ngIf="saleOrderForm.get('status')?.invalid && saleOrderForm.get('status')?.touched">
+                                  <div *ngIf="saleOrderForm.get('status')?.errors?.['maxlength']">
+                                    Status must be 50 characters or less
+                                  </div>
                                 </div>
-                            </div>
+                              </div>
                         </div>
                         
                         <div class="col-md-4" style="visibility: hidden">
@@ -472,53 +467,54 @@
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label for="paymentStatus">Payment Status</label>
-                                <input
-                                    type="text"
-                                    class="form-control"
-                                    id="paymentStatus"
-                                    formControlName="paymentStatus"
-                                    placeholder="Enter payment status"
-                                    [class.is-invalid]="
-                                        saleOrderForm.get('paymentStatus')?.invalid &&
-                                        saleOrderForm.get('paymentStatus')?.touched
-                                    " />
+                                <select
+                                  id="paymentStatus"
+                                  class="form-control"
+                                  formControlName="paymentStatus"
+                                  [class.is-invalid]="
+                                    saleOrderForm.get('paymentStatus')?.invalid &&
+                                    saleOrderForm.get('paymentStatus')?.touched
+                                  ">
+                                  <option value="">Select Payment Status</option>
+                                  <option *ngFor="let p of paymentStatusOptions" [value]="p">{{ p }}</option>
+                                </select>
                                 <div
-                                    class="invalid-feedback"
-                                    *ngIf="
-                                        saleOrderForm.get('paymentStatus')?.invalid &&
-                                        saleOrderForm.get('paymentStatus')?.touched
-                                    ">
-                                    <div *ngIf="saleOrderForm.get('paymentStatus')?.errors?.['maxlength']">
-                                        Payment status must be 50 characters or less
-                                    </div>
+                                  class="invalid-feedback"
+                                  *ngIf="
+                                    saleOrderForm.get('paymentStatus')?.invalid &&
+                                    saleOrderForm.get('paymentStatus')?.touched
+                                  ">
+                                  <div *ngIf="saleOrderForm.get('paymentStatus')?.errors?.['maxlength']">
+                                    Payment status must be 50 characters or less
+                                  </div>
                                 </div>
-                            </div>
+                              </div>
                         </div>
                         
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label for="sourceOfPayment">Source of Payment</label>
-                                <input
-                                    type="text"
-                                    class="form-control"
-                                    id="sourceOfPayment"
-                                    formControlName="sourceOfPayment"
-                                    placeholder="Enter source of payment"
-                                    [class.is-invalid]="
-                                        saleOrderForm.get('sourceOfPayment')?.invalid &&
-                                        saleOrderForm.get('sourceOfPayment')?.touched
-                                    " />
-                                <div
-                                    class="invalid-feedback"
-                                    *ngIf="
-                                        saleOrderForm.get('sourceOfPayment')?.invalid &&
-                                        saleOrderForm.get('sourceOfPayment')?.touched
-                                    ">
-                                    <div *ngIf="saleOrderForm.get('sourceOfPayment')?.errors?.['maxlength']">
-                                        Source of payment must be 100 characters or less
-                                    </div>
+                                <select
+                                  id="sourceOfPayment"
+                                  class="form-control"
+                                  formControlName="sourceOfPayment"
+                                  [class.is-invalid]="
+                                    saleOrderForm.get('sourceOfPayment')?.invalid &&
+                                    saleOrderForm.get('sourceOfPayment')?.touched
+                                  ">
+                                  <option value="">Select Source</option>
+                                  <option *ngFor="let s of sourceOfPaymentOptions" [value]="s">{{ s }}</option>
+                                </select>
+                                <div class="invalid-feedback"
+                                     *ngIf="saleOrderForm.get('sourceOfPayment')?.invalid && saleOrderForm.get('sourceOfPayment')?.touched">
+                                  <div *ngIf="saleOrderForm.get('sourceOfPayment')?.errors?.['maxlength']">
+                                    Must be 50 characters or less
+                                  </div>
+                                  <div *ngIf="saleOrderForm.get('sourceOfPayment')?.errors?.['required']">
+                                    Source of payment is required
+                                  </div>
                                 </div>
-                            </div>
+                              </div>
                         </div>
 
                     </div>

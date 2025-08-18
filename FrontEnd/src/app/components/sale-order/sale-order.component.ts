@@ -41,6 +41,10 @@ export class SaleOrderComponent implements OnInit {
     currentExchangeRate = 0;
     isLoadingRate = false;
 
+    readonly statusOptions = ['New', 'InProgress', 'Completed', 'Abandon'];
+    readonly paymentStatusOptions = ['Pending', 'PartialPaid', 'FullPaid'];
+    readonly sourceOfPaymentOptions = ['Website', 'Payoneer', 'OnlineTransfer'];
+
     constructor(
         private fb: FormBuilder,
         private saleOrderService: SaleOrderService,

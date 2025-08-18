@@ -37,7 +37,7 @@ namespace SimpleApi.Services
 			// Get orders with approaching deadlines
 			var approachingOrders = await _context.SaleOrders
                 .Where(so => so.CompanyId == companyId && 
-                            so.Status == "In Progress" && 
+                            so.Status == "InProgress" && 
                             so.Deadline.HasValue && 
                             so.Deadline.Value.ToUniversalTime() <= deadlineLimitUtc)
                 .ToListAsync();
