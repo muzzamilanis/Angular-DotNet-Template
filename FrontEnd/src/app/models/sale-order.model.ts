@@ -31,6 +31,15 @@ export interface SaleOrder {
     contactEmail?: string;
     contactPhone?: string;
     assignedTo?: string;
+    
+    // Writer Portal fields
+    assignedWriterId?: number;
+    assignedWriterName?: string;
+    attachmentFilenames?: string;
+    submittedFilename?: string;
+    submissionStatus?: string;
+    submissionDate?: Date;
+    
     orderDetails?: string;
     wordsOrPages?: string;
     totalPayment?: number;
@@ -68,6 +77,11 @@ export interface CreateSaleOrderDto {
     contactEmail?: string;
     contactPhone?: string;
     assignedTo?: string;
+    
+    // Writer Portal fields
+    assignedWriterId?: number;
+    attachmentFilenames?: string;
+    
     academicLevel?: string;
     orderDetails?: string;
     wordsOrPages?: string;
@@ -106,6 +120,14 @@ export interface UpdateSaleOrderDto {
     contactEmail?: string;
     contactPhone?: string;
     assignedTo?: string;
+    
+    // Writer Portal fields
+    assignedWriterId?: number;
+    attachmentFilenames?: string;
+    submittedFilename?: string;
+    submissionStatus?: string;
+    submissionDate?: Date;
+    
     academicLevel?: string;
     country?: string;
     orderDetails?: string;
@@ -117,4 +139,36 @@ export interface UpdateSaleOrderDto {
     foreignCurrencyAmount?: number;
     pkrAmount?: number;
     exchangeRateUsed?: number;
+}
+
+// Writer Portal specific interfaces
+export interface WriterDto {
+    id: number;
+    name: string;
+    email: string;
+    isActive: boolean;
+    companyName?: string;
+}
+
+export interface WriterSubmissionDto {
+    saleOrderId: number;
+    submissionStatus: string; // "Completed" or "Need clarity"
+    submittedFilename?: string;
+    notes?: string;
+}
+
+export interface WriterAssignmentDto {
+    id: number;
+    orderNumber: string;
+    orderDate: Date;
+    clientName?: string;
+    deadline?: Date;
+    status?: string;
+    orderDetails?: string;
+    wordsOrPages?: string;
+    academicLevel?: string;
+    attachmentFilenames?: string;
+    submissionStatus?: string;
+    submissionDate?: Date;
+    submittedFilename?: string;
 }

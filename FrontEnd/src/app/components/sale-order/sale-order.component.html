@@ -516,9 +516,9 @@
                     </div>
 
                     <div class="row" *ngIf="isDigitalMarketing">
-                        <div class="col-md-12">
+                        <div class="col-md-6">
                             <div class="form-group">
-                                <label for="assignedTo">Task Assigned To</label>
+                                <label for="assignedTo">Task Assigned To (Legacy)</label>
                                 <input
                                     type="text"
                                     class="form-control"
@@ -538,6 +538,63 @@
                                     <div *ngIf="saleOrderForm.get('assignedTo')?.errors?.['maxlength']">
                                         Assigned to must be 200 characters or less
                                     </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="assignedWriterId">Assigned Writer</label>
+                                <select
+                                    class="form-control"
+                                    id="assignedWriterId"
+                                    formControlName="assignedWriterId">
+                                    <option value="">Select Writer</option>
+                                    <option *ngFor="let writer of writers" [value]="writer.id">
+                                        {{ writer.name }} ({{ writer.email }})
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- File Attachments Section -->
+                    <div class="row" *ngIf="isDigitalMarketing">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="attachments">Attachments</label>
+                                <input
+                                    type="file"
+                                    class="form-control"
+                                    id="attachments"
+                                    multiple
+                                    (change)="onFilesSelected($event)"
+                                    accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png">
+                                <small class="text-muted">Supported formats: PDF, DOC, DOCX, TXT, JPG, PNG</small>
+                                
+                                <!-- Show selected files -->
+                                <div *ngIf="selectedFiles.length > 0" class="mt-2">
+                                    <h6>Selected Files:</h6>
+                                    <ul class="list-group">
+                                        <li *ngFor="let file of selectedFiles; let i = index" class="list-group-item d-flex justify-content-between align-items-center">
+                                            {{ file.name }} ({{ formatFileSize(file.size) }})
+                                            <button type="button" class="btn btn-sm btn-danger" (click)="removeFile(i)">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </li>
+                                    </ul>
+                                </div>
+
+                                <!-- Show existing attachments for editing -->
+                                <div *ngIf="editingOrder && currentOrder?.attachmentFilenames" class="mt-2">
+                                    <h6>Existing Attachments:</h6>
+                                    <ul class="list-group">
+                                        <li *ngFor="let filename of getAttachmentsList(currentOrder.attachmentFilenames)" class="list-group-item d-flex justify-content-between align-items-center">
+                                            {{ filename }}
+                                            <button type="button" class="btn btn-sm btn-info" (click)="downloadAttachment(filename)">
+                                                <i class="fas fa-download"></i>
+                                            </button>
+                                        </li>
+                                    </ul>
                                 </div>
                             </div>
                         </div>

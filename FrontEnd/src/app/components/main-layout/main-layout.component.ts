@@ -64,6 +64,11 @@ export class MainLayoutComponent implements OnInit {
         return this.authService.isSuperAdmin();
     }
 
+    // Add method to check if user is writer
+    isWriter(): boolean {
+        return this.authService.isWriter();
+    }
+
     toggleSidebar(): void {
         this.sidebarCollapsed = !this.sidebarCollapsed;
     }

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ValidatorFn, AbstractControl, ValidationErrors, FormArray } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router'; // <-- add
 import { SaleOrderService } from '../../services/sale-order.service';
+import { WriterService } from '../../services/writer.service';
 import { ProductService } from '../../services/product.service';
 import { CompanyService } from '../../services/company.service';
 import { ProjectService } from '../../services/project.service';
@@ -9,7 +10,7 @@ import { ServiceTypeService } from '../../services/service-type.service';
 import { CurrencyService } from '../../services/currency.service';
 import { Product } from '../../models/product.model';
 import { ServiceType } from '../../models/service-type.model';
-import { SaleOrder, CreateSaleOrderDto } from '../../models/sale-order.model';
+import { SaleOrder, CreateSaleOrderDto, WriterDto } from '../../models/sale-order.model';
 import { CreateSaleOrderItemDto } from '../../models/sale-order-item.model';
 import { PaginatedResponse } from '../../models/common.model';
 import { Company } from '../../models/company.model';
@@ -30,8 +31,13 @@ export class SaleOrderComponent implements OnInit {
     serviceTypes: ServiceType[] = [];
     saleOrders: SaleOrder[] = [];
     editingOrder: SaleOrder | null = null;
+    currentOrder: SaleOrder | null = null;
     currentCompany: Company | null = null;
     isDigitalMarketing = false;
+
+    // Writer Portal properties
+    writers: WriterDto[] = [];
+    selectedFiles: File[] = [];
 
     // Currency-related properties
     countries: any[] = [];
@@ -48,6 +54,7 @@ export class SaleOrderComponent implements OnInit {
     constructor(
         private fb: FormBuilder,
         private saleOrderService: SaleOrderService,
+        private writerService: WriterService,
         private productService: ProductService,
         private companyService: CompanyService,
         private projectService: ProjectService,
@@ -64,6 +71,7 @@ export class SaleOrderComponent implements OnInit {
     ngOnInit(): void {
         this.loadCurrentCompany();
         this.loadProducts();
+        this.loadWriters();
         this.loadSaleOrders();
         // do NOT handle params here yet; wait for company/form init inside loadCurrentCompany
     }
@@ -232,6 +240,7 @@ export class SaleOrderComponent implements OnInit {
             this.saleOrderForm.addControl('paymentStatus', this.fb.control('', [Validators.maxLength(50)]));
             this.saleOrderForm.addControl('sourceOfPayment', this.fb.control('', [Validators.maxLength(100)]));
             this.saleOrderForm.addControl('assignedTo', this.fb.control('', [Validators.maxLength(200)]));
+            this.saleOrderForm.addControl('assignedWriterId', this.fb.control(''));
             this.saleOrderForm.addControl('contactEmail', this.fb.control('', [Validators.email, Validators.maxLength(200)]));
             this.saleOrderForm.addControl('contactPhone', this.fb.control('', [Validators.maxLength(50)]));
             this.saleOrderForm.addControl('orderDetails', this.fb.control('', [Validators.maxLength(1000)]));
@@ -404,6 +413,7 @@ export class SaleOrderComponent implements OnInit {
             saleOrder.contactEmail = formValue.contactEmail;
             saleOrder.contactPhone = formValue.contactPhone;
             saleOrder.assignedTo = formValue.assignedTo;
+            saleOrder.assignedWriterId = formValue.assignedWriterId;
             saleOrder.orderDetails = formValue.orderDetails;
             saleOrder.wordsOrPages = formValue.wordsOrPages;
 
@@ -424,9 +434,22 @@ export class SaleOrderComponent implements OnInit {
                 })
                 .subscribe({
                     next: (response) => {
-                        this.loadSaleOrders();
-                        this.resetForm();
-                        this.notificationService.showSuccess('Sale order updated successfully!');
+                        // Upload files if any were selected
+                        if (this.selectedFiles.length > 0) {
+                            this.uploadFiles(response.id).then(() => {
+                                this.loadSaleOrders();
+                                this.resetForm();
+                                this.notificationService.showSuccess('Sale order updated successfully with attachments!');
+                            }).catch(() => {
+                                this.loadSaleOrders();
+                                this.resetForm();
+                                this.notificationService.showWarning('Sale order updated but file upload failed.');
+                            });
+                        } else {
+                            this.loadSaleOrders();
+                            this.resetForm();
+                            this.notificationService.showSuccess('Sale order updated successfully!');
+                        }
                     },
                     error: (error) => {
                         console.error('Error updating sale order:', error);
@@ -437,9 +460,22 @@ export class SaleOrderComponent implements OnInit {
             // Create new order
             this.saleOrderService.createSaleOrder(saleOrder).subscribe({
                 next: (response) => {
-                    this.loadSaleOrders();
-                    this.resetForm();
-                    this.notificationService.showSuccess('Sale order created successfully!');
+                    // Upload files if any were selected
+                    if (this.selectedFiles.length > 0) {
+                        this.uploadFiles(response.id).then(() => {
+                            this.loadSaleOrders();
+                            this.resetForm();
+                            this.notificationService.showSuccess('Sale order created successfully with attachments!');
+                        }).catch(() => {
+                            this.loadSaleOrders();
+                            this.resetForm();
+                            this.notificationService.showWarning('Sale order created but file upload failed.');
+                        });
+                    } else {
+                        this.loadSaleOrders();
+                        this.resetForm();
+                        this.notificationService.showSuccess('Sale order created successfully!');
+                    }
                 },
                 error: (error) => {
                     console.error('Error creating sale order:', error);
@@ -451,6 +487,7 @@ export class SaleOrderComponent implements OnInit {
 
     editOrder(order: SaleOrder): void {
         this.editingOrder = order;
+        this.currentOrder = order;
 
         const formValue: any = {
             orderNumber: order.orderNumber,
@@ -472,6 +509,7 @@ export class SaleOrderComponent implements OnInit {
             formValue.contactEmail = order.contactEmail || '';
             formValue.contactPhone = order.contactPhone || '';
             formValue.assignedTo = order.assignedTo || '';
+            formValue.assignedWriterId = order.assignedWriterId || '';
             formValue.orderDetails = order.orderDetails || '';
             formValue.wordsOrPages = order.wordsOrPages || '';
 
@@ -579,6 +617,8 @@ export class SaleOrderComponent implements OnInit {
 
     resetForm(): void {
         this.editingOrder = null;
+        this.currentOrder = null;
+        this.selectedFiles = [];
         this.initializeForm();
         // Add one empty item by default only for non-digital marketing
         if (!this.isDigitalMarketing) {
@@ -697,5 +737,81 @@ export class SaleOrderComponent implements OnInit {
 
     isFormReadonly(): boolean {
         return this.editingOrder?.status?.toLowerCase() === 'completed';
+    }
+
+    // Writer Portal methods
+    private loadWriters(): void {
+        this.writerService.getWriters().subscribe({
+            next: (writers) => {
+                this.writers = writers;
+            },
+            error: (error) => {
+                console.error('Error loading writers:', error);
+            }
+        });
+    }
+
+    onFilesSelected(event: any): void {
+        const files = event.target.files;
+        if (files) {
+            this.selectedFiles = Array.from(files);
+        }
+    }
+
+    removeFile(index: number): void {
+        this.selectedFiles.splice(index, 1);
+    }
+
+    formatFileSize(bytes: number): string {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+
+    getAttachmentsList(attachmentFilenames: string | undefined): string[] {
+        if (!attachmentFilenames) return [];
+        return attachmentFilenames.split(',').filter(name => name.trim());
+    }
+
+    downloadAttachment(filename: string): void {
+        this.saleOrderService.downloadFile(filename).subscribe({
+            next: (blob) => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+            },
+            error: (error) => {
+                console.error('Error downloading file:', error);
+                this.notificationService.showError('Error downloading file', 'Error');
+            }
+        });
+    }
+
+    private uploadFiles(saleOrderId: number): Promise<void> {
+        return new Promise((resolve, reject) => {
+            if (this.selectedFiles.length === 0) {
+                resolve();
+                return;
+            }
+
+            this.saleOrderService.uploadAttachments(saleOrderId, this.selectedFiles).subscribe({
+                next: (response) => {
+                    console.log('Files uploaded successfully:', response);
+                    this.selectedFiles = []; // Clear selected files
+                    resolve();
+                },
+                error: (error) => {
+                    console.error('Error uploading files:', error);
+                    reject(error);
+                }
+            });
+        });
     }
 }

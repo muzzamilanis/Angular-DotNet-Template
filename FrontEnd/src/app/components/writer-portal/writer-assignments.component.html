@@ -1,0 +1,164 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">My Assignments</h3>
+                </div>
+                <div class="card-body">
+                    <div *ngIf="isLoading" class="loading">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        Loading assignments...
+                    </div>
+
+                    <div *ngIf="!isLoading && assignments.length === 0" class="no-assignments">
+                        <i class="fas fa-inbox fa-3x" style="color: #ccc;"></i>
+                        <h4>No assignments yet</h4>
+                        <p>You don't have any assignments at the moment.</p>
+                    </div>
+
+                    <div *ngIf="!isLoading && assignments.length > 0" class="assignments-list">
+                        <div *ngFor="let assignment of assignments" class="assignment-card">
+                            <div class="assignment-header">
+                                <span class="assignment-title">{{ assignment.orderNumber }}</span>
+                                <span class="badge" [ngClass]="getStatusClass(assignment.status)">
+                                    {{ assignment.status || 'Not Set' }}
+                                </span>
+                            </div>
+
+                            <div class="assignment-meta">
+                                <div class="meta-item">
+                                    <span class="meta-label">Client:</span>
+                                    <span class="meta-value">{{ assignment.clientName || 'N/A' }}</span>
+                                </div>
+                                <div class="meta-item">
+                                    <span class="meta-label">Order Date:</span>
+                                    <span class="meta-value">{{ formatDate(assignment.orderDate) }}</span>
+                                </div>
+                                <div class="meta-item">
+                                    <span class="meta-label">Deadline:</span>
+                                    <span class="meta-value" [ngClass]="{'deadline-urgent': isDeadlineUrgent(assignment.deadline)}">
+                                        {{ formatDate(assignment.deadline) }}
+                                    </span>
+                                </div>
+                                <div class="meta-item">
+                                    <span class="meta-label">Pages/Words:</span>
+                                    <span class="meta-value">{{ assignment.wordsOrPages || 'N/A' }}</span>
+                                </div>
+                                <div class="meta-item">
+                                    <span class="meta-label">Academic Level:</span>
+                                    <span class="meta-value">{{ assignment.academicLevel || 'N/A' }}</span>
+                                </div>
+                                <div class="meta-item">
+                                    <span class="meta-label">Submission Status:</span>
+                                    <span class="badge" [ngClass]="getSubmissionStatusClass(assignment.submissionStatus)">
+                                        {{ assignment.submissionStatus || 'Not Submitted' }}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div *ngIf="assignment.orderDetails" class="meta-item" style="margin-bottom: 1rem;">
+                                <span class="meta-label">Order Details:</span>
+                                <div class="meta-value" style="margin-top: 0.5rem; padding: 0.75rem; background: #f8f9fa; border-radius: 4px;">
+                                    {{ assignment.orderDetails }}
+                                </div>
+                            </div>
+
+                            <!-- Attachments Section -->
+                            <div *ngIf="assignment.attachmentFilenames" class="attachments-section">
+                                <h6><i class="fas fa-paperclip"></i> Attachments:</h6>
+                                <div *ngFor="let filename of getAttachmentsList(assignment.attachmentFilenames)">
+                                    <a class="attachment-item" (click)="downloadAttachment(filename)">
+                                        <i class="fas fa-download"></i> {{ filename }}
+                                    </a>
+                                </div>
+                            </div>
+
+                            <!-- Submission Section -->
+                            <div class="submission-section">
+                                <div *ngIf="assignment.submissionStatus">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <strong>Submitted on:</strong> {{ formatDate(assignment.submissionDate) }}
+                                        </div>
+                                        <div class="col-md-6" *ngIf="assignment.submittedFilename">
+                                            <strong>Submitted file:</strong> 
+                                            <a (click)="downloadAttachment(assignment.submittedFilename)" class="attachment-item btn-sm">
+                                                <i class="fas fa-download"></i> {{ assignment.submittedFilename }}
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mt-3">
+                                    <button 
+                                        class="btn btn-success btn-sm" 
+                                        (click)="openSubmissionModal(assignment)"
+                                        [disabled]="assignment.submissionStatus === 'Completed'">
+                                        <i class="fas fa-upload"></i>
+                                        {{ assignment.submissionStatus ? 'Update Submission' : 'Submit Work' }}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Submission Modal -->
+<div *ngIf="isSubmissionModalOpen" class="modal-overlay" (click)="closeSubmissionModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+        <h4>Submit Work - {{ selectedAssignment?.orderNumber }}</h4>
+        
+        <form (ngSubmit)="submitWork()" #submissionForm="ngForm">
+            <div class="form-group">
+                <label for="submissionStatus">Submission Status *</label>
+                <select 
+                    id="submissionStatus" 
+                    name="submissionStatus"
+                    class="form-control" 
+                    [(ngModel)]="submissionStatus" 
+                    required>
+                    <option value="">Select Status</option>
+                    <option value="Completed">Completed</option>
+                    <option value="Need clarity">Need clarity</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="submissionFile">Upload File (optional)</label>
+                <input 
+                    type="file" 
+                    id="submissionFile" 
+                    name="submissionFile"
+                    class="form-control" 
+                    (change)="onFileSelected($event)"
+                    accept=".pdf,.doc,.docx,.txt">
+                <small class="text-muted">Supported formats: PDF, DOC, DOCX, TXT</small>
+            </div>
+
+            <div class="form-group">
+                <label for="submissionNotes">Notes (optional)</label>
+                <textarea 
+                    id="submissionNotes" 
+                    name="submissionNotes"
+                    class="form-control" 
+                    rows="3"
+                    [(ngModel)]="submissionNotes"
+                    placeholder="Add any notes or comments..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary" [disabled]="!submissionStatus">
+                    <i class="fas fa-paper-plane"></i> Submit
+                </button>
+                <button type="button" class="btn btn-secondary" (click)="closeSubmissionModal()">
+                    Cancel
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
