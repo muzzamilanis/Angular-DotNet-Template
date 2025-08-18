@@ -436,9 +436,6 @@ namespace SimpleApi.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
 
-                    b.Property<int?>("AssignedWriterId")
-                        .HasColumnType("integer");
-
                     b.Property<string>("AttachmentFilenames")
                         .HasMaxLength(2000)
                         .HasColumnType("character varying(2000)");
@@ -542,8 +539,6 @@ namespace SimpleApi.Migrations
                         .HasColumnType("character varying(100)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("AssignedWriterId");
 
                     b.HasIndex("CompanyId");
 
@@ -820,10 +815,6 @@ namespace SimpleApi.Migrations
 
             modelBuilder.Entity("SimpleApi.Models.SaleOrder", b =>
                 {
-                    b.HasOne("SimpleApi.Models.User", "AssignedWriter")
-                        .WithMany()
-                        .HasForeignKey("AssignedWriterId");
-
                     b.HasOne("SimpleApi.Models.Company", "Company")
                         .WithMany()
                         .HasForeignKey("CompanyId")
@@ -839,8 +830,6 @@ namespace SimpleApi.Migrations
                         .WithMany()
                         .HasForeignKey("ServiceTypeId")
                         .OnDelete(DeleteBehavior.SetNull);
-
-                    b.Navigation("AssignedWriter");
 
                     b.Navigation("Company");
 
