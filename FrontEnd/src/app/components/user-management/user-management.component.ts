@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { BackendUser, CreateBackendUserDto, UpdateBackendUserDto } from '../../models/user.model';
+import { BackendUser, CreateBackendUserDto, UpdateBackendUserDto, UserRole } from '../../models/user.model';
 import { Company } from '../../models/company.model';
 import { UserService } from '../../services/user.service';
 import { CompanyService } from '../../services/company.service';
@@ -21,6 +21,9 @@ export class UserManagementComponent implements OnInit {
     isEditing = false;
     isLoading = false;
     currentUserIsSuperAdmin = false;
+    
+    // Make UserRole accessible in template
+    UserRole = UserRole;
 
     constructor(
         private fb: FormBuilder,
@@ -44,6 +47,7 @@ export class UserManagementComponent implements OnInit {
             email: ['', [Validators.required, Validators.email]],
             password: ['', [Validators.required, Validators.minLength(6)]],
             isSuperAdmin: [false],
+            role: [UserRole.User, [Validators.required]],
             companyId: ['', [Validators.required]],
             isActive: [true],
         });
@@ -87,6 +91,7 @@ export class UserManagementComponent implements OnInit {
                     email: formValue.email,
                     isActive: formValue.isActive,
                     isSuperAdmin: formValue.isSuperAdmin,
+                    role: formValue.role,
                     companyId: parseInt(formValue.companyId),
                 };
                 this.updateUser(updateDto);
@@ -96,6 +101,7 @@ export class UserManagementComponent implements OnInit {
                     email: formValue.email,
                     password: formValue.password,
                     isSuperAdmin: formValue.isSuperAdmin,
+                    role: formValue.role,
                     companyId: parseInt(formValue.companyId),
                 };
                 this.createUser(createDto);
@@ -149,6 +155,7 @@ export class UserManagementComponent implements OnInit {
             name: user.name,
             email: user.email,
             isSuperAdmin: user.isSuperAdmin,
+            role: user.role,
             companyId: user.companyId,
             isActive: user.isActive,
         });
@@ -244,6 +251,7 @@ export class UserManagementComponent implements OnInit {
         this.userForm.reset();
         this.userForm.patchValue({
             isSuperAdmin: false,
+            role: UserRole.User,
             isActive: true,
         });
         this.selectedUser = null;
@@ -287,6 +295,32 @@ export class UserManagementComponent implements OnInit {
     }
 
     getUserRoleText(user: BackendUser): string {
-        return user.isSuperAdmin ? 'Super Admin' : 'User';
+        if (user.isSuperAdmin) {
+            return 'Super Admin';
+        }
+        
+        switch (user.role) {
+            case UserRole.SuperAdmin:
+                return 'Super Admin';
+            case UserRole.CompanyAdmin:
+                return 'Company Admin';
+            case UserRole.Manager:
+                return 'Manager';
+            case UserRole.Writer:
+                return 'Writer';
+            case UserRole.User:
+            default:
+                return 'User';
+        }
+    }
+
+    getRoleOptions(): { value: UserRole; label: string }[] {
+        return [
+            { value: UserRole.User, label: 'User' },
+            { value: UserRole.Manager, label: 'Manager' },
+            { value: UserRole.CompanyAdmin, label: 'Company Admin' },
+            { value: UserRole.Writer, label: 'Writer' },
+            { value: UserRole.SuperAdmin, label: 'Super Admin' },
+        ];
     }
 }
