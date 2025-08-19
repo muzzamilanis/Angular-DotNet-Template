@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { WriterService } from '../../services/writer.service';
 import { SaleOrderService } from '../../services/sale-order.service';
 import { WriterAssignmentDto } from '../../models/sale-order.model';
+import { NotificationService } from '../../services/notification.service';
 
 @Component({
     selector: 'app-writer-assignments',
@@ -20,7 +21,8 @@ export class WriterAssignmentsComponent implements OnInit {
 
     constructor(
         private writerService: WriterService,
-        private saleOrderService: SaleOrderService
+        private saleOrderService: SaleOrderService,
+        private notificationService: NotificationService
     ) { }
 
     ngOnInit(): void {
@@ -74,13 +76,13 @@ export class WriterAssignmentsComponent implements OnInit {
 
         this.writerService.submitWork(submission, this.submissionFile || undefined).subscribe({
             next: (response) => {
-                alert('Work submitted successfully!');
+                this.notificationService.showSuccess('Work submitted successfully!');
                 this.closeSubmissionModal();
                 this.loadAssignments(); // Reload to see updated status
             },
             error: (error) => {
                 console.error('Error submitting work:', error);
-                alert('Error submitting work. Please try again.');
+                this.notificationService.showError('Error submitting work. Please try again.');
             }
         });
     }
@@ -105,13 +107,13 @@ export class WriterAssignmentsComponent implements OnInit {
                 console.error('Error message:', error.message);
                 
                 if (error.status === 403) {
-                    alert('Access denied. You do not have permission to download this file.');
+                    this.notificationService.showError('Access denied. You do not have permission to download this file.');
                 } else if (error.status === 404) {
-                    alert('File not found. The attachment may have been deleted.');
+                    this.notificationService.showError('File not found. The attachment may have been deleted.');
                 } else if (error.status === 401) {
-                    alert('Authentication required. Please log in again.');
+                    this.notificationService.showError('Authentication required. Please log in again.');
                 } else {
-                    alert(`Error downloading file: ${error.message || 'Unknown error'}`);
+                    this.notificationService.showError(`Error downloading file: ${error.message || 'Unknown error'}`);
                 }
             }
         });
