@@ -28,9 +28,9 @@ export class UserManagementComponent implements OnInit {
     readonly roleOptions: { value: UserRole; label: string }[] = [
         { value: UserRole.User, label: 'User' },
         { value: UserRole.Manager, label: 'Manager' },
-        { value: UserRole.CompanyAdmin, label: 'Company Admin' },
+        { value: UserRole.CompanyAdmin, label: 'Admin' },
         { value: UserRole.Writer, label: 'Writer' },
-        { value: UserRole.SuperAdmin, label: 'Super Admin' },
+        //{ value: UserRole.SuperAdmin, label: 'Super Admin' },  only created during company registration
     ];
 
     trackByRoleValue = (_: number, opt: { value: UserRole; label: string }) => opt.value;
@@ -66,8 +66,7 @@ export class UserManagementComponent implements OnInit {
 
     setupCompanySelection(): void {
         // Auto-populate company for non-super admin users
-        if (!this.currentUserIsSuperAdmin) {
-            const currentUserCompanyId = this.authService.getCurrentUserCompanyId();
+        const currentUserCompanyId = this.authService.getCurrentUserCompanyId();
             if (currentUserCompanyId) {
                 this.userForm.patchValue({
                     companyId: currentUserCompanyId.toString()
@@ -75,7 +74,6 @@ export class UserManagementComponent implements OnInit {
                 // Make company field readonly for non-super admin users
                 this.userForm.get('companyId')?.disable();
             }
-        }
 
         // Setup super admin checkbox validation based on role
         this.setupSuperAdminValidation();
@@ -371,4 +369,9 @@ export class UserManagementComponent implements OnInit {
                 return 'User';
         }
     }
+
+    // Helper method to check if company field should be readonly
+  get isCompanyFieldReadonly(): boolean {
+    return true; // Always true for now, can be modified based on conditions
+  }
 }

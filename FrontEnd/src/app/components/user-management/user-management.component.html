@@ -104,14 +104,12 @@
                                     <i class="fas fa-building"></i>
                                     Company
                                     <span class="text-danger">*</span>
-                                    <span *ngIf="!currentUserIsSuperAdmin" class="text-muted">(Auto-selected)</span>
                                 </label>
                                 <select
                                     class="form-control"
                                     id="companyId"
                                     formControlName="companyId"
-                                    [class.is-invalid]="isFieldInvalid('companyId')"
-                                    [disabled]="!currentUserIsSuperAdmin">
+                                    [class.is-invalid]="isFieldInvalid('companyId')">
                                     <option value="">🏢 Select Company</option>
                                     <option *ngFor="let company of companies" [value]="company.id">
                                         {{ company.name }}
@@ -147,14 +145,14 @@
                                 <div class="invalid-feedback" *ngIf="isFieldInvalid('role')">
                                     {{ getFieldError('role') }}
                                 </div>
-                                <small class="form-text text-muted">
+                                <small class="form-text text-muted" hidden="true">
                                     Select the appropriate role for this user
                                 </small>
                             </div>
 
                             <!-- Super Admin Checkbox -->
                             <div class="form-group">
-                                <div class="form-check">
+                                <div class="form-check" hidden="true">
                                     <input
                                         type="checkbox"
                                         class="form-check-input"
