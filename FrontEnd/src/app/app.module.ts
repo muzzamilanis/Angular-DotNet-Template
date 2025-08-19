@@ -22,6 +22,7 @@ import { ProjectFormComponent } from './components/project/project-form.componen
 import { ProjectDetailComponent } from './components/project/project-detail.component';
 import { ServiceTypeComponent } from './components/service-type/service-type.component';
 import { WriterAssignmentsComponent } from './components/writer-portal/writer-assignments.component';
+import { WriterDashboardComponent } from './components/writer-portal/writer-dashboard.component';
 // import { CurrencySetupComponent } from './components/currency-setup/currency-setup.component';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
 
@@ -44,6 +45,7 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
         ProjectDetailComponent,
         ServiceTypeComponent,
         WriterAssignmentsComponent,
+        WriterDashboardComponent,
         // CurrencySetupComponent,
     ],
     imports: [
