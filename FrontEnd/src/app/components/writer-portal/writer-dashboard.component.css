@@ -1,0 +1,140 @@
+/* Writer Dashboard Specific Styles */
+
+.small-box {
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    transition: transform 0.2s ease-in-out;
+}
+
+.small-box:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.description-block {
+    padding: 15px 0;
+}
+
+.description-header {
+    margin: 10px 0 5px 0;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.description-text {
+    text-transform: uppercase;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.description-percentage {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.card {
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.05);
+}
+
+.card-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+    border-radius: 8px 8px 0 0 !important;
+}
+
+.table th {
+    border-top: none;
+    font-weight: 600;
+    color: #495057;
+}
+
+.badge {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+}
+
+.badge-success {
+    background-color: #28a745;
+}
+
+.badge-warning {
+    background-color: #ffc107;
+    color: #212529;
+}
+
+.badge-info {
+    background-color: #17a2b8;
+}
+
+.badge-secondary {
+    background-color: #6c757d;
+}
+
+.badge-danger {
+    background-color: #dc3545;
+}
+
+.text-danger {
+    color: #dc3545 !important;
+}
+
+.alert {
+    border-radius: 8px;
+}
+
+.btn {
+    border-radius: 6px;
+}
+
+.btn-lg {
+    padding: 0.75rem 1.5rem;
+    font-size: 1.1rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .small-box .inner h3 {
+        font-size: 24px;
+    }
+    
+    .small-box .inner p {
+        font-size: 12px;
+    }
+    
+    .description-header {
+        font-size: 14px;
+    }
+    
+    .description-percentage {
+        font-size: 18px;
+    }
+}
+
+/* Loading animation */
+.fa-spinner {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Table hover effects */
+.table tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+/* Icon styling */
+.fa-inbox {
+    opacity: 0.3;
+}
+
+.small-box .icon {
+    transition: transform 0.2s ease-in-out;
+}
+
+.small-box:hover .icon {
+    transform: scale(1.1);
+}

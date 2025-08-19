@@ -1,0 +1,209 @@
+<div class="row">
+    <div class="col-12">
+        <h1 class="m-0">Welcome back, {{ getUserDisplayName() }}!</h1>
+        <p class="text-muted">Your writing assignments dashboard</p>
+    </div>
+</div>
+
+<!-- Assignment Statistics -->
+<div class="row mt-4">
+    <div class="col-lg-3 col-6">
+        <div class="small-box bg-info">
+            <div class="inner">
+                <h3>{{ assignmentStats.total }}</h3>
+                <p>Total Assignments</p>
+            </div>
+            <div class="icon">
+                <i class="fas fa-tasks"></i>
+            </div>
+            <a routerLink="/writer/assignments" class="small-box-footer">
+                View All Assignments
+                <i class="fas fa-arrow-circle-right"></i>
+            </a>
+        </div>
+    </div>
+
+    <div class="col-lg-3 col-6">
+        <div class="small-box bg-warning">
+            <div class="inner">
+                <h3>{{ assignmentStats.pending }}</h3>
+                <p>Pending</p>
+            </div>
+            <div class="icon">
+                <i class="fas fa-clock"></i>
+            </div>
+            <a routerLink="/writer/assignments" class="small-box-footer">
+                View Pending
+                <i class="fas fa-arrow-circle-right"></i>
+            </a>
+        </div>
+    </div>
+
+    <div class="col-lg-3 col-6">
+        <div class="small-box bg-success">
+            <div class="inner">
+                <h3>{{ assignmentStats.completed }}</h3>
+                <p>Completed</p>
+            </div>
+            <div class="icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <a routerLink="/writer/assignments" class="small-box-footer">
+                View Completed
+                <i class="fas fa-arrow-circle-right"></i>
+            </a>
+        </div>
+    </div>
+
+    <div class="col-lg-3 col-6">
+        <div class="small-box bg-danger">
+            <div class="inner">
+                <h3>{{ assignmentStats.overdue }}</h3>
+                <p>Overdue</p>
+            </div>
+            <div class="icon">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <a routerLink="/writer/assignments" class="small-box-footer">
+                View Overdue
+                <i class="fas fa-arrow-circle-right"></i>
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Main Content -->
+<div class="row mt-4">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Recent Assignments</h3>
+                <div class="card-tools">
+                    <a routerLink="/writer/assignments" class="btn btn-primary btn-sm">
+                        <i class="fas fa-eye"></i> View All
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                <div *ngIf="isLoading" class="text-center">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    Loading assignments...
+                </div>
+
+                <div *ngIf="!isLoading && assignments.length === 0" class="text-center">
+                    <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                    <h5>No assignments yet</h5>
+                    <p class="text-muted">You don't have any assignments at the moment.</p>
+                </div>
+
+                <div *ngIf="!isLoading && assignments.length > 0">
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Order #</th>
+                                    <th>Client</th>
+                                    <th>Deadline</th>
+                                    <th>Status</th>
+                                    <th>Submission</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let assignment of getRecentAssignments()">
+                                    <td>
+                                        <strong>{{ assignment.orderNumber }}</strong>
+                                    </td>
+                                    <td>{{ assignment.clientName || 'N/A' }}</td>
+                                    <td>
+                                        <span [ngClass]="{'text-danger': isDeadlineUrgent(assignment.deadline)}">
+                                            {{ formatDate(assignment.deadline) }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="badge" [ngClass]="getStatusClass(assignment.status)">
+                                            {{ assignment.status || 'Pending' }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="badge" [ngClass]="assignment.submissionStatus ? 'badge-success' : 'badge-secondary'">
+                                            {{ assignment.submissionStatus || 'Not Submitted' }}
+                                        </span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Quick Actions</h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-12 mb-3">
+                        <a routerLink="/writer/assignments" class="btn btn-primary btn-lg d-block">
+                            <i class="fas fa-tasks mb-2"></i>
+                            <br />
+                            View All Assignments
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Performance Overview -->
+        <div class="card mt-3">
+            <div class="card-header">
+                <h3 class="card-title">Performance Overview</h3>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-6">
+                        <div class="description-block border-right">
+                            <span class="description-percentage text-success">
+                                <i class="fas fa-caret-up"></i>
+                                {{ assignmentStats.completed }}
+                            </span>
+                            <h5 class="description-header">Completed</h5>
+                            <span class="description-text">ASSIGNMENTS</span>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="description-block">
+                            <span class="description-percentage text-warning">
+                                <i class="fas fa-clock"></i>
+                                {{ assignmentStats.pending }}
+                            </span>
+                            <h5 class="description-header">Pending</h5>
+                            <span class="description-text">ASSIGNMENTS</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Urgent Deadlines Alert -->
+<div class="row mt-4" *ngIf="assignmentStats.overdue > 0">
+    <div class="col-12">
+        <div class="alert alert-danger" role="alert">
+            <h4 class="alert-heading">
+                <i class="fas fa-exclamation-triangle"></i>
+                Urgent: Overdue Assignments
+            </h4>
+            <p>You have {{ assignmentStats.overdue }} overdue assignment(s). Please review and submit them as soon as possible.</p>
+            <hr>
+            <p class="mb-0">
+                <a routerLink="/writer/assignments" class="btn btn-outline-danger">
+                    <i class="fas fa-eye"></i> View Overdue Assignments
+                </a>
+            </p>
+        </div>
+    </div>
+</div>
