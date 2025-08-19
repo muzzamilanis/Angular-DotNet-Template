@@ -57,7 +57,7 @@ if (string.IsNullOrEmpty(connectionString))
 }
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-	options.UseNpgsql(connectionString));
+	options.UseSqlite(connectionString));
 
 // Add AutoMapper
 builder.Services.AddAutoMapper(typeof(MappingProfile));
@@ -138,7 +138,7 @@ using (var scope = app.Services.CreateScope())
     context.Database.EnsureCreated();
 }
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection(); // Commented out for demonstration
 
 app.UseCors("AllowAll");
 
