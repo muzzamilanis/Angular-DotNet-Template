@@ -185,7 +185,6 @@ export class SaleOrderComponent implements OnInit {
 
             // Rule 2: FullPaid requires advance == total (use small epsilon for decimals)
             const approxEqual = totalAdvance < totalPkr;
-            console.log('approx equal: ', approxEqual);
             if (payment === 'fullpaid' && approxEqual) {
                 return { fullPaidMustEqualTotal: true };
             }
