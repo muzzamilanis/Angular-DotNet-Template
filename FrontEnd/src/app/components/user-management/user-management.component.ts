@@ -49,6 +49,7 @@ export class UserManagementComponent implements OnInit {
         this.currentUserIsSuperAdmin = this.authService.isSuperAdmin();
         this.loadUsers();
         this.loadCompanies();
+        this.setupCompanySelection();
     }
 
     createForm(): FormGroup {
@@ -61,6 +62,48 @@ export class UserManagementComponent implements OnInit {
             companyId: ['', [Validators.required]],
             isActive: [true],
         });
+    }
+
+    setupCompanySelection(): void {
+        // Auto-populate company for non-super admin users
+        if (!this.currentUserIsSuperAdmin) {
+            const currentUserCompanyId = this.authService.getCurrentUserCompanyId();
+            if (currentUserCompanyId) {
+                this.userForm.patchValue({
+                    companyId: currentUserCompanyId.toString()
+                });
+                // Make company field readonly for non-super admin users
+                this.userForm.get('companyId')?.disable();
+            }
+        }
+
+        // Setup super admin checkbox validation based on role
+        this.setupSuperAdminValidation();
+    }
+
+    setupSuperAdminValidation(): void {
+        // Listen to role changes to control super admin checkbox
+        this.userForm.get('role')?.valueChanges.subscribe(role => {
+            const isSuperAdminControl = this.userForm.get('isSuperAdmin');
+            
+            if (role === UserRole.SuperAdmin) {
+                // Enable super admin checkbox if Super Admin role is selected
+                isSuperAdminControl?.enable();
+            } else {
+                // Disable and uncheck super admin checkbox for non-super admin roles
+                isSuperAdminControl?.setValue(false);
+                isSuperAdminControl?.disable();
+            }
+        });
+
+        // Initialize the state based on current role
+        const currentRole = this.userForm.get('role')?.value;
+        const isSuperAdminControl = this.userForm.get('isSuperAdmin');
+        
+        if (currentRole !== UserRole.SuperAdmin) {
+            isSuperAdminControl?.setValue(false);
+            isSuperAdminControl?.disable();
+        }
     }
 
     loadUsers(): void {
@@ -92,7 +135,8 @@ export class UserManagementComponent implements OnInit {
 
     onSubmit(): void {
         if (this.userForm.valid) {
-            const formValue = this.userForm.value;
+            // Use getRawValue() to get disabled form field values
+            const formValue = this.userForm.getRawValue();
 
             if (this.isEditing && this.selectedUser) {
                 const updateDto: UpdateBackendUserDto = {
@@ -270,6 +314,9 @@ export class UserManagementComponent implements OnInit {
         // Re-add password requirement for new users
         this.userForm.get('password')?.setValidators([Validators.required, Validators.minLength(6)]);
         this.userForm.get('password')?.updateValueAndValidity();
+        
+        // Re-setup company selection and super admin validation for new user
+        this.setupCompanySelection();
     }
 
     private markFormGroupTouched(): void {

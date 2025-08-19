@@ -775,8 +775,10 @@ export class SaleOrderComponent implements OnInit {
     }
 
     downloadAttachment(filename: string): void {
+        console.log('Attempting to download file:', filename);
         this.saleOrderService.downloadFile(filename).subscribe({
             next: (blob) => {
+                console.log('File download successful, blob size:', blob.size);
                 const url = window.URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
@@ -788,7 +790,21 @@ export class SaleOrderComponent implements OnInit {
             },
             error: (error) => {
                 console.error('Error downloading file:', error);
-                this.notificationService.showError('Error downloading file', 'Error');
+                console.error('Error status:', error.status);
+                console.error('Error message:', error.message);
+                
+                let errorMessage = 'Error downloading file';
+                if (error.status === 403) {
+                    errorMessage = 'Access denied. You do not have permission to download this file.';
+                } else if (error.status === 404) {
+                    errorMessage = 'File not found. The attachment may have been deleted.';
+                } else if (error.status === 401) {
+                    errorMessage = 'Authentication required. Please log in again.';
+                } else if (error.message) {
+                    errorMessage = `Error downloading file: ${error.message}`;
+                }
+                
+                this.notificationService.showError(errorMessage, 'Download Error');
             }
         });
     }
