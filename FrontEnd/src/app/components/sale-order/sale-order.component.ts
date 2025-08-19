@@ -809,6 +809,14 @@ export class SaleOrderComponent implements OnInit {
         });
     }
 
+    getSubmissionStatusClass(submissionStatus: string | undefined): string {
+        switch (submissionStatus) {
+            case 'Completed': return 'badge-success';
+            case 'Need clarity': return 'badge-warning';
+            default: return 'badge-secondary';
+        }
+    }
+
     private uploadFiles(saleOrderId: number): Promise<void> {
         return new Promise((resolve, reject) => {
             if (this.selectedFiles.length === 0) {
