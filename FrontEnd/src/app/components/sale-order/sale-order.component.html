@@ -982,6 +982,7 @@
                                 <th *ngIf="isDigitalMarketing">Deadline</th>
                                 <th *ngIf="isDigitalMarketing">Status</th>
                                 <th *ngIf="isDigitalMarketing">Task Assigned To</th>
+                                <th *ngIf="isDigitalMarketing">Submission Status</th>
                                 <th *ngIf="isDigitalMarketing">Advance Payment</th>
                                 <th *ngIf="!isDigitalMarketing">Customer Address</th>
                                 <th *ngIf="!isDigitalMarketing">Items Count</th>
@@ -1006,6 +1007,23 @@
                                 </td>
                                 <td *ngIf="isDigitalMarketing">{{ order.status || 'N/A' }}</td>
                                 <td *ngIf="isDigitalMarketing">{{ order.assignedTo || 'N/A' }}</td>
+                                <td *ngIf="isDigitalMarketing">
+                                    <div *ngIf="order.submissionStatus">
+                                        <span class="badge" [ngClass]="getSubmissionStatusClass(order.submissionStatus)">
+                                            {{ order.submissionStatus }}
+                                        </span>
+                                        <div *ngIf="order.submittedFilename" class="mt-1">
+                                            <small>
+                                                <a (click)="downloadAttachment(order.submittedFilename)" 
+                                                   class="text-primary" 
+                                                   style="cursor: pointer; text-decoration: underline;">
+                                                    <i class="fas fa-download"></i> {{ order.submittedFilename }}
+                                                </a>
+                                            </small>
+                                        </div>
+                                    </div>
+                                    <span *ngIf="!order.submissionStatus" class="text-muted">Not Submitted</span>
+                                </td>
                                 <td *ngIf="!isDigitalMarketing">{{ order.customerAddress }}</td>
                                 <td *ngIf="!isDigitalMarketing">{{ order.items.length }}</td>
                                 <td *ngIf="isDigitalMarketing">
@@ -1027,7 +1045,7 @@
                                 </td>
                             </tr>
                             <tr *ngIf="saleOrders.length === 0">
-                                <td [attr.colspan]="isDigitalMarketing ? 9 : 7" class="text-center">
+                                <td [attr.colspan]="isDigitalMarketing ? 10 : 7" class="text-center">
                                     No sale orders found
                                 </td>
                             </tr>

@@ -81,9 +81,17 @@
                     data-widget="treeview"
                     role="menu"
                     data-accordion="false">
-                    <!-- Dashboard -->
+                    <!-- Dashboard - For non-writers -->
                     <li class="nav-item" *ngIf="!isWriter()">
                         <a routerLink="/dashboard" class="nav-link" routerLinkActive="active">
+                            <i class="nav-icon fas fa-tachometer-alt"></i>
+                            <p>Dashboard</p>
+                        </a>
+                    </li>
+
+                    <!-- Writer Dashboard - Only visible to Writers -->
+                    <li class="nav-item" *ngIf="isWriter()">
+                        <a routerLink="/writer/dashboard" class="nav-link" routerLinkActive="active">
                             <i class="nav-icon fas fa-tachometer-alt"></i>
                             <p>Dashboard</p>
                         </a>
