@@ -292,7 +292,7 @@ namespace SimpleApi.Services
             var deadlineThreshold = DateTime.UtcNow.Date.AddDays(3);
             
             return await _context.SaleOrders
-                .Where(so => so.Status == "In Progress" && 
+                .Where(so => so.Status == "InProgress" && 
                             so.Deadline.HasValue && 
                             so.Deadline.Value.ToUniversalTime() <= deadlineThreshold)
                 .Include(so => so.Company)
@@ -301,7 +301,7 @@ namespace SimpleApi.Services
 
         public bool IsDeadlineApproaching(SaleOrder order)
         {
-            if (!order.Deadline.HasValue || order.Status != "In Progress")
+            if (!order.Deadline.HasValue || order.Status != "InProgress")
                 return false;
                 
             return order.Deadline.Value <= DateTime.Today.AddDays(3);

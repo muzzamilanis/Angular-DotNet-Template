@@ -131,7 +131,7 @@ export class WriterAssignmentsComponent implements OnInit {
         switch (status) {
             case 'Completed': return 'badge badge-success';
             case 'Need clarity': return 'badge badge-warning';
-            case 'In Progress': return 'badge badge-info';
+            case 'InProgress': return 'badge badge-info';
             default: return 'badge badge-secondary';
         }
     }
