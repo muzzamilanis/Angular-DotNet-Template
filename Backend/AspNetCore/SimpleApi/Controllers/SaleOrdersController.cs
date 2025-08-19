@@ -178,6 +178,13 @@ namespace SimpleApi.Controllers
                 
                 existingAttachments.AddRange(uploadedFiles);
                 
+                // If work was submitted by writer and attachments are being added, revert status to InProgress
+                var newStatus = saleOrder.Status;
+                if (saleOrder.Status == "workSubmittedByWriter")
+                {
+                    newStatus = "InProgress";
+                }
+                
                 var updateDto = new UpdateSaleOrderDto
                 {
                     Id = saleOrder.Id,
@@ -190,7 +197,7 @@ namespace SimpleApi.Controllers
                     Code = saleOrder.Code,
                     ClientName = saleOrder.ClientName,
                     Deadline = saleOrder.Deadline,
-                    Status = saleOrder.Status,
+                    Status = newStatus,
                     AmountReceived = saleOrder.AmountReceived,
                     AmountReceivedInPkr = saleOrder.AmountReceivedInPkr,
                     PaymentStatus = saleOrder.PaymentStatus,
