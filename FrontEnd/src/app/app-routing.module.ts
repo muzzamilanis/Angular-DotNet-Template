@@ -15,6 +15,7 @@ import { ProjectDetailComponent } from './components/project/project-detail.comp
 import { ServiceTypeComponent } from './components/service-type/service-type.component';
 import { WriterAssignmentsComponent } from './components/writer-portal/writer-assignments.component';
 import { WriterDashboardComponent } from './components/writer-portal/writer-dashboard.component';
+import { BrandingDemoComponent } from './components/branding-demo/branding-demo.component';
 // import { CurrencySetupComponent } from './components/currency-setup/currency-setup.component';
 import { AuthGuard } from './guards/auth.guard';
 import { SuperAdminGuard } from './guards/super-admin.guard';
@@ -24,6 +25,7 @@ import { AdminDashboardGuard } from './guards/admin-dashboard.guard';
 const routes: Routes = [
     { path: 'login', component: LoginComponent },
     { path: 'register', component: RegistrationComponent },
+    { path: 'demo', component: BrandingDemoComponent },
     {
         path: '',
         component: MainLayoutComponent,
