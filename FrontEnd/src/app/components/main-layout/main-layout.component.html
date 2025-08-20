@@ -14,7 +14,8 @@
                  [src]="getCompanyLogo()" 
                  alt="Company Logo" 
                  class="navbar-logo">
-            <span class="brand-text font-weight-light">{{ getCompanyName() }}</span>
+            <span class="brand-text font-weight-light">SmartBizApp</span>
+            <span *ngIf="getCompanyName()" class="company-text ml-2 text-muted small">- {{ getCompanyName() }}</span>
         </div>
 
         <ul class="navbar-nav ml-auto">

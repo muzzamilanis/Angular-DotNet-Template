@@ -86,9 +86,9 @@ export class MainLayoutComponent implements OnInit {
         return '';
     }
 
-    // Get company name for branding
-    getCompanyName(): string {
-        return this.currentCompany?.name || 'SmartBizApp';
+    // Get company name for display
+    getCompanyName(): string | null {
+        return this.currentCompany?.name || null;
     }
 
     // Get company logo URL
