@@ -174,6 +174,104 @@
                                 </div>
                             </div>
                         </div>
+
+                        <!-- Company Branding Section -->
+                        <div class="card mt-3">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">
+                                    <i class="fas fa-palette mr-2"></i>
+                                    Company Branding
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <!-- Logo Upload Section -->
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="logoUpload">
+                                                Company Logo
+                                                <small class="text-muted">(Max 5MB - JPG, PNG, GIF, SVG)</small>
+                                            </label>
+                                            
+                                            <!-- Logo Preview -->
+                                            <div *ngIf="logoPreviewUrl" class="logo-preview mb-3">
+                                                <img [src]="logoPreviewUrl" alt="Company Logo" class="logo-preview-img">
+                                                <button 
+                                                    type="button" 
+                                                    class="btn btn-sm btn-danger logo-remove-btn"
+                                                    (click)="removeLogo()"
+                                                    title="Remove logo">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                            </div>
+
+                                            <!-- File Upload Button -->
+                                            <div class="file-upload-container">
+                                                <input
+                                                    type="file"
+                                                    id="logoUpload"
+                                                    class="file-input"
+                                                    accept="image/*"
+                                                    (change)="onLogoFileSelected($event)"
+                                                    [disabled]="isUploadingLogo" />
+                                                <label for="logoUpload" class="file-upload-btn">
+                                                    <span *ngIf="!isUploadingLogo">
+                                                        <i class="fas fa-cloud-upload-alt mr-2"></i>
+                                                        {{ logoPreviewUrl ? 'Change Logo' : 'Upload Logo' }}
+                                                    </span>
+                                                    <span *ngIf="isUploadingLogo">
+                                                        <i class="fas fa-spinner fa-spin mr-2"></i>
+                                                        Uploading...
+                                                    </span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Color Theme Section -->
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="primaryColor">
+                                                Primary Color Theme
+                                                <small class="text-muted">(This will be applied throughout the app)</small>
+                                            </label>
+                                            
+                                            <!-- Color Picker -->
+                                            <div class="color-picker-container">
+                                                <input
+                                                    type="color"
+                                                    id="primaryColor"
+                                                    class="form-control color-input"
+                                                    formControlName="primaryColor"
+                                                    (change)="onColorChange($event.target.value)" />
+                                                
+                                                <!-- Color Preview -->
+                                                <div class="color-preview" 
+                                                     [style.background-color]="companyForm.get('primaryColor')?.value">
+                                                    <span class="color-value">{{ companyForm.get('primaryColor')?.value }}</span>
+                                                </div>
+                                            </div>
+
+                                            <!-- Color Presets -->
+                                            <div class="color-presets mt-3">
+                                                <label class="small text-muted">Quick Color Presets:</label>
+                                                <div class="color-preset-grid">
+                                                    <button
+                                                        *ngFor="let color of colorPresets"
+                                                        type="button"
+                                                        class="color-preset-btn"
+                                                        [style.background-color]="color"
+                                                        [class.active]="companyForm.get('primaryColor')?.value === color"
+                                                        (click)="selectColorPreset(color)"
+                                                        [title]="color">
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="card-footer">

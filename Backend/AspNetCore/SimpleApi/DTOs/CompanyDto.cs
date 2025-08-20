@@ -24,6 +24,12 @@ namespace SimpleApi.DTOs
 
         public int BusinessNatureId { get; set; }
 
+        [MaxLength(500)]
+        public string? LogoUrl { get; set; }
+
+        [MaxLength(7)]
+        public string? PrimaryColor { get; set; }
+
         public bool IsActive { get; set; }
 
         public DateTime CreatedAt { get; set; }
@@ -48,6 +54,12 @@ namespace SimpleApi.DTOs
         public string? ContactPerson { get; set; }
 
 		public int BusinessNatureId { get; set; }
+
+        [MaxLength(500)]
+        public string? LogoUrl { get; set; }
+
+        [MaxLength(7)]
+        public string? PrimaryColor { get; set; }
 	}
 
     public class UpdateCompanyDto
@@ -71,6 +83,12 @@ namespace SimpleApi.DTOs
         public string? ContactPerson { get; set; }
 
 		public int BusinessNatureId { get; set; }
+
+        [MaxLength(500)]
+        public string? LogoUrl { get; set; }
+
+        [MaxLength(7)]
+        public string? PrimaryColor { get; set; }
 
 		public bool IsActive { get; set; } = true;
     }

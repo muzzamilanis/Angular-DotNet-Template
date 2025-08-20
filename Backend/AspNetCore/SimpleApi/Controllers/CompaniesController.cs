@@ -174,5 +174,90 @@ namespace SimpleApi.Controllers
                 throw new ArgumentException(ex.Message);
             }
         }
+
+        [HttpPost("upload-logo")]
+        public async Task<ActionResult<string>> UploadLogo([FromForm] IFormFile file)
+        {
+            try
+            {
+                if (file == null || file.Length == 0)
+                {
+                    return BadRequest("No file provided");
+                }
+
+                // Validate file type
+                var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".svg" };
+                var fileExtension = Path.GetExtension(file.FileName).ToLowerInvariant();
+                
+                if (!allowedExtensions.Contains(fileExtension))
+                {
+                    return BadRequest("Invalid file type. Only image files are allowed.");
+                }
+
+                // Validate file size (5MB max)
+                if (file.Length > 5 * 1024 * 1024)
+                {
+                    return BadRequest("File size too large. Maximum 5MB allowed.");
+                }
+
+                // Generate unique filename
+                var fileName = $"{Guid.NewGuid()}{fileExtension}";
+                var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "Assets", "logos");
+                
+                // Create directory if it doesn't exist
+                if (!Directory.Exists(uploadsFolder))
+                {
+                    Directory.CreateDirectory(uploadsFolder);
+                }
+
+                var filePath = Path.Combine(uploadsFolder, fileName);
+
+                // Save file
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await file.CopyToAsync(stream);
+                }
+
+                // Return the relative URL
+                var logoUrl = $"/api/companies/logos/{fileName}";
+                return Ok(new { logoUrl });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Error uploading file: {ex.Message}");
+            }
+        }
+
+        [HttpGet("logos/{fileName}")]
+        [AllowAnonymous]
+        public IActionResult GetLogo(string fileName)
+        {
+            try
+            {
+                var logoPath = Path.Combine(Directory.GetCurrentDirectory(), "Assets", "logos", fileName);
+                
+                if (!System.IO.File.Exists(logoPath))
+                {
+                    return NotFound();
+                }
+
+                var fileExtension = Path.GetExtension(fileName).ToLowerInvariant();
+                var contentType = fileExtension switch
+                {
+                    ".jpg" or ".jpeg" => "image/jpeg",
+                    ".png" => "image/png",
+                    ".gif" => "image/gif",
+                    ".svg" => "image/svg+xml",
+                    _ => "application/octet-stream"
+                };
+
+                var fileBytes = System.IO.File.ReadAllBytes(logoPath);
+                return File(fileBytes, contentType);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Error retrieving logo: {ex.Message}");
+            }
+        }
     }
 }

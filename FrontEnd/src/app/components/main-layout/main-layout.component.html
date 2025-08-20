@@ -10,7 +10,11 @@
         </ul>
 
         <div class="navbar-brand">
-            <span class="brand-text font-weight-light">SmartBizApp</span>
+            <img *ngIf="getCompanyLogo()" 
+                 [src]="getCompanyLogo()" 
+                 alt="Company Logo" 
+                 class="navbar-logo">
+            <span class="brand-text font-weight-light">{{ getCompanyName() }}</span>
         </div>
 
         <ul class="navbar-nav ml-auto">

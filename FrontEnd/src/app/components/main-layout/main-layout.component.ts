@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { NotificationService } from '../../services/notification.service';
+import { CompanyService } from '../../services/company.service';
+import { ThemeService } from '../../services/theme.service';
 
 @Component({
     selector: 'app-main-layout',
@@ -13,6 +15,8 @@ export class MainLayoutComponent implements OnInit {
     sidebarCollapsed = false;
     currentUser: any = null; // Add this property
     isLoadingUser = true; // Add loading state
+    currentCompany: any = null;
+    companyLogo: string | null = null;
 
     // Track open/closed state of menus
     openMenus: { [key: string]: boolean } = {};
@@ -20,11 +24,14 @@ export class MainLayoutComponent implements OnInit {
     constructor(
         private router: Router,
         private authService: AuthService,
-        private notificationService: NotificationService
+        private notificationService: NotificationService,
+        private companyService: CompanyService,
+        private themeService: ThemeService
     ) {}
 
     ngOnInit(): void {
         this.loadCurrentUser(); // Add this method call
+        this.loadCurrentCompany();
     }
 
     // Add this new method to load current user
@@ -43,6 +50,26 @@ export class MainLayoutComponent implements OnInit {
         });
     }
 
+    // Load current company for branding
+    loadCurrentCompany(): void {
+        this.companyService.getCurrentCompany().subscribe({
+            next: (company) => {
+                if (company) {
+                    this.currentCompany = company;
+                    this.companyLogo = company.logoUrl;
+                    
+                    // Apply company theme if available
+                    if (company.primaryColor) {
+                        this.themeService.setTheme(company.primaryColor);
+                    }
+                }
+            },
+            error: (error) => {
+                console.log('No company found or error loading company:', error);
+            },
+        });
+    }
+
     // Add method to get display name
     getUserDisplayName(): string {
         if (this.currentUser) {
@@ -57,6 +84,16 @@ export class MainLayoutComponent implements OnInit {
             return this.currentUser.emailAddress || this.currentUser.email || '';
         }
         return '';
+    }
+
+    // Get company name for branding
+    getCompanyName(): string {
+        return this.currentCompany?.name || 'SmartBizApp';
+    }
+
+    // Get company logo URL
+    getCompanyLogo(): string | null {
+        return this.companyLogo;
     }
 
     // Add method to check if user is super admin

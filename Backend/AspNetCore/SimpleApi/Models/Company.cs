@@ -25,6 +25,12 @@ namespace SimpleApi.Models
         [Required]
         public int BusinessNatureId { get; set; }
 
+        [MaxLength(500)]
+        public string? LogoUrl { get; set; }
+
+        [MaxLength(7)]
+        public string? PrimaryColor { get; set; } = "#667eea";
+
         public bool IsActive { get; set; } = true;
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

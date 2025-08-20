@@ -13,6 +13,8 @@ export interface Company {
     taxNumber?: string;
     registrationNumber?: string;
     logo?: string;
+    logoUrl?: string;
+    primaryColor?: string;
     isActive: boolean;
     BusinessNatureId?: number; // "Digital Marketing" or "General"
     createdDate?: Date;
@@ -33,10 +35,14 @@ export interface CreateCompanyDto {
     taxNumber?: string;
     registrationNumber?: string;
     logo?: string;
+    logoUrl?: string;
+    primaryColor?: string;
     BusinessNatureId?: number;
 }
 
 export interface UpdateCompanyDto extends CreateCompanyDto {
     id: number;
+    logoUrl?: string;
+    primaryColor?: string;
     isActive: boolean;
 }
