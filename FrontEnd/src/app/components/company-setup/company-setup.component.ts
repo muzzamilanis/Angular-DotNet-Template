@@ -6,6 +6,7 @@ import { BusinessNatureService } from '../../services/business-nature.service';
 import { CompanyService } from '../../services/company.service';
 import { AuthService } from '../../services/auth.service';
 import { NotificationService } from '../../services/notification.service';
+import { ThemeService } from '../../services/theme.service';
 
 @Component({
     selector: 'app-company-setup',
@@ -22,6 +23,18 @@ export class CompanySetupComponent implements OnInit {
     isEditing = false;
     currentCompany: any = null;
     currentUserIsSuperAdmin = false;
+    
+    // Logo upload properties
+    selectedLogoFile: File | null = null;
+    logoPreviewUrl: string | null = null;
+    isUploadingLogo = false;
+    
+    // Color picker properties
+    colorPresets = [
+        '#667eea', '#764ba2', '#ff6b6b', '#4ecdc4', 
+        '#45b7d1', '#96ceb4', '#ffeaa7', '#dda0dd',
+        '#98d8c8', '#f7dc6f', '#bb8fce', '#85c1e9'
+    ];
 
     constructor(
         private fb: FormBuilder,
@@ -29,7 +42,8 @@ export class CompanySetupComponent implements OnInit {
         private businessNatureService: BusinessNatureService,
         private companyService: CompanyService,
         private authService: AuthService,
-        private notificationService: NotificationService
+        private notificationService: NotificationService,
+        private themeService: ThemeService
     ) {
         this.companyForm = this.fb.group({
             businessNatureId: ['', Validators.required],
@@ -39,6 +53,8 @@ export class CompanySetupComponent implements OnInit {
             email: ['', [Validators.email, Validators.maxLength(200)]],
             contactPerson: ['', Validators.maxLength(100)],
             customFields: [''],
+            logoUrl: [''],
+            primaryColor: ['#667eea'],
         });
     }
 
@@ -92,7 +108,20 @@ export class CompanySetupComponent implements OnInit {
             phone: company.phone || '',
             email: company.email || '',
             contactPerson: company.contactPerson || '',
+            logoUrl: company.logoUrl || '',
+            primaryColor: company.primaryColor || '#667eea',
         });
+        
+        // Set logo preview if available
+        if (company.logoUrl) {
+            this.logoPreviewUrl = company.logoUrl;
+        }
+        
+        // Apply company theme
+        if (company.primaryColor) {
+            this.themeService.setTheme(company.primaryColor);
+        }
+        
         this.onBusinessNatureChange();
     }
 
@@ -149,6 +178,8 @@ export class CompanySetupComponent implements OnInit {
             email: this.companyForm.value.email,
             contactPerson: this.companyForm.value.contactPerson,
             businessNatureId: parseInt(this.companyForm.value.businessNatureId),
+            logoUrl: this.companyForm.value.logoUrl,
+            primaryColor: this.companyForm.value.primaryColor,
             isActive: true,
         };
 
@@ -157,6 +188,10 @@ export class CompanySetupComponent implements OnInit {
                 console.log('Company profile updated:', updatedCompany);
                 this.notificationService.showSuccess('Company updated successfully!');
                 this.currentCompany = updatedCompany;
+                
+                // Apply the new theme
+                this.themeService.setTheme(this.companyForm.value.primaryColor);
+                
                 this.isSubmitting = false;
             },
             error: (error) => {
@@ -169,6 +204,72 @@ export class CompanySetupComponent implements OnInit {
         });
     }
 
+    onLogoFileSelected(event: any): void {
+        const file = event.target.files[0];
+        if (file) {
+            // Validate file type
+            const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/svg+xml'];
+            if (!allowedTypes.includes(file.type)) {
+                this.notificationService.showError('Invalid file type. Please select an image file.');
+                return;
+            }
+
+            // Validate file size (5MB max)
+            if (file.size > 5 * 1024 * 1024) {
+                this.notificationService.showError('File size too large. Maximum 5MB allowed.');
+                return;
+            }
+
+            this.selectedLogoFile = file;
+            
+            // Create preview
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                this.logoPreviewUrl = e.target?.result as string;
+            };
+            reader.readAsDataURL(file);
+            
+            // Upload the logo
+            this.uploadLogo();
+        }
+    }
+
+    uploadLogo(): void {
+        if (!this.selectedLogoFile) return;
+
+        this.isUploadingLogo = true;
+        this.companyService.uploadLogo(this.selectedLogoFile).subscribe({
+            next: (response) => {
+                this.companyForm.patchValue({ logoUrl: response.logoUrl });
+                this.notificationService.showSuccess('Logo uploaded successfully!');
+                this.isUploadingLogo = false;
+            },
+            error: (error) => {
+                console.error('Error uploading logo:', error);
+                this.notificationService.showError('Error uploading logo: ' + (error.error?.message || error.message));
+                this.isUploadingLogo = false;
+                this.selectedLogoFile = null;
+                this.logoPreviewUrl = null;
+            },
+        });
+    }
+
+    removeLogo(): void {
+        this.selectedLogoFile = null;
+        this.logoPreviewUrl = null;
+        this.companyForm.patchValue({ logoUrl: '' });
+    }
+
+    onColorChange(color: string): void {
+        this.companyForm.patchValue({ primaryColor: color });
+        // Apply theme preview
+        this.themeService.setTheme(color);
+    }
+
+    selectColorPreset(color: string): void {
+        this.onColorChange(color);
+    }
+
     private markFormGroupTouched(): void {
         Object.keys(this.companyForm.controls).forEach((key) => {
             const control = this.companyForm.get(key);
@@ -179,6 +280,8 @@ export class CompanySetupComponent implements OnInit {
     resetForm(): void {
         this.companyForm.reset();
         this.selectedBusinessNature = undefined;
+        this.selectedLogoFile = null;
+        this.logoPreviewUrl = null;
 
         // Reset form to initial state with default values
         this.companyForm.patchValue({
@@ -188,11 +291,16 @@ export class CompanySetupComponent implements OnInit {
             phone: '',
             email: '',
             contactPerson: '',
+            logoUrl: '',
+            primaryColor: '#667eea',
         });
 
         // Clear all validation states
         this.companyForm.markAsUntouched();
         this.companyForm.markAsPristine();
+
+        // Reset theme to default
+        this.themeService.setTheme('#667eea');
 
         // If editing, reload the current company data
         if (this.isEditing && this.currentCompany) {
