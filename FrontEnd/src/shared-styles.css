@@ -400,3 +400,131 @@ select.form-control.loading,
         transform: rotate(360deg);
     }
 }
+
+/* === THEME VARIABLES AND GLOBAL OVERRIDES === */
+/* Defaults (ThemeService overrides these at runtime) */
+:root {
+    --primary-color: #667eea;
+    --primary-rgb: 102, 126, 234;
+    --primary-contrast: #ffffff;
+    --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+/* Common primary surfaces use the dynamic theme */
+.btn-primary,
+.content-header,
+.card-header,
+.dropdown-item:hover,
+.file-upload-btn,
+.input-group-text {
+    background: var(--primary-gradient) !important;
+    color: var(--primary-contrast) !important;
+    border-color: var(--primary-color) !important;
+}
+
+/* Focus and checked states */
+.form-control:focus,
+select.form-control:focus,
+.form-check-input:checked,
+.form-check-input:focus {
+    border-color: var(--primary-color) !important;
+    box-shadow: 0 0 0 0.2rem rgba(var(--primary-rgb), 0.25) !important;
+}
+
+/* === SIDEBAR OVERRIDES === */
+/* Entire sidebar background */
+.main-sidebar {
+    background-color: var(--primary-color) !important;
+}
+
+/* Inner sidebar container (AdminLTE places menu here) */
+.main-sidebar .sidebar {
+    background-color: transparent !important; /* keep parent color */
+}
+
+/* Brand area strip at the top of the sidebar */
+.main-sidebar .brand-link {
+    background-color: var(--primary-color) !important;
+    color: var(--primary-contrast) !important;
+}
+
+/* Sidebar nav items */
+.main-sidebar .nav-sidebar > .nav-item > .nav-link {
+    color: #ffffff !important;
+}
+.main-sidebar .nav-sidebar > .nav-item > .nav-link:hover,
+.main-sidebar .nav-sidebar > .nav-item > .nav-link.active {
+    background-color: rgba(var(--primary-rgb), 0.25) !important;
+    color: #ffffff !important;
+    border-radius: .25rem;
+}
+
+/* Optional: icons/text inside sidebar keep contrast */
+.main-sidebar .nav-icon,
+.main-sidebar .brand-text {
+    color: #ffffff !important;
+}
+
+/* === ENFORCED PRIMARY SURFACES (NAVBAR, SIDEBAR, GRIDS) === */
+
+/* Top navbar (includes sidebar toggle button area) */
+.main-header,
+.main-header.navbar {
+    background: var(--primary-gradient) !important;
+    color: var(--primary-contrast) !important;
+}
+
+/* Sidebar brand area (logo + company name) */
+.main-sidebar .brand-link {
+    background: var(--primary-gradient) !important;
+    color: var(--primary-contrast) !important;
+}
+
+/* Sidebar active item */
+.main-sidebar .nav-sidebar > .nav-item > .nav-link.active {
+    background: var(--primary-gradient) !important;
+    color: var(--primary-contrast) !important;
+}
+
+/* Grid headers (Bootstrap tables + PrimeNG) */
+.table thead th,
+.table > thead > tr > th,
+.dataTable thead th,
+.p-datatable .p-datatable-thead > tr > th {
+    background: var(--primary-gradient) !important;
+    color: var(--primary-contrast) !important;
+    border-color: var(--primary-color) !important;
+}
+
+/* Enforce dynamic theme on button hover/active/focus states */
+.btn.btn-primary:hover,
+.btn.btn-primary:focus,
+.btn.btn-primary:active,
+.show > .btn.btn-primary.dropdown-toggle {
+    background: var(--primary-gradient) !important;
+    border-color: var(--primary-color) !important;
+    color: var(--primary-contrast) !important;
+    box-shadow: 0 0 0 0.2rem rgba(var(--primary-rgb), 0.25) !important;
+}
+
+/* Outline primary should also flip to primary theme on hover */
+.btn.btn-outline-primary {
+    color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+}
+.btn.btn-outline-primary:hover,
+.btn.btn-outline-primary:focus,
+.btn.btn-outline-primary:active {
+    background: var(--primary-gradient) !important;
+    color: var(--primary-contrast) !important;
+    border-color: var(--primary-color) !important;
+}
+
+/* Custom primary-like action buttons */
+.file-upload-btn:hover,
+.file-upload-btn:focus,
+.file-upload-btn:active {
+    background: var(--primary-gradient) !important;
+    color: var(--primary-contrast) !important;
+    border-color: var(--primary-color) !important;
+}

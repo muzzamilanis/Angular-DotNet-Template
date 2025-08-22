@@ -21,9 +21,17 @@ export class ThemeService {
     }
 
     setTheme(primaryColor: string): void {
-        this.currentThemeSubject.next(primaryColor);
-        this.applyTheme(primaryColor);
-        this.saveTheme(primaryColor);
+        const color = this.normalize(primaryColor) ?? '#667eea';
+        this.currentThemeSubject.next(color);
+        this.applyTheme(color);
+        this.saveTheme(color);
+    }
+
+    private normalize(hex?: string | null): string | null {
+        if (!hex) return null;
+        const c = hex.trim();
+        if (/^#?[0-9a-f]{6}$/i.test(c)) return c.startsWith('#') ? c : `#${c}`;
+        return null;
     }
 
     private applyTheme(primaryColor: string): void {

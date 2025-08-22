@@ -7,6 +7,7 @@ import { CompanyService } from '../../services/company.service';
 import { AuthService } from '../../services/auth.service';
 import { NotificationService } from '../../services/notification.service';
 import { ThemeService } from '../../services/theme.service';
+import { environment } from '../../../environments/environment';
 
 @Component({
     selector: 'app-company-setup',
@@ -113,9 +114,17 @@ export class CompanySetupComponent implements OnInit {
         });
         
         // Set logo preview if available
-        if (company.logoUrl) {
-            this.logoPreviewUrl = company.logoUrl;
-        }
+       if (company.logoUrl) {
+        const companyLogo = this.companyService.getLogo(company.logoUrl).subscribe({
+            next: (logo) => {
+                this.logoPreviewUrl = URL.createObjectURL(logo);
+                console.log('Logo URL:', this.logoPreviewUrl);
+            },
+            error: (error) => {
+                console.error('Error loading logo:', error);
+            }
+        });
+    }
         
         // Apply company theme
         if (company.primaryColor) {
@@ -188,10 +197,10 @@ export class CompanySetupComponent implements OnInit {
                 console.log('Company profile updated:', updatedCompany);
                 this.notificationService.showSuccess('Company updated successfully!');
                 this.currentCompany = updatedCompany;
-                
-                // Apply the new theme
-                this.themeService.setTheme(this.companyForm.value.primaryColor);
-                
+
+                // Use server-confirmed value to ensure consistency
+                this.themeService.setTheme(updatedCompany?.primaryColor || '#667eea');
+
                 this.isSubmitting = false;
             },
             error: (error) => {

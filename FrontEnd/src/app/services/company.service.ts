@@ -54,6 +54,10 @@ export class CompanyService {
         return this.http.post<any>(`${this.apiUrl}/upload-logo`, formData);
     }
 
+    getLogo(fileName: string): Observable<Blob> {
+        return this.http.get(`${this.apiUrl}/logos/${fileName}`, { responseType: 'blob' });
+    }
+
     private getMockCompanies(): Company[] {
         // Mock data for demonstration - can be replaced with real API call
         const mockCompanies: Company[] = [

@@ -29,7 +29,7 @@ namespace SimpleApi.Models
         public string? LogoUrl { get; set; }
 
         [MaxLength(7)]
-        public string? PrimaryColor { get; set; } = "#667eea";
+        public string? PrimaryColor { get; set; }
 
         public bool IsActive { get; set; } = true;
 

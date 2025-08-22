@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
@@ -26,6 +26,24 @@ import { WriterDashboardComponent } from './components/writer-portal/writer-dash
 import { BrandingDemoComponent } from './components/branding-demo/branding-demo.component';
 // import { CurrencySetupComponent } from './components/currency-setup/currency-setup.component';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
+import { ThemeService } from './services/theme.service';
+import { CompanyService } from './services/company.service';
+
+// Initialize the theme before the app renders
+export function initializeAppTheme(themeService: ThemeService, companyService: CompanyService) {
+    return () =>
+        new Promise<void>((resolve) => {
+            companyService.getCurrentCompany().subscribe({
+                next: (company) => {
+                    if (company?.primaryColor) {
+                        themeService.setTheme(company.primaryColor);
+                    }
+                    resolve();
+                },
+                error: () => resolve(), // continue even if not authenticated yet
+            });
+        });
+}
 
 @NgModule({
     declarations: [
@@ -62,6 +80,12 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
         {
             provide: HTTP_INTERCEPTORS,
             useClass: AuthInterceptor,
+            multi: true,
+        },
+        {
+            provide: APP_INITIALIZER,
+            useFactory: initializeAppTheme,
+            deps: [ThemeService, CompanyService],
             multi: true,
         },
     ],

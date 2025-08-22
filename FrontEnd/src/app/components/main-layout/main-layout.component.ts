@@ -56,12 +56,21 @@ export class MainLayoutComponent implements OnInit {
             next: (company) => {
                 if (company) {
                     this.currentCompany = company;
-                    this.companyLogo = company.logoUrl;
-                    
-                    // Apply company theme if available
-                    if (company.primaryColor) {
-                        this.themeService.setTheme(company.primaryColor);
-                    }
+                    console.log('Current Company:', this.currentCompany);
+                    const companyLogo = this.companyService.getLogo(this.currentCompany.logoUrl).subscribe({
+                        next: (logo) => {
+                            this.companyLogo = URL.createObjectURL(logo);
+                            // Apply company theme
+                            if (this.currentCompany.primaryColor) {
+                                this.themeService.setTheme(this.currentCompany.primaryColor);
+                            }
+                            console.log('Theme Color:', this.currentCompany.primaryColor);
+                            console.log('Logo URL:', this.companyLogo);
+                        },
+                        error: (error) => {
+                            console.error('Error loading logo:', error);
+                        }
+                    });
                 }
             },
             error: (error) => {
@@ -93,7 +102,7 @@ export class MainLayoutComponent implements OnInit {
 
     // Get company logo URL
     getCompanyLogo(): string | null {
-        return this.companyLogo;
+        return this.companyLogo || null;
     }
 
     // Add method to check if user is super admin

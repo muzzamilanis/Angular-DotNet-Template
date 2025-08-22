@@ -174,8 +174,8 @@ namespace SimpleApi.Controllers
                 throw new ArgumentException(ex.Message);
             }
         }
-
-        [HttpPost("upload-logo")]
+		[ApiExplorerSettings(IgnoreApi = true)]
+		[HttpPost("upload-logo")]
         public async Task<ActionResult<string>> UploadLogo([FromForm] IFormFile file)
         {
             try
@@ -219,7 +219,7 @@ namespace SimpleApi.Controllers
                 }
 
                 // Return the relative URL
-                var logoUrl = $"/api/companies/logos/{fileName}";
+                var logoUrl = fileName;
                 return Ok(new { logoUrl });
             }
             catch (Exception ex)
@@ -229,7 +229,6 @@ namespace SimpleApi.Controllers
         }
 
         [HttpGet("logos/{fileName}")]
-        [AllowAnonymous]
         public IActionResult GetLogo(string fileName)
         {
             try
