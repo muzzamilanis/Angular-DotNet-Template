@@ -3,7 +3,7 @@
     <div class="col-md-12">
         <div class="card card-primary">
             <div class="card-header">
-                <h3 class="card-title">{{ editingOrder ? 'Edit' : 'Create' }} Sale Order</h3>
+                <h3 class="card-title">{{ editingOrder ? 'Edit' : 'Create' }} {{ isDigitalMarketing ? 'Order Log' : 'Sale Order' }}</h3>
             </div>
             <form [formGroup]="saleOrderForm" (ngSubmit)="onSubmit()">
                 <div class="card-body">
@@ -77,7 +77,8 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-md-6">
+                        <!-- Service Type field - hidden for Digital Marketing businesses as per requirements -->
+                        <div class="col-md-6" *ngIf="isDigitalMarketing && false">
                             <div class="form-group">
                                 <label for="serviceTypeId">
                                     <i class="fas fa-cogs"></i>
@@ -954,6 +955,15 @@
                         <i class="fas fa-times"></i>
                         Cancel
                     </button>
+                    <!-- Create Project button for Digital Marketing businesses -->
+                    <button 
+                        type="button" 
+                        class="btn btn-success ml-2" 
+                        *ngIf="isDigitalMarketing"
+                        (click)="openCreateProjectModal()">
+                        <i class="fas fa-plus"></i>
+                        Create Project
+                    </button>
                 </div>
             </form>
         </div>
@@ -965,7 +975,7 @@
     <div class="col-md-12">
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title">Sale Orders</h3>
+                <h3 class="card-title">{{ isDigitalMarketing ? 'Order Log' : 'Sale Orders' }}</h3>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -1053,6 +1063,143 @@
                     </table>
                 </div>
             </div>
+        </div>
+    </div>
+</div>
+
+<!-- Project Creation Modal for Digital Marketing -->
+<div class="modal fade" id="createProjectModal" tabindex="-1" role="dialog" *ngIf="isDigitalMarketing">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">
+                    <i class="fas fa-project-diagram mr-2"></i>
+                    Create New Project
+                </h4>
+                <button type="button" class="close" (click)="closeCreateProjectModal()" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            
+            <form [formGroup]="projectForm" (ngSubmit)="onCreateProject()" *ngIf="projectForm">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="modalProjectName">
+                                    <i class="fas fa-project-diagram"></i>
+                                    Project Name *
+                                </label>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="modalProjectName"
+                                    formControlName="projectName"
+                                    placeholder="Enter project name"
+                                    [class.is-invalid]="
+                                        projectForm.get('projectName')?.invalid &&
+                                        projectForm.get('projectName')?.touched
+                                    " />
+                                <div
+                                    class="invalid-feedback"
+                                    *ngIf="
+                                        projectForm.get('projectName')?.invalid &&
+                                        projectForm.get('projectName')?.touched
+                                    ">
+                                    <div *ngIf="projectForm.get('projectName')?.errors?.['required']">
+                                        Project name is required
+                                    </div>
+                                    <div *ngIf="projectForm.get('projectName')?.errors?.['maxlength']">
+                                        Project name must be 200 characters or less
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="modalProjectDescription">
+                                    <i class="fas fa-align-left"></i>
+                                    Project Description
+                                </label>
+                                <textarea
+                                    class="form-control"
+                                    id="modalProjectDescription"
+                                    formControlName="projectDescription"
+                                    rows="3"
+                                    placeholder="Enter project description (optional)"
+                                    [class.is-invalid]="
+                                        projectForm.get('projectDescription')?.invalid &&
+                                        projectForm.get('projectDescription')?.touched
+                                    ">
+                                </textarea>
+                                <div
+                                    class="invalid-feedback"
+                                    *ngIf="
+                                        projectForm.get('projectDescription')?.invalid &&
+                                        projectForm.get('projectDescription')?.touched
+                                    ">
+                                    <div *ngIf="projectForm.get('projectDescription')?.errors?.['maxlength']">
+                                        Description must be 1000 characters or less
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="modalProjectStatus">
+                                    <i class="fas fa-info-circle"></i>
+                                    Project Status *
+                                </label>
+                                <select
+                                    class="form-control"
+                                    id="modalProjectStatus"
+                                    formControlName="projectStatus">
+                                    <option value="0">Active</option>
+                                    <option value="1">In Progress</option>
+                                    <option value="2">Completed</option>
+                                    <option value="3">On Hold</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <div class="custom-control custom-checkbox mt-4">
+                                    <input
+                                        type="checkbox"
+                                        id="modalIsActive"
+                                        class="custom-control-input"
+                                        formControlName="isActive" />
+                                    <label for="modalIsActive" class="custom-control-label">Active Project</label>
+                                </div>
+                                <small class="form-text text-muted">
+                                    Inactive projects will not appear in dropdown selections
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" (click)="closeCreateProjectModal()">
+                        <i class="fas fa-times"></i>
+                        Cancel
+                    </button>
+                    <button
+                        type="submit"
+                        class="btn btn-primary"
+                        [disabled]="projectForm.invalid || isCreatingProject">
+                        <span *ngIf="isCreatingProject" class="spinner-border spinner-border-sm mr-2"></span>
+                        <i class="fas fa-save" *ngIf="!isCreatingProject"></i>
+                        {{ isCreatingProject ? 'Creating...' : 'Create Project' }}
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
