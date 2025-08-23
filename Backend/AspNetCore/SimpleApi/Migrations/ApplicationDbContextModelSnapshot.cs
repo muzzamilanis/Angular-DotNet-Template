@@ -165,8 +165,7 @@ namespace SimpleApi.Migrations
                             Email = "admin@defaultcompany.com",
                             IsActive = true,
                             Name = "Default Company",
-                            Phone = "555-0001",
-                            PrimaryColor = "#667eea"
+                            Phone = "555-0001"
                         },
                         new
                         {
@@ -178,8 +177,7 @@ namespace SimpleApi.Migrations
                             Email = "admin@digitalmarketingpro.com",
                             IsActive = true,
                             Name = "Digital Marketing Pro",
-                            Phone = "555-0002",
-                            PrimaryColor = "#667eea"
+                            Phone = "555-0002"
                         });
                 });
 
@@ -368,12 +366,17 @@ namespace SimpleApi.Migrations
                     b.Property<int>("ProjectStatus")
                         .HasColumnType("integer");
 
+                    b.Property<int?>("ServiceTypeId")
+                        .HasColumnType("integer");
+
                     b.Property<DateTime>("UpdatedDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CompanyId");
+
+                    b.HasIndex("ServiceTypeId");
 
                     b.ToTable("Projects");
 
@@ -387,6 +390,7 @@ namespace SimpleApi.Migrations
                             ProjectDescription = "Corporate website development project",
                             ProjectName = "Website Development",
                             ProjectStatus = 1,
+                            ServiceTypeId = 2,
                             UpdatedDate = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
                         },
                         new
@@ -398,6 +402,7 @@ namespace SimpleApi.Migrations
                             ProjectDescription = "Search engine optimization campaign",
                             ProjectName = "SEO Campaign",
                             ProjectStatus = 1,
+                            ServiceTypeId = 6,
                             UpdatedDate = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
                         },
                         new
@@ -409,6 +414,7 @@ namespace SimpleApi.Migrations
                             ProjectDescription = "Comprehensive social media marketing strategy",
                             ProjectName = "Social Media Marketing",
                             ProjectStatus = 1,
+                            ServiceTypeId = 4,
                             UpdatedDate = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
                         },
                         new
@@ -420,6 +426,7 @@ namespace SimpleApi.Migrations
                             ProjectDescription = "Blog and content creation for digital presence",
                             ProjectName = "Content Creation Campaign",
                             ProjectStatus = 3,
+                            ServiceTypeId = 1,
                             UpdatedDate = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
                         });
                 });
@@ -820,7 +827,14 @@ namespace SimpleApi.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("SimpleApi.Models.ServiceType", "ServiceType")
+                        .WithMany()
+                        .HasForeignKey("ServiceTypeId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.Navigation("Company");
+
+                    b.Navigation("ServiceType");
                 });
 
             modelBuilder.Entity("SimpleApi.Models.SaleOrder", b =>

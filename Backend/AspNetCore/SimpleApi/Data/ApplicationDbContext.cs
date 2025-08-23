@@ -62,6 +62,11 @@ namespace SimpleApi.Data
 					  .WithMany(e => e.Projects)
 					  .HasForeignKey(e => e.CompanyId)
 					  .OnDelete(DeleteBehavior.Restrict);
+
+				entity.HasOne(e => e.ServiceType)
+					  .WithMany()
+					  .HasForeignKey(e => e.ServiceTypeId)
+					  .OnDelete(DeleteBehavior.SetNull);
 			});
 
 			// Configure ServiceType
@@ -240,10 +245,10 @@ namespace SimpleApi.Data
 
 			// Seed data for Projects
 			modelBuilder.Entity<Project>().HasData(
-				new Project { Id = 1, ProjectName = "Website Development", ProjectDescription = "Corporate website development project", ProjectStatus = ProjectStatus.Active, CreatedDate = seedDate, UpdatedDate = seedDate, CompanyId = 1, IsActive = true },
-				new Project { Id = 2, ProjectName = "SEO Campaign", ProjectDescription = "Search engine optimization campaign", ProjectStatus = ProjectStatus.Active, CreatedDate = seedDate, UpdatedDate = seedDate, CompanyId = 1, IsActive = true },
-				new Project { Id = 3, ProjectName = "Social Media Marketing", ProjectDescription = "Comprehensive social media marketing strategy", ProjectStatus = ProjectStatus.Active, CreatedDate = seedDate, UpdatedDate = seedDate, CompanyId = 2, IsActive = true },
-				new Project { Id = 4, ProjectName = "Content Creation Campaign", ProjectDescription = "Blog and content creation for digital presence", ProjectStatus = ProjectStatus.Completed, CreatedDate = seedDate, UpdatedDate = seedDate, CompanyId = 2, IsActive = true }
+				new Project { Id = 1, ProjectName = "Website Development", ProjectDescription = "Corporate website development project", ProjectStatus = ProjectStatus.Active, ServiceTypeId = 2, CreatedDate = seedDate, UpdatedDate = seedDate, CompanyId = 1, IsActive = true },
+				new Project { Id = 2, ProjectName = "SEO Campaign", ProjectDescription = "Search engine optimization campaign", ProjectStatus = ProjectStatus.Active, ServiceTypeId = 6, CreatedDate = seedDate, UpdatedDate = seedDate, CompanyId = 1, IsActive = true },
+				new Project { Id = 3, ProjectName = "Social Media Marketing", ProjectDescription = "Comprehensive social media marketing strategy", ProjectStatus = ProjectStatus.Active, ServiceTypeId = 4, CreatedDate = seedDate, UpdatedDate = seedDate, CompanyId = 2, IsActive = true },
+				new Project { Id = 4, ProjectName = "Content Creation Campaign", ProjectDescription = "Blog and content creation for digital presence", ProjectStatus = ProjectStatus.Completed, ServiceTypeId = 1, CreatedDate = seedDate, UpdatedDate = seedDate, CompanyId = 2, IsActive = true }
 			);
 
 			// Seed data for ServiceTypes
