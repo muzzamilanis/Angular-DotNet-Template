@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ValidatorFn, AbstractControl, ValidationErrors, FormArray } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router'; // <-- add
 import { SaleOrderService } from '../../services/sale-order.service';
@@ -18,6 +18,7 @@ import { Company } from '../../models/company.model';
 import { Project } from '../../models/project.model';
 import { NotificationService } from '../../services/notification.service';
 import { BusinessNatureType } from '../../models/multi-tenant.model';
+import { ProjectStatus, CreateProjectDto } from '../../models/project.model';
 
 @Component({
     selector: 'app-sale-order',
@@ -47,6 +48,11 @@ export class SaleOrderComponent implements OnInit {
     selectedCurrencySymbol = '';
     currentExchangeRate = 0;
     isLoadingRate = false;
+
+    // Project creation modal properties
+    projectForm: FormGroup | null = null;
+    isCreatingProject = false;
+    @ViewChild('createProjectModal') createProjectModal!: ElementRef;
 
     readonly statusOptions = ['New', 'InProgress', 'Completed', 'Abandon', 'workSubmittedByWriter'];
     readonly paymentStatusOptions = ['Pending', 'PartialPaid', 'FullPaid'];
@@ -121,6 +127,7 @@ export class SaleOrderComponent implements OnInit {
                 if (this.isDigitalMarketing) {
                     this.loadProjects();
                     this.loadServiceTypes();
+                    this.initializeProjectForm();
                 }
 
                 // Add initial item only for non-digital marketing
@@ -835,5 +842,115 @@ export class SaleOrderComponent implements OnInit {
                 }
             });
         });
+    }
+
+    // Project creation modal methods
+    private initializeProjectForm(): void {
+        this.projectForm = this.fb.group({
+            projectName: ['', [Validators.required, Validators.maxLength(200)]],
+            projectDescription: ['', Validators.maxLength(1000)],
+            projectStatus: [ProjectStatus.Active, Validators.required],
+            isActive: [true],
+        });
+    }
+
+    openCreateProjectModal(): void {
+        if (!this.projectForm) {
+            this.initializeProjectForm();
+        } else {
+            this.projectForm.reset({
+                projectName: '',
+                projectDescription: '',
+                projectStatus: ProjectStatus.Active,
+                isActive: true
+            });
+        }
+
+        // Use a more Angular-friendly approach for modal
+        // This will need to be handled by the parent component or a service
+        this.showCreateProjectModal();
+    }
+
+    private showCreateProjectModal(): void {
+        // Show the modal using class manipulation
+        const modalElement = document.getElementById('createProjectModal');
+        if (modalElement) {
+            modalElement.style.display = 'block';
+            modalElement.classList.add('show');
+            document.body.classList.add('modal-open');
+            
+            // Add backdrop
+            const backdrop = document.createElement('div');
+            backdrop.className = 'modal-backdrop fade show';
+            backdrop.id = 'modalBackdrop';
+            document.body.appendChild(backdrop);
+        }
+    }
+
+    private hideCreateProjectModal(): void {
+        const modalElement = document.getElementById('createProjectModal');
+        if (modalElement) {
+            modalElement.style.display = 'none';
+            modalElement.classList.remove('show');
+            document.body.classList.remove('modal-open');
+            
+            // Remove backdrop
+            const backdrop = document.getElementById('modalBackdrop');
+            if (backdrop) {
+                backdrop.remove();
+            }
+        }
+    }
+
+    onCreateProject(): void {
+        if (this.projectForm && this.projectForm.valid) {
+            this.isCreatingProject = true;
+            const formValue = this.projectForm.value;
+
+            const createDto: CreateProjectDto = {
+                projectName: formValue.projectName,
+                projectDescription: formValue.projectDescription,
+                projectStatus: formValue.projectStatus,
+                isActive: formValue.isActive
+            };
+
+            this.projectService.create(createDto).subscribe({
+                next: (response) => {
+                    this.notificationService.showSuccess('Project created successfully!');
+                    
+                    // Close the modal
+                    this.hideCreateProjectModal();
+                    
+                    // Reload projects list
+                    this.loadProjects();
+                    
+                    // Optionally, select the newly created project in the form
+                    if (response.id) {
+                        this.saleOrderForm.get('projectId')?.setValue(response.id);
+                    }
+                    
+                    this.isCreatingProject = false;
+                },
+                error: (error) => {
+                    console.error('Error creating project:', error);
+                    this.notificationService.showError('Failed to create project. Please try again.');
+                    this.isCreatingProject = false;
+                }
+            });
+        } else {
+            // Mark all fields as touched to show validation errors
+            this.markFormGroupTouched(this.projectForm!);
+        }
+    }
+
+    private markFormGroupTouched(formGroup: FormGroup): void {
+        Object.keys(formGroup.controls).forEach(key => {
+            const control = formGroup.get(key);
+            control?.markAsTouched();
+        });
+    }
+
+    closeCreateProjectModal(): void {
+        this.hideCreateProjectModal();
     }
 }

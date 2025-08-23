@@ -4,6 +4,7 @@ import { AuthService } from '../../services/auth.service';
 import { NotificationService } from '../../services/notification.service';
 import { CompanyService } from '../../services/company.service';
 import { ThemeService } from '../../services/theme.service';
+import { BusinessNatureType } from '../../models/multi-tenant.model';
 
 @Component({
     selector: 'app-main-layout',
@@ -113,6 +114,11 @@ export class MainLayoutComponent implements OnInit {
     // Add method to check if user is writer
     isWriter(): boolean {
         return this.authService.isWriter();
+    }
+
+    // Check if current company is Digital Marketing
+    isDigitalMarketing(): boolean {
+        return this.currentCompany?.businessNatureId === BusinessNatureType.DIGITALMARKETINGAGENCY;
     }
 
     toggleSidebar(): void {

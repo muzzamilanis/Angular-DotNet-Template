@@ -122,13 +122,13 @@
                             </p>
                         </a>
                         <ul class="nav nav-treeview">
-                            <li class="nav-item">
+                            <li class="nav-item" *ngIf="!isDigitalMarketing()">
                                 <a routerLink="/masters/products" class="nav-link" routerLinkActive="active">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Products</p>
                                 </a>
                             </li>
-                            <li class="nav-item">
+                            <li class="nav-item" *ngIf="!isDigitalMarketing()">
                                 <a routerLink="/masters/customers" class="nav-link" routerLinkActive="active">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Customers</p>
@@ -140,7 +140,7 @@
                                     <p>Projects</p>
                                 </a>
                             </li>
-                            <li class="nav-item">
+                            <li class="nav-item" *ngIf="!isDigitalMarketing()">
                                 <a routerLink="/masters/service-types" class="nav-link" routerLinkActive="active">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Service Types</p>
@@ -168,7 +168,7 @@
                             <li class="nav-item">
                                 <a routerLink="/transactions/sale-orders" class="nav-link" routerLinkActive="active">
                                     <i class="far fa-circle nav-icon"></i>
-                                    <p>Sale Orders</p>
+                                    <p>Order Log</p>
                                 </a>
                             </li>
                         </ul>
