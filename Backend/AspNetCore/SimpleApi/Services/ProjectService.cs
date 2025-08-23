@@ -22,6 +22,7 @@ namespace SimpleApi.Services
             var query = _context.Projects
                 .Where(p => p.CompanyId == companyId)
                 .Include(p => p.SaleOrders)
+                .Include(p => p.ServiceType)
                 .AsQueryable();
 
             // Apply filtering
@@ -75,6 +76,8 @@ namespace SimpleApi.Services
                     ProjectName = p.ProjectName,
                     ProjectDescription = p.ProjectDescription,
                     ProjectStatus = p.ProjectStatus,
+                    ServiceTypeId = p.ServiceTypeId,
+                    ServiceTypeName = p.ServiceType != null ? p.ServiceType.Name : null,
                     CreatedDate = p.CreatedDate,
                     UpdatedDate = p.UpdatedDate,
                     IsActive = p.IsActive,
@@ -89,6 +92,7 @@ namespace SimpleApi.Services
         {
             var project = await _context.Projects
                 .Include(p => p.Company)
+                .Include(p => p.ServiceType)
                 .FirstOrDefaultAsync(p => p.Id == id && p.CompanyId == companyId);
 
             if (project == null)
@@ -96,6 +100,7 @@ namespace SimpleApi.Services
 
             var projectDto = _mapper.Map<ProjectDto>(project);
             projectDto.CompanyName = project.Company?.Name;
+            projectDto.ServiceTypeName = project.ServiceType?.Name;
 
             return projectDto;
         }
@@ -158,6 +163,7 @@ namespace SimpleApi.Services
         {
             var projects = await _context.Projects
                 .Where(p => p.CompanyId == companyId && p.IsActive)
+                .Include(p => p.ServiceType)
                 .OrderBy(p => p.ProjectName)
                 .ToListAsync();
 

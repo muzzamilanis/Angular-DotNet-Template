@@ -79,6 +79,27 @@
                         </div>
                     </div>
 
+                    <!-- Service Type Selection -->
+                    <div class="form-group" *ngIf="isDigitalMarketing">
+                        <label for="serviceTypeId">
+                            <i class="fas fa-cogs"></i>
+                            Service Type
+                        </label>
+                        <select
+                            id="serviceTypeId"
+                            class="form-control"
+                            formControlName="serviceTypeId"
+                            [class.is-invalid]="isFieldInvalid('serviceTypeId')">
+                            <option value="">🔧 Select service type</option>
+                            <option *ngFor="let serviceType of serviceTypes" [value]="serviceType.id">
+                                {{ serviceType.name }}
+                            </option>
+                        </select>
+                        <div class="invalid-feedback" *ngIf="isFieldInvalid('serviceTypeId')">
+                            {{ getFieldError('serviceTypeId') }}
+                        </div>
+                    </div>
+
                     <!-- Is Active -->
                     <div class="form-group">
                         <div class="custom-control custom-checkbox">

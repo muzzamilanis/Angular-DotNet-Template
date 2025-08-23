@@ -69,20 +69,31 @@
                                     <i class="fas fa-project-diagram"></i>
                                     Project
                                 </label>
-                                <select class="form-control" id="projectId" formControlName="projectId">
-                                    <option value="">🎯 Select Project</option>
-                                    <option *ngFor="let project of projects" [value]="project.id">
-                                        {{ project.projectName }}
-                                    </option>
-                                </select>
+                                <div class="input-group">
+                                    <select class="form-control" id="projectId" formControlName="projectId">
+                                        <option value="">🎯 Select Project</option>
+                                        <option *ngFor="let project of projects" [value]="project.id">
+                                            {{ project.projectName }}
+                                        </option>
+                                    </select>
+                                    <div class="input-group-append">
+                                        <button 
+                                            type="button" 
+                                            class="btn btn-outline-success" 
+                                            (click)="openCreateProjectModal()"
+                                            title="Create New Project">
+                                            <i class="fas fa-plus"></i>
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <!-- Service Type field - hidden for Digital Marketing businesses as per requirements -->
-                        <div class="col-md-6" *ngIf="isDigitalMarketing && false">
+                        <!-- Service Type field -->
+                        <div class="col-md-6" *ngIf="isDigitalMarketing">
                             <div class="form-group">
                                 <label for="serviceTypeId">
                                     <i class="fas fa-cogs"></i>
-                                    Service Type *
+                                    Service Type
                                 </label>
                                 <select
                                     class="form-control"
@@ -1160,10 +1171,9 @@
                                     class="form-control"
                                     id="modalProjectStatus"
                                     formControlName="projectStatus">
-                                    <option value="0">Active</option>
-                                    <option value="1">In Progress</option>
-                                    <option value="2">Completed</option>
-                                    <option value="3">On Hold</option>
+                                    <option value="1">Active</option>
+                                    <option value="2">Inactive</option>
+                                    <option value="3">Completed</option>
                                 </select>
                             </div>
                         </div>
@@ -1180,6 +1190,26 @@
                                 <small class="form-text text-muted">
                                     Inactive projects will not appear in dropdown selections
                                 </small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="modalServiceType">
+                                    <i class="fas fa-cogs"></i>
+                                    Service Type
+                                </label>
+                                <select
+                                    class="form-control"
+                                    id="modalServiceType"
+                                    formControlName="serviceTypeId">
+                                    <option value="">🔧 Select Service Type</option>
+                                    <option *ngFor="let serviceType of serviceTypes" [value]="serviceType.id">
+                                        {{ serviceType.name }}
+                                    </option>
+                                </select>
                             </div>
                         </div>
                     </div>

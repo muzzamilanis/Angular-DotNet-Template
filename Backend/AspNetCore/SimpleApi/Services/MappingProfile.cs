@@ -27,10 +27,12 @@ namespace SimpleApi.Services
 
             // Project mappings
             CreateMap<Project, ProjectDto>()
-                .ForMember(dest => dest.CompanyName, opt => opt.MapFrom(src => src.Company!.Name));
+                .ForMember(dest => dest.CompanyName, opt => opt.MapFrom(src => src.Company!.Name))
+                .ForMember(dest => dest.ServiceTypeName, opt => opt.MapFrom(src => src.ServiceType!.Name));
             CreateMap<CreateProjectDto, Project>();
             CreateMap<UpdateProjectDto, Project>();
-            CreateMap<Project, ProjectListDto>();
+            CreateMap<Project, ProjectListDto>()
+                .ForMember(dest => dest.ServiceTypeName, opt => opt.MapFrom(src => src.ServiceType!.Name));
 
             // SaleOrder mappings
             CreateMap<SaleOrder, SaleOrderDto>()

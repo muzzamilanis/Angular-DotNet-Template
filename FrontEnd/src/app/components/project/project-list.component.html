@@ -57,6 +57,7 @@
                             Status
                             <i [class]="getSortIcon('projectStatus')" class="ml-1"></i>
                         </th>
+                        <th>Service Type</th>
                         <th>Company</th>
                         <th (click)="onSort('createdDate')" style="cursor: pointer">
                             Created Date
@@ -82,6 +83,9 @@
                             <span class="badge" [ngClass]="'badge-' + getStatusClass(project.projectStatus)">
                                 {{ getStatusText(project.projectStatus) }}
                             </span>
+                        </td>
+                        <td>
+                            <span class="text-muted">{{ project.serviceTypeName || 'Not assigned' }}</span>
                         </td>
                         <td>{{ project.companyName || 'Unknown' }}</td>
                         <td>

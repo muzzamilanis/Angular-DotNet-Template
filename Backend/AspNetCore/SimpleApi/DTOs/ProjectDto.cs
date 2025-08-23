@@ -9,6 +9,8 @@ namespace SimpleApi.DTOs
         public string ProjectName { get; set; } = string.Empty;
         public string? ProjectDescription { get; set; }
         public ProjectStatus ProjectStatus { get; set; }
+        public int? ServiceTypeId { get; set; }
+        public string? ServiceTypeName { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime UpdatedDate { get; set; }
         public int CompanyId { get; set; }
@@ -27,6 +29,8 @@ namespace SimpleApi.DTOs
 
         public ProjectStatus ProjectStatus { get; set; } = ProjectStatus.Active;
 
+        public int? ServiceTypeId { get; set; }
+
         public bool IsActive { get; set; } = true;
     }
 
@@ -43,6 +47,8 @@ namespace SimpleApi.DTOs
 
         public ProjectStatus ProjectStatus { get; set; }
 
+        public int? ServiceTypeId { get; set; }
+
         public bool IsActive { get; set; }
     }
 
@@ -52,6 +58,8 @@ namespace SimpleApi.DTOs
         public string ProjectName { get; set; } = string.Empty;
         public string? ProjectDescription { get; set; }
         public ProjectStatus ProjectStatus { get; set; }
+        public int? ServiceTypeId { get; set; }
+        public string? ServiceTypeName { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime UpdatedDate { get; set; }
         public bool IsActive { get; set; }

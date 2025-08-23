@@ -850,6 +850,7 @@ export class SaleOrderComponent implements OnInit {
             projectName: ['', [Validators.required, Validators.maxLength(200)]],
             projectDescription: ['', Validators.maxLength(1000)],
             projectStatus: [ProjectStatus.Active, Validators.required],
+            serviceTypeId: [''],
             isActive: [true],
         });
     }
@@ -862,6 +863,7 @@ export class SaleOrderComponent implements OnInit {
                 projectName: '',
                 projectDescription: '',
                 projectStatus: ProjectStatus.Active,
+                serviceTypeId: '',
                 isActive: true
             });
         }
@@ -911,6 +913,7 @@ export class SaleOrderComponent implements OnInit {
                 projectName: formValue.projectName,
                 projectDescription: formValue.projectDescription,
                 projectStatus: formValue.projectStatus,
+                serviceTypeId: formValue.serviceTypeId || null,
                 isActive: formValue.isActive
             };
 

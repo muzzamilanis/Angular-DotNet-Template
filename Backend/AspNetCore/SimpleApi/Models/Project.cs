@@ -23,6 +23,10 @@ namespace SimpleApi.Models
         public int CompanyId { get; set; }
         public virtual Company? Company { get; set; }
 
+        // Foreign key for ServiceType
+        public int? ServiceTypeId { get; set; }
+        public virtual ServiceType? ServiceType { get; set; }
+
         public bool IsActive { get; set; } = true;
 
         // Navigation property for related SaleOrders
