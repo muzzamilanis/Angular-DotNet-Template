@@ -9,6 +9,8 @@ export interface Project {
     projectName: string;
     projectDescription?: string;
     projectStatus: ProjectStatus;
+    serviceTypeId?: number;
+    serviceTypeName?: string;
     createdDate: Date;
     updatedDate: Date;
     companyId: number;
@@ -21,6 +23,8 @@ export interface ProjectListItem {
     projectName: string;
     projectDescription?: string;
     projectStatus: ProjectStatus;
+    serviceTypeId?: number;
+    serviceTypeName?: string;
     createdDate: Date;
     updatedDate: Date;
     isActive: boolean;
@@ -33,6 +37,7 @@ export interface CreateProjectDto {
     projectName: string;
     projectDescription?: string;
     projectStatus: ProjectStatus;
+    serviceTypeId?: number;
     isActive: boolean;
 }
 
@@ -41,6 +46,7 @@ export interface UpdateProjectDto {
     projectName: string;
     projectDescription?: string;
     projectStatus: ProjectStatus;
+    serviceTypeId?: number;
     isActive: boolean;
 }
 

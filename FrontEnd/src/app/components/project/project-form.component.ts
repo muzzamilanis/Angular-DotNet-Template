@@ -2,7 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ProjectService } from '../../services/project.service';
+import { ServiceTypeService } from '../../services/service-type.service';
+import { CompanyService } from '../../services/company.service';
 import { Project, ProjectStatus, CreateProjectDto, UpdateProjectDto } from '../../models/project.model';
+import { ServiceType } from '../../models/service-type.model';
+import { Company } from '../../models/company.model';
+import { BusinessNatureType } from '../../models/multi-tenant.model';
 
 @Component({
     selector: 'app-project-form',
@@ -22,6 +27,11 @@ export class ProjectFormComponent implements OnInit {
     alertType = '';
     showAlert = false;
 
+    // Service Types and Company info
+    serviceTypes: ServiceType[] = [];
+    currentCompany: Company | null = null;
+    isDigitalMarketing = false;
+
     // Project Status options for dropdown
     statusOptions = [
         { label: 'Active', value: ProjectStatus.Active },
@@ -32,6 +42,8 @@ export class ProjectFormComponent implements OnInit {
     constructor(
         private fb: FormBuilder,
         private projectService: ProjectService,
+        private serviceTypeService: ServiceTypeService,
+        private companyService: CompanyService,
         private route: ActivatedRoute,
         private router: Router
     ) {
@@ -39,6 +51,7 @@ export class ProjectFormComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        this.loadCurrentCompany();
         this.route.params.subscribe((params) => {
             if (params['id']) {
                 this.isEditMode = true;
@@ -53,8 +66,39 @@ export class ProjectFormComponent implements OnInit {
             projectName: ['', [Validators.required, Validators.maxLength(200)]],
             projectDescription: ['', Validators.maxLength(1000)],
             projectStatus: [ProjectStatus.Active, Validators.required],
+            serviceTypeId: [''],
             isActive: [true],
         });
+    }
+
+    private loadCurrentCompany(): void {
+        this.companyService.getCurrentCompany().subscribe({
+            next: (company) => {
+                this.currentCompany = company;
+                this.isDigitalMarketing = company.businessNatureId === BusinessNatureType.DIGITALMARKETINGAGENCY;
+                
+                if (this.isDigitalMarketing) {
+                    this.loadServiceTypes();
+                }
+            },
+            error: (error) => {
+                console.error('Error loading current company:', error);
+                this.isDigitalMarketing = false;
+            },
+        });
+    }
+
+    private loadServiceTypes(): void {
+        if (this.currentCompany) {
+            this.serviceTypeService.getServiceTypesByCompany(this.currentCompany.id).subscribe({
+                next: (serviceTypes: ServiceType[]) => {
+                    this.serviceTypes = serviceTypes || [];
+                },
+                error: (error) => {
+                    console.error('Error loading service types:', error);
+                },
+            });
+        }
     }
 
     private loadProject(): void {
@@ -67,6 +111,7 @@ export class ProjectFormComponent implements OnInit {
                     projectName: project.projectName,
                     projectDescription: project.projectDescription,
                     projectStatus: project.projectStatus,
+                    serviceTypeId: project.serviceTypeId || '',
                     isActive: project.isActive,
                 });
                 this.loading = false;
