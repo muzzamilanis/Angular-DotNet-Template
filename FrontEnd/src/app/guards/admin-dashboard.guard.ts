@@ -25,6 +25,10 @@ export class AdminDashboardGuard implements CanActivate {
                 // Redirect writers to their specific dashboard
                 this.router.navigate(['/writer/dashboard']);
                 return of(false);
+            } else if (this.authService.isTeamLead() && !this.authService.isSuperAdmin()) {
+                // Redirect team leads to their specific dashboard (unless they are also SuperAdmin)
+                this.router.navigate(['/team-lead/dashboard']);
+                return of(false);
             } else {
                 return of(true);
             }
@@ -38,6 +42,10 @@ export class AdminDashboardGuard implements CanActivate {
                     if (user.role === 'Writer' || user.role === 4) {
                         // Redirect writers to their specific dashboard
                         this.router.navigate(['/writer/dashboard']);
+                        return false;
+                    } else if ((user.role === 'Manager' || user.role === 1) && !user.isSuperAdmin) {
+                        // Redirect team leads to their specific dashboard (unless they are also SuperAdmin)
+                        this.router.navigate(['/team-lead/dashboard']);
                         return false;
                     } else {
                         return true;
