@@ -23,6 +23,7 @@ import { ProjectDetailComponent } from './components/project/project-detail.comp
 import { ServiceTypeComponent } from './components/service-type/service-type.component';
 import { WriterAssignmentsComponent } from './components/writer-portal/writer-assignments.component';
 import { WriterDashboardComponent } from './components/writer-portal/writer-dashboard.component';
+import { TeamLeadOrdersComponent } from './components/team-lead/team-lead-orders.component';
 import { BrandingDemoComponent } from './components/branding-demo/branding-demo.component';
 // import { CurrencySetupComponent } from './components/currency-setup/currency-setup.component';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
@@ -65,6 +66,7 @@ export function initializeAppTheme(themeService: ThemeService, companyService: C
         ServiceTypeComponent,
         WriterAssignmentsComponent,
         WriterDashboardComponent,
+        TeamLeadOrdersComponent,
         BrandingDemoComponent,
         // CurrencySetupComponent,
     ],

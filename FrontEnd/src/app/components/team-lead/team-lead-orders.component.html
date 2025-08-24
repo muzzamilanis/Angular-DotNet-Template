@@ -1,0 +1,157 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Team Lead - Order Management</h3>
+                </div>
+                <div class="card-body">
+                    <div *ngIf="isLoading" class="loading">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        Loading orders...
+                    </div>
+
+                    <div *ngIf="!isLoading && orders.length === 0" class="no-orders">
+                        <i class="fas fa-inbox fa-3x" style="color: #ccc;"></i>
+                        <h4>No orders found</h4>
+                        <p>There are no orders to manage at the moment.</p>
+                    </div>
+
+                    <div *ngIf="!isLoading && orders.length > 0" class="orders-list">
+                        <div *ngFor="let order of orders" class="order-card">
+                            <div class="order-header">
+                                <span class="order-title">{{ order.orderNumber }}</span>
+                                <span class="badge" [ngClass]="getStatusClass(order.status)">
+                                    {{ order.status || 'Not Set' }}
+                                </span>
+                            </div>
+
+                            <div class="order-meta">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="meta-item">
+                                            <span class="meta-label">Client:</span>
+                                            <span class="meta-value">{{ order.clientName || order.customerName || 'N/A' }}</span>
+                                        </div>
+                                        <div class="meta-item">
+                                            <span class="meta-label">Order Date:</span>
+                                            <span class="meta-value">{{ formatDate(order.orderDate) }}</span>
+                                        </div>
+                                        <div class="meta-item">
+                                            <span class="meta-label">Deadline:</span>
+                                            <span class="meta-value" [ngClass]="{'deadline-urgent': isDeadlineUrgent(order.deadline)}">
+                                                {{ formatDate(order.deadline) }}
+                                            </span>
+                                        </div>
+                                        <div class="meta-item">
+                                            <span class="meta-label">Pages/Words:</span>
+                                            <span class="meta-value">{{ order.wordsOrPages || 'N/A' }}</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="meta-item">
+                                            <span class="meta-label">Assigned Writer:</span>
+                                            <span class="meta-value" [ngClass]="{'text-danger': !order.assignedToUserId}">
+                                                {{ getWriterName(order.assignedToUserId) }}
+                                            </span>
+                                        </div>
+                                        <div class="meta-item">
+                                            <span class="meta-label">Academic Level:</span>
+                                            <span class="meta-value">{{ order.academicLevel || 'N/A' }}</span>
+                                        </div>
+                                        <div class="meta-item">
+                                            <span class="meta-label">Country:</span>
+                                            <span class="meta-value">{{ order.country || 'N/A' }}</span>
+                                        </div>
+                                        <div class="meta-item">
+                                            <span class="meta-label">Submission Status:</span>
+                                            <span class="badge" [ngClass]="getSubmissionStatusClass(order.submissionStatus)">
+                                                {{ order.submissionStatus || 'Not Submitted' }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div *ngIf="order.orderDetails" class="meta-item" style="margin-bottom: 1rem;">
+                                <span class="meta-label">Order Details:</span>
+                                <div class="meta-value" style="margin-top: 0.5rem; padding: 0.75rem; background: #f8f9fa; border-radius: 4px;">
+                                    {{ order.orderDetails }}
+                                </div>
+                            </div>
+
+                            <!-- Attachments Section -->
+                            <div *ngIf="order.attachmentFilenames" class="attachments-section">
+                                <h6><i class="fas fa-paperclip"></i> Attachments:</h6>
+                                <div *ngFor="let filename of getAttachmentsList(order.attachmentFilenames)">
+                                    <span class="attachment-item">
+                                        <i class="fas fa-file"></i> {{ filename }}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- Assignment Section -->
+                            <div class="assignment-section">
+                                <div *ngIf="order.submissionStatus && order.submissionDate" class="row mb-2">
+                                    <div class="col-md-12">
+                                        <strong>Last Submission:</strong> {{ formatDate(order.submissionDate) }}
+                                        <span class="badge ml-2" [ngClass]="getSubmissionStatusClass(order.submissionStatus)">
+                                            {{ order.submissionStatus }}
+                                        </span>
+                                    </div>
+                                </div>
+                                
+                                <div class="mt-3">
+                                    <button 
+                                        class="btn btn-primary btn-sm" 
+                                        (click)="openAssignModal(order)"
+                                        [disabled]="!canReassign(order)">
+                                        <i class="fas fa-user-edit"></i>
+                                        {{ order.assignedToUserId ? 'Reassign' : 'Assign Writer' }}
+                                    </button>
+                                    <small *ngIf="!canReassign(order)" class="text-muted ml-2">
+                                        Cannot reassign completed orders
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Assignment Modal -->
+<div *ngIf="isAssignModalOpen" class="modal-overlay" (click)="closeAssignModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+        <h4>{{ selectedOrder?.assignedToUserId ? 'Reassign' : 'Assign' }} Order - {{ selectedOrder?.orderNumber }}</h4>
+        
+        <form (ngSubmit)="assignOrder()" #assignForm="ngForm">
+            <div class="form-group">
+                <label for="writerId">Select Writer *</label>
+                <select 
+                    id="writerId" 
+                    name="writerId"
+                    class="form-control" 
+                    [(ngModel)]="selectedWriterId" 
+                    required>
+                    <option value="">Select a writer</option>
+                    <option *ngFor="let writer of writers" [value]="writer.id">
+                        {{ writer.name }} ({{ writer.email }})
+                    </option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary" [disabled]="!selectedWriterId">
+                    <i class="fas fa-check"></i> 
+                    {{ selectedOrder?.assignedToUserId ? 'Update Assignment' : 'Assign Order' }}
+                </button>
+                <button type="button" class="btn btn-secondary ml-2" (click)="closeAssignModal()">
+                    Cancel
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using SimpleApi.Models;
 
 namespace SimpleApi.Controllers
 {
@@ -34,6 +35,16 @@ namespace SimpleApi.Controllers
 		internal string? GetCurrentUserEmail()
 		{
 			return User.FindFirst(ClaimTypes.Email)?.Value;
+		}
+
+		internal UserRole GetCurrentUserRole()
+		{
+			var roleClaim = User.FindFirst(ClaimTypes.Role)?.Value;
+			if (Enum.TryParse<UserRole>(roleClaim, out UserRole role))
+			{
+				return role;
+			}
+			throw new UnauthorizedAccessException("Unable to determine user role.");
 		}
 
 	}

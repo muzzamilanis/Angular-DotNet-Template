@@ -117,6 +117,10 @@ export class AuthService {
         return this.currentUserInfo?.role === 'Writer' || this.currentUserInfo?.role === 4; // Writer enum value
     }
 
+    isTeamLead(): boolean {
+        return this.currentUserInfo?.role === 'Manager' || this.currentUserInfo?.role === 1; // Manager/Team Lead enum value
+    }
+
     getUserRole(): string | number {
         return this.currentUserInfo?.role;
     }

@@ -104,11 +104,19 @@
                         </a>
                     </li>
 
-                    <!-- Writer Portal - Only visible to Writers -->
-                    <li class="nav-item" *ngIf="isWriter()">
+                    <!-- Writer Portal - Visible to Writers and SuperAdmin -->
+                    <li class="nav-item" *ngIf="isWriter() || isSuperAdmin()">
                         <a routerLink="/writer/assignments" class="nav-link" routerLinkActive="active">
                             <i class="nav-icon fas fa-tasks"></i>
-                            <p>Assignments</p>
+                            <p>Writer Portal</p>
+                        </a>
+                    </li>
+
+                    <!-- Team Lead Portal - Visible to Team Leads and SuperAdmin -->
+                    <li class="nav-item" *ngIf="isTeamLead() || isSuperAdmin()">
+                        <a routerLink="/team-lead/orders" class="nav-link" routerLinkActive="active">
+                            <i class="nav-icon fas fa-users-cog"></i>
+                            <p>Team Lead Portal</p>
                         </a>
                     </li>
 

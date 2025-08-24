@@ -116,6 +116,11 @@ export class MainLayoutComponent implements OnInit {
         return this.authService.isWriter();
     }
 
+    // Add method to check if user is team lead
+    isTeamLead(): boolean {
+        return this.authService.isTeamLead();
+    }
+
     // Check if current company is Digital Marketing
     isDigitalMarketing(): boolean {
         return this.currentCompany?.businessNatureId === BusinessNatureType.DIGITALMARKETINGAGENCY;

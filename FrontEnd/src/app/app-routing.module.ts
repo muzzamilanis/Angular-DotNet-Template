@@ -15,11 +15,13 @@ import { ProjectDetailComponent } from './components/project/project-detail.comp
 import { ServiceTypeComponent } from './components/service-type/service-type.component';
 import { WriterAssignmentsComponent } from './components/writer-portal/writer-assignments.component';
 import { WriterDashboardComponent } from './components/writer-portal/writer-dashboard.component';
+import { TeamLeadOrdersComponent } from './components/team-lead/team-lead-orders.component';
 import { BrandingDemoComponent } from './components/branding-demo/branding-demo.component';
 // import { CurrencySetupComponent } from './components/currency-setup/currency-setup.component';
 import { AuthGuard } from './guards/auth.guard';
 import { SuperAdminGuard } from './guards/super-admin.guard';
 import { WriterGuard } from './guards/writer.guard';
+import { TeamLeadGuard } from './guards/team-lead.guard';
 import { AdminDashboardGuard } from './guards/admin-dashboard.guard';
 
 const routes: Routes = [
@@ -60,6 +62,11 @@ const routes: Routes = [
                 path: 'writer/dashboard', 
                 component: WriterDashboardComponent, 
                 canActivate: [WriterGuard] 
+            },
+            { 
+                path: 'team-lead/orders', 
+                component: TeamLeadOrdersComponent, 
+                canActivate: [TeamLeadGuard] 
             },
         ],
     },

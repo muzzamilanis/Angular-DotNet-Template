@@ -20,6 +20,11 @@ namespace SimpleApi.Services
         // Writer Portal methods
         Task<List<WriterAssignmentDto>> GetWriterAssignmentsAsync(int writerId);
         Task SubmitWriterWorkAsync(WriterSubmissionDto submission, IFormFile? submittedFile, int writerId);
+        
+        // Team Lead methods
+        Task<List<TeamLeadOrderDto>> GetTeamLeadOrdersAsync(int companyId);
+        Task AssignOrderToWriterAsync(int saleOrderId, int writerId, int companyId);
+        Task UpdateOrderAssignmentAsync(int saleOrderId, int writerId, int companyId);
     }
 
     public class SaleOrderService : ISaleOrderService
@@ -381,6 +386,135 @@ namespace SimpleApi.Services
             if (submission.SubmissionStatus == "Completed")
             {
                 saleOrder.Status = "workSubmittedByWriter";
+            }
+
+            await _context.SaveChangesAsync();
+        }
+
+        // Team Lead methods implementation
+        public async Task<List<TeamLeadOrderDto>> GetTeamLeadOrdersAsync(int companyId)
+        {
+            // Get all orders for the company with basic info
+            var allOrders = await _context.SaleOrders
+                .Where(so => so.CompanyId == companyId)
+                .OrderByDescending(so => so.OrderDate)
+                .ToListAsync();
+
+            var result = new List<TeamLeadOrderDto>();
+
+            foreach (var order in allOrders)
+            {
+                var teamLeadOrder = new TeamLeadOrderDto
+                {
+                    Id = order.Id,
+                    OrderNumber = order.OrderNumber,
+                    OrderDate = order.OrderDate,
+                    ClientName = order.ClientName,
+                    CustomerName = order.CustomerName,
+                    Deadline = order.Deadline,
+                    Status = order.Status,
+                    OrderDetails = order.OrderDetails,
+                    AcademicLevel = order.AcademicLevel,
+                    Country = order.Country,
+                    WordsOrPages = order.WordsOrPages,
+                    SubmissionStatus = order.SubmissionStatus,
+                    SubmissionDate = order.SubmissionDate,
+                    AttachmentFilenames = order.AttachmentFilenames
+                };
+
+                // Get assigned writer info if order is assigned
+                if (!string.IsNullOrEmpty(order.AssignedTo) && int.TryParse(order.AssignedTo, out int assignedUserId))
+                {
+                    var assignedUser = await _context.Users
+                        .FirstOrDefaultAsync(u => u.Id == assignedUserId && u.CompanyId == companyId);
+                    
+                    if (assignedUser != null)
+                    {
+                        teamLeadOrder.AssignedTo = assignedUser.Name;
+                        teamLeadOrder.AssignedToUserId = assignedUser.Id;
+                    }
+                }
+
+                result.Add(teamLeadOrder);
+            }
+
+            return result;
+        }
+
+        public async Task AssignOrderToWriterAsync(int saleOrderId, int writerId, int companyId)
+        {
+            // Validate sale order exists and belongs to company
+            var saleOrder = await _context.SaleOrders
+                .FirstOrDefaultAsync(so => so.Id == saleOrderId && so.CompanyId == companyId);
+
+            if (saleOrder == null)
+            {
+                throw new ArgumentException($"Sale order with ID {saleOrderId} not found or access denied.");
+            }
+
+            // Validate writer exists, belongs to company, and has Writer role
+            var writer = await _context.Users
+                .FirstOrDefaultAsync(u => u.Id == writerId && u.CompanyId == companyId && u.Role == UserRole.Writer && u.IsActive);
+
+            if (writer == null)
+            {
+                throw new ArgumentException($"Writer with ID {writerId} not found, not active, or access denied.");
+            }
+
+            // Check if order is already assigned
+            if (!string.IsNullOrEmpty(saleOrder.AssignedTo))
+            {
+                throw new ArgumentException("Order is already assigned. Use update assignment instead.");
+            }
+
+            // Assign the order
+            saleOrder.AssignedTo = writerId.ToString();
+            saleOrder.Status = "InProgress"; // Set status to InProgress when assigned
+
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task UpdateOrderAssignmentAsync(int saleOrderId, int writerId, int companyId)
+        {
+            // Validate sale order exists and belongs to company
+            var saleOrder = await _context.SaleOrders
+                .FirstOrDefaultAsync(so => so.Id == saleOrderId && so.CompanyId == companyId);
+
+            if (saleOrder == null)
+            {
+                throw new ArgumentException($"Sale order with ID {saleOrderId} not found or access denied.");
+            }
+
+            // Validate writer exists, belongs to company, and has Writer role
+            var writer = await _context.Users
+                .FirstOrDefaultAsync(u => u.Id == writerId && u.CompanyId == companyId && u.Role == UserRole.Writer && u.IsActive);
+
+            if (writer == null)
+            {
+                throw new ArgumentException($"Writer with ID {writerId} not found, not active, or access denied.");
+            }
+
+            // Check if order can be reassigned (not completed)
+            if (saleOrder.Status == "Completed")
+            {
+                throw new ArgumentException("Cannot reassign completed orders.");
+            }
+
+            // Update the assignment
+            saleOrder.AssignedTo = writerId.ToString();
+            
+            // Reset submission status if changing assignment after submission
+            if (saleOrder.SubmissionStatus != null && saleOrder.SubmissionStatus != "")
+            {
+                saleOrder.SubmissionStatus = null;
+                saleOrder.SubmissionDate = null;
+                saleOrder.SubmittedFilename = null;
+            }
+
+            // Set status to InProgress when reassigned
+            if (saleOrder.Status != "InProgress")
+            {
+                saleOrder.Status = "InProgress";
             }
 
             await _context.SaveChangesAsync();
