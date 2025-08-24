@@ -62,7 +62,12 @@ export class ProjectListComponent implements OnInit {
 
         this.projectService.getAll(params).subscribe({
             next: (response: PaginatedResponse<ProjectListItem>) => {
-                this.projects = response.items;
+                console.log('items', response.items)
+                // Normalize projectStatus coming from API (number 0..2, 1..3, or strings)
+                this.projects = (response.items || []).map(p => ({
+                    ...p,
+                    projectStatus: this.normalizeStatus(p.projectStatus)
+                }) as ProjectListItem);
                 this.totalRecords = response.totalCount;
                 this.totalPages = Math.ceil(this.totalRecords / this.itemsPerPage);
                 this.loading = false;
@@ -130,12 +135,40 @@ export class ProjectListComponent implements OnInit {
         });
     }
 
-    getStatusText(status: ProjectStatus): string {
-        return getProjectStatusText(status);
+    getStatusText(status: ProjectStatus | number | string): string {
+        return getProjectStatusText(this.normalizeStatus(status));
     }
 
-    getStatusClass(status: ProjectStatus): string {
-        return getProjectStatusClass(status);
+    getStatusClass(status: ProjectStatus | number | string): string {
+        return getProjectStatusClass(this.normalizeStatus(status));
+    }
+
+    private normalizeStatus(status: ProjectStatus | number | string | null | undefined): ProjectStatus {
+        // Handle numeric values
+        if (typeof status === 'number') {
+            // If API returns 1..3 (matches enum)
+            if (status >= 1 && status <= 3) return status as ProjectStatus;
+            // If API returns 0..2 (shift to 1..3)
+            if (status >= 0 && status <= 2) return (status + 1) as ProjectStatus;
+        }
+
+        // Handle string values ("Active"/"Inactive"/"Completed" or "1"/"2"/"3")
+        if (typeof status === 'string') {
+            const s = status.trim().toLowerCase();
+            // numeric string
+            if (/^\d+$/.test(s)) {
+                const n = parseInt(s, 10);
+                if (n >= 1 && n <= 3) return n as ProjectStatus;
+                if (n >= 0 && n <= 2) return (n + 1) as ProjectStatus;
+            }
+            // named string
+            if (s === 'active') return ProjectStatus.Active;
+            if (s === 'inactive') return ProjectStatus.Inactive;
+            if (s === 'completed' || s === 'complete') return ProjectStatus.Completed;
+        }
+
+        // Fallback (avoid "Unknown")
+        return ProjectStatus.Active;
     }
 
     getSortIcon(field: string): string {

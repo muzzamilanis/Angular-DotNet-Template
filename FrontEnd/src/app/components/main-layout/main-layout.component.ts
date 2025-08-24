@@ -228,7 +228,12 @@ export class MainLayoutComponent implements OnInit {
         } else if (url.includes('/masters/customers')) {
             return 'Customer Management';
         } else if (url.includes('/transactions/sale-orders')) {
-            return 'Sale Orders';
+            if(this.isDigitalMarketing() === true) {
+               return "Order Logs" 
+            }
+            else{
+                return 'Sale Orders';
+            }
         } else if (url.includes('/administration/user-management')) {
             return 'User Management';
         }

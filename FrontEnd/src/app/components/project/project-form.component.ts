@@ -110,7 +110,7 @@ export class ProjectFormComponent implements OnInit {
                 this.projectForm.patchValue({
                     projectName: project.projectName,
                     projectDescription: project.projectDescription,
-                    projectStatus: project.projectStatus,
+                    projectStatus: this.normalizeStatus(project.projectStatus), // <-- normalize for edit mode
                     serviceTypeId: project.serviceTypeId || '',
                     isActive: project.isActive,
                 });
@@ -123,6 +123,26 @@ export class ProjectFormComponent implements OnInit {
                 this.router.navigate(['/masters/projects']);
             },
         });
+    }
+
+    // Normalize API status (numbers 0..2 or 1..3, or strings) to ProjectStatus enum
+    private normalizeStatus(status: ProjectStatus | number | string | null | undefined): ProjectStatus {
+        if (typeof status === 'number') {
+            if (status >= 1 && status <= 3) return status as ProjectStatus;
+            if (status >= 0 && status <= 2) return (status + 1) as ProjectStatus;
+        }
+        if (typeof status === 'string') {
+            const s = status.trim().toLowerCase();
+            if (/^\d+$/.test(s)) {
+                const n = parseInt(s, 10);
+                if (n >= 1 && n <= 3) return n as ProjectStatus;
+                if (n >= 0 && n <= 2) return (n + 1) as ProjectStatus;
+            }
+            if (s === 'active') return ProjectStatus.Active;
+            if (s === 'inactive') return ProjectStatus.Inactive;
+            if (s === 'completed' || s === 'complete') return ProjectStatus.Completed;
+        }
+        return ProjectStatus.Active;
     }
 
     onSubmit(): void {

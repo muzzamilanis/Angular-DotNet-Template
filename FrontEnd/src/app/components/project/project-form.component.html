@@ -69,8 +69,8 @@
                             class="form-control"
                             formControlName="projectStatus"
                             [class.is-invalid]="isFieldInvalid('projectStatus')">
-                            <option value="">📊 Select project status</option>
-                            <option *ngFor="let option of statusOptions" [value]="option.value">
+                            <option [ngValue]="null">📊 Select project status</option>
+                            <option *ngFor="let option of statusOptions" [ngValue]="option.value">
                                 {{ option.label }}
                             </option>
                         </select>
