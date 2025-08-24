@@ -423,3 +423,30 @@ namespace SimpleApi.DTOs
         public DateTime? SubmissionDate { get; set; }
         public string? SubmittedFilename { get; set; }
     }
+
+    // Team Lead DTOs
+    public class TeamLeadOrderDto
+    {
+        public int Id { get; set; }
+        public string OrderNumber { get; set; } = string.Empty;
+        public DateTime OrderDate { get; set; }
+        public string? ClientName { get; set; }
+        public string? CustomerName { get; set; }
+        public DateTime? Deadline { get; set; }
+        public string? Status { get; set; }
+        public string? AssignedTo { get; set; }
+        public int? AssignedToUserId { get; set; }
+        public string? OrderDetails { get; set; }
+        public string? AcademicLevel { get; set; }
+        public string? Country { get; set; }
+        public string? WordsOrPages { get; set; }
+        public string? SubmissionStatus { get; set; }
+        public DateTime? SubmissionDate { get; set; }
+        public string? AttachmentFilenames { get; set; }
+    }
+
+    public class AssignOrderDto
+    {
+        public int SaleOrderId { get; set; }
+        public int WriterId { get; set; }
+    }
