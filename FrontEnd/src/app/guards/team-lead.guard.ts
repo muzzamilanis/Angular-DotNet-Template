@@ -21,7 +21,7 @@ export class TeamLeadGuard implements CanActivate {
 
         // If we have current user info cached, check immediately
         if (this.authService.getCurrentUser()) {
-            if (this.authService.isTeamLead() || this.authService.isSuperAdmin()) {
+            if (this.authService.isTeamLead() && !this.authService.isSuperAdmin()) {
                 return of(true);
             } else {
                 this.router.navigate(['/dashboard']);
@@ -35,7 +35,7 @@ export class TeamLeadGuard implements CanActivate {
                 if (response.success) {
                     const role = response.result.user.role;
                     const isSuperAdmin = response.result.user.isSuperAdmin;
-                    if (role === 'Manager' || role === 1 || isSuperAdmin) {
+                    if ((role === 'Manager' || role === 1) && !isSuperAdmin) {
                         return true;
                     } else {
                         this.router.navigate(['/dashboard']);
