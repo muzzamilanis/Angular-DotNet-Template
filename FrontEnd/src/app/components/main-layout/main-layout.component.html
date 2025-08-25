@@ -91,7 +91,7 @@
                     data-widget="treeview"
                     role="menu"
                     data-accordion="false">
-                    <!-- Dashboard - For SuperAdmin and Company Admin only -->
+                    <!-- Dashboard - For SuperAdmin -->
                     <li class="nav-item" *ngIf="!isWriter() && !isTeamLead()">
                         <a routerLink="/dashboard" class="nav-link" routerLinkActive="active">
                             <i class="nav-icon fas fa-tachometer-alt"></i>
@@ -116,7 +116,7 @@
                     </li>
 
                     <!-- Team Lead Portal - Visible to Team Leads only -->
-                    <li class="nav-item" *ngIf="isTeamLead() && !isSuperAdmin()">
+                    <li class="nav-item" *ngIf="isTeamLead() || isSuperAdmin()">
                         <a routerLink="/team-lead/dashboard" class="nav-link" routerLinkActive="active">
                             <i class="nav-icon fas fa-users-cog"></i>
                             <p>Team Lead Portal</p>

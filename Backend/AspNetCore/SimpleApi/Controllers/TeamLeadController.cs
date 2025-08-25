@@ -30,9 +30,9 @@ namespace SimpleApi.Controllers
                 var isSuperAdmin = GetCurrentUserIsSuperAdmin();
 
                 // Check if user is Team Lead (Manager) only
-                if (currentUserRole != UserRole.Manager)
+                if (currentUserRole != UserRole.Manager && currentUserRole != UserRole.SuperAdmin)
                 {
-                    return Forbid("Access denied. Only Team Leads can access this resource.");
+                    return Forbid("Access denied. Only authorize members can access this resource.");
                 }
 
                 var orders = await _saleOrderService.GetTeamLeadOrdersAsync(companyId);
@@ -58,9 +58,9 @@ namespace SimpleApi.Controllers
                 var isSuperAdmin = GetCurrentUserIsSuperAdmin();
 
                 // Check if user is Team Lead (Manager) only
-                if (currentUserRole != UserRole.Manager)
+                if (currentUserRole != UserRole.Manager && currentUserRole != UserRole.SuperAdmin)
                 {
-                    return Forbid("Access denied. Only Team Leads can access this resource.");
+                    return Forbid("Access denied. Only authorize members can access this resource.");
                 }
 
                 var writers = await _userService.GetWritersAsync(companyId);
@@ -86,9 +86,9 @@ namespace SimpleApi.Controllers
                 var isSuperAdmin = GetCurrentUserIsSuperAdmin();
 
                 // Check if user is Team Lead (Manager) only
-                if (currentUserRole != UserRole.Manager)
+                if (currentUserRole != UserRole.Manager && currentUserRole != UserRole.SuperAdmin)
                 {
-                    return Forbid("Access denied. Only Team Leads can assign orders.");
+                    return Forbid("Access denied. Only authorize members can assign orders.");
                 }
 
                 await _saleOrderService.AssignOrderToWriterAsync(assignment.SaleOrderId, assignment.WriterId, companyId);
@@ -118,9 +118,9 @@ namespace SimpleApi.Controllers
                 var isSuperAdmin = GetCurrentUserIsSuperAdmin();
 
                 // Check if user is Team Lead (Manager) only
-                if (currentUserRole != UserRole.Manager)
+                if (currentUserRole != UserRole.Manager && currentUserRole != UserRole.SuperAdmin)
                 {
-                    return Forbid("Access denied. Only Team Leads can update assignments.");
+                    return Forbid("Access denied. Only authorize members can update assignments.");
                 }
 
                 await _saleOrderService.UpdateOrderAssignmentAsync(assignment.SaleOrderId, assignment.WriterId, companyId);
