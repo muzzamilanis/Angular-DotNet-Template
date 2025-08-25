@@ -21,7 +21,7 @@ export class WriterGuard implements CanActivate {
 
         // If we have current user info cached, check immediately
         if (this.authService.getCurrentUser()) {
-            if (this.authService.isWriter()) {
+            if (this.authService.isWriter() || this.authService.isSuperAdmin()) {
                 return of(true);
             } else {
                 this.router.navigate(['/dashboard']);
