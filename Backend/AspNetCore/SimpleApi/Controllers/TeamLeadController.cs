@@ -29,10 +29,10 @@ namespace SimpleApi.Controllers
                 var currentUserRole = GetCurrentUserRole();
                 var isSuperAdmin = GetCurrentUserIsSuperAdmin();
 
-                // Check if user is Team Lead (Manager) or SuperAdmin
-                if (currentUserRole != UserRole.Manager && !isSuperAdmin)
+                // Check if user is Team Lead (Manager) only
+                if (currentUserRole != UserRole.Manager)
                 {
-                    return Forbid("Access denied. Only Team Leads and Super Admins can access this resource.");
+                    return Forbid("Access denied. Only Team Leads can access this resource.");
                 }
 
                 var orders = await _saleOrderService.GetTeamLeadOrdersAsync(companyId);
@@ -57,10 +57,10 @@ namespace SimpleApi.Controllers
                 var currentUserRole = GetCurrentUserRole();
                 var isSuperAdmin = GetCurrentUserIsSuperAdmin();
 
-                // Check if user is Team Lead (Manager) or SuperAdmin
-                if (currentUserRole != UserRole.Manager && !isSuperAdmin)
+                // Check if user is Team Lead (Manager) only
+                if (currentUserRole != UserRole.Manager)
                 {
-                    return Forbid("Access denied. Only Team Leads and Super Admins can access this resource.");
+                    return Forbid("Access denied. Only Team Leads can access this resource.");
                 }
 
                 var writers = await _userService.GetWritersAsync(companyId);
@@ -85,10 +85,10 @@ namespace SimpleApi.Controllers
                 var currentUserRole = GetCurrentUserRole();
                 var isSuperAdmin = GetCurrentUserIsSuperAdmin();
 
-                // Check if user is Team Lead (Manager) or SuperAdmin
-                if (currentUserRole != UserRole.Manager && !isSuperAdmin)
+                // Check if user is Team Lead (Manager) only
+                if (currentUserRole != UserRole.Manager)
                 {
-                    return Forbid("Access denied. Only Team Leads and Super Admins can assign orders.");
+                    return Forbid("Access denied. Only Team Leads can assign orders.");
                 }
 
                 await _saleOrderService.AssignOrderToWriterAsync(assignment.SaleOrderId, assignment.WriterId, companyId);
@@ -117,10 +117,10 @@ namespace SimpleApi.Controllers
                 var currentUserRole = GetCurrentUserRole();
                 var isSuperAdmin = GetCurrentUserIsSuperAdmin();
 
-                // Check if user is Team Lead (Manager) or SuperAdmin
-                if (currentUserRole != UserRole.Manager && !isSuperAdmin)
+                // Check if user is Team Lead (Manager) only
+                if (currentUserRole != UserRole.Manager)
                 {
-                    return Forbid("Access denied. Only Team Leads and Super Admins can update assignments.");
+                    return Forbid("Access denied. Only Team Leads can update assignments.");
                 }
 
                 await _saleOrderService.UpdateOrderAssignmentAsync(assignment.SaleOrderId, assignment.WriterId, companyId);
