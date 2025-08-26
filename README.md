@@ -1,6 +1,6 @@
 # SmartBizApp
 
-SmartBizApp is a modern business management application built with **ASP.NET Core** backend and **Angular** frontend, designed to streamline business operations and enhance productivity.
+SmartBizApp is a comprehensive business management platform with **ASP.NET Core** backend, **Angular** web frontend, and **React Native** mobile app, designed to streamline business operations and enhance productivity across all devices.
 
 ## Features
 
@@ -55,6 +55,16 @@ SmartBizApp is a modern business management application built with **ASP.NET Cor
 - **Real-time Updates**: Microsoft SignalR 8.0.7 client integration
 - **Date/Time**: Moment.js 2.30.1 with timezone support (Moment-timezone 0.5.47)
 - **Notifications**: SweetAlert2 11.22.2 for user-friendly alert system
+
+### Mobile App (NEW)
+- **Framework**: React Native with Expo SDK 53.0.0
+- **Language**: TypeScript 5.8.3 with strict typing
+- **Navigation**: React Navigation 6.0 with stack and tab navigators
+- **State Management**: React Context API with AsyncStorage persistence
+- **HTTP Client**: Axios with request/response interceptors
+- **UI Components**: Expo Vector Icons with native iOS/Android styling
+- **Authentication**: JWT token management with secure storage
+- **Platform Support**: iOS, Android, and Web (Expo Web)
 
 ### Development & Deployment
 - **Linting**: ESLint 9.21.0 with Angular-specific rules and TypeScript integration
@@ -120,12 +130,30 @@ The default admin user is created during database seeding with the email `admin@
    # yarn install && yarn start
    ```
 
-4. **Access the Application**
-   - Frontend: http://localhost:4200
+4. **Mobile App Setup (NEW)**
+   ```bash
+   cd Mobile/SmartBizApp
+   npm install
+   
+   # Install Expo CLI globally if not already installed
+   npm install -g @expo/cli
+   
+   # Start the development server
+   npm start
+   
+   # Run on specific platform
+   npm run ios     # iOS simulator
+   npm run android # Android emulator
+   npm run web     # Web browser
+   ```
+
+5. **Access the Applications**
+   - Web Frontend: http://localhost:4200
+   - Mobile App: Use Expo Go app to scan QR code or run on simulator
    - Backend API: http://localhost:5000 (or 5001 for HTTPS)
    - API Documentation: http://localhost:5000/swagger
 
-5. **Database Configuration**
+6. **Database Configuration**
    
    **Development (SQLite - Default):**
    - No additional setup required
