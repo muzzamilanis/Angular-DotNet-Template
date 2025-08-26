@@ -314,13 +314,14 @@ namespace SimpleApi.Services
 
         public async Task<List<WriterAssignmentDto>> GetWriterAssignmentsAsync(int writerId)
         {
+            List<WriterAssignmentDto> assignments = new List<WriterAssignmentDto>();
             // Get the writer's name first
             var writer = await _context.Users.FindAsync(writerId);
             if (writer == null)
                 throw new ArgumentException("Writer not found");
-
-            var assignments = await _context.SaleOrders
-                .Where(so => so.AssignedTo == writer.Name)
+            if (writer.Role == UserRole.SuperAdmin)
+            {
+                assignments = await _context.SaleOrders
                 .Select(so => new WriterAssignmentDto
                 {
                     Id = so.Id,
@@ -338,6 +339,30 @@ namespace SimpleApi.Services
                     SubmittedFilename = so.SubmittedFilename
                 })
                 .ToListAsync();
+            }
+            else
+            {
+				assignments = await _context.SaleOrders
+				.Where(so => so.AssignedTo == writer.Name)
+				.Select(so => new WriterAssignmentDto
+				{
+					Id = so.Id,
+					OrderNumber = so.OrderNumber,
+					OrderDate = so.OrderDate,
+					ClientName = so.ClientName,
+					Deadline = so.Deadline,
+					Status = so.Status,
+					OrderDetails = so.OrderDetails,
+					WordsOrPages = so.WordsOrPages,
+					AcademicLevel = so.AcademicLevel,
+					AttachmentFilenames = so.AttachmentFilenames,
+					SubmissionStatus = so.SubmissionStatus,
+					SubmissionDate = so.SubmissionDate,
+					SubmittedFilename = so.SubmittedFilename
+				})
+				.ToListAsync();
+			}
+                
 
             return assignments;
         }
