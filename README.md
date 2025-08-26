@@ -34,8 +34,6 @@ SmartBizApp is a modern business management application built with **ASP.NET Cor
 
 ## Technology Stack
 
-## Technology Stack
-
 ### Backend
 - **Framework**: ASP.NET Core 8.0 Web API with .NET 8.0 runtime
 - **Database**: PostgreSQL 15+ with Entity Framework Core 9.0 ORM
