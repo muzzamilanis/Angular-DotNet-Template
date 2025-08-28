@@ -17,79 +17,69 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import { Picker } from '@react-native-picker/picker';
+import ApiService from '../services/ApiService';
+import { SaleOrder, CreateSaleOrderDto, Project, Company } from '../types';
 
 const { width } = Dimensions.get('window');
 
-interface SaleOrder {
-  id: string;
-  orderNumber: string;
-  orderDate: string;
-  businessType: 'Digital Marketing' | 'Traditional';
-  clientName: string;
-  contactEmail: string;
-  contactPhone: string;
-  projectName: string;
-  serviceType: string;
-  description: string;
-  budget: string;
-  currency: string;
-  status: 'Draft' | 'Active' | 'Completed' | 'Cancelled';
-}
-
 const OrdersScreen: React.FC = () => {
   const [orders, setOrders] = useState<SaleOrder[]>([]);
+  const [projects, setProjects] = useState<Project[]>([]);
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [isDigitalMarketing, setIsDigitalMarketing] = useState(true);
   const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState<Partial<SaleOrder>>({
-    businessType: 'Digital Marketing',
-    orderDate: new Date().toISOString().split('T')[0],
-    currency: 'USD',
+  const [loadingOrders, setLoadingOrders] = useState(true);
+  const [formData, setFormData] = useState<Partial<CreateSaleOrderDto>>({
+    orderDate: new Date(),
     status: 'Draft',
+    currencyCode: 'USD',
+    customerAddress: '',
   });
 
   const slideAnim = new Animated.Value(0);
 
   useEffect(() => {
-    // Load existing orders (mock data for demo)
     loadOrders();
+    loadProjects();
   }, []);
 
-  const loadOrders = () => {
-    // Mock data - in real app this would be API call
-    const mockOrders: SaleOrder[] = [
-      {
-        id: '1',
-        orderNumber: 'ORD-2024-001',
-        orderDate: '2024-01-15',
-        businessType: 'Digital Marketing',
-        clientName: 'TechCorp Solutions',
-        contactEmail: 'contact@techcorp.com',
-        contactPhone: '+1-555-0123',
-        projectName: 'Website Redesign',
-        serviceType: 'Web Development',
-        description: 'Complete website redesign with modern UI/UX',
-        budget: '15000',
-        currency: 'USD',
-        status: 'Active',
-      },
-      {
-        id: '2',
-        orderNumber: 'ORD-2024-002',
-        orderDate: '2024-01-20',
-        businessType: 'Traditional',
-        clientName: 'Local Restaurant',
-        contactEmail: 'info@restaurant.com',
-        contactPhone: '+1-555-0456',
-        projectName: 'Marketing Campaign',
-        serviceType: 'Marketing',
-        description: 'Social media marketing and branding',
-        budget: '5000',
-        currency: 'USD',
-        status: 'Draft',
-      },
-    ];
-    setOrders(mockOrders);
+  const loadOrders = async () => {
+    try {
+      setLoadingOrders(true);
+      const fetchedOrders = await ApiService.getSaleOrders();
+      setOrders(fetchedOrders);
+    } catch (error: any) {
+      console.error('Error loading orders:', error);
+      Alert.alert('Error', 'Failed to load orders: ' + error.message);
+    } finally {
+      setLoadingOrders(false);
+    }
+  };
+
+  const loadProjects = async () => {
+    try {
+      const fetchedProjects = await ApiService.getProjects();
+      setProjects(fetchedProjects);
+    } catch (error: any) {
+      console.error('Error loading projects:', error);
+      // Don't show error for projects as it's not critical
+    }
+  };
+
+  const determineBusinessType = async () => {
+    try {
+      // Try to get current user's company to determine business type
+      const user = await ApiService.getCurrentUser();
+      if (user?.company?.businessNature?.toLowerCase().includes('digital')) {
+        setIsDigitalMarketing(true);
+      } else {
+        setIsDigitalMarketing(false);
+      }
+    } catch (error) {
+      // Default to digital marketing if can't determine
+      setIsDigitalMarketing(true);
+    }
   };
 
   const openCreateForm = () => {
@@ -98,6 +88,7 @@ const OrdersScreen: React.FC = () => {
       useNativeDriver: true,
     }).start();
     setShowCreateForm(true);
+    determineBusinessType();
   };
 
   const closeCreateForm = () => {
@@ -107,48 +98,68 @@ const OrdersScreen: React.FC = () => {
     }).start(() => {
       setShowCreateForm(false);
       setFormData({
-        businessType: 'Digital Marketing',
-        orderDate: new Date().toISOString().split('T')[0],
-        currency: 'USD',
+        orderDate: new Date(),
         status: 'Draft',
+        currencyCode: 'USD',
+        customerAddress: '',
       });
     });
   };
 
-  const handleSaveOrder = () => {
-    if (!formData.orderNumber || !formData.clientName) {
+  const handleSaveOrder = async () => {
+    // Basic validation
+    if (!formData.orderNumber || (!formData.clientName && !formData.customerName)) {
       Alert.alert('Validation Error', 'Please fill in all required fields');
       return;
     }
 
     setLoading(true);
     
-    // Simulate API call
-    setTimeout(() => {
-      const newOrder: SaleOrder = {
-        id: Date.now().toString(),
+    try {
+      const orderData: CreateSaleOrderDto = {
         orderNumber: formData.orderNumber || '',
-        orderDate: formData.orderDate || '',
-        businessType: formData.businessType || 'Digital Marketing',
-        clientName: formData.clientName || '',
-        contactEmail: formData.contactEmail || '',
-        contactPhone: formData.contactPhone || '',
-        projectName: formData.projectName || '',
-        serviceType: formData.serviceType || '',
-        description: formData.description || '',
-        budget: formData.budget || '',
-        currency: formData.currency || 'USD',
-        status: formData.status || 'Draft',
+        orderDate: formData.orderDate || new Date(),
+        customerName: isDigitalMarketing ? (formData.clientName || '') : (formData.customerName || ''),
+        customerAddress: formData.customerAddress || '',
+        items: [],
+        
+        // Digital Marketing specific fields
+        ...(isDigitalMarketing && {
+          clientName: formData.clientName,
+          contactEmail: formData.contactEmail,
+          contactPhone: formData.contactPhone,
+          projectId: formData.projectId,
+          deadline: formData.deadline,
+          status: formData.status,
+          orderDetails: formData.orderDetails,
+          wordsOrPages: formData.wordsOrPages,
+          academicLevel: formData.academicLevel,
+          country: formData.country,
+          assignedTo: formData.assignedTo,
+          paymentStatus: formData.paymentStatus,
+          sourceOfPayment: formData.sourceOfPayment,
+          amountReceived: formData.amountReceived,
+          amountReceivedInPkr: formData.amountReceivedInPkr,
+          totalPayment: formData.totalPayment,
+          currencyCode: formData.currencyCode,
+          foreignCurrencyAmount: formData.foreignCurrencyAmount,
+          pkrAmount: formData.pkrAmount,
+          exchangeRateUsed: formData.exchangeRateUsed,
+        }),
       };
 
+      const newOrder = await ApiService.createSaleOrder(orderData);
       setOrders(prev => [newOrder, ...prev]);
       setLoading(false);
       closeCreateForm();
       Alert.alert('Success', 'Sale order created successfully!');
-    }, 1500);
+    } catch (error: any) {
+      setLoading(false);
+      Alert.alert('Error', 'Failed to create order: ' + error.message);
+    }
   };
 
-  const getStatusColor = (status: string) => {
+  const getStatusColor = (status: string = 'Draft') => {
     switch (status) {
       case 'Active': return '#28a745';
       case 'Completed': return '#007bff';
@@ -157,38 +168,71 @@ const OrdersScreen: React.FC = () => {
     }
   };
 
-  const OrderCard = ({ order }: { order: SaleOrder }) => (
-    <View style={styles.orderCard}>
-      <LinearGradient
-        colors={['#ffffff', '#f8f9ff']}
-        style={styles.cardGradient}
-      >
-        <View style={styles.cardHeader}>
-          <View style={styles.orderInfo}>
-            <Text style={styles.orderNumber}>{order.orderNumber}</Text>
-            <Text style={styles.orderDate}>{order.orderDate}</Text>
+  const formatDate = (date: Date | string): string => {
+    if (!date) return 'N/A';
+    const d = new Date(date);
+    return d.toLocaleDateString();
+  };
+
+  const OrderCard = ({ order }: { order: SaleOrder }) => {
+    const clientName = order.clientName || order.customerName || 'Unknown Client';
+    const projectName = order.projectName || 'No Project';
+    const isDigitalOrder = !!order.clientName;
+    
+    return (
+      <View style={styles.orderCard}>
+        <LinearGradient
+          colors={['#ffffff', '#f8f9ff']}
+          style={styles.cardGradient}
+        >
+          <View style={styles.cardHeader}>
+            <View style={styles.orderInfo}>
+              <Text style={styles.orderNumber}>{order.orderNumber}</Text>
+              <Text style={styles.orderDate}>{formatDate(order.orderDate)}</Text>
+              {order.deadline && (
+                <Text style={styles.deadline}>Due: {formatDate(order.deadline)}</Text>
+              )}
+            </View>
+            <View style={[styles.statusBadge, { backgroundColor: getStatusColor(order.status) }]}>
+              <Text style={styles.statusText}>{order.status || 'Draft'}</Text>
+            </View>
           </View>
-          <View style={[styles.statusBadge, { backgroundColor: getStatusColor(order.status) }]}>
-            <Text style={styles.statusText}>{order.status}</Text>
-          </View>
-        </View>
-        
-        <View style={styles.cardBody}>
-          <Text style={styles.clientName}>{order.clientName}</Text>
-          <Text style={styles.projectName}>{order.projectName}</Text>
-          <Text style={styles.businessType}>{order.businessType}</Text>
           
-          <View style={styles.cardFooter}>
-            <Text style={styles.budget}>{order.currency} {order.budget}</Text>
-            <TouchableOpacity style={styles.viewButton}>
-              <Ionicons name="eye-outline" size={16} color="#667eea" />
-              <Text style={styles.viewButtonText}>View</Text>
-            </TouchableOpacity>
+          <View style={styles.cardBody}>
+            <Text style={styles.clientName}>{clientName}</Text>
+            <Text style={styles.projectName}>{projectName}</Text>
+            {isDigitalOrder && <Text style={styles.businessType}>Digital Marketing</Text>}
+            {order.contactEmail && (
+              <Text style={styles.contactInfo}>📧 {order.contactEmail}</Text>
+            )}
+            {order.contactPhone && (
+              <Text style={styles.contactInfo}>📱 {order.contactPhone}</Text>
+            )}
+            {order.academicLevel && (
+              <Text style={styles.academicLevel}>🎓 {order.academicLevel}</Text>
+            )}
+            
+            <View style={styles.cardFooter}>
+              <View>
+                {order.totalAmount > 0 && (
+                  <Text style={styles.budget}>{order.currencyCode || 'USD'} {order.totalAmount}</Text>
+                )}
+                {order.foreignCurrencyAmount && (
+                  <Text style={styles.foreignAmount}>
+                    {order.currencyCode} {order.foreignCurrencyAmount}
+                  </Text>
+                )}
+              </View>
+              <TouchableOpacity style={styles.viewButton}>
+                <Ionicons name="eye-outline" size={16} color="#667eea" />
+                <Text style={styles.viewButtonText}>View</Text>
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
-      </LinearGradient>
-    </View>
-  );
+        </LinearGradient>
+      </View>
+    );
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -205,7 +249,12 @@ const OrdersScreen: React.FC = () => {
       </LinearGradient>
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        {orders.length === 0 ? (
+        {loadingOrders ? (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color="#667eea" />
+            <Text style={styles.loadingText}>Loading orders...</Text>
+          </View>
+        ) : orders.length === 0 ? (
           <View style={styles.emptyState}>
             <Ionicons name="receipt-outline" size={64} color="#ccc" />
             <Text style={styles.emptyTitle}>No Orders Yet</Text>
@@ -254,8 +303,8 @@ const OrdersScreen: React.FC = () => {
                 <TextInput
                   style={styles.input}
                   placeholder="YYYY-MM-DD"
-                  value={formData.orderDate}
-                  onChangeText={(text) => setFormData(prev => ({ ...prev, orderDate: text }))}
+                  value={formData.orderDate ? formatDate(formData.orderDate) : ''}
+                  onChangeText={(text) => setFormData(prev => ({ ...prev, orderDate: new Date(text) }))}
                 />
               </View>
 
@@ -267,10 +316,6 @@ const OrdersScreen: React.FC = () => {
                     value={isDigitalMarketing}
                     onValueChange={(value) => {
                       setIsDigitalMarketing(value);
-                      setFormData(prev => ({ 
-                        ...prev, 
-                        businessType: value ? 'Digital Marketing' : 'Traditional' 
-                      }));
                     }}
                     trackColor={{ false: '#ccc', true: '#667eea' }}
                     thumbColor={isDigitalMarketing ? '#764ba2' : '#f4f3f4'}
@@ -284,14 +329,33 @@ const OrdersScreen: React.FC = () => {
               <Text style={styles.sectionTitle}>👤 Client Information</Text>
               
               <View style={styles.inputGroup}>
-                <Text style={styles.inputLabel}>Client Name *</Text>
+                <Text style={styles.inputLabel}>
+                  {isDigitalMarketing ? 'Client Name *' : 'Customer Name *'}
+                </Text>
                 <TextInput
                   style={styles.input}
-                  placeholder="Enter client name"
-                  value={formData.clientName}
-                  onChangeText={(text) => setFormData(prev => ({ ...prev, clientName: text }))}
+                  placeholder={isDigitalMarketing ? "Enter client name" : "Enter customer name"}
+                  value={isDigitalMarketing ? formData.clientName : formData.customerName}
+                  onChangeText={(text) => setFormData(prev => ({ 
+                    ...prev, 
+                    [isDigitalMarketing ? 'clientName' : 'customerName']: text 
+                  }))}
                 />
               </View>
+
+              {!isDigitalMarketing && (
+                <View style={styles.inputGroup}>
+                  <Text style={styles.inputLabel}>Customer Address</Text>
+                  <TextInput
+                    style={[styles.input, styles.textArea]}
+                    placeholder="Enter customer address"
+                    value={formData.customerAddress}
+                    onChangeText={(text) => setFormData(prev => ({ ...prev, customerAddress: text }))}
+                    multiline
+                    numberOfLines={3}
+                  />
+                </View>
+              )}
 
               <View style={styles.inputGroup}>
                 <Text style={styles.inputLabel}>Contact Email</Text>
@@ -317,68 +381,225 @@ const OrdersScreen: React.FC = () => {
               </View>
             </View>
 
-            <View style={styles.formSection}>
-              <Text style={styles.sectionTitle}>🚀 Project Information</Text>
-              
-              <View style={styles.inputGroup}>
-                <Text style={styles.inputLabel}>Project Name</Text>
-                <TextInput
-                  style={styles.input}
-                  placeholder="Enter project name"
-                  value={formData.projectName}
-                  onChangeText={(text) => setFormData(prev => ({ ...prev, projectName: text }))}
-                />
-              </View>
+            {isDigitalMarketing && (
+              <>
+                <View style={styles.formSection}>
+                  <Text style={styles.sectionTitle}>🚀 Project Information</Text>
+                  
+                  <View style={styles.inputGroup}>
+                    <Text style={styles.inputLabel}>Project</Text>
+                    <View style={styles.pickerContainer}>
+                      <Picker
+                        selectedValue={formData.projectId}
+                        onValueChange={(itemValue) => setFormData(prev => ({ ...prev, projectId: itemValue }))}
+                        style={styles.picker}
+                      >
+                        <Picker.Item label="Select Project" value={undefined} />
+                        {projects.map((project) => (
+                          <Picker.Item 
+                            key={project.id} 
+                            label={project.projectName} 
+                            value={project.id} 
+                          />
+                        ))}
+                      </Picker>
+                    </View>
+                  </View>
 
-              <View style={styles.inputGroup}>
-                <Text style={styles.inputLabel}>Service Type</Text>
-                <TextInput
-                  style={styles.input}
-                  placeholder="Enter service type"
-                  value={formData.serviceType}
-                  onChangeText={(text) => setFormData(prev => ({ ...prev, serviceType: text }))}
-                />
-              </View>
+                  <View style={styles.inputGroup}>
+                    <Text style={styles.inputLabel}>Deadline</Text>
+                    <TextInput
+                      style={styles.input}
+                      placeholder="YYYY-MM-DD"
+                      value={formData.deadline ? formatDate(formData.deadline) : ''}
+                      onChangeText={(text) => setFormData(prev => ({ ...prev, deadline: new Date(text) }))}
+                    />
+                  </View>
 
-              <View style={styles.inputGroup}>
-                <Text style={styles.inputLabel}>Description</Text>
-                <TextInput
-                  style={[styles.input, styles.textArea]}
-                  placeholder="Enter project description"
-                  value={formData.description}
-                  onChangeText={(text) => setFormData(prev => ({ ...prev, description: text }))}
-                  multiline
-                  numberOfLines={4}
-                />
-              </View>
-            </View>
+                  <View style={styles.inputGroup}>
+                    <Text style={styles.inputLabel}>Status</Text>
+                    <View style={styles.pickerContainer}>
+                      <Picker
+                        selectedValue={formData.status}
+                        onValueChange={(itemValue) => setFormData(prev => ({ ...prev, status: itemValue }))}
+                        style={styles.picker}
+                      >
+                        <Picker.Item label="Draft" value="Draft" />
+                        <Picker.Item label="Active" value="Active" />
+                        <Picker.Item label="Completed" value="Completed" />
+                        <Picker.Item label="Cancelled" value="Cancelled" />
+                      </Picker>
+                    </View>
+                  </View>
 
-            <View style={styles.formSection}>
-              <Text style={styles.sectionTitle}>💰 Financial Information</Text>
-              
-              <View style={styles.rowInputs}>
-                <View style={[styles.inputGroup, { flex: 2 }]}>
-                  <Text style={styles.inputLabel}>Budget</Text>
-                  <TextInput
-                    style={styles.input}
-                    placeholder="Enter budget amount"
-                    value={formData.budget}
-                    onChangeText={(text) => setFormData(prev => ({ ...prev, budget: text }))}
-                    keyboardType="numeric"
-                  />
+                  <View style={styles.inputGroup}>
+                    <Text style={styles.inputLabel}>Assigned To</Text>
+                    <TextInput
+                      style={styles.input}
+                      placeholder="Enter assignee name"
+                      value={formData.assignedTo}
+                      onChangeText={(text) => setFormData(prev => ({ ...prev, assignedTo: text }))}
+                    />
+                  </View>
+
+                  <View style={styles.inputGroup}>
+                    <Text style={styles.inputLabel}>Order Details</Text>
+                    <TextInput
+                      style={[styles.input, styles.textArea]}
+                      placeholder="Enter detailed requirements and specifications"
+                      value={formData.orderDetails}
+                      onChangeText={(text) => setFormData(prev => ({ ...prev, orderDetails: text }))}
+                      multiline
+                      numberOfLines={4}
+                    />
+                  </View>
+
+                  <View style={styles.rowInputs}>
+                    <View style={[styles.inputGroup, { flex: 1 }]}>
+                      <Text style={styles.inputLabel}>Words/Pages</Text>
+                      <TextInput
+                        style={styles.input}
+                        placeholder="e.g., 1000 words"
+                        value={formData.wordsOrPages}
+                        onChangeText={(text) => setFormData(prev => ({ ...prev, wordsOrPages: text }))}
+                      />
+                    </View>
+                    
+                    <View style={[styles.inputGroup, { flex: 1 }]}>
+                      <Text style={styles.inputLabel}>Academic Level</Text>
+                      <TextInput
+                        style={styles.input}
+                        placeholder="e.g., Bachelor"
+                        value={formData.academicLevel}
+                        onChangeText={(text) => setFormData(prev => ({ ...prev, academicLevel: text }))}
+                      />
+                    </View>
+                  </View>
+
+                  <View style={styles.inputGroup}>
+                    <Text style={styles.inputLabel}>Country</Text>
+                    <TextInput
+                      style={styles.input}
+                      placeholder="Enter country"
+                      value={formData.country}
+                      onChangeText={(text) => setFormData(prev => ({ ...prev, country: text }))}
+                    />
+                  </View>
                 </View>
-                
-                <View style={[styles.inputGroup, { flex: 1 }]}>
-                  <Text style={styles.inputLabel}>Currency</Text>
-                  <TextInput
-                    style={styles.input}
-                    placeholder="USD"
-                    value={formData.currency}
-                    onChangeText={(text) => setFormData(prev => ({ ...prev, currency: text }))}
-                  />
+
+                <View style={styles.formSection}>
+                  <Text style={styles.sectionTitle}>💰 Payment Information</Text>
+                  
+                  <View style={styles.inputGroup}>
+                    <Text style={styles.inputLabel}>Payment Status</Text>
+                    <View style={styles.pickerContainer}>
+                      <Picker
+                        selectedValue={formData.paymentStatus}
+                        onValueChange={(itemValue) => setFormData(prev => ({ ...prev, paymentStatus: itemValue }))}
+                        style={styles.picker}
+                      >
+                        <Picker.Item label="Pending" value="Pending" />
+                        <Picker.Item label="Partial" value="Partial" />
+                        <Picker.Item label="Paid" value="Paid" />
+                        <Picker.Item label="Overdue" value="Overdue" />
+                      </Picker>
+                    </View>
+                  </View>
+
+                  <View style={styles.inputGroup}>
+                    <Text style={styles.inputLabel}>Source of Payment</Text>
+                    <TextInput
+                      style={styles.input}
+                      placeholder="e.g., Bank Transfer, PayPal"
+                      value={formData.sourceOfPayment}
+                      onChangeText={(text) => setFormData(prev => ({ ...prev, sourceOfPayment: text }))}
+                    />
+                  </View>
+
+                  <View style={styles.rowInputs}>
+                    <View style={[styles.inputGroup, { flex: 1 }]}>
+                      <Text style={styles.inputLabel}>Currency</Text>
+                      <TextInput
+                        style={styles.input}
+                        placeholder="USD"
+                        value={formData.currencyCode}
+                        onChangeText={(text) => setFormData(prev => ({ ...prev, currencyCode: text }))}
+                      />
+                    </View>
+                    
+                    <View style={[styles.inputGroup, { flex: 1 }]}>
+                      <Text style={styles.inputLabel}>Exchange Rate</Text>
+                      <TextInput
+                        style={styles.input}
+                        placeholder="0.00"
+                        value={formData.exchangeRateUsed?.toString()}
+                        onChangeText={(text) => setFormData(prev => ({ ...prev, exchangeRateUsed: parseFloat(text) || 0 }))}
+                        keyboardType="numeric"
+                      />
+                    </View>
+                  </View>
+
+                  <View style={styles.rowInputs}>
+                    <View style={[styles.inputGroup, { flex: 1 }]}>
+                      <Text style={styles.inputLabel}>Foreign Amount</Text>
+                      <TextInput
+                        style={styles.input}
+                        placeholder="0.00"
+                        value={formData.foreignCurrencyAmount?.toString()}
+                        onChangeText={(text) => setFormData(prev => ({ ...prev, foreignCurrencyAmount: parseFloat(text) || 0 }))}
+                        keyboardType="numeric"
+                      />
+                    </View>
+                    
+                    <View style={[styles.inputGroup, { flex: 1 }]}>
+                      <Text style={styles.inputLabel}>PKR Amount</Text>
+                      <TextInput
+                        style={styles.input}
+                        placeholder="0.00"
+                        value={formData.pkrAmount?.toString()}
+                        onChangeText={(text) => setFormData(prev => ({ ...prev, pkrAmount: parseFloat(text) || 0 }))}
+                        keyboardType="numeric"
+                      />
+                    </View>
+                  </View>
+
+                  <View style={styles.rowInputs}>
+                    <View style={[styles.inputGroup, { flex: 1 }]}>
+                      <Text style={styles.inputLabel}>Amount Received</Text>
+                      <TextInput
+                        style={styles.input}
+                        placeholder="0.00"
+                        value={formData.amountReceived?.toString()}
+                        onChangeText={(text) => setFormData(prev => ({ ...prev, amountReceived: parseFloat(text) || 0 }))}
+                        keyboardType="numeric"
+                      />
+                    </View>
+                    
+                    <View style={[styles.inputGroup, { flex: 1 }]}>
+                      <Text style={styles.inputLabel}>Received (PKR)</Text>
+                      <TextInput
+                        style={styles.input}
+                        placeholder="0.00"
+                        value={formData.amountReceivedInPkr?.toString()}
+                        onChangeText={(text) => setFormData(prev => ({ ...prev, amountReceivedInPkr: parseFloat(text) || 0 }))}
+                        keyboardType="numeric"
+                      />
+                    </View>
+                  </View>
+
+                  <View style={styles.inputGroup}>
+                    <Text style={styles.inputLabel}>Total Payment</Text>
+                    <TextInput
+                      style={styles.input}
+                      placeholder="0.00"
+                      value={formData.totalPayment?.toString()}
+                      onChangeText={(text) => setFormData(prev => ({ ...prev, totalPayment: parseFloat(text) || 0 }))}
+                      keyboardType="numeric"
+                    />
+                  </View>
                 </View>
-              </View>
-            </View>
+              </>
+            )}
 
             <TouchableOpacity 
               style={styles.saveButton} 
@@ -500,7 +721,22 @@ const styles = StyleSheet.create({
   businessType: {
     fontSize: 12,
     color: '#764ba2',
-    marginBottom: 10,
+    marginBottom: 4,
+  },
+  deadline: {
+    fontSize: 12,
+    color: '#ff6b6b',
+    fontWeight: '500',
+  },
+  contactInfo: {
+    fontSize: 12,
+    color: '#666',
+    marginBottom: 2,
+  },
+  academicLevel: {
+    fontSize: 12,
+    color: '#28a745',
+    marginBottom: 8,
   },
   cardFooter: {
     flexDirection: 'row',
@@ -511,6 +747,20 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     color: '#28a745',
+  },
+  foreignAmount: {
+    fontSize: 12,
+    color: '#666',
+  },
+  loadingContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 80,
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
+    color: '#666',
   },
   viewButton: {
     flexDirection: 'row',
@@ -634,6 +884,15 @@ const styles = StyleSheet.create({
   rowInputs: {
     flexDirection: 'row',
     gap: 15,
+  },
+  pickerContainer: {
+    borderWidth: 2,
+    borderColor: '#e0e0e0',
+    borderRadius: 12,
+    backgroundColor: '#f8f9ff',
+  },
+  picker: {
+    height: 50,
   },
   saveButton: {
     marginTop: 30,

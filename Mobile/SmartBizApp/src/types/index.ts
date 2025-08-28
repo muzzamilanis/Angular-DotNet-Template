@@ -44,10 +44,11 @@ export interface Company {
 // Project Types
 export interface Project {
   id: number;
-  name: string;
+  projectName: string;
   description?: string;
   startDate: Date;
   endDate?: Date;
+  deadline?: Date;
   status: string;
   companyId: number;
   company?: Company;
@@ -66,14 +67,110 @@ export interface ServiceType {
 // Sale Order Types
 export interface SaleOrder {
   id: number;
+  orderNumber: string;
   orderDate: Date;
   customerName: string;
-  companyName?: string;
+  customerAddress: string;
   totalAmount: number;
-  status: string;
-  deadline?: Date;
+  items?: SaleOrderItem[];
+  companyId: number;
+  companyName?: string;
+
+  // Project relationship
   projectId?: number;
-  project?: Project;
+  projectName?: string;
+
+  // ServiceType relationship
+  serviceTypeId?: number;
+  serviceTypeName?: string;
+
+  // Digital Marketing specific fields
+  code?: string;
+  clientName?: string;
+  deadline?: Date;
+  status?: string;
+  amountReceived?: number;
+  amountReceivedInPkr?: number;
+  paymentStatus?: string;
+  sourceOfPayment?: string;
+  contactEmail?: string;
+  contactPhone?: string;
+  assignedTo?: string;
+  
+  attachmentFilenames?: string;
+  submittedFilename?: string;
+  submissionStatus?: string;
+  submissionDate?: Date;
+  
+  orderDetails?: string;
+  wordsOrPages?: string;
+  totalPayment?: number;
+  academicLevel?: string;
+  country?: string;
+  
+  // Currency-related fields for Digital Marketing companies
+  currencyCode?: string;
+  foreignCurrencyAmount?: number;
+  pkrAmount?: number;
+  exchangeRateUsed?: number;
+}
+
+// Sale Order Item Types
+export interface SaleOrderItem {
+  id: number;
+  productName: string;
+  quantity: number;
+  unitPrice: number;
+  totalPrice: number;
+  saleOrderId: number;
+}
+
+// Create DTOs
+export interface CreateSaleOrderDto {
+  orderNumber: string;
+  orderDate: Date;
+  customerName: string;
+  customerAddress: string;
+  items?: CreateSaleOrderItemDto[];
+
+  // Project relationship
+  projectId?: number;
+  // ServiceType relationship
+  serviceTypeId?: number;
+
+  // Digital Marketing specific fields
+  code?: string;
+  clientName?: string;
+  deadline?: Date;
+  status?: string;
+  amountReceived?: number;
+  amountReceivedInPkr?: number;
+  paymentStatus?: string;
+  sourceOfPayment?: string;
+  contactEmail?: string;
+  contactPhone?: string;
+  assignedTo?: string;
+  
+  attachmentFilenames?: string;
+  
+  academicLevel?: string;
+  orderDetails?: string;
+  wordsOrPages?: string;
+  totalPayment?: number;
+  country?: string;
+  
+  // Currency-related fields for Digital Marketing companies
+  currencyCode?: string;
+  foreignCurrencyAmount?: number;
+  pkrAmount?: number;
+  exchangeRateUsed?: number;
+}
+
+export interface CreateSaleOrderItemDto {
+  productName: string;
+  quantity: number;
+  unitPrice: number;
+  totalPrice: number;
 }
 
 // API Response Types
