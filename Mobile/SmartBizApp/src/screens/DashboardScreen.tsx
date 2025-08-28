@@ -43,7 +43,7 @@ const DashboardScreen: React.FC = () => {
         totalProjects: projects.status === 'fulfilled' ? projects.value.length : 0,
         totalOrders: orders.status === 'fulfilled' ? orders.value.length : 0,
         pendingOrders: orders.status === 'fulfilled' 
-          ? orders.value.filter(order => order.status.toLowerCase() === 'pending').length 
+          ? orders.value.filter(order => order.status?.toLowerCase() === 'pending').length 
           : 0,
       });
     } catch (error) {
