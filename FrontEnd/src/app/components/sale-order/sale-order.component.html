@@ -1,16 +1,28 @@
-<!-- Sale Order Form -->
+<!-- Enhanced Sale Order Form with Modern UI -->
 <div class="row">
     <div class="col-md-12">
         <div class="card card-primary">
             <div class="card-header">
-                <h3 class="card-title">{{ editingOrder ? 'Edit' : 'Create' }} {{ isDigitalMarketing ? 'Order Log' : 'Sale Order' }}</h3>
+                <h3 class="card-title">
+                    <i class="fas fa-shopping-cart"></i>
+                    {{ editingOrder ? 'Edit' : 'Create' }} {{ isDigitalMarketing ? 'Order Log' : 'Sale Order' }}
+                </h3>
             </div>
             <form [formGroup]="saleOrderForm" (ngSubmit)="onSubmit()">
                 <div class="card-body">
+                    
+                    <!-- Basic Information Section -->
+                    <div class="section-header-mobile">
+                        <h5><i class="fas fa-info-circle"></i>Basic Information</h5>
+                    </div>
+                    
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="orderNumber">Order ID *</label>
+                                <label for="orderNumber">
+                                    <i class="fas fa-hashtag"></i>
+                                    Order ID *
+                                </label>
                                 <input
                                     type="text"
                                     class="form-control"
@@ -39,7 +51,10 @@
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="orderDate">Date *</label>
+                                <label for="orderDate">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    Date *
+                                </label>
                                 <input
                                     type="date"
                                     class="form-control"
@@ -61,8 +76,17 @@
                         </div>
                     </div>
 
-                    <!-- Digital Marketing specific fields -->
+                    <hr class="section-divider">
+
+                    <!-- Digital Marketing Project Section -->
                     <div class="row" *ngIf="isDigitalMarketing">
+                        <div class="col-md-12">
+                            <div class="section-title">
+                                <i class="fas fa-project-diagram"></i>
+                                Project & Service Information
+                            </div>
+                        </div>
+                        
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="projectId">
@@ -88,6 +112,7 @@
                                 </div>
                             </div>
                         </div>
+                        
                         <!-- Service Type field -->
                         <div class="col-md-6" *ngIf="!isDigitalMarketing">
                             <div class="form-group">
@@ -120,11 +145,21 @@
                         </div>
                     </div>
 
+                    <!-- Client Information Section -->
                     <div class="row" *ngIf="isDigitalMarketing">
+                        <div class="col-md-12">
+                            <div class="section-title">
+                                <i class="fas fa-user-tie"></i>
+                                Client Information
+                            </div>
+                        </div>
                         
                         <div class="col-md-4">
                             <div class="form-group">
-                                <label for="clientName">Client Name *</label>
+                                <label for="clientName">
+                                    <i class="fas fa-user"></i>
+                                    Client Name *
+                                </label>
                                 <input
                                     type="text"
                                     class="form-control"
@@ -141,13 +176,6 @@
                                         saleOrderForm.get('clientName')?.invalid &&
                                         saleOrderForm.get('clientName')?.touched
                                     ">
-
-                                </div>
-
-                                <div class="row" *ngIf="isDigitalMarketing">
-                                    <!-- <div *ngIf="saleOrderForm.get('clientName')?.errors?.['required']">
-                                        Client name is required
-                                    </div> -->
                                     <div *ngIf="saleOrderForm.get('clientName')?.errors?.['maxlength']">
                                         Client name must be 200 characters or less
                                     </div>
@@ -157,7 +185,10 @@
                         
                         <div class="col-md-4">
                             <div class="form-group">
-                                <label for="contactEmail">Contact Email</label>
+                                <label for="contactEmail">
+                                    <i class="fas fa-envelope"></i>
+                                    Contact Email
+                                </label>
                                 <input
                                     type="email"
                                     class="form-control"
@@ -186,7 +217,10 @@
                         
                         <div class="col-md-4">
                             <div class="form-group">
-                                <label for="contactPhone">Contact Phone</label>
+                                <label for="contactPhone">
+                                    <i class="fas fa-phone"></i>
+                                    Contact Phone
+                                </label>
                                 <input
                                     type="text"
                                     class="form-control"
@@ -955,66 +989,75 @@
                 </div>
 
                 <div class="card-footer">
-                    <button
-                        type="submit"
-                        class="btn btn-primary"
-                        [disabled]="saleOrderForm.invalid || (!isDigitalMarketing && items.length === 0) || isFormReadonly()">
-                        <i class="fas fa-save"></i>
-                        {{ editingOrder ? 'Update' : 'Create' }} Order
-                    </button>
-                    <button type="button" class="btn btn-secondary ml-2" (click)="resetForm()">
-                        <i class="fas fa-times"></i>
-                        Cancel
-                    </button>
-                    <!-- Create Project button for Digital Marketing businesses -->
-                    <button 
-                        type="button" 
-                        class="btn btn-success ml-2" 
-                        *ngIf="isDigitalMarketing"
-                        (click)="openCreateProjectModal()">
-                        <i class="fas fa-plus"></i>
-                        Create Project
-                    </button>
+                    <div class="d-flex flex-wrap gap-2 justify-content-between align-items-center">
+                        <div class="action-buttons">
+                            <button
+                                type="submit"
+                                class="btn btn-primary btn-lg"
+                                [disabled]="saleOrderForm.invalid || (!isDigitalMarketing && items.length === 0) || isFormReadonly()">
+                                <i class="fas fa-save"></i>
+                                {{ editingOrder ? 'Update Order' : 'Create Order' }}
+                            </button>
+                            <button type="button" class="btn btn-secondary btn-lg ml-2" (click)="resetForm()">
+                                <i class="fas fa-times"></i>
+                                Cancel
+                            </button>
+                        </div>
+                        
+                        <!-- Create Project button for Digital Marketing businesses -->
+                        <button 
+                            type="button" 
+                            class="btn btn-success btn-lg" 
+                            *ngIf="isDigitalMarketing"
+                            (click)="openCreateProjectModal()">
+                            <i class="fas fa-plus"></i>
+                            Create Project
+                        </button>
+                    </div>
                 </div>
             </form>
         </div>
     </div>
 </div>
 
-<!-- Sale Orders List -->
+<!-- Enhanced Sale Orders List with Mobile Support -->
 <div class="row mt-4">
     <div class="col-md-12">
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title">{{ isDigitalMarketing ? 'Order Log' : 'Sale Orders' }}</h3>
+                <h3 class="card-title">
+                    <i class="fas fa-list-alt"></i>
+                    {{ isDigitalMarketing ? 'Order Log' : 'Sale Orders' }}
+                </h3>
             </div>
             <div class="card-body">
-                <div class="table-responsive">
+                <!-- Desktop Table View -->
+                <div class="table-responsive desktop-table">
                     <table class="table table-bordered table-striped">
                         <thead>
                             <tr>
-                                <th>Order ID</th>
-                                <th>Date</th>
-                                <th *ngIf="isDigitalMarketing">Client Name</th>
-                                <th *ngIf="!isDigitalMarketing">Customer Name</th>
-                                <th>Company</th>
-                                <th *ngIf="isDigitalMarketing">Project</th>
-                                <th *ngIf="isDigitalMarketing">Service Type</th>
-                                <th *ngIf="isDigitalMarketing">Deadline</th>
-                                <th *ngIf="isDigitalMarketing">Status</th>
-                                <th *ngIf="isDigitalMarketing">Task Assigned To</th>
-                                <th *ngIf="isDigitalMarketing">Submission Status</th>
-                                <th *ngIf="isDigitalMarketing">Advance Payment</th>
-                                <th *ngIf="!isDigitalMarketing">Customer Address</th>
-                                <th *ngIf="!isDigitalMarketing">Items Count</th>
-                                <th *ngIf="isDigitalMarketing">Total Payment</th>
-                                <th *ngIf="!isDigitalMarketing">Total Amount</th>
-                                <th>Actions</th>
+                                <th><i class="fas fa-hashtag"></i> Order ID</th>
+                                <th><i class="fas fa-calendar"></i> Date</th>
+                                <th *ngIf="isDigitalMarketing"><i class="fas fa-user"></i> Client Name</th>
+                                <th *ngIf="!isDigitalMarketing"><i class="fas fa-user"></i> Customer Name</th>
+                                <th><i class="fas fa-building"></i> Company</th>
+                                <th *ngIf="isDigitalMarketing"><i class="fas fa-project-diagram"></i> Project</th>
+                                <th *ngIf="isDigitalMarketing"><i class="fas fa-cogs"></i> Service Type</th>
+                                <th *ngIf="isDigitalMarketing"><i class="fas fa-clock"></i> Deadline</th>
+                                <th *ngIf="isDigitalMarketing"><i class="fas fa-flag"></i> Status</th>
+                                <th *ngIf="isDigitalMarketing"><i class="fas fa-user-check"></i> Assigned To</th>
+                                <th *ngIf="isDigitalMarketing"><i class="fas fa-check-circle"></i> Submission</th>
+                                <th *ngIf="isDigitalMarketing"><i class="fas fa-dollar-sign"></i> Advance</th>
+                                <th *ngIf="!isDigitalMarketing"><i class="fas fa-map-marker"></i> Address</th>
+                                <th *ngIf="!isDigitalMarketing"><i class="fas fa-list"></i> Items</th>
+                                <th *ngIf="isDigitalMarketing"><i class="fas fa-money-bill"></i> Total</th>
+                                <th *ngIf="!isDigitalMarketing"><i class="fas fa-money-bill"></i> Total</th>
+                                <th><i class="fas fa-tools"></i> Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr *ngFor="let order of saleOrders">
-                                <td>{{ order.orderNumber }}</td>
+                                <td><strong>{{ order.orderNumber }}</strong></td>
                                 <td>{{ order.orderDate | date: 'short' }}</td>
                                 <td *ngIf="isDigitalMarketing">
                                     {{ order.clientName || order.customerName || 'N/A' }}
@@ -1026,11 +1069,18 @@
                                 <td *ngIf="isDigitalMarketing">
                                     {{ order.deadline ? (order.deadline | date: 'short') : 'N/A' }}
                                 </td>
-                                <td *ngIf="isDigitalMarketing">{{ order.status || 'N/A' }}</td>
+                                <td *ngIf="isDigitalMarketing">
+                                    <span class="status-badge badge-primary" *ngIf="order.status">
+                                        <i class="fas fa-flag"></i>
+                                        {{ order.status }}
+                                    </span>
+                                    <span *ngIf="!order.status" class="text-muted">N/A</span>
+                                </td>
                                 <td *ngIf="isDigitalMarketing">{{ order.assignedTo || 'N/A' }}</td>
                                 <td *ngIf="isDigitalMarketing">
                                     <div *ngIf="order.submissionStatus">
-                                        <span class="badge" [ngClass]="getSubmissionStatusClass(order.submissionStatus)">
+                                        <span class="status-badge" [ngClass]="getSubmissionStatusClass(order.submissionStatus)">
+                                            <i class="fas fa-check-circle"></i>
                                             {{ order.submissionStatus }}
                                         </span>
                                         <div *ngIf="order.submittedFilename" class="mt-1">
@@ -1048,30 +1098,123 @@
                                 <td *ngIf="!isDigitalMarketing">{{ order.customerAddress }}</td>
                                 <td *ngIf="!isDigitalMarketing">{{ order.items.length }}</td>
                                 <td *ngIf="isDigitalMarketing">
-                                    {{ (order.amountReceivedInPkr || 0).toFixed(2) }}
+                                    <strong>${{ (order.amountReceivedInPkr || 0).toFixed(2) }}</strong>
                                 </td>
                                 <td *ngIf="isDigitalMarketing">
-                                    {{ (order.pkrAmount || 0).toFixed(2) }}
+                                    <strong>${{ (order.pkrAmount || 0).toFixed(2) }}</strong>
                                 </td>
-                                <td *ngIf="!isDigitalMarketing">${{ order.totalAmount.toFixed(2) }}</td>
+                                <td *ngIf="!isDigitalMarketing">
+                                    <strong>${{ order.totalAmount.toFixed(2) }}</strong>
+                                </td>
                                 <td>
                                     <button type="button"
                                             class="btn btn-warning btn-sm mr-2"
-                                            (click)="editOrder(order)">
+                                            (click)="editOrder(order)"
+                                            title="Edit Order">
                                         <i class="fas fa-edit"></i>
                                     </button>
-                                    <button type="button" class="btn btn-danger btn-sm" (click)="deleteOrder(order)">
+                                    <button type="button" 
+                                            class="btn btn-danger btn-sm" 
+                                            (click)="deleteOrder(order)"
+                                            title="Delete Order">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </td>
                             </tr>
                             <tr *ngIf="saleOrders.length === 0">
-                                <td [attr.colspan]="isDigitalMarketing ? 10 : 7" class="text-center">
-                                    No sale orders found
+                                <td [attr.colspan]="isDigitalMarketing ? 12 : 7" class="text-center">
+                                    <div class="py-4">
+                                        <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                                        <h5 class="text-muted">No orders found</h5>
+                                        <p class="text-muted">Create your first order to get started</p>
+                                    </div>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
+                </div>
+
+                <!-- Mobile Card View -->
+                <div class="mobile-orders-container">
+                    <div *ngFor="let order of saleOrders" class="mobile-order-card">
+                        <div class="mobile-order-header">
+                            <div>
+                                <div class="mobile-order-id">#{{ order.orderNumber }}</div>
+                                <div class="mobile-order-date">{{ order.orderDate | date: 'medium' }}</div>
+                            </div>
+                            <div>
+                                <span class="status-badge badge-primary" *ngIf="order.status">
+                                    {{ order.status }}
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <div class="mobile-order-details">
+                            <div class="mobile-order-detail" *ngIf="isDigitalMarketing">
+                                <div class="mobile-order-label">Client</div>
+                                <div class="mobile-order-value">{{ order.clientName || order.customerName || 'N/A' }}</div>
+                            </div>
+                            <div class="mobile-order-detail" *ngIf="!isDigitalMarketing">
+                                <div class="mobile-order-label">Customer</div>
+                                <div class="mobile-order-value">{{ order.customerName || 'N/A' }}</div>
+                            </div>
+                            
+                            <div class="mobile-order-detail">
+                                <div class="mobile-order-label">Company</div>
+                                <div class="mobile-order-value">{{ order.companyName || 'Unknown' }}</div>
+                            </div>
+                            
+                            <div class="mobile-order-detail" *ngIf="isDigitalMarketing">
+                                <div class="mobile-order-label">Project</div>
+                                <div class="mobile-order-value">{{ order.projectName || 'N/A' }}</div>
+                            </div>
+                            
+                            <div class="mobile-order-detail" *ngIf="isDigitalMarketing">
+                                <div class="mobile-order-label">Assigned To</div>
+                                <div class="mobile-order-value">{{ order.assignedTo || 'N/A' }}</div>
+                            </div>
+                            
+                            <div class="mobile-order-detail" *ngIf="isDigitalMarketing">
+                                <div class="mobile-order-label">Total Payment</div>
+                                <div class="mobile-order-value">
+                                    <strong>${{ (order.pkrAmount || 0).toFixed(2) }}</strong>
+                                </div>
+                            </div>
+                            <div class="mobile-order-detail" *ngIf="!isDigitalMarketing">
+                                <div class="mobile-order-label">Total Amount</div>
+                                <div class="mobile-order-value">
+                                    <strong>${{ order.totalAmount.toFixed(2) }}</strong>
+                                </div>
+                            </div>
+                            
+                            <div class="mobile-order-detail" *ngIf="isDigitalMarketing">
+                                <div class="mobile-order-label">Advance</div>
+                                <div class="mobile-order-value">
+                                    <strong>${{ (order.amountReceivedInPkr || 0).toFixed(2) }}</strong>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mobile-order-actions">
+                            <button type="button"
+                                    class="btn btn-warning btn-sm"
+                                    (click)="editOrder(order)">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                            <button type="button" 
+                                    class="btn btn-danger btn-sm" 
+                                    (click)="deleteOrder(order)">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Empty State for Mobile -->
+                    <div *ngIf="saleOrders.length === 0" class="text-center py-5">
+                        <i class="fas fa-inbox fa-4x text-muted mb-3"></i>
+                        <h5 class="text-muted">No orders found</h5>
+                        <p class="text-muted">Create your first order to get started</p>
+                    </div>
                 </div>
             </div>
         </div>
