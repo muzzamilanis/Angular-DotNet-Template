@@ -14,7 +14,7 @@ export interface User {
 }
 
 export interface LoginRequest {
-  usernameOrEmailAddress: string;
+  UsernameOrEmail: string;
   password: string;
   rememberClient?: boolean;
 }

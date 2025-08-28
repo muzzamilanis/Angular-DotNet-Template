@@ -3,7 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ApiResponse, LoginRequest, LoginResponse, User, Company, Project, SaleOrder } from '../types';
 
 // Base API configuration
-const API_BASE_URL = 'https://localhost:7095/api'; // Update this to match your backend URL
+const API_BASE_URL = 'https://localhost:5001/api'; // Update this to match your backend URL
 
 class ApiService {
   private axiosInstance: AxiosInstance;
@@ -54,7 +54,7 @@ class ApiService {
   // Authentication endpoints
   async login(credentials: LoginRequest): Promise<LoginResponse> {
     try {
-      const response = await this.axiosInstance.post<ApiResponse<LoginResponse>>('/auth/login', credentials);
+      const response = await this.axiosInstance.post<ApiResponse<LoginResponse>>('/TokenAuth/authenticate', credentials);
       const data = response.data;
       
       if (data.success && data.result) {

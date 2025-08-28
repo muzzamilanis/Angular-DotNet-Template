@@ -37,9 +37,8 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
 
     try {
       await login({
-        usernameOrEmailAddress: usernameOrEmailAddress.trim(),
+        UsernameOrEmail: usernameOrEmailAddress.trim(),
         password,
-        rememberClient,
       });
       
       // Navigation will be handled automatically by the auth state change
