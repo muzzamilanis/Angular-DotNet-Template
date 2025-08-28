@@ -1203,7 +1203,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title">
-                    <i class="fas fa-project-diagram mr-2"></i>
+                    <i class="fas fa-project-diagram me-2"></i>
                     Create New Project
                 </h4>
                 <button type="button" class="close" (click)="closeCreateProjectModal()" aria-label="Close">
@@ -1214,7 +1214,7 @@
             <form [formGroup]="projectForm" (ngSubmit)="onCreateProject()" *ngIf="projectForm">
                 <div class="modal-body">
                     <div class="row">
-                        <div class="col-md-12">
+                        <div class="col-12">
                             <div class="form-group">
                                 <label for="modalProjectName">
                                     <i class="fas fa-project-diagram"></i>
@@ -1248,7 +1248,7 @@
                     </div>
 
                     <div class="row">
-                        <div class="col-md-12">
+                        <div class="col-12">
                             <div class="form-group">
                                 <label for="modalProjectDescription">
                                     <i class="fas fa-align-left"></i>
@@ -1280,7 +1280,7 @@
                     </div>
 
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-12 col-md-6">
                             <div class="form-group">
                                 <label for="modalProjectStatus">
                                     <i class="fas fa-info-circle"></i>
@@ -1296,7 +1296,7 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-12 col-md-6">
                             <div class="form-group">
                                 <div class="custom-control custom-checkbox mt-4">
                                     <input
@@ -1304,9 +1304,13 @@
                                         id="modalIsActive"
                                         class="custom-control-input"
                                         formControlName="isActive" />
-                                    <label for="modalIsActive" class="custom-control-label">Active Project</label>
+                                    <label for="modalIsActive" class="custom-control-label">
+                                        <i class="fas fa-check-circle me-2"></i>
+                                        Active Project
+                                    </label>
                                 </div>
                                 <small class="form-text text-muted">
+                                    <i class="fas fa-info-circle me-1"></i>
                                     Inactive projects will not appear in dropdown selections
                                 </small>
                             </div>
@@ -1314,7 +1318,7 @@
                     </div>
 
                     <div class="row">
-                        <div class="col-md-12">
+                        <div class="col-12">
                             <div class="form-group">
                                 <label for="modalServiceType">
                                     <i class="fas fa-cogs"></i>
@@ -1335,18 +1339,20 @@
                 </div>
 
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" (click)="closeCreateProjectModal()">
-                        <i class="fas fa-times"></i>
-                        Cancel
-                    </button>
-                    <button
-                        type="submit"
-                        class="btn btn-primary"
-                        [disabled]="projectForm.invalid || isCreatingProject">
-                        <span *ngIf="isCreatingProject" class="spinner-border spinner-border-sm mr-2"></span>
-                        <i class="fas fa-save" *ngIf="!isCreatingProject"></i>
-                        {{ isCreatingProject ? 'Creating...' : 'Create Project' }}
-                    </button>
+                    <div class="d-flex flex-column flex-sm-row w-100 gap-2">
+                        <button type="button" class="btn btn-secondary flex-fill" (click)="closeCreateProjectModal()">
+                            <i class="fas fa-times me-2"></i>
+                            Cancel
+                        </button>
+                        <button
+                            type="submit"
+                            class="btn btn-primary flex-fill"
+                            [disabled]="projectForm.invalid || isCreatingProject">
+                            <span *ngIf="isCreatingProject" class="spinner-border spinner-border-sm me-2"></span>
+                            <i class="fas fa-save me-2" *ngIf="!isCreatingProject"></i>
+                            {{ isCreatingProject ? 'Creating...' : 'Create Project' }}
+                        </button>
+                    </div>
                 </div>
             </form>
         </div>
