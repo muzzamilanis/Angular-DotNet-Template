@@ -121,3 +121,6 @@ typings/
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# Preview and test files
+preview.html
