@@ -164,3 +164,26 @@ export interface WriterAssignmentDto {
     submissionDate?: Date;
     submittedFilename?: string;
 }
+
+// Order Instructions interfaces
+export interface OrderInstructionDto {
+    id: number;
+    saleOrderId: number;
+    senderId: number;
+    senderName: string;
+    message: string;
+    createdAt: Date;
+    isFromTeamLead: boolean;
+    attachmentFilenames?: string;
+}
+
+export interface CreateOrderInstructionDto {
+    saleOrderId: number;
+    message: string;
+    attachmentFilenames?: string;
+}
+
+export interface UpdateOrderDetailsDto {
+    id: number;
+    orderDetails?: string;
+}
