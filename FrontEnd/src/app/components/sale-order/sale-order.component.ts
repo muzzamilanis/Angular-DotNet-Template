@@ -19,6 +19,7 @@ import { Project } from '../../models/project.model';
 import { NotificationService } from '../../services/notification.service';
 import { BusinessNatureType } from '../../models/multi-tenant.model';
 import { ProjectStatus, CreateProjectDto } from '../../models/project.model';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
     selector: 'app-sale-order',
@@ -36,6 +37,7 @@ export class SaleOrderComponent implements OnInit {
     currentOrder: SaleOrder | null = null;
     currentCompany: Company | null = null;
     isDigitalMarketing = false;
+    isSuperAdmin = false;
 
     // Writer Portal properties
     writers: BackendUser[] = [];
@@ -68,19 +70,25 @@ export class SaleOrderComponent implements OnInit {
         private serviceTypeService: ServiceTypeService,
         private currencyService: CurrencyService,
         private notificationService: NotificationService,
-        private route: ActivatedRoute,   // <-- add
-        private router: Router           // <-- optional (to clear query params)
+        private route: ActivatedRoute,
+        private router: Router,
+        private authService: AuthService
     ) {
         this.initializeForm();
         this.initializeCountries();
     }
 
     ngOnInit(): void {
+        this.checkUserRole();
         this.loadCurrentCompany();
         this.loadProducts();
         this.loadWriters();
         this.loadSaleOrders();
-        // do NOT handle params here yet; wait for company/form init inside loadCurrentCompany
+    }
+
+    private checkUserRole(): void {
+        const currentUser = this.authService.getCurrentUser();
+        this.isSuperAdmin = currentUser?.role === UserRole.SuperAdmin;
     }
 
     private handleQueryParams(): void {

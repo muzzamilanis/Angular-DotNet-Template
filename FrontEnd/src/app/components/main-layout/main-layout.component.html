@@ -128,14 +128,18 @@
                         class="nav-item"
                         [class.menu-open]="isMenuOpen('masters')"
                         *ngIf="!isWriter() && (isSuperAdmin() || isTeamLead())">
-                        <a (click)="toggleMenuState('masters', $event)" class="nav-link">
+                         <a routerLink="/masters/projects" class="nav-link" routerLinkActive="active">
+                            <i class="far fa-circle nav-icon"></i>
+                            <p>Projects</p>
+                        </a>
+                        <!-- <a (click)="toggleMenuState('masters', $event)" class="nav-link">
                             <i class="nav-icon fas fa-database"></i>
                             <p>
                                 Masters
                                 <i class="fas fa-angle-left right"></i>
                             </p>
-                        </a>
-                        <ul class="nav nav-treeview">
+                        </a> -->
+                        <!-- <ul class="nav nav-treeview">
                             <li class="nav-item" *ngIf="!isDigitalMarketing() && isSuperAdmin()">
                                 <a routerLink="/masters/products" class="nav-link" routerLinkActive="active">
                                     <i class="far fa-circle nav-icon"></i>
@@ -147,26 +151,26 @@
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Customers</p>
                                 </a>
-                            </li>
-                            <li class="nav-item">
+                            </li> -->
+                            <!-- <li class="nav-item">
                                 <a routerLink="/masters/projects" class="nav-link" routerLinkActive="active">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Projects</p>
                                 </a>
-                            </li>
-                            <li class="nav-item" *ngIf="!isDigitalMarketing() && isSuperAdmin()">
+                            </li> -->
+                            <!-- <li class="nav-item" *ngIf="!isDigitalMarketing() && isSuperAdmin()">
                                 <a routerLink="/masters/service-types" class="nav-link" routerLinkActive="active">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Service Types</p>
                                 </a>
-                            </li>
+                            </li> -->
                             <!-- <li class="nav-item">
                                 <a routerLink="/masters/currency-setup" class="nav-link" routerLinkActive="active">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Currency Setup</p>
                                 </a>
-                            </li> for the time being not showing this menu -->
-                        </ul>
+                            </li> for the time being not showing this menu
+                        </ul> -->
                     </li>
 
                     <!-- Transactions - Hidden from Writers and Team Leads -->
@@ -174,7 +178,11 @@
                         class="nav-item"
                         [class.menu-open]="isMenuOpen('transactions')"
                         *ngIf="!isWriter() && !isTeamLead()">
-                        <a (click)="toggleMenuState('transactions', $event)" class="nav-link">
+                        <a routerLink="/transactions/sale-orders" class="nav-link" routerLinkActive="active">
+                            <i class="far fa-circle nav-icon"></i>
+                            <p>Order Log</p>
+                        </a>
+                        <!-- <a (click)="toggleMenuState('transactions', $event)" class="nav-link">
                             <i class="nav-icon fas fa-shopping-cart"></i>
                             <p>
                                 Transactions
@@ -188,7 +196,7 @@
                                     <p>Order Log</p>
                                 </a>
                             </li>
-                        </ul>
+                        </ul> -->
                     </li>
 
                     <!-- Administration -->
@@ -223,7 +231,7 @@
                     </li>
 
                     <!-- Reports - Hidden from Writers and Team Leads -->
-                    <li class="nav-item" *ngIf="!isWriter() && !isTeamLead()">
+                    <li class="nav-item" *ngIf="!isDigitalMarketing()">
                         <a href="#" class="nav-link">
                             <i class="nav-icon fas fa-chart-bar"></i>
                             <p>

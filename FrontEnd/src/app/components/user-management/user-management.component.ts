@@ -27,8 +27,8 @@ export class UserManagementComponent implements OnInit {
 
     readonly roleOptions: { value: UserRole; label: string }[] = [
         { value: UserRole.User, label: 'User' },
-        { value: UserRole.Manager, label: 'Manager' },
-        { value: UserRole.CompanyAdmin, label: 'Admin' },
+        { value: UserRole.Manager, label: 'Team Lead' },
+        { value: UserRole.CompanyAdmin, label: 'CSR' },
         { value: UserRole.Writer, label: 'Writer' },
         //{ value: UserRole.SuperAdmin, label: 'Super Admin' },  only created during company registration
     ];
@@ -359,9 +359,9 @@ export class UserManagementComponent implements OnInit {
             case UserRole.SuperAdmin:
                 return 'Super Admin';
             case UserRole.CompanyAdmin:
-                return 'Company Admin';
+                return 'CSR';
             case UserRole.Manager:
-                return 'Manager';
+                return 'Team Lead';
             case UserRole.Writer:
                 return 'Writer';
             case UserRole.User:
