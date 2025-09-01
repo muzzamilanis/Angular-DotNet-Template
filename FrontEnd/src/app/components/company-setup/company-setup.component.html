@@ -192,12 +192,15 @@
                                                 Company Logo
                                                 <small class="text-muted">(Max 5MB - JPG, PNG, GIF, SVG)</small>
                                             </label>
-                                            
+
                                             <!-- Logo Preview -->
                                             <div *ngIf="logoPreviewUrl" class="logo-preview mb-3">
-                                                <img [src]="logoPreviewUrl" alt="Company Logo" class="logo-preview-img">
-                                                <button 
-                                                    type="button" 
+                                                <img
+                                                    [src]="logoPreviewUrl"
+                                                    alt="Company Logo"
+                                                    class="logo-preview-img" />
+                                                <button
+                                                    type="button"
                                                     class="btn btn-sm btn-danger logo-remove-btn"
                                                     (click)="removeLogo()"
                                                     title="Remove logo">
@@ -233,9 +236,11 @@
                                         <div class="form-group">
                                             <label for="primaryColor">
                                                 Primary Color Theme
-                                                <small class="text-muted">(This will be applied throughout the app)</small>
+                                                <small class="text-muted">
+                                                    (This will be applied throughout the app)
+                                                </small>
                                             </label>
-                                            
+
                                             <!-- Color Picker -->
                                             <div class="color-picker-container">
                                                 <input
@@ -244,11 +249,14 @@
                                                     class="form-control color-input"
                                                     formControlName="primaryColor"
                                                     (change)="onColorChange($event.target.value)" />
-                                                
+
                                                 <!-- Color Preview -->
-                                                <div class="color-preview" 
-                                                     [style.background-color]="companyForm.get('primaryColor')?.value">
-                                                    <span class="color-value">{{ companyForm.get('primaryColor')?.value }}</span>
+                                                <div
+                                                    class="color-preview"
+                                                    [style.background-color]="companyForm.get('primaryColor')?.value">
+                                                    <span class="color-value">
+                                                        {{ companyForm.get('primaryColor')?.value }}
+                                                    </span>
                                                 </div>
                                             </div>
 
@@ -261,10 +269,11 @@
                                                         type="button"
                                                         class="color-preset-btn"
                                                         [style.background-color]="color"
-                                                        [class.active]="companyForm.get('primaryColor')?.value === color"
+                                                        [class.active]="
+                                                            companyForm.get('primaryColor')?.value === color
+                                                        "
                                                         (click)="selectColorPreset(color)"
-                                                        [title]="color">
-                                                    </button>
+                                                        [title]="color"></button>
                                                 </div>
                                             </div>
                                         </div>

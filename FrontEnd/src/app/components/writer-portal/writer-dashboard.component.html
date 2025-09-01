@@ -80,7 +80,8 @@
                 <h3 class="card-title">Recent Assignments</h3>
                 <div class="card-tools">
                     <a routerLink="/writer/assignments" class="btn btn-primary btn-sm">
-                        <i class="fas fa-eye"></i> View All
+                        <i class="fas fa-eye"></i>
+                        View All
                     </a>
                 </div>
             </div>
@@ -115,7 +116,7 @@
                                     </td>
                                     <td>{{ assignment.clientName || 'N/A' }}</td>
                                     <td>
-                                        <span [ngClass]="{'text-danger': isDeadlineUrgent(assignment.deadline)}">
+                                        <span [ngClass]="{ 'text-danger': isDeadlineUrgent(assignment.deadline) }">
                                             {{ formatDate(assignment.deadline) }}
                                         </span>
                                     </td>
@@ -125,7 +126,11 @@
                                         </span>
                                     </td>
                                     <td>
-                                        <span class="badge" [ngClass]="assignment.submissionStatus ? 'badge-success' : 'badge-secondary'">
+                                        <span
+                                            class="badge"
+                                            [ngClass]="
+                                                assignment.submissionStatus ? 'badge-success' : 'badge-secondary'
+                                            ">
                                             {{ assignment.submissionStatus || 'Not Submitted' }}
                                         </span>
                                     </td>
@@ -197,11 +202,15 @@
                 <i class="fas fa-exclamation-triangle"></i>
                 Urgent: Overdue Assignments
             </h4>
-            <p>You have {{ assignmentStats.overdue }} overdue assignment(s). Please review and submit them as soon as possible.</p>
-            <hr>
+            <p>
+                You have {{ assignmentStats.overdue }} overdue assignment(s). Please review and submit them as soon as
+                possible.
+            </p>
+            <hr />
             <p class="mb-0">
                 <a routerLink="/writer/assignments" class="btn btn-outline-danger">
-                    <i class="fas fa-eye"></i> View Overdue Assignments
+                    <i class="fas fa-eye"></i>
+                    View Overdue Assignments
                 </a>
             </p>
         </div>

@@ -70,7 +70,7 @@ export class MainLayoutComponent implements OnInit {
                         },
                         error: (error) => {
                             console.error('Error loading logo:', error);
-                        }
+                        },
                     });
                 }
             },
@@ -233,10 +233,9 @@ export class MainLayoutComponent implements OnInit {
         } else if (url.includes('/masters/customers')) {
             return 'Customer Management';
         } else if (url.includes('/transactions/sale-orders')) {
-            if(this.isDigitalMarketing() === true) {
-               return "Order Logs" 
-            }
-            else{
+            if (this.isDigitalMarketing() === true) {
+                return 'Order Logs';
+            } else {
                 return 'Sale Orders';
             }
         } else if (url.includes('/administration/user-management')) {

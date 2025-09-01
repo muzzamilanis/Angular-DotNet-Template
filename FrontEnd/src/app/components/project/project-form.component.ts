@@ -76,7 +76,7 @@ export class ProjectFormComponent implements OnInit {
             next: (company) => {
                 this.currentCompany = company;
                 this.isDigitalMarketing = company.businessNatureId === BusinessNatureType.DIGITALMARKETINGAGENCY;
-                
+
                 if (this.isDigitalMarketing) {
                     this.loadServiceTypes();
                 }
