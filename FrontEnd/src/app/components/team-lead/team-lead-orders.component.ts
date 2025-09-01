@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { TeamLeadService, TeamLeadOrderDto, WriterDto, AssignOrderDto } from '../../services/team-lead.service';
 import { NotificationService } from '../../services/notification.service';
+import { OrderInstructionDto, CreateOrderInstructionDto, UpdateOrderDetailsDto } from '../../models/sale-order.model';
 
 @Component({
     selector: 'app-team-lead-orders',
@@ -15,6 +16,20 @@ export class TeamLeadOrdersComponent implements OnInit {
     isAssignModalOpen = false;
     selectedOrder: TeamLeadOrderDto | null = null;
     selectedWriterId: number | null = null;
+
+    // Order details editing
+    isEditingDetails = false;
+    editingOrderId: number | null = null;
+    editedOrderDetails = '';
+
+    // Instructions
+    isInstructionModalOpen = false;
+    instructions: OrderInstructionDto[] = [];
+    newInstructionMessage = '';
+    isLoadingInstructions = false;
+
+    // File upload for instructions
+    selectedInstructionFiles: File[] = [];
 
     constructor(
         private teamLeadService: TeamLeadService,
@@ -142,5 +157,142 @@ export class TeamLeadOrdersComponent implements OnInit {
         if (!writerId) return 'Unassigned';
         const writer = this.writers.find(w => w.id === writerId);
         return writer ? writer.name : 'Unknown Writer';
+    }
+
+    // Order details editing methods
+    startEditingDetails(order: TeamLeadOrderDto): void {
+        this.isEditingDetails = true;
+        this.editingOrderId = order.id;
+        this.editedOrderDetails = order.orderDetails || '';
+    }
+
+    cancelEditingDetails(): void {
+        this.isEditingDetails = false;
+        this.editingOrderId = null;
+        this.editedOrderDetails = '';
+    }
+
+    saveOrderDetails(): void {
+        if (!this.editingOrderId) return;
+
+        const updateDto: UpdateOrderDetailsDto = {
+            id: this.editingOrderId,
+            orderDetails: this.editedOrderDetails
+        };
+
+        this.teamLeadService.updateOrderDetails(this.editingOrderId, updateDto).subscribe({
+            next: (response) => {
+                this.notificationService.showSuccess('Order details updated successfully!');
+                this.cancelEditingDetails();
+                this.loadOrders(); // Reload to see updated details
+            },
+            error: (error) => {
+                console.error('Error updating order details:', error);
+                this.notificationService.showError('Error updating order details. Please try again.');
+            }
+        });
+    }
+
+    // Instructions methods
+    openInstructionsModal(order: TeamLeadOrderDto): void {
+        this.selectedOrder = order;
+        this.isInstructionModalOpen = true;
+        this.loadInstructions(order.id);
+    }
+
+    closeInstructionsModal(): void {
+        this.isInstructionModalOpen = false;
+        this.selectedOrder = null;
+        this.instructions = [];
+        this.newInstructionMessage = '';
+        this.selectedInstructionFiles = [];
+    }
+
+    loadInstructions(saleOrderId: number): void {
+        this.isLoadingInstructions = true;
+        this.teamLeadService.getOrderInstructions(saleOrderId).subscribe({
+            next: (instructions) => {
+                this.instructions = instructions;
+                this.isLoadingInstructions = false;
+            },
+            error: (error) => {
+                console.error('Error loading instructions:', error);
+                this.notificationService.showError('Error loading instructions.');
+                this.isLoadingInstructions = false;
+            }
+        });
+    }
+
+    addInstruction(): void {
+        if (!this.selectedOrder || !this.newInstructionMessage.trim()) return;
+
+        // Upload files first if any are selected
+        if (this.selectedInstructionFiles.length > 0) {
+            this.uploadInstructionFiles().then((filenames) => {
+                this.sendInstruction(filenames.join(','));
+            }).catch((error) => {
+                console.error('Error uploading files:', error);
+                this.notificationService.showError('Error uploading files. Please try again.');
+            });
+        } else {
+            this.sendInstruction();
+        }
+    }
+
+    private sendInstruction(attachmentFilenames?: string): void {
+        if (!this.selectedOrder) return;
+
+        const instruction: CreateOrderInstructionDto = {
+            saleOrderId: this.selectedOrder.id,
+            message: this.newInstructionMessage.trim(),
+            attachmentFilenames: attachmentFilenames
+        };
+
+        this.teamLeadService.addOrderInstruction(this.selectedOrder.id, instruction).subscribe({
+            next: (newInstruction) => {
+                this.instructions.push(newInstruction);
+                this.newInstructionMessage = '';
+                this.selectedInstructionFiles = [];
+                this.notificationService.showSuccess('Instruction added successfully!');
+            },
+            error: (error) => {
+                console.error('Error adding instruction:', error);
+                this.notificationService.showError('Error adding instruction. Please try again.');
+            }
+        });
+    }
+
+    private uploadInstructionFiles(): Promise<string[]> {
+        return new Promise((resolve, reject) => {
+            if (!this.selectedOrder) {
+                reject('No order selected');
+                return;
+            }
+
+            this.teamLeadService.uploadInstructionFiles(this.selectedOrder.id, this.selectedInstructionFiles).subscribe({
+                next: (response) => {
+                    resolve(response.filenames || []);
+                },
+                error: (error) => {
+                    reject(error);
+                }
+            });
+        });
+    }
+
+    onInstructionFilesSelected(event: any): void {
+        const files = event.target.files;
+        if (files) {
+            this.selectedInstructionFiles = Array.from(files);
+        }
+    }
+
+    formatInstructionDate(date: Date): string {
+        return new Date(date).toLocaleString();
+    }
+
+    getInstructionAttachments(attachmentFilenames?: string): string[] {
+        if (!attachmentFilenames) return [];
+        return attachmentFilenames.split(',').filter(name => name.trim());
     }
 }

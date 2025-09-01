@@ -73,10 +73,46 @@
                                 </div>
                             </div>
 
-                            <div *ngIf="order.orderDetails" class="meta-item" style="margin-bottom: 1rem;">
+                            <!-- Order Details Section - Now Editable -->
+                            <div class="meta-item" style="margin-bottom: 1rem;">
                                 <span class="meta-label">Order Details:</span>
-                                <div class="meta-value" style="margin-top: 0.5rem; padding: 0.75rem; background: #f8f9fa; border-radius: 4px;">
-                                    {{ order.orderDetails }}
+                                <div style="margin-top: 0.5rem;">
+                                    <!-- Read-only view -->
+                                    <div *ngIf="!isEditingDetails || editingOrderId !== order.id" 
+                                         style="padding: 0.75rem; background: #f8f9fa; border-radius: 4px; position: relative;">
+                                        <div style="margin-bottom: 0.5rem;">
+                                            {{ order.orderDetails || 'No details provided yet. Click edit to add details.' }}
+                                        </div>
+                                        <button 
+                                            class="btn btn-sm btn-outline-primary" 
+                                            (click)="startEditingDetails(order)"
+                                            style="position: absolute; top: 5px; right: 5px;">
+                                            <i class="fas fa-edit"></i> Edit
+                                        </button>
+                                    </div>
+                                    
+                                    <!-- Edit mode -->
+                                    <div *ngIf="isEditingDetails && editingOrderId === order.id">
+                                        <textarea 
+                                            [(ngModel)]="editedOrderDetails"
+                                            class="form-control"
+                                            rows="4"
+                                            placeholder="Enter order details and instructions..."
+                                            style="margin-bottom: 0.5rem;"></textarea>
+                                        <div>
+                                            <button 
+                                                class="btn btn-sm btn-success" 
+                                                (click)="saveOrderDetails()"
+                                                [disabled]="!editedOrderDetails.trim()">
+                                                <i class="fas fa-save"></i> Save
+                                            </button>
+                                            <button 
+                                                class="btn btn-sm btn-secondary ml-2" 
+                                                (click)="cancelEditingDetails()">
+                                                <i class="fas fa-times"></i> Cancel
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
@@ -108,6 +144,12 @@
                                         [disabled]="!canReassign(order)">
                                         <i class="fas fa-user-edit"></i>
                                         {{ order.assignedToUserId ? 'Reassign' : 'Assign Writer' }}
+                                    </button>
+                                    <button 
+                                        class="btn btn-info btn-sm ml-2" 
+                                        (click)="openInstructionsModal(order)">
+                                        <i class="fas fa-comments"></i>
+                                        Instructions
                                     </button>
                                     <small *ngIf="!canReassign(order)" class="text-muted ml-2">
                                         Cannot reassign completed orders
@@ -153,5 +195,92 @@
                 </button>
             </div>
         </form>
+    </div>
+</div>
+
+<!-- Instructions Modal -->
+<div class="modal" [class.show]="isInstructionModalOpen" [style.display]="isInstructionModalOpen ? 'block' : 'none'">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4>Order Instructions - {{ selectedOrder?.orderNumber }}</h4>
+                <button type="button" class="close" (click)="closeInstructionsModal()">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Instructions History -->
+                <div class="instructions-history" style="max-height: 400px; overflow-y: auto; margin-bottom: 1rem;">
+                    <h6>Instruction History:</h6>
+                    <div *ngIf="isLoadingInstructions" class="text-center">
+                        <i class="fas fa-spinner fa-spin"></i> Loading instructions...
+                    </div>
+                    <div *ngIf="!isLoadingInstructions && instructions.length === 0" class="text-muted">
+                        No instructions yet. Add the first instruction below.
+                    </div>
+                    <div *ngFor="let instruction of instructions" class="instruction-item" 
+                         [class.team-lead-instruction]="instruction.isFromTeamLead"
+                         [class.writer-instruction]="!instruction.isFromTeamLead"
+                         style="margin-bottom: 1rem; padding: 0.75rem; border-radius: 8px; border-left: 4px solid;">
+                        <div class="instruction-header" style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <strong>{{ instruction.senderName }}</strong>
+                            <small class="text-muted">{{ formatInstructionDate(instruction.createdAt) }}</small>
+                        </div>
+                        <div class="instruction-message" style="margin-bottom: 0.5rem;">
+                            {{ instruction.message }}
+                        </div>
+                        <div *ngIf="instruction.attachmentFilenames" class="instruction-attachments">
+                            <small><i class="fas fa-paperclip"></i> Attachments:</small>
+                            <span *ngFor="let filename of getInstructionAttachments(instruction.attachmentFilenames)" 
+                                  class="attachment-tag" style="margin-left: 0.5rem; background: #e9ecef; padding: 2px 6px; border-radius: 3px; font-size: 0.8em;">
+                                {{ filename }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Add New Instruction -->
+                <div class="add-instruction-section" style="border-top: 1px solid #dee2e6; padding-top: 1rem;">
+                    <h6>Add New Instruction:</h6>
+                    <div class="form-group">
+                        <textarea 
+                            [(ngModel)]="newInstructionMessage"
+                            class="form-control"
+                            rows="3"
+                            placeholder="Type your instruction or clarification here..."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="instructionFiles">Attach Files (optional):</label>
+                        <input 
+                            type="file" 
+                            id="instructionFiles"
+                            class="form-control"
+                            multiple
+                            (change)="onInstructionFilesSelected($event)"
+                            accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png">
+                        <small class="text-muted">Supported formats: PDF, DOC, DOCX, TXT, JPG, PNG</small>
+                        <div *ngIf="selectedInstructionFiles.length > 0" class="selected-files" style="margin-top: 0.5rem;">
+                            <small><strong>Selected files:</strong></small>
+                            <div *ngFor="let file of selectedInstructionFiles" style="margin-left: 1rem;">
+                                <i class="fas fa-file"></i> {{ file.name }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <button 
+                            class="btn btn-primary" 
+                            (click)="addInstruction()"
+                            [disabled]="!newInstructionMessage.trim()">
+                            <i class="fas fa-paper-plane"></i> Send Instruction
+                        </button>
+                        <button type="button" class="btn btn-secondary ml-2" (click)="closeInstructionsModal()">
+                            Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>

@@ -450,3 +450,38 @@ namespace SimpleApi.DTOs
         public int SaleOrderId { get; set; }
         public int WriterId { get; set; }
     }
+
+    // Order Instructions DTOs
+    public class OrderInstructionDto
+    {
+        public int Id { get; set; }
+        public int SaleOrderId { get; set; }
+        public int SenderId { get; set; }
+        public string SenderName { get; set; } = string.Empty;
+        public string Message { get; set; } = string.Empty;
+        public DateTime CreatedAt { get; set; }
+        public bool IsFromTeamLead { get; set; }
+        public string? AttachmentFilenames { get; set; }
+    }
+
+    public class CreateOrderInstructionDto
+    {
+        [Required]
+        public int SaleOrderId { get; set; }
+
+        [Required]
+        [StringLength(2000)]
+        public string Message { get; set; } = string.Empty;
+
+        [StringLength(500)]
+        public string? AttachmentFilenames { get; set; }
+    }
+
+    public class UpdateOrderDetailsDto
+    {
+        [Required]
+        public int Id { get; set; }
+        
+        [StringLength(1000)]
+        public string? OrderDetails { get; set; }
+    }

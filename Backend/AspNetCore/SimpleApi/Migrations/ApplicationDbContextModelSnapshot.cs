@@ -275,6 +275,44 @@ namespace SimpleApi.Migrations
                         });
                 });
 
+            modelBuilder.Entity("SimpleApi.Models.OrderInstruction", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AttachmentFilenames")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsFromTeamLead")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)");
+
+                    b.Property<int>("SaleOrderId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("SenderId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SaleOrderId");
+
+                    b.HasIndex("SenderId");
+
+                    b.ToTable("OrderInstructions");
+                });
+
             modelBuilder.Entity("SimpleApi.Models.Product", b =>
                 {
                     b.Property<int>("Id")
@@ -806,6 +844,25 @@ namespace SimpleApi.Migrations
                         .IsRequired();
 
                     b.Navigation("Company");
+                });
+
+            modelBuilder.Entity("SimpleApi.Models.OrderInstruction", b =>
+                {
+                    b.HasOne("SimpleApi.Models.SaleOrder", "SaleOrder")
+                        .WithMany()
+                        .HasForeignKey("SaleOrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SimpleApi.Models.User", "Sender")
+                        .WithMany()
+                        .HasForeignKey("SenderId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("SaleOrder");
+
+                    b.Navigation("Sender");
                 });
 
             modelBuilder.Entity("SimpleApi.Models.Product", b =>

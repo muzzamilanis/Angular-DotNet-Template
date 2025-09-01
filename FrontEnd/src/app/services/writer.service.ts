@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { WriterAssignmentDto, WriterSubmissionDto } from '../models/sale-order.model';
+import { WriterAssignmentDto, WriterSubmissionDto, OrderInstructionDto, CreateOrderInstructionDto } from '../models/sale-order.model';
 import { User } from '../models/user.model';
 import { environment } from '../../environments/environment';
 
@@ -40,5 +40,14 @@ export class WriterService {
     
     // Do NOT pass any headers - let browser set multipart/form-data
     return this.http.post(`${this.apiUrl}/submit`, formData);
+  }
+
+  // Order Instructions methods for writers
+  getOrderInstructions(saleOrderId: number): Observable<OrderInstructionDto[]> {
+    return this.http.get<OrderInstructionDto[]>(`${this.apiUrl}/assignments/${saleOrderId}/instructions`);
+  }
+
+  addWriterResponse(saleOrderId: number, instruction: CreateOrderInstructionDto): Observable<OrderInstructionDto> {
+    return this.http.post<OrderInstructionDto>(`${this.apiUrl}/assignments/${saleOrderId}/instructions`, instruction);
   }
 }

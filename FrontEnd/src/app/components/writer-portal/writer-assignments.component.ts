@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { WriterService } from '../../services/writer.service';
 import { SaleOrderService } from '../../services/sale-order.service';
-import { WriterAssignmentDto } from '../../models/sale-order.model';
+import { WriterAssignmentDto, OrderInstructionDto, CreateOrderInstructionDto } from '../../models/sale-order.model';
 import { NotificationService } from '../../services/notification.service';
 
 @Component({
@@ -18,6 +18,12 @@ export class WriterAssignmentsComponent implements OnInit {
     submissionStatus = '';
     submissionFile: File | null = null;
     submissionNotes = '';
+
+    // Instructions
+    isInstructionModalOpen = false;
+    instructions: OrderInstructionDto[] = [];
+    newResponseMessage = '';
+    isLoadingInstructions = false;
 
     constructor(
         private writerService: WriterService,
@@ -152,5 +158,64 @@ export class WriterAssignmentsComponent implements OnInit {
         const tomorrow = new Date();
         tomorrow.setDate(tomorrow.getDate() + 1);
         return deadlineDate <= tomorrow;
+    }
+
+    // Instructions methods
+    openInstructionsModal(assignment: WriterAssignmentDto): void {
+        this.selectedAssignment = assignment;
+        this.isInstructionModalOpen = true;
+        this.loadInstructions(assignment.id);
+    }
+
+    closeInstructionsModal(): void {
+        this.isInstructionModalOpen = false;
+        this.selectedAssignment = null;
+        this.instructions = [];
+        this.newResponseMessage = '';
+    }
+
+    loadInstructions(saleOrderId: number): void {
+        this.isLoadingInstructions = true;
+        this.writerService.getOrderInstructions(saleOrderId).subscribe({
+            next: (instructions) => {
+                this.instructions = instructions;
+                this.isLoadingInstructions = false;
+            },
+            error: (error) => {
+                console.error('Error loading instructions:', error);
+                this.notificationService.showError('Error loading instructions.');
+                this.isLoadingInstructions = false;
+            }
+        });
+    }
+
+    addResponse(): void {
+        if (!this.selectedAssignment || !this.newResponseMessage.trim()) return;
+
+        const response: CreateOrderInstructionDto = {
+            saleOrderId: this.selectedAssignment.id,
+            message: this.newResponseMessage.trim()
+        };
+
+        this.writerService.addWriterResponse(this.selectedAssignment.id, response).subscribe({
+            next: (newResponse) => {
+                this.instructions.push(newResponse);
+                this.newResponseMessage = '';
+                this.notificationService.showSuccess('Response sent successfully!');
+            },
+            error: (error) => {
+                console.error('Error sending response:', error);
+                this.notificationService.showError('Error sending response. Please try again.');
+            }
+        });
+    }
+
+    formatInstructionDate(date: Date): string {
+        return new Date(date).toLocaleString();
+    }
+
+    getInstructionAttachments(attachmentFilenames?: string): string[] {
+        if (!attachmentFilenames) return [];
+        return attachmentFilenames.split(',').filter(name => name.trim());
     }
 }
