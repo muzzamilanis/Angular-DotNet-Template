@@ -19,6 +19,7 @@ namespace SimpleApi.Data
 		public DbSet<BusinessNature> BusinessNatures { get; set; }
 		public DbSet<ServiceType> ServiceTypes { get; set; }
 		public DbSet<Currency> Currencies { get; set; }
+		public DbSet<OrderInstruction> OrderInstructions { get; set; }
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
@@ -203,6 +204,25 @@ namespace SimpleApi.Data
 				entity.HasOne(e => e.Product)
 					  .WithMany()
 					  .HasForeignKey(e => e.ProductId);
+			});
+
+			// Configure OrderInstruction
+			modelBuilder.Entity<OrderInstruction>(entity =>
+			{
+				entity.HasKey(e => e.Id);
+				entity.Property(e => e.Message).IsRequired().HasMaxLength(2000);
+				entity.Property(e => e.AttachmentFilenames).HasMaxLength(500);
+				entity.Property(e => e.CreatedAt).IsRequired();
+
+				entity.HasOne(e => e.SaleOrder)
+					  .WithMany()
+					  .HasForeignKey(e => e.SaleOrderId)
+					  .OnDelete(DeleteBehavior.Cascade);
+
+				entity.HasOne(e => e.Sender)
+					  .WithMany()
+					  .HasForeignKey(e => e.SenderId)
+					  .OnDelete(DeleteBehavior.Restrict);
 			});
 
 			// Define a fixed seed date to avoid constant model changes
