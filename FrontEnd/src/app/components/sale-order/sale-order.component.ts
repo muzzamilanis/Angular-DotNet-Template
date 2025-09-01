@@ -56,6 +56,14 @@ export class SaleOrderComponent implements OnInit {
     isCreatingProject = false;
     @ViewChild('createProjectModal') createProjectModal!: ElementRef;
 
+    // Order list filtering and view properties
+    isCreateMode = false;
+    filteredSaleOrders: SaleOrder[] = [];
+    searchFilter = '';
+    statusFilter = '';
+    dateFromFilter = '';
+    dateToFilter = '';
+
     readonly statusOptions = ['New', 'InProgress', 'Completed', 'Abandon', 'workSubmittedByWriter'];
     readonly paymentStatusOptions = ['Pending', 'PartialPaid', 'FullPaid'];
     readonly sourceOfPaymentOptions = ['Website', 'Payoneer', 'OnlineTransfer'];
@@ -461,6 +469,9 @@ export class SaleOrderComponent implements OnInit {
                         } else {
                             this.loadSaleOrders();
                             this.resetForm();
+                            if (this.isCreateMode) {
+                                this.isCreateMode = false;
+                            }
                             this.notificationService.showSuccess('Sale order updated successfully!');
                         }
                     },
@@ -487,6 +498,9 @@ export class SaleOrderComponent implements OnInit {
                     } else {
                         this.loadSaleOrders();
                         this.resetForm();
+                        if (this.isCreateMode) {
+                            this.isCreateMode = false;
+                        }
                         this.notificationService.showSuccess('Sale order created successfully!');
                     }
                 },
@@ -666,6 +680,8 @@ export class SaleOrderComponent implements OnInit {
                     console.error('Unexpected response format:', response);
                     this.saleOrders = [];
                 }
+                // Initialize filtered orders
+                this.applyFilters();
             },
             error: (error) => {
                 console.error('Error loading sale orders:', error);
@@ -963,5 +979,72 @@ export class SaleOrderComponent implements OnInit {
 
     closeCreateProjectModal(): void {
         this.hideCreateProjectModal();
+    }
+
+    // Order list filtering methods
+    applyFilters(): void {
+        this.filteredSaleOrders = this.saleOrders.filter(order => {
+            // Search filter (order number, client name, customer name)
+            if (this.searchFilter && this.searchFilter.trim()) {
+                const searchTerm = this.searchFilter.toLowerCase();
+                const matchesSearch = 
+                    order.orderNumber.toLowerCase().includes(searchTerm) ||
+                    (order.clientName && order.clientName.toLowerCase().includes(searchTerm)) ||
+                    (order.customerName && order.customerName.toLowerCase().includes(searchTerm));
+                if (!matchesSearch) return false;
+            }
+
+            // Status filter
+            if (this.statusFilter && this.statusFilter.trim()) {
+                if (order.status !== this.statusFilter) return false;
+            }
+
+            // Date range filter
+            if (this.dateFromFilter) {
+                const orderDate = new Date(order.orderDate);
+                const fromDate = new Date(this.dateFromFilter);
+                if (orderDate < fromDate) return false;
+            }
+
+            if (this.dateToFilter) {
+                const orderDate = new Date(order.orderDate);
+                const toDate = new Date(this.dateToFilter);
+                toDate.setHours(23, 59, 59, 999); // Include the entire to date
+                if (orderDate > toDate) return false;
+            }
+
+            return true;
+        });
+    }
+
+    onSearchFilterChange(): void {
+        this.applyFilters();
+    }
+
+    onStatusFilterChange(): void {
+        this.applyFilters();
+    }
+
+    onDateFilterChange(): void {
+        this.applyFilters();
+    }
+
+    clearFilters(): void {
+        this.searchFilter = '';
+        this.statusFilter = '';
+        this.dateFromFilter = '';
+        this.dateToFilter = '';
+        this.applyFilters();
+    }
+
+    // Create order mode methods
+    enterCreateMode(): void {
+        this.isCreateMode = true;
+        this.resetForm();
+    }
+
+    exitCreateMode(): void {
+        this.isCreateMode = false;
+        this.resetForm();
     }
 }

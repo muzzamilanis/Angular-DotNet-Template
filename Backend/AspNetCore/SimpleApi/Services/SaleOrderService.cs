@@ -453,15 +453,31 @@ namespace SimpleApi.Services
                 };
 
                 // Get assigned writer info if order is assigned
-                if (!string.IsNullOrEmpty(order.AssignedTo) && int.TryParse(order.AssignedTo, out int assignedUserId))
+                if (!string.IsNullOrEmpty(order.AssignedTo))
                 {
-                    var assignedUser = await _context.Users
-                        .FirstOrDefaultAsync(u => u.Id == assignedUserId && u.CompanyId == companyId);
-                    
-                    if (assignedUser != null)
+                    // Try to parse as integer first (new format)
+                    if (int.TryParse(order.AssignedTo, out int assignedUserId))
                     {
-                        teamLeadOrder.AssignedTo = assignedUser.Name;
-                        teamLeadOrder.AssignedToUserId = assignedUser.Id;
+                        var assignedUser = await _context.Users
+                            .FirstOrDefaultAsync(u => u.Id == assignedUserId && u.CompanyId == companyId);
+                        
+                        if (assignedUser != null)
+                        {
+                            teamLeadOrder.AssignedTo = assignedUser.Name;
+                            teamLeadOrder.AssignedToUserId = assignedUser.Id;
+                        }
+                        else
+                        {
+                            // Handle case where user ID doesn't exist anymore (legacy data)
+                            teamLeadOrder.AssignedTo = $"Unknown User (ID: {assignedUserId})";
+                            teamLeadOrder.AssignedToUserId = null;
+                        }
+                    }
+                    else
+                    {
+                        // Handle legacy case where AssignedTo contains name instead of ID
+                        teamLeadOrder.AssignedTo = order.AssignedTo;
+                        teamLeadOrder.AssignedToUserId = null;
                     }
                 }
 
@@ -491,15 +507,32 @@ namespace SimpleApi.Services
                 throw new ArgumentException($"Writer with ID {writerId} not found, not active, or access denied.");
             }
 
-            // Check if order is already assigned
-            if (!string.IsNullOrEmpty(saleOrder.AssignedTo))
+            // Check if order can be reassigned (not completed)
+            if (saleOrder.Status == "Completed")
             {
-                throw new ArgumentException("Order is already assigned. Use update assignment instead.");
+                throw new ArgumentException("Cannot assign completed orders.");
+            }
+
+            // For legacy data, allow reassignment even if already assigned to handle data migration
+            // Only throw error if trying to assign to the same writer
+            if (!string.IsNullOrEmpty(saleOrder.AssignedTo) && 
+                int.TryParse(saleOrder.AssignedTo, out int currentWriterId) && 
+                currentWriterId == writerId)
+            {
+                throw new ArgumentException("Order is already assigned to this writer.");
             }
 
             // Assign the order
             saleOrder.AssignedTo = writerId.ToString();
             saleOrder.Status = "InProgress"; // Set status to InProgress when assigned
+
+            // Reset submission status if changing assignment after submission
+            if (saleOrder.SubmissionStatus != null && saleOrder.SubmissionStatus != "")
+            {
+                saleOrder.SubmissionStatus = null;
+                saleOrder.SubmissionDate = null;
+                saleOrder.SubmittedFilename = null;
+            }
 
             await _context.SaveChangesAsync();
         }

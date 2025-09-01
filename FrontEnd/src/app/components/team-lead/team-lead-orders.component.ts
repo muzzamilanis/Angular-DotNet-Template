@@ -91,7 +91,12 @@ export class TeamLeadOrdersComponent implements OnInit {
             writerId: this.selectedWriterId
         };
 
-        const isUpdate = !!this.selectedOrder.assignedToUserId;
+        // For legacy orders where assignedToUserId might be null but assignedTo has a value,
+        // we should treat it as a new assignment rather than an update
+        const hasValidCurrentAssignment = this.selectedOrder.assignedToUserId && 
+                                         this.selectedOrder.assignedToUserId > 0;
+        const isUpdate = hasValidCurrentAssignment;
+        
         const operation = isUpdate 
             ? this.teamLeadService.updateAssignment(assignment)
             : this.teamLeadService.assignOrder(assignment);
@@ -106,7 +111,24 @@ export class TeamLeadOrdersComponent implements OnInit {
             },
             error: (error) => {
                 console.error('Error assigning order:', error);
-                this.notificationService.showError('Error assigning order. Please try again.');
+                
+                // If update fails for legacy data, try as new assignment
+                if (isUpdate && error.status === 400) {
+                    console.log('Update failed, trying as new assignment for legacy data...');
+                    this.teamLeadService.assignOrder(assignment).subscribe({
+                        next: (response) => {
+                            this.notificationService.showSuccess('Order assigned successfully!');
+                            this.closeAssignModal();
+                            this.loadOrders();
+                        },
+                        error: (assignError) => {
+                            console.error('Error in fallback assignment:', assignError);
+                            this.notificationService.showError('Error assigning order. Please try again.');
+                        }
+                    });
+                } else {
+                    this.notificationService.showError('Error assigning order. Please try again.');
+                }
             }
         });
     }
