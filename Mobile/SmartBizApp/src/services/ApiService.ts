@@ -1,6 +1,6 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { ApiResponse, LoginRequest, LoginResponse, User, Company, Project, SaleOrder } from '../types';
+import { ApiResponse, LoginRequest, LoginResponse, User, Company, Project, SaleOrder, CreateSaleOrderDto } from '../types';
 
 // Base API configuration
 const API_BASE_URL = 'https://localhost:5001/api'; // Update this to match your backend URL
@@ -193,11 +193,11 @@ class ApiService {
   // Project endpoints
   async getProjects(): Promise<Project[]> {
     try {
-      const response = await this.axiosInstance.get<ApiResponse<Project[]>>('/projects');
+      const response = await this.axiosInstance.get<ApiResponse<{ items: Project[] }>>('/projects');
       const data = response.data;
       
       if (data.success && data.result) {
-        return data.result;
+        return data.result.items || [];
       } else {
         throw new Error(data.error || 'Failed to fetch projects');
       }
@@ -206,19 +206,87 @@ class ApiService {
     }
   }
 
-  // Sale Order endpoints
-  async getSaleOrders(): Promise<SaleOrder[]> {
+  async createProject(project: Partial<Project>): Promise<Project> {
     try {
-      const response = await this.axiosInstance.get<ApiResponse<SaleOrder[]>>('/saleorders');
+      const response = await this.axiosInstance.post<ApiResponse<Project>>('/projects', project);
       const data = response.data;
       
       if (data.success && data.result) {
         return data.result;
       } else {
+        throw new Error(data.error || 'Failed to create project');
+      }
+    } catch (error: any) {
+      throw new Error(error.response?.data?.error || error.message || 'Failed to create project');
+    }
+  }
+
+  // Sale Order endpoints
+  async getSaleOrders(): Promise<SaleOrder[]> {
+    try {
+      const response = await this.axiosInstance.get<ApiResponse<{ items: SaleOrder[] }>>('/saleorders');
+      const data = response.data;
+      
+      if (data.success && data.result) {
+        return data.result.items || [];
+      } else {
         throw new Error(data.error || 'Failed to fetch sale orders');
       }
     } catch (error: any) {
       throw new Error(error.response?.data?.error || error.message || 'Failed to fetch sale orders');
+    }
+  }
+
+  async getSaleOrder(id: number): Promise<SaleOrder> {
+    try {
+      const response = await this.axiosInstance.get<ApiResponse<SaleOrder>>(`/saleorders/${id}`);
+      const data = response.data;
+      
+      if (data.success && data.result) {
+        return data.result;
+      } else {
+        throw new Error(data.error || 'Failed to fetch sale order');
+      }
+    } catch (error: any) {
+      throw new Error(error.response?.data?.error || error.message || 'Failed to fetch sale order');
+    }
+  }
+
+  async createSaleOrder(saleOrder: CreateSaleOrderDto): Promise<SaleOrder> {
+    try {
+      const response = await this.axiosInstance.post<ApiResponse<SaleOrder>>('/saleorders', saleOrder);
+      const data = response.data;
+      
+      if (data.success && data.result) {
+        return data.result;
+      } else {
+        throw new Error(data.error || 'Failed to create sale order');
+      }
+    } catch (error: any) {
+      throw new Error(error.response?.data?.error || error.message || 'Failed to create sale order');
+    }
+  }
+
+  async updateSaleOrder(id: number, saleOrder: Partial<CreateSaleOrderDto>): Promise<SaleOrder> {
+    try {
+      const response = await this.axiosInstance.put<ApiResponse<SaleOrder>>(`/saleorders/${id}`, saleOrder);
+      const data = response.data;
+      
+      if (data.success && data.result) {
+        return data.result;
+      } else {
+        throw new Error(data.error || 'Failed to update sale order');
+      }
+    } catch (error: any) {
+      throw new Error(error.response?.data?.error || error.message || 'Failed to update sale order');
+    }
+  }
+
+  async deleteSaleOrder(id: number): Promise<void> {
+    try {
+      await this.axiosInstance.delete(`/saleorders/${id}`);
+    } catch (error: any) {
+      throw new Error(error.response?.data?.error || error.message || 'Failed to delete sale order');
     }
   }
 
