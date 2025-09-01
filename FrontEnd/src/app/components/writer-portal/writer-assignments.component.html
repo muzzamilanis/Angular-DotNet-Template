@@ -12,7 +12,7 @@
                     </div>
 
                     <div *ngIf="!isLoading && assignments.length === 0" class="no-assignments">
-                        <i class="fas fa-inbox fa-3x" style="color: #ccc;"></i>
+                        <i class="fas fa-inbox fa-3x" style="color: #ccc"></i>
                         <h4>No assignments yet</h4>
                         <p>You don't have any assignments at the moment.</p>
                     </div>
@@ -37,7 +37,9 @@
                                 </div>
                                 <div class="meta-item">
                                     <span class="meta-label">Deadline:</span>
-                                    <span class="meta-value" [ngClass]="{'deadline-urgent': isDeadlineUrgent(assignment.deadline)}">
+                                    <span
+                                        class="meta-value"
+                                        [ngClass]="{ 'deadline-urgent': isDeadlineUrgent(assignment.deadline) }">
                                         {{ formatDate(assignment.deadline) }}
                                     </span>
                                 </div>
@@ -51,25 +53,38 @@
                                 </div>
                                 <div class="meta-item">
                                     <span class="meta-label">Submission Status:</span>
-                                    <span class="badge" [ngClass]="getSubmissionStatusClass(assignment.submissionStatus)">
+                                    <span
+                                        class="badge"
+                                        [ngClass]="getSubmissionStatusClass(assignment.submissionStatus)">
                                         {{ assignment.submissionStatus || 'Not Submitted' }}
                                     </span>
                                 </div>
                             </div>
 
-                            <div *ngIf="assignment.orderDetails" class="meta-item" style="margin-bottom: 1rem;">
+                            <div *ngIf="assignment.orderDetails" class="meta-item" style="margin-bottom: 1rem">
                                 <span class="meta-label">Order Details:</span>
-                                <div class="meta-value" style="margin-top: 0.5rem; padding: 0.75rem; background: #f8f9fa; border-radius: 4px;">
+                                <div
+                                    class="meta-value"
+                                    style="
+                                        margin-top: 0.5rem;
+                                        padding: 0.75rem;
+                                        background: #f8f9fa;
+                                        border-radius: 4px;
+                                    ">
                                     {{ assignment.orderDetails }}
                                 </div>
                             </div>
 
                             <!-- Attachments Section -->
                             <div *ngIf="assignment.attachmentFilenames" class="attachments-section">
-                                <h6><i class="fas fa-paperclip"></i> Attachments:</h6>
+                                <h6>
+                                    <i class="fas fa-paperclip"></i>
+                                    Attachments:
+                                </h6>
                                 <div *ngFor="let filename of getAttachmentsList(assignment.attachmentFilenames)">
                                     <a class="attachment-item" (click)="downloadAttachment(filename)">
-                                        <i class="fas fa-download"></i> {{ filename }}
+                                        <i class="fas fa-download"></i>
+                                        {{ filename }}
                                     </a>
                                 </div>
                             </div>
@@ -79,27 +94,31 @@
                                 <div *ngIf="assignment.submissionStatus">
                                     <div class="row">
                                         <div class="col-md-6">
-                                            <strong>Submitted on:</strong> {{ formatDate(assignment.submissionDate) }}
+                                            <strong>Submitted on:</strong>
+                                            {{ formatDate(assignment.submissionDate) }}
                                         </div>
                                         <div class="col-md-6" *ngIf="assignment.submittedFilename">
-                                            <strong>Submitted file:</strong> 
-                                            <a (click)="downloadAttachment(assignment.submittedFilename)" class="attachment-item btn-sm">
-                                                <i class="fas fa-download"></i> {{ assignment.submittedFilename }}
+                                            <strong>Submitted file:</strong>
+                                            <a
+                                                (click)="downloadAttachment(assignment.submittedFilename)"
+                                                class="attachment-item btn-sm">
+                                                <i class="fas fa-download"></i>
+                                                {{ assignment.submittedFilename }}
                                             </a>
                                         </div>
                                     </div>
                                 </div>
-                                
+
                                 <div class="mt-3">
-                                    <button 
-                                        class="btn btn-success btn-sm" 
+                                    <button
+                                        class="btn btn-success btn-sm"
                                         (click)="openSubmissionModal(assignment)"
                                         [disabled]="assignment.submissionStatus === 'Completed'">
                                         <i class="fas fa-upload"></i>
                                         {{ assignment.submissionStatus ? 'Update Submission' : 'Submit Work' }}
                                     </button>
-                                    <button 
-                                        class="btn btn-info btn-sm ml-2" 
+                                    <button
+                                        class="btn btn-info btn-sm ml-2"
                                         (click)="openInstructionsModal(assignment)">
                                         <i class="fas fa-comments"></i>
                                         Instructions
@@ -118,15 +137,15 @@
 <div *ngIf="isSubmissionModalOpen" class="modal-overlay" (click)="closeSubmissionModal()">
     <div class="modal-content" (click)="$event.stopPropagation()">
         <h4>Submit Work - {{ selectedAssignment?.orderNumber }}</h4>
-        
+
         <form (ngSubmit)="submitWork()" #submissionForm="ngForm">
             <div class="form-group">
                 <label for="submissionStatus">Submission Status *</label>
-                <select 
-                    id="submissionStatus" 
+                <select
+                    id="submissionStatus"
                     name="submissionStatus"
-                    class="form-control" 
-                    [(ngModel)]="submissionStatus" 
+                    class="form-control"
+                    [(ngModel)]="submissionStatus"
                     required>
                     <option value="">Select Status</option>
                     <option value="Completed">Completed</option>
@@ -135,23 +154,23 @@
             </div>
 
             <div class="form-group">
-                <label for="submissionFile">Upload File (optional)</label>
-                <input 
-                    type="file" 
-                    id="submissionFile" 
+                <label for="submissionFile">Upload File/Document/Screenshot (optional)</label>
+                <input
+                    type="file"
+                    id="submissionFile"
                     name="submissionFile"
-                    class="form-control" 
+                    class="form-control"
                     (change)="onFileSelected($event)"
-                    accept=".pdf,.doc,.docx,.txt">
-                <small class="text-muted">Supported formats: PDF, DOC, DOCX, TXT</small>
+                    accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png,.webp" />
+                <small class="text-muted">Supported formats: PDF, DOC, DOCX, TXT, JPG, JPEG, PNG, WebP</small>
             </div>
 
             <div class="form-group">
                 <label for="submissionNotes">Notes (optional)</label>
-                <textarea 
-                    id="submissionNotes" 
+                <textarea
+                    id="submissionNotes"
                     name="submissionNotes"
-                    class="form-control" 
+                    class="form-control"
                     rows="3"
                     [(ngModel)]="submissionNotes"
                     placeholder="Add any notes or comments..."></textarea>
@@ -159,11 +178,10 @@
 
             <div class="form-group">
                 <button type="submit" class="btn btn-primary" [disabled]="!submissionStatus">
-                    <i class="fas fa-paper-plane"></i> Submit
+                    <i class="fas fa-paper-plane"></i>
+                    Submit
                 </button>
-                <button type="button" class="btn btn-secondary" (click)="closeSubmissionModal()">
-                    Cancel
-                </button>
+                <button type="button" class="btn btn-secondary" (click)="closeSubmissionModal()">Cancel</button>
             </div>
         </form>
     </div>
@@ -181,30 +199,47 @@
             </div>
             <div class="modal-body">
                 <!-- Instructions History -->
-                <div class="instructions-history" style="max-height: 400px; overflow-y: auto; margin-bottom: 1rem;">
+                <div class="instructions-history" style="max-height: 400px; overflow-y: auto; margin-bottom: 1rem">
                     <h6>Instruction History:</h6>
                     <div *ngIf="isLoadingInstructions" class="text-center">
-                        <i class="fas fa-spinner fa-spin"></i> Loading instructions...
+                        <i class="fas fa-spinner fa-spin"></i>
+                        Loading instructions...
                     </div>
                     <div *ngIf="!isLoadingInstructions && instructions.length === 0" class="text-muted">
                         No instructions yet. Check back later or contact your team lead if you have questions.
                     </div>
-                    <div *ngFor="let instruction of instructions" class="instruction-item" 
-                         [class.team-lead-instruction]="instruction.isFromTeamLead"
-                         [class.writer-instruction]="!instruction.isFromTeamLead"
-                         style="margin-bottom: 1rem; padding: 0.75rem; border-radius: 8px; border-left: 4px solid;">
-                        <div class="instruction-header" style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                    <div
+                        *ngFor="let instruction of instructions"
+                        class="instruction-item"
+                        [class.team-lead-instruction]="instruction.isFromTeamLead"
+                        [class.writer-instruction]="!instruction.isFromTeamLead"
+                        style="margin-bottom: 1rem; padding: 0.75rem; border-radius: 8px; border-left: 4px solid">
+                        <div
+                            class="instruction-header"
+                            style="display: flex; justify-content: space-between; margin-bottom: 0.5rem">
                             <strong>{{ instruction.senderName }}</strong>
                             <small class="text-muted">{{ formatInstructionDate(instruction.createdAt) }}</small>
                         </div>
-                        <div class="instruction-message" style="margin-bottom: 0.5rem;">
+                        <div class="instruction-message" style="margin-bottom: 0.5rem">
                             {{ instruction.message }}
                         </div>
                         <div *ngIf="instruction.attachmentFilenames" class="instruction-attachments">
-                            <small><i class="fas fa-paperclip"></i> Attachments:</small>
-                            <span *ngFor="let filename of getInstructionAttachments(instruction.attachmentFilenames)" 
-                                  class="attachment-tag" style="margin-left: 0.5rem; background: #e9ecef; padding: 2px 6px; border-radius: 3px; font-size: 0.8em; cursor: pointer;"
-                                  (click)="downloadAttachment(filename)">
+                            <small>
+                                <i class="fas fa-paperclip"></i>
+                                Attachments:
+                            </small>
+                            <span
+                                *ngFor="let filename of getInstructionAttachments(instruction.attachmentFilenames)"
+                                class="attachment-tag"
+                                style="
+                                    margin-left: 0.5rem;
+                                    background: #e9ecef;
+                                    padding: 2px 6px;
+                                    border-radius: 3px;
+                                    font-size: 0.8em;
+                                    cursor: pointer;
+                                "
+                                (click)="downloadAttachment(filename)">
                                 {{ filename }}
                             </span>
                         </div>
@@ -212,10 +247,10 @@
                 </div>
 
                 <!-- Add Response -->
-                <div class="add-response-section" style="border-top: 1px solid #dee2e6; padding-top: 1rem;">
+                <div class="add-response-section" style="border-top: 1px solid #dee2e6; padding-top: 1rem">
                     <h6>Ask for Clarification or Report Issues:</h6>
                     <div class="form-group">
-                        <textarea 
+                        <textarea
                             [(ngModel)]="newResponseMessage"
                             class="form-control"
                             rows="3"
@@ -223,11 +258,9 @@
                     </div>
 
                     <div class="form-group">
-                        <button 
-                            class="btn btn-primary" 
-                            (click)="addResponse()"
-                            [disabled]="!newResponseMessage.trim()">
-                            <i class="fas fa-paper-plane"></i> Send Response
+                        <button class="btn btn-primary" (click)="addResponse()" [disabled]="!newResponseMessage.trim()">
+                            <i class="fas fa-paper-plane"></i>
+                            Send Response
                         </button>
                         <button type="button" class="btn btn-secondary ml-2" (click)="closeInstructionsModal()">
                             Close
