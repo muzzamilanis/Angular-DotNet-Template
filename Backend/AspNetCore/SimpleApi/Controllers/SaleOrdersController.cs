@@ -271,6 +271,7 @@ namespace SimpleApi.Controllers
                 ".jpg" => "image/jpeg",
                 ".jpeg" => "image/jpeg",
                 ".png" => "image/png",
+                ".webp" => "image/webp",
                 ".gif" => "image/gif",
                 _ => "application/octet-stream"
             };
