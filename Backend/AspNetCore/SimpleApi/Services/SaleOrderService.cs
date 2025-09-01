@@ -29,6 +29,7 @@ namespace SimpleApi.Services
         // Order Instructions methods
         Task<List<OrderInstructionDto>> GetOrderInstructionsAsync(int saleOrderId, int companyId);
         Task<OrderInstructionDto> AddOrderInstructionAsync(CreateOrderInstructionDto instruction, int senderId, bool isFromTeamLead, int companyId);
+        Task<OrderInstructionDto> AddOrderInstructionWithAttachmentAsync(CreateOrderInstructionDto instruction, int senderId, bool isFromTeamLead, int companyId, IFormFile? attachmentFile);
         Task UpdateOrderDetailsAsync(UpdateOrderDetailsDto updateDto, int companyId);
     }
 
@@ -642,6 +643,74 @@ namespace SimpleApi.Services
                 CreatedAt = DateTime.UtcNow,
                 IsFromTeamLead = isFromTeamLead,
                 AttachmentFilenames = instruction.AttachmentFilenames
+            };
+
+            _context.OrderInstructions.Add(orderInstruction);
+            await _context.SaveChangesAsync();
+
+            return new OrderInstructionDto
+            {
+                Id = orderInstruction.Id,
+                SaleOrderId = orderInstruction.SaleOrderId,
+                SenderId = orderInstruction.SenderId,
+                SenderName = sender.Name,
+                Message = orderInstruction.Message,
+                CreatedAt = orderInstruction.CreatedAt,
+                IsFromTeamLead = orderInstruction.IsFromTeamLead,
+                AttachmentFilenames = orderInstruction.AttachmentFilenames
+            };
+        }
+
+        public async Task<OrderInstructionDto> AddOrderInstructionWithAttachmentAsync(CreateOrderInstructionDto instruction, int senderId, bool isFromTeamLead, int companyId, IFormFile? attachmentFile)
+        {
+            // Verify that the sale order belongs to the company
+            var saleOrder = await _context.SaleOrders
+                .FirstOrDefaultAsync(so => so.Id == instruction.SaleOrderId && so.CompanyId == companyId);
+
+            if (saleOrder == null)
+            {
+                throw new ArgumentException($"Sale order with ID {instruction.SaleOrderId} not found or access denied.");
+            }
+
+            // Verify that the sender exists and belongs to the same company
+            var sender = await _context.Users
+                .FirstOrDefaultAsync(u => u.Id == senderId && u.CompanyId == companyId && u.IsActive);
+
+            if (sender == null)
+            {
+                throw new ArgumentException($"User with ID {senderId} not found or access denied.");
+            }
+
+            // Handle file upload if provided
+            string? attachmentFilename = null;
+            if (attachmentFile != null && attachmentFile.Length > 0)
+            {
+                // Create assets directory if it doesn't exist
+                var assetsPath = Path.Combine(Directory.GetCurrentDirectory(), "Assets");
+                if (!Directory.Exists(assetsPath))
+                    Directory.CreateDirectory(assetsPath);
+
+                // Generate unique filename
+                var fileName = $"{Guid.NewGuid()}_{attachmentFile.FileName}";
+                var filePath = Path.Combine(assetsPath, fileName);
+
+                // Save file
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await attachmentFile.CopyToAsync(stream);
+                }
+
+                attachmentFilename = fileName;
+            }
+
+            var orderInstruction = new OrderInstruction
+            {
+                SaleOrderId = instruction.SaleOrderId,
+                SenderId = senderId,
+                Message = instruction.Message,
+                CreatedAt = DateTime.UtcNow,
+                IsFromTeamLead = isFromTeamLead,
+                AttachmentFilenames = attachmentFilename ?? instruction.AttachmentFilenames
             };
 
             _context.OrderInstructions.Add(orderInstruction);
