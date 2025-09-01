@@ -184,5 +184,40 @@ namespace SimpleApi.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpPost("assignments/{saleOrderId}/instructions-with-attachment")]
+        public async Task<ActionResult<OrderInstructionDto>> AddWriterResponseWithAttachment(int saleOrderId, [FromForm] CreateOrderInstructionDto instruction, IFormFile? attachmentFile)
+        {
+            try
+            {
+                var userId = GetCurrentUserId();
+                var companyId = GetCurrentUserCompanyId();
+
+                // Verify that the writer is assigned to this order
+                var assignment = await _saleOrderService.GetWriterAssignmentsAsync(userId);
+                if (!assignment.Any(a => a.Id == saleOrderId))
+                {
+                    return Forbid("Access denied. You are not assigned to this order.");
+                }
+
+                // Ensure the instruction is for the correct sale order
+                instruction.SaleOrderId = saleOrderId;
+
+                var result = await _saleOrderService.AddOrderInstructionWithAttachmentAsync(instruction, userId, false, companyId, attachmentFile);
+                return Ok(result);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(ex.Message);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }
