@@ -1,10 +1,10 @@
-<!-- Sale Order Form -->
-<div class="row" *ngIf="!isCreateMode || editingOrder">
+<!-- Sale Order Form - Only show when showCreateForm is true -->
+<div class="row" *ngIf="showCreateForm">
     <div class="col-md-12">
         <div class="card card-primary">
             <div class="card-header">
                 <h3 class="card-title">{{ editingOrder ? 'Edit' : 'Create' }} {{ isDigitalMarketing ? 'Order Log' : 'Sale Order' }}</h3>
-                <div class="card-tools" *ngIf="!editingOrder">
+                <div class="card-tools">
                     <button type="button" class="btn btn-tool" (click)="exitCreateMode()" title="Exit Create Mode">
                         <i class="fas fa-times"></i>
                     </button>
@@ -967,7 +967,7 @@
                         <i class="fas fa-save"></i>
                         {{ editingOrder ? 'Update' : 'Create' }} Order
                     </button>
-                    <button type="button" class="btn btn-secondary ml-2" (click)="resetForm()">
+                    <button type="button" class="btn btn-secondary ml-2" (click)="exitCreateMode()">
                         <i class="fas fa-times"></i>
                         Cancel
                     </button>
@@ -986,8 +986,8 @@
     </div>
 </div>
 
-<!-- Sale Orders List -->
-<div class="row mt-4" *ngIf="!isCreateMode">
+<!-- Sale Orders List - Only show when showCreateForm is false -->
+<div class="row mt-4" *ngIf="!showCreateForm">
     <div class="col-md-12">
         <div class="card">
             <div class="card-header">
@@ -1002,7 +1002,7 @@
             <!-- Filter Controls -->
             <div class="card-body pb-2">
                 <div class="row mb-3">
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         <div class="form-group mb-2">
                             <label for="searchFilter" class="form-label mb-1">Search</label>
                             <input 
@@ -1013,6 +1013,20 @@
                                 (input)="onSearchFilterChange()"
                                 placeholder="Search orders..."
                             />
+                        </div>
+                    </div>
+                    <div class="col-md-2" *ngIf="isDigitalMarketing">
+                        <div class="form-group mb-2">
+                            <label for="projectFilter" class="form-label mb-1">Project</label>
+                            <select 
+                                class="form-control form-control-sm" 
+                                id="projectFilter"
+                                [(ngModel)]="projectFilter"
+                                (change)="onProjectFilterChange()"
+                            >
+                                <option value="">All Projects</option>
+                                <option *ngFor="let project of projects" [value]="project.id">{{ project.projectName }}</option>
+                            </select>
                         </div>
                     </div>
                     <div class="col-md-2" *ngIf="isDigitalMarketing">

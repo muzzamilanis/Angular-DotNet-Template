@@ -64,6 +64,12 @@ export class SaleOrderComponent implements OnInit {
     dateFromFilter = '';
     dateToFilter = '';
 
+    // Add this property to control form visibility
+    showCreateForm = false;
+
+    // Add project filter property
+    projectFilter: number | string = '';
+
     readonly statusOptions = ['New', 'InProgress', 'Completed', 'Abandon', 'workSubmittedByWriter'];
     readonly paymentStatusOptions = ['Pending', 'PartialPaid', 'FullPaid'];
     readonly sourceOfPaymentOptions = ['Website', 'Payoneer', 'OnlineTransfer'];
@@ -455,24 +461,18 @@ export class SaleOrderComponent implements OnInit {
                 })
                 .subscribe({
                     next: (response) => {
-                        // Upload files if any were selected
                         if (this.selectedFiles.length > 0) {
                             this.uploadFiles(response.id).then(() => {
+                                this.notificationService.showSuccess('Order updated successfully!');
                                 this.loadSaleOrders();
-                                this.resetForm();
-                                this.notificationService.showSuccess('Sale order updated successfully with attachments!');
+                                this.exitCreateMode(); // Hide form after successful update
                             }).catch(() => {
-                                this.loadSaleOrders();
-                                this.resetForm();
-                                this.notificationService.showWarning('Sale order updated but file upload failed.');
+                                this.notificationService.showError('Failed to upload files');
                             });
                         } else {
+                            this.notificationService.showSuccess('Order updated successfully!');
                             this.loadSaleOrders();
-                            this.resetForm();
-                            if (this.isCreateMode) {
-                                this.isCreateMode = false;
-                            }
-                            this.notificationService.showSuccess('Sale order updated successfully!');
+                            this.exitCreateMode(); // Hide form after successful update
                         }
                     },
                     error: (error) => {
@@ -484,24 +484,18 @@ export class SaleOrderComponent implements OnInit {
             // Create new order
             this.saleOrderService.createSaleOrder(saleOrder).subscribe({
                 next: (response) => {
-                    // Upload files if any were selected
                     if (this.selectedFiles.length > 0) {
                         this.uploadFiles(response.id).then(() => {
+                            this.notificationService.showSuccess('Order created successfully!');
                             this.loadSaleOrders();
-                            this.resetForm();
-                            this.notificationService.showSuccess('Sale order created successfully with attachments!');
+                            this.exitCreateMode(); // Hide form after successful creation
                         }).catch(() => {
-                            this.loadSaleOrders();
-                            this.resetForm();
-                            this.notificationService.showWarning('Sale order created but file upload failed.');
+                            this.notificationService.showError('Failed to upload files');
                         });
                     } else {
+                        this.notificationService.showSuccess('Order created successfully!');
                         this.loadSaleOrders();
-                        this.resetForm();
-                        if (this.isCreateMode) {
-                            this.isCreateMode = false;
-                        }
-                        this.notificationService.showSuccess('Sale order created successfully!');
+                        this.exitCreateMode(); // Hide form after successful creation
                     }
                 },
                 error: (error) => {
@@ -515,7 +509,11 @@ export class SaleOrderComponent implements OnInit {
     editOrder(order: SaleOrder): void {
         this.editingOrder = order;
         this.currentOrder = order;
+        this.showCreateForm = true; // Show form when editing
+        this.populateFormForEdit(order);
+    }
 
+    private populateFormForEdit(order: SaleOrder): void {
         const formValue: any = {
             orderNumber: order.orderNumber,
             orderDate: new Date(order.orderDate).toISOString().substring(0, 10),
@@ -582,7 +580,7 @@ export class SaleOrderComponent implements OnInit {
                 if (this.isDigitalMarketing) {
                     itemFormValue.workTitle = item.workTitle || '';
                     itemFormValue.paperType = item.paperType || '';
-                    itemFormValue.serviceType = item.serviceType || '';
+                    itemFormValue.serviceType = item.serviceType;
                     itemFormValue.wordCount = item.wordCount || null;
                     itemFormValue.pageCount = item.pageCount || null;
                     itemFormValue.itemDeadline = item.itemDeadline
@@ -984,33 +982,49 @@ export class SaleOrderComponent implements OnInit {
     // Order list filtering methods
     applyFilters(): void {
         this.filteredSaleOrders = this.saleOrders.filter(order => {
-            // Search filter (order number, client name, customer name)
-            if (this.searchFilter && this.searchFilter.trim()) {
+            // Search filter
+            if (this.searchFilter) {
                 const searchTerm = this.searchFilter.toLowerCase();
-                const matchesSearch = 
-                    order.orderNumber.toLowerCase().includes(searchTerm) ||
-                    (order.clientName && order.clientName.toLowerCase().includes(searchTerm)) ||
-                    (order.customerName && order.customerName.toLowerCase().includes(searchTerm));
-                if (!matchesSearch) return false;
+                const orderNumber = order.orderNumber?.toLowerCase() || '';
+                const clientName = order.clientName?.toLowerCase() || '';
+                const customerName = order.customerName?.toLowerCase() || '';
+                const projectName = order.projectName?.toLowerCase() || '';
+                
+                if (!orderNumber.includes(searchTerm) && 
+                    !clientName.includes(searchTerm) && 
+                    !customerName.includes(searchTerm) &&
+                    !projectName.includes(searchTerm)) {
+                    return false;
+                }
+            }
+
+            // Project filter (Digital Marketing only)
+            if (this.isDigitalMarketing && this.projectFilter && 
+                order.projectId !== parseInt(this.projectFilter.toString())) {
+                return false;
             }
 
             // Status filter
-            if (this.statusFilter && this.statusFilter.trim()) {
-                if (order.status !== this.statusFilter) return false;
+            if (this.statusFilter && order.status !== this.statusFilter) {
+                return false;
             }
 
-            // Date range filter
+            // Date filters
             if (this.dateFromFilter) {
                 const orderDate = new Date(order.orderDate);
                 const fromDate = new Date(this.dateFromFilter);
-                if (orderDate < fromDate) return false;
+                if (orderDate < fromDate) {
+                    return false;
+                }
             }
 
             if (this.dateToFilter) {
                 const orderDate = new Date(order.orderDate);
                 const toDate = new Date(this.dateToFilter);
-                toDate.setHours(23, 59, 59, 999); // Include the entire to date
-                if (orderDate > toDate) return false;
+                toDate.setHours(23, 59, 59, 999);
+                if (orderDate > toDate) {
+                    return false;
+                }
             }
 
             return true;
@@ -1018,6 +1032,10 @@ export class SaleOrderComponent implements OnInit {
     }
 
     onSearchFilterChange(): void {
+        this.applyFilters();
+    }
+
+    onProjectFilterChange(): void {
         this.applyFilters();
     }
 
@@ -1031,6 +1049,7 @@ export class SaleOrderComponent implements OnInit {
 
     clearFilters(): void {
         this.searchFilter = '';
+        this.projectFilter = '';
         this.statusFilter = '';
         this.dateFromFilter = '';
         this.dateToFilter = '';
@@ -1039,12 +1058,14 @@ export class SaleOrderComponent implements OnInit {
 
     // Create order mode methods
     enterCreateMode(): void {
-        this.isCreateMode = true;
+        this.showCreateForm = true;
+        this.editingOrder = null;
         this.resetForm();
     }
 
     exitCreateMode(): void {
-        this.isCreateMode = false;
+        this.showCreateForm = false;
+        this.editingOrder = null;
         this.resetForm();
     }
 }
