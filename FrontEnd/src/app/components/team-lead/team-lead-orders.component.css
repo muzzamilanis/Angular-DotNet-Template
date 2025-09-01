@@ -26,12 +26,12 @@
     border-radius: 8px;
     padding: 1.5rem;
     background: #ffffff;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     transition: box-shadow 0.3s ease;
 }
 
 .order-card:hover {
-    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 .order-header {
@@ -171,7 +171,7 @@
     max-width: 500px;
     max-height: 90vh;
     overflow-y: auto;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
 
 .modal-content h4 {
@@ -201,7 +201,7 @@
 .form-control:focus {
     outline: none;
     border-color: #007bff;
-    box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
 }
 
 .btn {
@@ -263,17 +263,17 @@
     .order-card {
         padding: 1rem;
     }
-    
+
     .meta-item {
         flex-direction: column;
         gap: 0.25rem;
     }
-    
+
     .meta-label {
         min-width: unset;
         font-size: 0.9rem;
     }
-    
+
     .modal-content {
         padding: 1.5rem;
         margin: 1rem;

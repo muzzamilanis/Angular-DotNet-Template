@@ -93,6 +93,6 @@ export enum BusinessNatureType {
     DIGITALMARKETINGAGENCY = 1,
     AUTOMOBILE = 2,
     GENERAL = 3,
-    RETAIL=4,
-    MANUFACTURING=5
+    RETAIL = 4,
+    MANUFACTURING = 5,
 }

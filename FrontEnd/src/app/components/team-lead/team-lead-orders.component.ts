@@ -7,7 +7,7 @@ import { OrderInstructionDto, CreateOrderInstructionDto, UpdateOrderDetailsDto }
     selector: 'app-team-lead-orders',
     templateUrl: './team-lead-orders.component.html',
     styleUrls: ['./team-lead-orders.component.css'],
-    standalone: false
+    standalone: false,
 })
 export class TeamLeadOrdersComponent implements OnInit {
     orders: TeamLeadOrderDto[] = [];
@@ -34,7 +34,7 @@ export class TeamLeadOrdersComponent implements OnInit {
     constructor(
         private teamLeadService: TeamLeadService,
         private notificationService: NotificationService
-    ) { }
+    ) {}
 
     ngOnInit(): void {
         this.loadOrders();
@@ -52,19 +52,19 @@ export class TeamLeadOrdersComponent implements OnInit {
                 console.error('Error loading orders:', error);
                 this.notificationService.showError('Error loading orders. Please try again.');
                 this.isLoading = false;
-            }
+            },
         });
     }
 
     loadWriters(): void {
         this.teamLeadService.getWriters().subscribe({
             next: (writers) => {
-                this.writers = writers.filter(w => w.isActive);
+                this.writers = writers.filter((w) => w.isActive);
             },
             error: (error) => {
                 console.error('Error loading writers:', error);
                 this.notificationService.showError('Error loading writers.');
-            }
+            },
         });
     }
 
@@ -88,16 +88,16 @@ export class TeamLeadOrdersComponent implements OnInit {
 
         const assignment: AssignOrderDto = {
             saleOrderId: this.selectedOrder.id,
-            writerId: this.selectedWriterId
+            writerId: this.selectedWriterId,
         };
 
         // For legacy orders where assignedToUserId might be null but assignedTo has a value,
         // we should treat it as a new assignment rather than an update
-        const hasValidCurrentAssignment = this.selectedOrder.assignedToUserId && 
-                                         this.selectedOrder.assignedToUserId > 0;
+        const hasValidCurrentAssignment =
+            this.selectedOrder.assignedToUserId && this.selectedOrder.assignedToUserId > 0;
         const isUpdate = hasValidCurrentAssignment;
-        
-        const operation = isUpdate 
+
+        const operation = isUpdate
             ? this.teamLeadService.updateAssignment(assignment)
             : this.teamLeadService.assignOrder(assignment);
 
@@ -111,7 +111,7 @@ export class TeamLeadOrdersComponent implements OnInit {
             },
             error: (error) => {
                 console.error('Error assigning order:', error);
-                
+
                 // If update fails for legacy data, try as new assignment
                 if (isUpdate && error.status === 400) {
                     console.log('Update failed, trying as new assignment for legacy data...');
@@ -124,12 +124,12 @@ export class TeamLeadOrdersComponent implements OnInit {
                         error: (assignError) => {
                             console.error('Error in fallback assignment:', assignError);
                             this.notificationService.showError('Error assigning order. Please try again.');
-                        }
+                        },
                     });
                 } else {
                     this.notificationService.showError('Error assigning order. Please try again.');
                 }
-            }
+            },
         });
     }
 
@@ -140,19 +140,27 @@ export class TeamLeadOrdersComponent implements OnInit {
 
     getStatusClass(status: string | undefined): string {
         switch (status) {
-            case 'Completed': return 'badge badge-success';
-            case 'workSubmittedByWriter': return 'badge badge-info';
-            case 'InProgress': return 'badge badge-warning';
-            case 'Need clarity': return 'badge badge-danger';
-            default: return 'badge badge-secondary';
+            case 'Completed':
+                return 'badge badge-success';
+            case 'workSubmittedByWriter':
+                return 'badge badge-info';
+            case 'InProgress':
+                return 'badge badge-warning';
+            case 'Need clarity':
+                return 'badge badge-danger';
+            default:
+                return 'badge badge-secondary';
         }
     }
 
     getSubmissionStatusClass(status: string | undefined): string {
         switch (status) {
-            case 'Completed': return 'badge badge-success';
-            case 'Need clarity': return 'badge badge-warning';
-            default: return 'badge badge-light';
+            case 'Completed':
+                return 'badge badge-success';
+            case 'Need clarity':
+                return 'badge badge-warning';
+            default:
+                return 'badge badge-light';
         }
     }
 
@@ -163,7 +171,7 @@ export class TeamLeadOrdersComponent implements OnInit {
 
     getAttachmentsList(attachmentFilenames: string | undefined): string[] {
         if (!attachmentFilenames) return [];
-        return attachmentFilenames.split(',').filter(name => name.trim());
+        return attachmentFilenames.split(',').filter((name) => name.trim());
     }
 
     isDeadlineUrgent(deadline: Date | undefined): boolean {
@@ -177,7 +185,7 @@ export class TeamLeadOrdersComponent implements OnInit {
 
     getWriterName(writerId?: number): string {
         if (!writerId) return 'Unassigned';
-        const writer = this.writers.find(w => w.id === writerId);
+        const writer = this.writers.find((w) => w.id === writerId);
         return writer ? writer.name : 'Unknown Writer';
     }
 
@@ -199,7 +207,7 @@ export class TeamLeadOrdersComponent implements OnInit {
 
         const updateDto: UpdateOrderDetailsDto = {
             id: this.editingOrderId,
-            orderDetails: this.editedOrderDetails
+            orderDetails: this.editedOrderDetails,
         };
 
         this.teamLeadService.updateOrderDetails(this.editingOrderId, updateDto).subscribe({
@@ -211,7 +219,7 @@ export class TeamLeadOrdersComponent implements OnInit {
             error: (error) => {
                 console.error('Error updating order details:', error);
                 this.notificationService.showError('Error updating order details. Please try again.');
-            }
+            },
         });
     }
 
@@ -241,7 +249,7 @@ export class TeamLeadOrdersComponent implements OnInit {
                 console.error('Error loading instructions:', error);
                 this.notificationService.showError('Error loading instructions.');
                 this.isLoadingInstructions = false;
-            }
+            },
         });
     }
 
@@ -250,12 +258,14 @@ export class TeamLeadOrdersComponent implements OnInit {
 
         // Upload files first if any are selected
         if (this.selectedInstructionFiles.length > 0) {
-            this.uploadInstructionFiles().then((filenames) => {
-                this.sendInstruction(filenames.join(','));
-            }).catch((error) => {
-                console.error('Error uploading files:', error);
-                this.notificationService.showError('Error uploading files. Please try again.');
-            });
+            this.uploadInstructionFiles()
+                .then((filenames) => {
+                    this.sendInstruction(filenames.join(','));
+                })
+                .catch((error) => {
+                    console.error('Error uploading files:', error);
+                    this.notificationService.showError('Error uploading files. Please try again.');
+                });
         } else {
             this.sendInstruction();
         }
@@ -267,7 +277,7 @@ export class TeamLeadOrdersComponent implements OnInit {
         const instruction: CreateOrderInstructionDto = {
             saleOrderId: this.selectedOrder.id,
             message: this.newInstructionMessage.trim(),
-            attachmentFilenames: attachmentFilenames
+            attachmentFilenames: attachmentFilenames,
         };
 
         this.teamLeadService.addOrderInstruction(this.selectedOrder.id, instruction).subscribe({
@@ -280,7 +290,7 @@ export class TeamLeadOrdersComponent implements OnInit {
             error: (error) => {
                 console.error('Error adding instruction:', error);
                 this.notificationService.showError('Error adding instruction. Please try again.');
-            }
+            },
         });
     }
 
@@ -291,14 +301,16 @@ export class TeamLeadOrdersComponent implements OnInit {
                 return;
             }
 
-            this.teamLeadService.uploadInstructionFiles(this.selectedOrder.id, this.selectedInstructionFiles).subscribe({
-                next: (response) => {
-                    resolve(response.filenames || []);
-                },
-                error: (error) => {
-                    reject(error);
-                }
-            });
+            this.teamLeadService
+                .uploadInstructionFiles(this.selectedOrder.id, this.selectedInstructionFiles)
+                .subscribe({
+                    next: (response) => {
+                        resolve(response.filenames || []);
+                    },
+                    error: (error) => {
+                        reject(error);
+                    },
+                });
         });
     }
 
@@ -315,6 +327,6 @@ export class TeamLeadOrdersComponent implements OnInit {
 
     getInstructionAttachments(attachmentFilenames?: string): string[] {
         if (!attachmentFilenames) return [];
-        return attachmentFilenames.split(',').filter(name => name.trim());
+        return attachmentFilenames.split(',').filter((name) => name.trim());
     }
 }

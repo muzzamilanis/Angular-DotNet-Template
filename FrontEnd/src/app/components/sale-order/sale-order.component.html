@@ -3,7 +3,9 @@
     <div class="col-md-12">
         <div class="card card-primary">
             <div class="card-header">
-                <h3 class="card-title">{{ editingOrder ? 'Edit' : 'Create' }} {{ isDigitalMarketing ? 'Order Log' : 'Sale Order' }}</h3>
+                <h3 class="card-title">
+                    {{ editingOrder ? 'Edit' : 'Create' }} {{ isDigitalMarketing ? 'Order Log' : 'Sale Order' }}
+                </h3>
                 <div class="card-tools">
                     <button type="button" class="btn btn-tool" (click)="exitCreateMode()" title="Exit Create Mode">
                         <i class="fas fa-times"></i>
@@ -1034,14 +1036,15 @@
                     <div class="col-md-2" *ngIf="isDigitalMarketing">
                         <div class="form-group mb-2">
                             <label for="projectFilter" class="form-label mb-1">Project</label>
-                            <select 
-                                class="form-control form-control-sm" 
+                            <select
+                                class="form-control form-control-sm"
                                 id="projectFilter"
                                 [(ngModel)]="projectFilter"
-                                (change)="onProjectFilterChange()"
-                            >
+                                (change)="onProjectFilterChange()">
                                 <option value="">All Projects</option>
-                                <option *ngFor="let project of projects" [value]="project.id">{{ project.projectName }}</option>
+                                <option *ngFor="let project of projects" [value]="project.id">
+                                    {{ project.projectName }}
+                                </option>
                             </select>
                         </div>
                     </div>

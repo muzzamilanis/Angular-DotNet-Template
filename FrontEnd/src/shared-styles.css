@@ -56,9 +56,10 @@
     border: 2px solid #e9ecef !important;
     border-radius: 8px !important;
     padding: 0.75rem 1rem !important;
-    font-size: 0.95rem !important;
+    font-size: 1rem !important;
     transition: all 0.3s ease !important;
     background-color: #fff !important;
+    min-height: 50px !important;
 }
 
 .form-control:focus {
@@ -456,7 +457,7 @@ select.form-control:focus,
 .main-sidebar .nav-sidebar > .nav-item > .nav-link.active {
     background-color: rgba(var(--primary-rgb), 0.25) !important;
     color: #ffffff !important;
-    border-radius: .25rem;
+    border-radius: 0.25rem;
 }
 
 /* Optional: icons/text inside sidebar keep contrast */

@@ -43,21 +43,19 @@ export class ServiceTypeComponent implements OnInit {
 
             if (this.editingServiceType) {
                 // Update existing service type
-                this.serviceTypeService
-                    .updateServiceType(this.editingServiceType.id, formValue)
-                    .subscribe({
-                        next: (response) => {
-                            this.loadServiceTypes();
-                            this.resetForm();
-                            this.loading = false;
-                            this.notificationService.showSuccess('Service type updated successfully!');
-                        },
-                        error: (error) => {
-                            console.error('Error updating service type:', error);
-                            this.loading = false;
-                            this.notificationService.showError('Error updating service type. Please try again.');
-                        },
-                    });
+                this.serviceTypeService.updateServiceType(this.editingServiceType.id, formValue).subscribe({
+                    next: (response) => {
+                        this.loadServiceTypes();
+                        this.resetForm();
+                        this.loading = false;
+                        this.notificationService.showSuccess('Service type updated successfully!');
+                    },
+                    error: (error) => {
+                        console.error('Error updating service type:', error);
+                        this.loading = false;
+                        this.notificationService.showError('Error updating service type. Please try again.');
+                    },
+                });
             } else {
                 // Create new service type
                 const createServiceTypeDto: CreateServiceTypeDto = formValue;
