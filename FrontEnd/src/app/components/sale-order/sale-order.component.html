@@ -1,9 +1,14 @@
 <!-- Sale Order Form -->
-<div class="row">
+<div class="row" *ngIf="!isCreateMode || editingOrder">
     <div class="col-md-12">
         <div class="card card-primary">
             <div class="card-header">
                 <h3 class="card-title">{{ editingOrder ? 'Edit' : 'Create' }} {{ isDigitalMarketing ? 'Order Log' : 'Sale Order' }}</h3>
+                <div class="card-tools" *ngIf="!editingOrder">
+                    <button type="button" class="btn btn-tool" (click)="exitCreateMode()" title="Exit Create Mode">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
             </div>
             <form [formGroup]="saleOrderForm" (ngSubmit)="onSubmit()">
                 <div class="card-body">
@@ -982,13 +987,90 @@
 </div>
 
 <!-- Sale Orders List -->
-<div class="row mt-4">
+<div class="row mt-4" *ngIf="!isCreateMode">
     <div class="col-md-12">
         <div class="card">
             <div class="card-header">
                 <h3 class="card-title">{{ isDigitalMarketing ? 'Order Log' : 'Sale Orders' }}</h3>
+                <div class="card-tools">
+                    <button type="button" class="btn btn-primary btn-sm" (click)="enterCreateMode()">
+                        <i class="fas fa-plus"></i>
+                        {{ isDigitalMarketing ? 'Create Order' : 'Add Order' }}
+                    </button>
+                </div>
             </div>
-            <div class="card-body">
+            <!-- Filter Controls -->
+            <div class="card-body pb-2">
+                <div class="row mb-3">
+                    <div class="col-md-3">
+                        <div class="form-group mb-2">
+                            <label for="searchFilter" class="form-label mb-1">Search</label>
+                            <input 
+                                type="text" 
+                                class="form-control form-control-sm" 
+                                id="searchFilter"
+                                [(ngModel)]="searchFilter"
+                                (input)="onSearchFilterChange()"
+                                placeholder="Search orders..."
+                            />
+                        </div>
+                    </div>
+                    <div class="col-md-2" *ngIf="isDigitalMarketing">
+                        <div class="form-group mb-2">
+                            <label for="statusFilter" class="form-label mb-1">Status</label>
+                            <select 
+                                class="form-control form-control-sm" 
+                                id="statusFilter"
+                                [(ngModel)]="statusFilter"
+                                (change)="onStatusFilterChange()"
+                            >
+                                <option value="">All Status</option>
+                                <option *ngFor="let status of statusOptions" [value]="status">{{ status }}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group mb-2">
+                            <label for="dateFromFilter" class="form-label mb-1">From Date</label>
+                            <input 
+                                type="date" 
+                                class="form-control form-control-sm" 
+                                id="dateFromFilter"
+                                [(ngModel)]="dateFromFilter"
+                                (change)="onDateFilterChange()"
+                            />
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group mb-2">
+                            <label for="dateToFilter" class="form-label mb-1">To Date</label>
+                            <input 
+                                type="date" 
+                                class="form-control form-control-sm" 
+                                id="dateToFilter"
+                                [(ngModel)]="dateToFilter"
+                                (change)="onDateFilterChange()"
+                            />
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group mb-2">
+                            <label class="form-label mb-1">&nbsp;</label>
+                            <div>
+                                <button 
+                                    type="button" 
+                                    class="btn btn-secondary btn-sm" 
+                                    (click)="clearFilters()"
+                                    title="Clear all filters"
+                                >
+                                    <i class="fas fa-times"></i> Clear
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body pt-0">
                 <div class="table-responsive">
                     <table class="table table-bordered table-striped">
                         <thead>
@@ -1013,7 +1095,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr *ngFor="let order of saleOrders">
+                            <tr *ngFor="let order of filteredSaleOrders">
                                 <td>{{ order.orderNumber }}</td>
                                 <td>{{ order.orderDate | date: 'short' }}</td>
                                 <td *ngIf="isDigitalMarketing">
@@ -1065,9 +1147,9 @@
                                     </button>
                                 </td>
                             </tr>
-                            <tr *ngIf="saleOrders.length === 0">
+                            <tr *ngIf="filteredSaleOrders.length === 0">
                                 <td [attr.colspan]="isDigitalMarketing ? 10 : 7" class="text-center">
-                                    No sale orders found
+                                    {{ searchFilter || statusFilter || dateFromFilter || dateToFilter ? 'No orders match the current filters' : 'No sale orders found' }}
                                 </td>
                             </tr>
                         </tbody>
