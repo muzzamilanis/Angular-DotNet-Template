@@ -165,7 +165,9 @@
                                     <small class="form-text text-muted" *ngIf="userForm.get('isSuperAdmin')?.enabled">
                                         Super admins have full access to all system features
                                     </small>
-                                    <small class="form-text text-warning" *ngIf="userForm.get('isSuperAdmin')?.disabled">
+                                    <small
+                                        class="form-text text-warning"
+                                        *ngIf="userForm.get('isSuperAdmin')?.disabled">
                                         <i class="fas fa-exclamation-triangle mr-1"></i>
                                         Super Admin access only available when "Super Admin" role is selected
                                     </small>

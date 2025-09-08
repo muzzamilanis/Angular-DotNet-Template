@@ -2,13 +2,13 @@
 
 .small-box {
     border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     transition: transform 0.2s ease-in-out;
 }
 
 .small-box:hover {
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
 .description-block {
@@ -34,7 +34,7 @@
 
 .card {
     border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.05);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
 }
 
 .card-header {
@@ -97,15 +97,15 @@
     .small-box .inner h3 {
         font-size: 24px;
     }
-    
+
     .small-box .inner p {
         font-size: 12px;
     }
-    
+
     .description-header {
         font-size: 14px;
     }
-    
+
     .description-percentage {
         font-size: 18px;
     }
@@ -117,8 +117,12 @@
 }
 
 @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
 }
 
 /* Table hover effects */

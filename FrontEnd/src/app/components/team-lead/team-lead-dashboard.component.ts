@@ -6,7 +6,7 @@ import { AuthService } from '../../services/auth.service';
     selector: 'app-team-lead-dashboard',
     templateUrl: './team-lead-dashboard.component.html',
     styleUrls: ['./team-lead-dashboard.component.css'],
-    standalone: false
+    standalone: false,
 })
 export class TeamLeadDashboardComponent implements OnInit {
     currentUser: any = null;
@@ -18,13 +18,13 @@ export class TeamLeadDashboardComponent implements OnInit {
         unassigned: 0,
         completed: 0,
         overdue: 0,
-        needClarity: 0
+        needClarity: 0,
     };
 
     constructor(
         private teamLeadService: TeamLeadService,
         private authService: AuthService
-    ) { }
+    ) {}
 
     ngOnInit(): void {
         this.loadCurrentUser();
@@ -40,7 +40,7 @@ export class TeamLeadDashboardComponent implements OnInit {
             },
             error: (error) => {
                 console.error('Error loading current user:', error);
-            }
+            },
         });
     }
 
@@ -55,20 +55,20 @@ export class TeamLeadDashboardComponent implements OnInit {
             error: (error) => {
                 console.error('Error loading orders:', error);
                 this.isLoading = false;
-            }
+            },
         });
     }
 
     calculateOrderStats(): void {
         this.orderStats.total = this.orders.length;
-        this.orderStats.assigned = this.orders.filter(o => o.assignedToUserId).length;
-        this.orderStats.unassigned = this.orders.filter(o => !o.assignedToUserId).length;
-        this.orderStats.completed = this.orders.filter(o => o.status === 'Completed').length;
-        this.orderStats.needClarity = this.orders.filter(o => o.status === 'Need clarity').length;
-        
+        this.orderStats.assigned = this.orders.filter((o) => o.assignedToUserId).length;
+        this.orderStats.unassigned = this.orders.filter((o) => !o.assignedToUserId).length;
+        this.orderStats.completed = this.orders.filter((o) => o.status === 'Completed').length;
+        this.orderStats.needClarity = this.orders.filter((o) => o.status === 'Need clarity').length;
+
         // Calculate overdue orders
         const today = new Date();
-        this.orderStats.overdue = this.orders.filter(o => {
+        this.orderStats.overdue = this.orders.filter((o) => {
             if (!o.deadline) return false;
             const deadline = new Date(o.deadline);
             return deadline < today && o.status !== 'Completed';
@@ -95,11 +95,16 @@ export class TeamLeadDashboardComponent implements OnInit {
 
     getStatusClass(status: string | undefined): string {
         switch (status) {
-            case 'Completed': return 'badge-success';
-            case 'workSubmittedByWriter': return 'badge-info';
-            case 'InProgress': return 'badge-warning';
-            case 'Need clarity': return 'badge-danger';
-            default: return 'badge-secondary';
+            case 'Completed':
+                return 'badge-success';
+            case 'workSubmittedByWriter':
+                return 'badge-info';
+            case 'InProgress':
+                return 'badge-warning';
+            case 'Need clarity':
+                return 'badge-danger';
+            default:
+                return 'badge-secondary';
         }
     }
 

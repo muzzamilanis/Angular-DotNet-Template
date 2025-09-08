@@ -31,18 +31,18 @@ export interface SaleOrder {
     contactEmail?: string;
     contactPhone?: string;
     assignedTo?: string;
-    
+
     attachmentFilenames?: string;
     submittedFilename?: string;
     submissionStatus?: string;
     submissionDate?: Date;
-    
+
     orderDetails?: string;
     wordsOrPages?: string;
     totalPayment?: number;
     academicLevel?: string;
     country?: string;
-    
+
     // Currency-related fields for Digital Marketing companies
     currencyCode?: string;
     foreignCurrencyAmount?: number;
@@ -74,15 +74,15 @@ export interface CreateSaleOrderDto {
     contactEmail?: string;
     contactPhone?: string;
     assignedTo?: string;
-    
+
     attachmentFilenames?: string;
-    
+
     academicLevel?: string;
     orderDetails?: string;
     wordsOrPages?: string;
     totalPayment?: number;
     country?: string;
-    
+
     // Currency-related fields for Digital Marketing companies
     currencyCode?: string;
     foreignCurrencyAmount?: number;
@@ -115,18 +115,18 @@ export interface UpdateSaleOrderDto {
     contactEmail?: string;
     contactPhone?: string;
     assignedTo?: string;
-    
+
     attachmentFilenames?: string;
     submittedFilename?: string;
     submissionStatus?: string;
     submissionDate?: Date;
-    
+
     academicLevel?: string;
     country?: string;
     orderDetails?: string;
     wordsOrPages?: string;
     totalPayment?: number;
-    
+
     // Currency-related fields for Digital Marketing companies
     currencyCode?: string;
     foreignCurrencyAmount?: number;

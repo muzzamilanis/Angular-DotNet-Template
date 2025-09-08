@@ -1,5 +1,13 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ValidatorFn, AbstractControl, ValidationErrors, FormArray } from '@angular/forms';
+import {
+    FormBuilder,
+    FormGroup,
+    Validators,
+    ValidatorFn,
+    AbstractControl,
+    ValidationErrors,
+    FormArray,
+} from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router'; // <-- add
 import { SaleOrderService } from '../../services/sale-order.service';
 import { UserService } from '../../services/user.service';
@@ -117,7 +125,7 @@ export class SaleOrderComponent implements OnInit {
     }
 
     private handleQueryParams(): void {
-        this.route.queryParamMap.subscribe(params => {
+        this.route.queryParamMap.subscribe((params) => {
             const idParam = params.get('id');
             const projectIdParam = params.get('projectId');
 
@@ -139,7 +147,7 @@ export class SaleOrderComponent implements OnInit {
                         error: (err) => {
                             console.error('Failed to load sale order by id from query params:', err);
                             this.notificationService.showError('Unable to load the requested order.');
-                        }
+                        },
                     });
                 }
             }
@@ -206,17 +214,11 @@ export class SaleOrderComponent implements OnInit {
     }
 
     // Group-level validator for payment rules
-    private paymentRulesValidator(
-        paymentCtrl: string,
-        totalPkrCtrl: string,
-        ...advanceCtrls: string[]
-    ): ValidatorFn {
+    private paymentRulesValidator(paymentCtrl: string, totalPkrCtrl: string, ...advanceCtrls: string[]): ValidatorFn {
         return (group: AbstractControl): ValidationErrors | null => {
             const payment = (group.get(paymentCtrl)?.value ?? '').toString().trim().toLowerCase();
             const totalPkr = Number(group.get(totalPkrCtrl)?.value) || 0;
-            const totalAdvance = advanceCtrls
-                .map(c => Number(group.get(c)?.value) || 0)
-                .reduce((a, b) => a + b, 0);
+            const totalAdvance = advanceCtrls.map((c) => Number(group.get(c)?.value) || 0).reduce((a, b) => a + b, 0);
 
             // Rule 1: Pending cannot have any advance
             if (payment === 'pending' && totalAdvance > 0) {
@@ -252,15 +254,15 @@ export class SaleOrderComponent implements OnInit {
             {
                 validators: this.paymentRulesValidator(
                     'paymentStatus',
-                    'pkrAmount',            // total PKR control (change if yours is different)
-                    'amountReceived',        // summed with...
-                    'amountReceivedInPkr'      // ...this (adjust names if different)
+                    'pkrAmount', // total PKR control (change if yours is different)
+                    'amountReceived', // summed with...
+                    'amountReceivedInPkr' // ...this (adjust names if different)
                 ),
             }
         );
 
         // Re-evaluate when relevant fields change
-        ['paymentStatus', 'advanceAmount', 'advanceAmountPkr', 'pkrAmount'].forEach(name => {
+        ['paymentStatus', 'advanceAmount', 'advanceAmountPkr', 'pkrAmount'].forEach((name) => {
             this.saleOrderForm.get(name)?.valueChanges.subscribe(() => {
                 this.saleOrderForm.updateValueAndValidity({ onlySelf: false, emitEvent: false });
             });
@@ -269,7 +271,10 @@ export class SaleOrderComponent implements OnInit {
         // Add Digital Marketing specific fields if company is Digital Marketing
         if (this.isDigitalMarketing) {
             // For digital marketing, we use clientName instead of customerName
-            this.saleOrderForm.addControl('clientName', this.fb.control('', [Validators.required, Validators.maxLength(200)]));
+            this.saleOrderForm.addControl(
+                'clientName',
+                this.fb.control('', [Validators.required, Validators.maxLength(200)])
+            );
             this.saleOrderForm.addControl('projectId', this.fb.control(''));
             this.saleOrderForm.addControl('serviceTypeId', this.fb.control(''));
             this.saleOrderForm.addControl('deadline', this.fb.control(''));
@@ -280,7 +285,10 @@ export class SaleOrderComponent implements OnInit {
             this.saleOrderForm.addControl('paymentStatus', this.fb.control('', [Validators.maxLength(50)]));
             this.saleOrderForm.addControl('sourceOfPayment', this.fb.control('', [Validators.maxLength(100)]));
             this.saleOrderForm.addControl('assignedTo', this.fb.control('', [Validators.maxLength(200)]));
-            this.saleOrderForm.addControl('contactEmail', this.fb.control('', [Validators.email, Validators.maxLength(200)]));
+            this.saleOrderForm.addControl(
+                'contactEmail',
+                this.fb.control('', [Validators.email, Validators.maxLength(200)])
+            );
             this.saleOrderForm.addControl('contactPhone', this.fb.control('', [Validators.maxLength(50)]));
             this.saleOrderForm.addControl('orderDetails', this.fb.control('', [Validators.maxLength(1000)]));
             this.saleOrderForm.addControl('wordsOrPages', this.fb.control('', [Validators.maxLength(100)]));
@@ -293,7 +301,10 @@ export class SaleOrderComponent implements OnInit {
             this.saleOrderForm.addControl('exchangeRateUsed', this.fb.control(0));
         } else {
             // For non-digital marketing companies, use traditional fields and items
-            this.saleOrderForm.addControl('customerName', this.fb.control('', [Validators.required, Validators.maxLength(200)]));
+            this.saleOrderForm.addControl(
+                'customerName',
+                this.fb.control('', [Validators.required, Validators.maxLength(200)])
+            );
             this.saleOrderForm.addControl('customerAddress', this.fb.control('', [Validators.maxLength(500)]));
             this.saleOrderForm.addControl('items', this.fb.array([]));
         }
@@ -398,7 +409,7 @@ export class SaleOrderComponent implements OnInit {
                 );
             }
             // mark touched for related fields
-            ['paymentStatus', 'advanceAmount', 'advanceAmountPkr', 'pkrAmount'].forEach(n =>
+            ['paymentStatus', 'advanceAmount', 'advanceAmountPkr', 'pkrAmount'].forEach((n) =>
                 this.saleOrderForm.get(n)?.markAsTouched()
             );
             return;
@@ -473,13 +484,15 @@ export class SaleOrderComponent implements OnInit {
                 .subscribe({
                     next: (response) => {
                         if (this.selectedFiles.length > 0) {
-                            this.uploadFiles(response.id).then(() => {
-                                this.notificationService.showSuccess('Order updated successfully!');
-                                this.loadSaleOrders();
-                                this.exitCreateMode(); // Hide form after successful update
-                            }).catch(() => {
-                                this.notificationService.showError('Failed to upload files');
-                            });
+                            this.uploadFiles(response.id)
+                                .then(() => {
+                                    this.notificationService.showSuccess('Order updated successfully!');
+                                    this.loadSaleOrders();
+                                    this.exitCreateMode(); // Hide form after successful update
+                                })
+                                .catch(() => {
+                                    this.notificationService.showError('Failed to upload files');
+                                });
                         } else {
                             this.notificationService.showSuccess('Order updated successfully!');
                             this.loadSaleOrders();
@@ -496,13 +509,15 @@ export class SaleOrderComponent implements OnInit {
             this.saleOrderService.createSaleOrder(saleOrder).subscribe({
                 next: (response) => {
                     if (this.selectedFiles.length > 0) {
-                        this.uploadFiles(response.id).then(() => {
-                            this.notificationService.showSuccess('Order created successfully!');
-                            this.loadSaleOrders();
-                            this.exitCreateMode(); // Hide form after successful creation
-                        }).catch(() => {
-                            this.notificationService.showError('Failed to upload files');
-                        });
+                        this.uploadFiles(response.id)
+                            .then(() => {
+                                this.notificationService.showSuccess('Order created successfully!');
+                                this.loadSaleOrders();
+                                this.exitCreateMode(); // Hide form after successful creation
+                            })
+                            .catch(() => {
+                                this.notificationService.showError('Failed to upload files');
+                            });
                     } else {
                         this.notificationService.showSuccess('Order created successfully!');
                         this.loadSaleOrders();
@@ -781,11 +796,11 @@ export class SaleOrderComponent implements OnInit {
         this.userService.getAll().subscribe({
             next: (users) => {
                 // Filter users with Writer role
-                this.writers = users.filter(user => user.role === UserRole.Writer && user.isActive);
+                this.writers = users.filter((user) => user.role === UserRole.Writer && user.isActive);
             },
             error: (error) => {
                 console.error('Error loading writers:', error);
-            }
+            },
         });
     }
 
@@ -810,7 +825,7 @@ export class SaleOrderComponent implements OnInit {
 
     getAttachmentsList(attachmentFilenames: string | undefined): string[] {
         if (!attachmentFilenames) return [];
-        return attachmentFilenames.split(',').filter(name => name.trim());
+        return attachmentFilenames.split(',').filter((name) => name.trim());
     }
 
     downloadAttachment(filename: string): void {
@@ -831,7 +846,7 @@ export class SaleOrderComponent implements OnInit {
                 console.error('Error downloading file:', error);
                 console.error('Error status:', error.status);
                 console.error('Error message:', error.message);
-                
+
                 let errorMessage = 'Error downloading file';
                 if (error.status === 403) {
                     errorMessage = 'Access denied. You do not have permission to download this file.';
@@ -842,17 +857,20 @@ export class SaleOrderComponent implements OnInit {
                 } else if (error.message) {
                     errorMessage = `Error downloading file: ${error.message}`;
                 }
-                
+
                 this.notificationService.showError(errorMessage, 'Download Error');
-            }
+            },
         });
     }
 
     getSubmissionStatusClass(submissionStatus: string | undefined): string {
         switch (submissionStatus) {
-            case 'Completed': return 'badge-success';
-            case 'Need clarity': return 'badge-warning';
-            default: return 'badge-secondary';
+            case 'Completed':
+                return 'badge-success';
+            case 'Need clarity':
+                return 'badge-warning';
+            default:
+                return 'badge-secondary';
         }
     }
 
@@ -872,7 +890,7 @@ export class SaleOrderComponent implements OnInit {
                 error: (error) => {
                     console.error('Error uploading files:', error);
                     reject(error);
-                }
+                },
             });
         });
     }
@@ -897,7 +915,7 @@ export class SaleOrderComponent implements OnInit {
                 projectDescription: '',
                 projectStatus: ProjectStatus.Active,
                 serviceTypeId: '',
-                isActive: true
+                isActive: true,
             });
         }
 
@@ -913,7 +931,7 @@ export class SaleOrderComponent implements OnInit {
             modalElement.style.display = 'block';
             modalElement.classList.add('show');
             document.body.classList.add('modal-open');
-            
+
             // Add backdrop
             const backdrop = document.createElement('div');
             backdrop.className = 'modal-backdrop fade show';
@@ -928,7 +946,7 @@ export class SaleOrderComponent implements OnInit {
             modalElement.style.display = 'none';
             modalElement.classList.remove('show');
             document.body.classList.remove('modal-open');
-            
+
             // Remove backdrop
             const backdrop = document.getElementById('modalBackdrop');
             if (backdrop) {
@@ -947,31 +965,31 @@ export class SaleOrderComponent implements OnInit {
                 projectDescription: formValue.projectDescription,
                 projectStatus: formValue.projectStatus,
                 serviceTypeId: formValue.serviceTypeId || null,
-                isActive: formValue.isActive
+                isActive: formValue.isActive,
             };
 
             this.projectService.create(createDto).subscribe({
                 next: (response) => {
                     this.notificationService.showSuccess('Project created successfully!');
-                    
+
                     // Close the modal
                     this.hideCreateProjectModal();
-                    
+
                     // Reload projects list
                     this.loadProjects();
-                    
+
                     // Optionally, select the newly created project in the form
                     if (response.id) {
                         this.saleOrderForm.get('projectId')?.setValue(response.id);
                     }
-                    
+
                     this.isCreatingProject = false;
                 },
                 error: (error) => {
                     console.error('Error creating project:', error);
                     this.notificationService.showError('Failed to create project. Please try again.');
                     this.isCreatingProject = false;
-                }
+                },
             });
         } else {
             // Mark all fields as touched to show validation errors
@@ -980,7 +998,7 @@ export class SaleOrderComponent implements OnInit {
     }
 
     private markFormGroupTouched(formGroup: FormGroup): void {
-        Object.keys(formGroup.controls).forEach(key => {
+        Object.keys(formGroup.controls).forEach((key) => {
             const control = formGroup.get(key);
             control?.markAsTouched();
         });
@@ -992,7 +1010,7 @@ export class SaleOrderComponent implements OnInit {
 
     // Order list filtering methods
     applyFilters(): void {
-        this.filteredSaleOrders = this.saleOrders.filter(order => {
+        this.filteredSaleOrders = this.saleOrders.filter((order) => {
             // Search filter
             if (this.searchFilter) {
                 const searchTerm = this.searchFilter.toLowerCase();
@@ -1000,18 +1018,23 @@ export class SaleOrderComponent implements OnInit {
                 const clientName = order.clientName?.toLowerCase() || '';
                 const customerName = order.customerName?.toLowerCase() || '';
                 const projectName = order.projectName?.toLowerCase() || '';
-                
-                if (!orderNumber.includes(searchTerm) && 
-                    !clientName.includes(searchTerm) && 
+
+                if (
+                    !orderNumber.includes(searchTerm) &&
+                    !clientName.includes(searchTerm) &&
                     !customerName.includes(searchTerm) &&
-                    !projectName.includes(searchTerm)) {
+                    !projectName.includes(searchTerm)
+                ) {
                     return false;
                 }
             }
 
             // Project filter (Digital Marketing only)
-            if (this.isDigitalMarketing && this.projectFilter && 
-                order.projectId !== parseInt(this.projectFilter.toString())) {
+            if (
+                this.isDigitalMarketing &&
+                this.projectFilter &&
+                order.projectId !== parseInt(this.projectFilter.toString())
+            ) {
                 return false;
             }
 

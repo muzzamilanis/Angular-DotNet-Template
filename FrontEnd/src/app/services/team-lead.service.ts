@@ -36,47 +36,47 @@ export interface WriterDto {
 }
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root',
 })
 export class TeamLeadService {
-  private apiUrl = `${environment.apiUrl}/TeamLead`;
+    private apiUrl = `${environment.apiUrl}/TeamLead`;
 
-  constructor(private http: HttpClient) { }
+    constructor(private http: HttpClient) {}
 
-  getOrders(): Observable<TeamLeadOrderDto[]> {
-    return this.http.get<TeamLeadOrderDto[]>(`${this.apiUrl}/orders`);
-  }
+    getOrders(): Observable<TeamLeadOrderDto[]> {
+        return this.http.get<TeamLeadOrderDto[]>(`${this.apiUrl}/orders`);
+    }
 
-  getWriters(): Observable<WriterDto[]> {
-    return this.http.get<WriterDto[]>(`${this.apiUrl}/writers`);
-  }
+    getWriters(): Observable<WriterDto[]> {
+        return this.http.get<WriterDto[]>(`${this.apiUrl}/writers`);
+    }
 
-  assignOrder(assignment: AssignOrderDto): Observable<any> {
-    return this.http.post(`${this.apiUrl}/assign`, assignment);
-  }
+    assignOrder(assignment: AssignOrderDto): Observable<any> {
+        return this.http.post(`${this.apiUrl}/assign`, assignment);
+    }
 
-  updateAssignment(assignment: AssignOrderDto): Observable<any> {
-    return this.http.put(`${this.apiUrl}/assign`, assignment);
-  }
+    updateAssignment(assignment: AssignOrderDto): Observable<any> {
+        return this.http.put(`${this.apiUrl}/assign`, assignment);
+    }
 
-  // Order Instructions methods
-  getOrderInstructions(saleOrderId: number): Observable<OrderInstructionDto[]> {
-    return this.http.get<OrderInstructionDto[]>(`${this.apiUrl}/orders/${saleOrderId}/instructions`);
-  }
+    // Order Instructions methods
+    getOrderInstructions(saleOrderId: number): Observable<OrderInstructionDto[]> {
+        return this.http.get<OrderInstructionDto[]>(`${this.apiUrl}/orders/${saleOrderId}/instructions`);
+    }
 
-  addOrderInstruction(saleOrderId: number, instruction: CreateOrderInstructionDto): Observable<OrderInstructionDto> {
-    return this.http.post<OrderInstructionDto>(`${this.apiUrl}/orders/${saleOrderId}/instructions`, instruction);
-  }
+    addOrderInstruction(saleOrderId: number, instruction: CreateOrderInstructionDto): Observable<OrderInstructionDto> {
+        return this.http.post<OrderInstructionDto>(`${this.apiUrl}/orders/${saleOrderId}/instructions`, instruction);
+    }
 
-  updateOrderDetails(saleOrderId: number, updateDto: UpdateOrderDetailsDto): Observable<any> {
-    return this.http.put(`${this.apiUrl}/orders/${saleOrderId}/details`, updateDto);
-  }
+    updateOrderDetails(saleOrderId: number, updateDto: UpdateOrderDetailsDto): Observable<any> {
+        return this.http.put(`${this.apiUrl}/orders/${saleOrderId}/details`, updateDto);
+    }
 
-  uploadInstructionFiles(saleOrderId: number, files: File[]): Observable<any> {
-    const formData = new FormData();
-    files.forEach(file => {
-      formData.append('files', file, file.name);
-    });
-    return this.http.post(`${this.apiUrl}/orders/${saleOrderId}/upload-instructions`, formData);
-  }
+    uploadInstructionFiles(saleOrderId: number, files: File[]): Observable<any> {
+        const formData = new FormData();
+        files.forEach((file) => {
+            formData.append('files', file, file.name);
+        });
+        return this.http.post(`${this.apiUrl}/orders/${saleOrderId}/upload-instructions`, formData);
+    }
 }
