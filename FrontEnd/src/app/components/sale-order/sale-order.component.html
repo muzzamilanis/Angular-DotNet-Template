@@ -245,33 +245,40 @@
                     </div>
 
                     <div class="row" *ngIf="isDigitalMarketing">
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <div class="form-group">
                                 <label for="wordsOrPages">
-                                    <i class="fas fa-file-word"></i>
-                                    Words or Pages
+                                    <i class="fas fa-file-alt"></i>
+                                    Words / Pages
                                 </label>
-                                <input
-                                    type="text"
-                                    class="form-control"
+                                <select
                                     id="wordsOrPages"
+                                    class="form-control"
                                     formControlName="wordsOrPages"
-                                    placeholder="e.g., 500 words, 3 pages"
-                                    [class.is-invalid]="
-                                        saleOrderForm.get('wordsOrPages')?.invalid &&
-                                        saleOrderForm.get('wordsOrPages')?.touched
-                                    " />
-                                <div
-                                    class="invalid-feedback"
-                                    *ngIf="
-                                        saleOrderForm.get('wordsOrPages')?.invalid &&
-                                        saleOrderForm.get('wordsOrPages')?.touched
-                                    ">
-                                    <div *ngIf="saleOrderForm.get('wordsOrPages')?.errors?.['maxlength']">
-                                        Words or Pages must be 100 characters or less
-                                    </div>
+                                    (change)="onPagesChanged()"
+                                    [class.is-invalid]="saleOrderForm.get('wordsOrPages')?.invalid && saleOrderForm.get('wordsOrPages')?.touched">
+                                    <option value="">Select No of Pages</option>
+                                    <option *ngFor="let opt of pageOptions" [value]="opt.value">
+                                        {{ opt.label }}
+                                    </option>
+                                </select>
+                                <div class="invalid-feedback" *ngIf="saleOrderForm.get('wordsOrPages')?.invalid && saleOrderForm.get('wordsOrPages')?.touched">
+                                    Please select pages.
                                 </div>
                             </div>
+                        </div>
+
+                        <!-- OPTIONAL display of computed words if you keep a wordCount control -->
+                        <div class="form-group col-md-3" *ngIf="saleOrderForm.get('wordCount')">
+                            <label>
+                                <i class="fas fa-hashtag"></i>
+                                Total Words
+                            </label>
+                            <input
+                                type="number"
+                                class="form-control"
+                                formControlName="wordCount"
+                                readonly>
                         </div>
 
                         <div class="col-md-4">
