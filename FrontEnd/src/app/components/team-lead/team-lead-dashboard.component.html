@@ -80,7 +80,8 @@
                 <h3 class="card-title">Recent Orders</h3>
                 <div class="card-tools">
                     <a routerLink="/team-lead/orders" class="btn btn-primary btn-sm">
-                        <i class="fas fa-eye"></i> View All Orders
+                        <i class="fas fa-eye"></i>
+                        View All Orders
                     </a>
                 </div>
             </div>
@@ -115,7 +116,7 @@
                                     </td>
                                     <td>{{ order.clientName || order.customerName || 'N/A' }}</td>
                                     <td>
-                                        <span [ngClass]="{'text-danger': isDeadlineUrgent(order.deadline)}">
+                                        <span [ngClass]="{ 'text-danger': isDeadlineUrgent(order.deadline) }">
                                             {{ formatDate(order.deadline) }}
                                         </span>
                                     </td>
@@ -210,10 +211,11 @@
                 Urgent: Overdue Orders
             </h4>
             <p>There are {{ orderStats.overdue }} overdue order(s) that need immediate attention.</p>
-            <hr>
+            <hr />
             <p class="mb-0">
                 <a routerLink="/team-lead/orders" class="btn btn-outline-danger">
-                    <i class="fas fa-eye"></i> Review Overdue Orders
+                    <i class="fas fa-eye"></i>
+                    Review Overdue Orders
                 </a>
             </p>
         </div>
@@ -229,10 +231,11 @@
                 Action Required: Unassigned Orders
             </h4>
             <p>There are {{ orderStats.unassigned }} unassigned order(s) waiting for writer assignment.</p>
-            <hr>
+            <hr />
             <p class="mb-0">
                 <a routerLink="/team-lead/orders" class="btn btn-outline-warning">
-                    <i class="fas fa-user-plus"></i> Assign Orders to Writers
+                    <i class="fas fa-user-plus"></i>
+                    Assign Orders to Writers
                 </a>
             </p>
         </div>

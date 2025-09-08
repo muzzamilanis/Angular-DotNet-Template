@@ -4,7 +4,7 @@
     border-radius: 8px;
     padding: 1rem;
     background: white;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .assignment-header {
@@ -190,4 +190,59 @@
 .deadline-urgent {
     color: #dc3545;
     font-weight: bold;
+}
+
+/* Instruction Styles */
+.instructions-history {
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    padding: 1rem;
+    background: #fafafa;
+}
+
+.instruction-item.team-lead-instruction {
+    background: #e3f2fd;
+    border-left-color: #2196f3 !important;
+}
+
+.instruction-item.writer-instruction {
+    background: #f3e5f5;
+    border-left-color: #9c27b0 !important;
+}
+
+.instruction-header {
+    font-size: 0.9rem;
+}
+
+.instruction-message {
+    line-height: 1.5;
+}
+
+.instruction-attachments {
+    font-size: 0.85rem;
+    color: #6c757d;
+}
+
+.attachment-tag {
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.attachment-tag:hover {
+    background-color: #dee2e6 !important;
+}
+
+.add-response-section {
+    background: #fff;
+    border-radius: 6px;
+    padding: 1rem;
+}
+
+.btn-info {
+    background-color: #17a2b8;
+    color: white;
+}
+
+.btn-info:hover {
+    background-color: #138496;
 }

@@ -24,17 +24,26 @@ export class CompanySetupComponent implements OnInit {
     isEditing = false;
     currentCompany: any = null;
     currentUserIsSuperAdmin = false;
-    
+
     // Logo upload properties
     selectedLogoFile: File | null = null;
     logoPreviewUrl: string | null = null;
     isUploadingLogo = false;
-    
+
     // Color picker properties
     colorPresets = [
-        '#667eea', '#764ba2', '#ff6b6b', '#4ecdc4', 
-        '#45b7d1', '#96ceb4', '#ffeaa7', '#dda0dd',
-        '#98d8c8', '#f7dc6f', '#bb8fce', '#85c1e9'
+        '#667eea',
+        '#764ba2',
+        '#ff6b6b',
+        '#4ecdc4',
+        '#45b7d1',
+        '#96ceb4',
+        '#ffeaa7',
+        '#dda0dd',
+        '#98d8c8',
+        '#f7dc6f',
+        '#bb8fce',
+        '#85c1e9',
     ];
 
     constructor(
@@ -112,25 +121,25 @@ export class CompanySetupComponent implements OnInit {
             logoUrl: company.logoUrl || '',
             primaryColor: company.primaryColor || '#667eea',
         });
-        
+
         // Set logo preview if available
-       if (company.logoUrl) {
-        const companyLogo = this.companyService.getLogo(company.logoUrl).subscribe({
-            next: (logo) => {
-                this.logoPreviewUrl = URL.createObjectURL(logo);
-                console.log('Logo URL:', this.logoPreviewUrl);
-            },
-            error: (error) => {
-                console.error('Error loading logo:', error);
-            }
-        });
-    }
-        
+        if (company.logoUrl) {
+            const companyLogo = this.companyService.getLogo(company.logoUrl).subscribe({
+                next: (logo) => {
+                    this.logoPreviewUrl = URL.createObjectURL(logo);
+                    console.log('Logo URL:', this.logoPreviewUrl);
+                },
+                error: (error) => {
+                    console.error('Error loading logo:', error);
+                },
+            });
+        }
+
         // Apply company theme
         if (company.primaryColor) {
             this.themeService.setTheme(company.primaryColor);
         }
-        
+
         this.onBusinessNatureChange();
     }
 
@@ -178,7 +187,7 @@ export class CompanySetupComponent implements OnInit {
     }
 
     updateCompany(): void {
-        console.log('CompanyForm: ', this.companyForm)
+        console.log('CompanyForm: ', this.companyForm);
         const updateRequest = {
             id: this.currentCompany.id,
             name: this.companyForm.value.companyName,
@@ -230,14 +239,14 @@ export class CompanySetupComponent implements OnInit {
             }
 
             this.selectedLogoFile = file;
-            
+
             // Create preview
             const reader = new FileReader();
             reader.onload = (e) => {
                 this.logoPreviewUrl = e.target?.result as string;
             };
             reader.readAsDataURL(file);
-            
+
             // Upload the logo
             this.uploadLogo();
         }

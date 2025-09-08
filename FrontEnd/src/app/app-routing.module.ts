@@ -44,9 +44,12 @@ const routes: Routes = [
             { path: 'masters/projects/edit/:id', component: ProjectFormComponent },
             { path: 'masters/projects/:id', component: ProjectDetailComponent },
             { path: 'masters/service-types', component: ServiceTypeComponent },
-            { 
-                path: 'masters/currency-setup', 
-                loadComponent: () => import('./components/currency-setup/currency-setup.component').then(m => m.CurrencySetupComponent)
+            {
+                path: 'masters/currency-setup',
+                loadComponent: () =>
+                    import('./components/currency-setup/currency-setup.component').then(
+                        (m) => m.CurrencySetupComponent
+                    ),
             },
             { path: 'administration/company-setup', component: CompanySetupComponent, canActivate: [SuperAdminGuard] },
             {
@@ -54,25 +57,25 @@ const routes: Routes = [
                 component: UserManagementComponent,
                 canActivate: [SuperAdminGuard],
             },
-            { 
-                path: 'writer/assignments', 
-                component: WriterAssignmentsComponent, 
-                canActivate: [WriterGuard] 
+            {
+                path: 'writer/assignments',
+                component: WriterAssignmentsComponent,
+                canActivate: [WriterGuard],
             },
-            { 
-                path: 'writer/dashboard', 
-                component: WriterDashboardComponent, 
-                canActivate: [WriterGuard] 
+            {
+                path: 'writer/dashboard',
+                component: WriterDashboardComponent,
+                canActivate: [WriterGuard],
             },
-            { 
-                path: 'team-lead/dashboard', 
-                component: TeamLeadDashboardComponent, 
-                canActivate: [TeamLeadGuard] 
+            {
+                path: 'team-lead/dashboard',
+                component: TeamLeadDashboardComponent,
+                canActivate: [TeamLeadGuard],
             },
-            { 
-                path: 'team-lead/orders', 
-                component: TeamLeadOrdersComponent, 
-                canActivate: [TeamLeadGuard] 
+            {
+                path: 'team-lead/orders',
+                component: TeamLeadOrdersComponent,
+                canActivate: [TeamLeadGuard],
             },
         ],
     },

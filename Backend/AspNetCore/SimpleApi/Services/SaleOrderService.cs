@@ -25,6 +25,12 @@ namespace SimpleApi.Services
         Task<List<TeamLeadOrderDto>> GetTeamLeadOrdersAsync(int companyId);
         Task AssignOrderToWriterAsync(int saleOrderId, int writerId, int companyId);
         Task UpdateOrderAssignmentAsync(int saleOrderId, int writerId, int companyId);
+        
+        // Order Instructions methods
+        Task<List<OrderInstructionDto>> GetOrderInstructionsAsync(int saleOrderId, int companyId);
+        Task<OrderInstructionDto> AddOrderInstructionAsync(CreateOrderInstructionDto instruction, int senderId, bool isFromTeamLead, int companyId);
+        Task<OrderInstructionDto> AddOrderInstructionWithAttachmentAsync(CreateOrderInstructionDto instruction, int senderId, bool isFromTeamLead, int companyId, IFormFile? attachmentFile);
+        Task UpdateOrderDetailsAsync(UpdateOrderDetailsDto updateDto, int companyId);
     }
 
     public class SaleOrderService : ISaleOrderService
@@ -448,15 +454,31 @@ namespace SimpleApi.Services
                 };
 
                 // Get assigned writer info if order is assigned
-                if (!string.IsNullOrEmpty(order.AssignedTo) && int.TryParse(order.AssignedTo, out int assignedUserId))
+                if (!string.IsNullOrEmpty(order.AssignedTo))
                 {
-                    var assignedUser = await _context.Users
-                        .FirstOrDefaultAsync(u => u.Id == assignedUserId && u.CompanyId == companyId);
-                    
-                    if (assignedUser != null)
+                    // Try to parse as integer first (new format)
+                    if (int.TryParse(order.AssignedTo, out int assignedUserId))
                     {
-                        teamLeadOrder.AssignedTo = assignedUser.Name;
-                        teamLeadOrder.AssignedToUserId = assignedUser.Id;
+                        var assignedUser = await _context.Users
+                            .FirstOrDefaultAsync(u => u.Id == assignedUserId && u.CompanyId == companyId);
+                        
+                        if (assignedUser != null)
+                        {
+                            teamLeadOrder.AssignedTo = assignedUser.Name;
+                            teamLeadOrder.AssignedToUserId = assignedUser.Id;
+                        }
+                        else
+                        {
+                            // Handle case where user ID doesn't exist anymore (legacy data)
+                            teamLeadOrder.AssignedTo = $"Unknown User (ID: {assignedUserId})";
+                            teamLeadOrder.AssignedToUserId = null;
+                        }
+                    }
+                    else
+                    {
+                        // Handle legacy case where AssignedTo contains name instead of ID
+                        teamLeadOrder.AssignedTo = order.AssignedTo;
+                        teamLeadOrder.AssignedToUserId = null;
                     }
                 }
 
@@ -486,15 +508,32 @@ namespace SimpleApi.Services
                 throw new ArgumentException($"Writer with ID {writerId} not found, not active, or access denied.");
             }
 
-            // Check if order is already assigned
-            if (!string.IsNullOrEmpty(saleOrder.AssignedTo))
+            // Check if order can be reassigned (not completed)
+            if (saleOrder.Status == "Completed")
             {
-                throw new ArgumentException("Order is already assigned. Use update assignment instead.");
+                throw new ArgumentException("Cannot assign completed orders.");
+            }
+
+            // For legacy data, allow reassignment even if already assigned to handle data migration
+            // Only throw error if trying to assign to the same writer
+            if (!string.IsNullOrEmpty(saleOrder.AssignedTo) && 
+                int.TryParse(saleOrder.AssignedTo, out int currentWriterId) && 
+                currentWriterId == writerId)
+            {
+                throw new ArgumentException("Order is already assigned to this writer.");
             }
 
             // Assign the order
             saleOrder.AssignedTo = writerId.ToString();
             saleOrder.Status = "InProgress"; // Set status to InProgress when assigned
+
+            // Reset submission status if changing assignment after submission
+            if (saleOrder.SubmissionStatus != null && saleOrder.SubmissionStatus != "")
+            {
+                saleOrder.SubmissionStatus = null;
+                saleOrder.SubmissionDate = null;
+                saleOrder.SubmittedFilename = null;
+            }
 
             await _context.SaveChangesAsync();
         }
@@ -542,6 +581,165 @@ namespace SimpleApi.Services
                 saleOrder.Status = "InProgress";
             }
 
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<List<OrderInstructionDto>> GetOrderInstructionsAsync(int saleOrderId, int companyId)
+        {
+            // Verify that the sale order belongs to the company
+            var saleOrderExists = await _context.SaleOrders
+                .AnyAsync(so => so.Id == saleOrderId && so.CompanyId == companyId);
+
+            if (!saleOrderExists)
+            {
+                throw new ArgumentException($"Sale order with ID {saleOrderId} not found or access denied.");
+            }
+
+            var instructions = await _context.OrderInstructions
+                .Include(oi => oi.Sender)
+                .Where(oi => oi.SaleOrderId == saleOrderId)
+                .OrderBy(oi => oi.CreatedAt)
+                .Select(oi => new OrderInstructionDto
+                {
+                    Id = oi.Id,
+                    SaleOrderId = oi.SaleOrderId,
+                    SenderId = oi.SenderId,
+                    SenderName = oi.Sender != null ? oi.Sender.Name : "Unknown",
+                    Message = oi.Message,
+                    CreatedAt = oi.CreatedAt,
+                    IsFromTeamLead = oi.IsFromTeamLead,
+                    AttachmentFilenames = oi.AttachmentFilenames
+                })
+                .ToListAsync();
+
+            return instructions;
+        }
+
+        public async Task<OrderInstructionDto> AddOrderInstructionAsync(CreateOrderInstructionDto instruction, int senderId, bool isFromTeamLead, int companyId)
+        {
+            // Verify that the sale order belongs to the company
+            var saleOrder = await _context.SaleOrders
+                .FirstOrDefaultAsync(so => so.Id == instruction.SaleOrderId && so.CompanyId == companyId);
+
+            if (saleOrder == null)
+            {
+                throw new ArgumentException($"Sale order with ID {instruction.SaleOrderId} not found or access denied.");
+            }
+
+            // Verify that the sender exists and belongs to the same company
+            var sender = await _context.Users
+                .FirstOrDefaultAsync(u => u.Id == senderId && u.CompanyId == companyId && u.IsActive);
+
+            if (sender == null)
+            {
+                throw new ArgumentException($"User with ID {senderId} not found or access denied.");
+            }
+
+            var orderInstruction = new OrderInstruction
+            {
+                SaleOrderId = instruction.SaleOrderId,
+                SenderId = senderId,
+                Message = instruction.Message,
+                CreatedAt = DateTime.UtcNow,
+                IsFromTeamLead = isFromTeamLead,
+                AttachmentFilenames = instruction.AttachmentFilenames
+            };
+
+            _context.OrderInstructions.Add(orderInstruction);
+            await _context.SaveChangesAsync();
+
+            return new OrderInstructionDto
+            {
+                Id = orderInstruction.Id,
+                SaleOrderId = orderInstruction.SaleOrderId,
+                SenderId = orderInstruction.SenderId,
+                SenderName = sender.Name,
+                Message = orderInstruction.Message,
+                CreatedAt = orderInstruction.CreatedAt,
+                IsFromTeamLead = orderInstruction.IsFromTeamLead,
+                AttachmentFilenames = orderInstruction.AttachmentFilenames
+            };
+        }
+
+        public async Task<OrderInstructionDto> AddOrderInstructionWithAttachmentAsync(CreateOrderInstructionDto instruction, int senderId, bool isFromTeamLead, int companyId, IFormFile? attachmentFile)
+        {
+            // Verify that the sale order belongs to the company
+            var saleOrder = await _context.SaleOrders
+                .FirstOrDefaultAsync(so => so.Id == instruction.SaleOrderId && so.CompanyId == companyId);
+
+            if (saleOrder == null)
+            {
+                throw new ArgumentException($"Sale order with ID {instruction.SaleOrderId} not found or access denied.");
+            }
+
+            // Verify that the sender exists and belongs to the same company
+            var sender = await _context.Users
+                .FirstOrDefaultAsync(u => u.Id == senderId && u.CompanyId == companyId && u.IsActive);
+
+            if (sender == null)
+            {
+                throw new ArgumentException($"User with ID {senderId} not found or access denied.");
+            }
+
+            // Handle file upload if provided
+            string? attachmentFilename = null;
+            if (attachmentFile != null && attachmentFile.Length > 0)
+            {
+                // Create assets directory if it doesn't exist
+                var assetsPath = Path.Combine(Directory.GetCurrentDirectory(), "Assets");
+                if (!Directory.Exists(assetsPath))
+                    Directory.CreateDirectory(assetsPath);
+
+                // Generate unique filename
+                var fileName = $"{Guid.NewGuid()}_{attachmentFile.FileName}";
+                var filePath = Path.Combine(assetsPath, fileName);
+
+                // Save file
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await attachmentFile.CopyToAsync(stream);
+                }
+
+                attachmentFilename = fileName;
+            }
+
+            var orderInstruction = new OrderInstruction
+            {
+                SaleOrderId = instruction.SaleOrderId,
+                SenderId = senderId,
+                Message = instruction.Message,
+                CreatedAt = DateTime.UtcNow,
+                IsFromTeamLead = isFromTeamLead,
+                AttachmentFilenames = attachmentFilename ?? instruction.AttachmentFilenames
+            };
+
+            _context.OrderInstructions.Add(orderInstruction);
+            await _context.SaveChangesAsync();
+
+            return new OrderInstructionDto
+            {
+                Id = orderInstruction.Id,
+                SaleOrderId = orderInstruction.SaleOrderId,
+                SenderId = orderInstruction.SenderId,
+                SenderName = sender.Name,
+                Message = orderInstruction.Message,
+                CreatedAt = orderInstruction.CreatedAt,
+                IsFromTeamLead = orderInstruction.IsFromTeamLead,
+                AttachmentFilenames = orderInstruction.AttachmentFilenames
+            };
+        }
+
+        public async Task UpdateOrderDetailsAsync(UpdateOrderDetailsDto updateDto, int companyId)
+        {
+            var saleOrder = await _context.SaleOrders
+                .FirstOrDefaultAsync(so => so.Id == updateDto.Id && so.CompanyId == companyId);
+
+            if (saleOrder == null)
+            {
+                throw new ArgumentException($"Sale order with ID {updateDto.Id} not found or access denied.");
+            }
+
+            saleOrder.OrderDetails = updateDto.OrderDetails;
             await _context.SaveChangesAsync();
         }
     }

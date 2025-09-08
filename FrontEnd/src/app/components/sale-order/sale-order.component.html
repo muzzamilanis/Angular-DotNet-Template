@@ -1,9 +1,16 @@
-<!-- Sale Order Form -->
-<div class="row">
+<!-- Sale Order Form - Only show when showCreateForm is true -->
+<div class="row" *ngIf="showCreateForm">
     <div class="col-md-12">
         <div class="card card-primary">
             <div class="card-header">
-                <h3 class="card-title">{{ editingOrder ? 'Edit' : 'Create' }} {{ isDigitalMarketing ? 'Order Log' : 'Sale Order' }}</h3>
+                <h3 class="card-title">
+                    {{ editingOrder ? 'Edit' : 'Create' }} {{ isDigitalMarketing ? 'Order Log' : 'Sale Order' }}
+                </h3>
+                <div class="card-tools">
+                    <button type="button" class="btn btn-tool" (click)="exitCreateMode()" title="Exit Create Mode">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
             </div>
             <form [formGroup]="saleOrderForm" (ngSubmit)="onSubmit()">
                 <div class="card-body">
@@ -77,9 +84,9 @@
                                         </option>
                                     </select>
                                     <div class="input-group-append">
-                                        <button 
-                                            type="button" 
-                                            class="btn btn-outline-success" 
+                                        <button
+                                            type="button"
+                                            class="btn btn-outline-success"
                                             (click)="openCreateProjectModal()"
                                             title="Create New Project">
                                             <i class="fas fa-plus"></i>
@@ -121,7 +128,6 @@
                     </div>
 
                     <div class="row" *ngIf="isDigitalMarketing">
-                        
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label for="clientName">Client Name *</label>
@@ -140,9 +146,7 @@
                                     *ngIf="
                                         saleOrderForm.get('clientName')?.invalid &&
                                         saleOrderForm.get('clientName')?.touched
-                                    ">
-
-                                </div>
+                                    "></div>
 
                                 <div class="row" *ngIf="isDigitalMarketing">
                                     <!-- <div *ngIf="saleOrderForm.get('clientName')?.errors?.['required']">
@@ -154,7 +158,7 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label for="contactEmail">Contact Email</label>
@@ -183,7 +187,7 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label for="contactPhone">Contact Phone</label>
@@ -212,7 +216,6 @@
                     </div>
 
                     <div class="row" *ngIf="isDigitalMarketing">
-
                         <div class="col-md-12">
                             <div class="form-group">
                                 <label for="orderDetails">
@@ -244,7 +247,6 @@
                     </div>
 
                     <div class="row" *ngIf="isDigitalMarketing">
-
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label for="wordsOrPages">
@@ -285,21 +287,27 @@
                             <div class="form-group">
                                 <label for="status">Status</label>
                                 <select
-                                  id="status"
-                                  class="form-control"
-                                  formControlName="status"
-                                  [class.is-invalid]="saleOrderForm.get('status')?.invalid && saleOrderForm.get('status')?.touched">
-                                  <option value="">Select Status</option>
-                                  <option *ngFor="let s of statusOptions" [value]="s">{{ s }}</option>
+                                    id="status"
+                                    class="form-control"
+                                    formControlName="status"
+                                    [class.is-invalid]="
+                                        saleOrderForm.get('status')?.invalid && saleOrderForm.get('status')?.touched
+                                    ">
+                                    <option value="">Select Status</option>
+                                    <option *ngFor="let s of statusOptions" [value]="s">{{ s }}</option>
                                 </select>
-                                <div class="invalid-feedback" *ngIf="saleOrderForm.get('status')?.invalid && saleOrderForm.get('status')?.touched">
-                                  <div *ngIf="saleOrderForm.get('status')?.errors?.['maxlength']">
-                                    Status must be 50 characters or less
-                                  </div>
+                                <div
+                                    class="invalid-feedback"
+                                    *ngIf="
+                                        saleOrderForm.get('status')?.invalid && saleOrderForm.get('status')?.touched
+                                    ">
+                                    <div *ngIf="saleOrderForm.get('status')?.errors?.['maxlength']">
+                                        Status must be 50 characters or less
+                                    </div>
                                 </div>
-                              </div>
+                            </div>
                         </div>
-                        
+
                         <div class="col-md-4" style="visibility: hidden">
                             <div class="form-group">
                                 <label for="totalPayment">
@@ -348,9 +356,9 @@
                                     <i class="fas fa-globe"></i>
                                     Country
                                 </label>
-                                <select 
-                                    class="form-control" 
-                                    id="country" 
+                                <select
+                                    class="form-control"
+                                    id="country"
                                     (change)="onCountryChange($event.target.value)"
                                     [value]="selectedCountry"
                                     [disabled]="isFormReadonly()">
@@ -404,7 +412,8 @@
                                     <i class="fas fa-rupee-sign"></i>
                                     PKR Equivalent
                                     <span *ngIf="isLoadingRate" class="text-muted">
-                                        <i class="fas fa-spinner fa-spin"></i> Loading rate...
+                                        <i class="fas fa-spinner fa-spin"></i>
+                                        Loading rate...
                                     </span>
                                     <span *ngIf="currentExchangeRate > 0" class="text-muted">
                                         (Rate: 1 {{ selectedCurrencyCode }} = {{ currentExchangeRate }} PKR)
@@ -447,7 +456,7 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label for="amountReceivedInPkr">Advance Amount In Pkr</label>
@@ -475,59 +484,63 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label for="paymentStatus">Payment Status</label>
                                 <select
-                                  id="paymentStatus"
-                                  class="form-control"
-                                  formControlName="paymentStatus"
-                                  [class.is-invalid]="
-                                    (saleOrderForm.get('paymentStatus')?.touched || saleOrderForm.touched) &&
-                                    (saleOrderForm.hasError('advancePendingConflict') || saleOrderForm.hasError('fullPaidMustEqualTotal'))
-                                  ">
-                                  <option value="">Select Payment Status</option>
-                                  <option *ngFor="let p of paymentStatusOptions" [value]="p">{{ p }}</option>
+                                    id="paymentStatus"
+                                    class="form-control"
+                                    formControlName="paymentStatus"
+                                    [class.is-invalid]="
+                                        (saleOrderForm.get('paymentStatus')?.touched || saleOrderForm.touched) &&
+                                        (saleOrderForm.hasError('advancePendingConflict') ||
+                                            saleOrderForm.hasError('fullPaidMustEqualTotal'))
+                                    ">
+                                    <option value="">Select Payment Status</option>
+                                    <option *ngFor="let p of paymentStatusOptions" [value]="p">{{ p }}</option>
                                 </select>
                                 <div class="invalid-feedback" *ngIf="saleOrderForm.hasError('advancePendingConflict')">
-                                  Payment cannot be Pending when an advance amount is greater than 0.
+                                    Payment cannot be Pending when an advance amount is greater than 0.
                                 </div>
                                 <div class="invalid-feedback" *ngIf="saleOrderForm.hasError('fullPaidMustEqualTotal')">
-                                  For Full Paid, Advance Amount must equal Total Amount (PKR).
+                                    For Full Paid, Advance Amount must equal Total Amount (PKR).
                                 </div>
-                              </div>
+                            </div>
                         </div>
-                        
+
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label for="sourceOfPayment">Source of Payment</label>
                                 <select
-                                  id="sourceOfPayment"
-                                  class="form-control"
-                                  formControlName="sourceOfPayment"
-                                  [class.is-invalid]="
-                                    saleOrderForm.get('sourceOfPayment')?.invalid &&
-                                    saleOrderForm.get('sourceOfPayment')?.touched
-                                  ">
-                                  <option value="">Select Source</option>
-                                  <option *ngFor="let s of sourceOfPaymentOptions" [value]="s">{{ s }}</option>
+                                    id="sourceOfPayment"
+                                    class="form-control"
+                                    formControlName="sourceOfPayment"
+                                    [class.is-invalid]="
+                                        saleOrderForm.get('sourceOfPayment')?.invalid &&
+                                        saleOrderForm.get('sourceOfPayment')?.touched
+                                    ">
+                                    <option value="">Select Source</option>
+                                    <option *ngFor="let s of sourceOfPaymentOptions" [value]="s">{{ s }}</option>
                                 </select>
-                                <div class="invalid-feedback"
-                                     *ngIf="saleOrderForm.get('sourceOfPayment')?.invalid && saleOrderForm.get('sourceOfPayment')?.touched">
-                                  <div *ngIf="saleOrderForm.get('sourceOfPayment')?.errors?.['maxlength']">
-                                    Must be 50 characters or less
-                                  </div>
-                                  <div *ngIf="saleOrderForm.get('sourceOfPayment')?.errors?.['required']">
-                                    Source of payment is required
-                                  </div>
+                                <div
+                                    class="invalid-feedback"
+                                    *ngIf="
+                                        saleOrderForm.get('sourceOfPayment')?.invalid &&
+                                        saleOrderForm.get('sourceOfPayment')?.touched
+                                    ">
+                                    <div *ngIf="saleOrderForm.get('sourceOfPayment')?.errors?.['maxlength']">
+                                        Must be 50 characters or less
+                                    </div>
+                                    <div *ngIf="saleOrderForm.get('sourceOfPayment')?.errors?.['required']">
+                                        Source of payment is required
+                                    </div>
                                 </div>
-                              </div>
+                            </div>
                         </div>
-
                     </div>
 
-                    <div class="row" *ngIf="isDigitalMarketing">
+                    <div class="row" *ngIf="isDigitalMarketing && isSuperAdmin">
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="assignedTo">Assigned To</label>
@@ -573,8 +586,8 @@
                                         id="attachments"
                                         multiple
                                         (change)="onFilesSelected($event)"
-                                        accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png"
-                                        #fileInput>
+                                        accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png,.webp"
+                                        #fileInput />
                                     <label for="attachments" class="file-upload-btn">
                                         <i class="fas fa-cloud-upload-alt mr-2"></i>
                                         Choose Files
@@ -582,14 +595,16 @@
                                 </div>
                                 <small class="text-muted">
                                     <i class="fas fa-info-circle mr-1"></i>
-                                    Supported formats: PDF, DOC, DOCX, TXT, JPG, PNG
+                                    Supported formats: PDF, DOC, DOCX, TXT, JPG, PNG, WebP
                                 </small>
-                                
+
                                 <!-- Show selected files -->
                                 <div *ngIf="selectedFiles.length > 0" class="mt-2">
                                     <h6>Selected Files:</h6>
                                     <ul class="list-group">
-                                        <li *ngFor="let file of selectedFiles; let i = index" class="list-group-item d-flex justify-content-between align-items-center">
+                                        <li
+                                            *ngFor="let file of selectedFiles; let i = index"
+                                            class="list-group-item d-flex justify-content-between align-items-center">
                                             {{ file.name }} ({{ formatFileSize(file.size) }})
                                             <button type="button" class="btn btn-sm btn-danger" (click)="removeFile(i)">
                                                 <i class="fas fa-times"></i>
@@ -602,9 +617,16 @@
                                 <div *ngIf="editingOrder && currentOrder?.attachmentFilenames" class="mt-2">
                                     <h6>Existing Attachments:</h6>
                                     <ul class="list-group">
-                                        <li *ngFor="let filename of getAttachmentsList(currentOrder.attachmentFilenames)" class="list-group-item d-flex justify-content-between align-items-center">
+                                        <li
+                                            *ngFor="
+                                                let filename of getAttachmentsList(currentOrder.attachmentFilenames)
+                                            "
+                                            class="list-group-item d-flex justify-content-between align-items-center">
                                             {{ filename }}
-                                            <button type="button" class="btn btn-sm btn-info" (click)="downloadAttachment(filename)">
+                                            <button
+                                                type="button"
+                                                class="btn btn-sm btn-info"
+                                                (click)="downloadAttachment(filename)">
                                                 <i class="fas fa-download"></i>
                                             </button>
                                         </li>
@@ -958,18 +980,20 @@
                     <button
                         type="submit"
                         class="btn btn-primary"
-                        [disabled]="saleOrderForm.invalid || (!isDigitalMarketing && items.length === 0) || isFormReadonly()">
+                        [disabled]="
+                            saleOrderForm.invalid || (!isDigitalMarketing && items.length === 0) || isFormReadonly()
+                        ">
                         <i class="fas fa-save"></i>
                         {{ editingOrder ? 'Update' : 'Create' }} Order
                     </button>
-                    <button type="button" class="btn btn-secondary ml-2" (click)="resetForm()">
+                    <button type="button" class="btn btn-secondary ml-2" (click)="exitCreateMode()">
                         <i class="fas fa-times"></i>
                         Cancel
                     </button>
                     <!-- Create Project button for Digital Marketing businesses -->
-                    <button 
-                        type="button" 
-                        class="btn btn-success ml-2" 
+                    <button
+                        type="button"
+                        class="btn btn-success ml-2"
                         *ngIf="isDigitalMarketing"
                         (click)="openCreateProjectModal()">
                         <i class="fas fa-plus"></i>
@@ -981,14 +1005,102 @@
     </div>
 </div>
 
-<!-- Sale Orders List -->
-<div class="row mt-4">
+<!-- Sale Orders List - Only show when showCreateForm is false -->
+<div class="row mt-4" *ngIf="!showCreateForm">
     <div class="col-md-12">
         <div class="card">
             <div class="card-header">
                 <h3 class="card-title">{{ isDigitalMarketing ? 'Order Log' : 'Sale Orders' }}</h3>
+                <div class="card-tools">
+                    <button type="button" class="btn btn-primary btn-sm" (click)="enterCreateMode()">
+                        <i class="fas fa-plus"></i>
+                        {{ isDigitalMarketing ? 'Create Order' : 'Add Order' }}
+                    </button>
+                </div>
             </div>
-            <div class="card-body">
+            <!-- Filter Controls -->
+            <div class="card-body pb-2">
+                <div class="row mb-3">
+                    <div class="col-md-2">
+                        <div class="form-group mb-2">
+                            <label for="searchFilter" class="form-label mb-1">Search</label>
+                            <input
+                                type="text"
+                                class="form-control form-control-sm"
+                                id="searchFilter"
+                                [(ngModel)]="searchFilter"
+                                (input)="onSearchFilterChange()"
+                                placeholder="Search orders..." />
+                        </div>
+                    </div>
+                    <div class="col-md-2" *ngIf="isDigitalMarketing">
+                        <div class="form-group mb-2">
+                            <label for="projectFilter" class="form-label mb-1">Project</label>
+                            <select
+                                class="form-control form-control-sm"
+                                id="projectFilter"
+                                [(ngModel)]="projectFilter"
+                                (change)="onProjectFilterChange()">
+                                <option value="">All Projects</option>
+                                <option *ngFor="let project of projects" [value]="project.id">
+                                    {{ project.projectName }}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-2" *ngIf="isDigitalMarketing">
+                        <div class="form-group mb-2">
+                            <label for="statusFilter" class="form-label mb-1">Status</label>
+                            <select
+                                class="form-control form-control-sm"
+                                id="statusFilter"
+                                [(ngModel)]="statusFilter"
+                                (change)="onStatusFilterChange()">
+                                <option value="">All Status</option>
+                                <option *ngFor="let status of statusOptions" [value]="status">{{ status }}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group mb-2">
+                            <label for="dateFromFilter" class="form-label mb-1">From Date</label>
+                            <input
+                                type="date"
+                                class="form-control form-control-sm"
+                                id="dateFromFilter"
+                                [(ngModel)]="dateFromFilter"
+                                (change)="onDateFilterChange()" />
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group mb-2">
+                            <label for="dateToFilter" class="form-label mb-1">To Date</label>
+                            <input
+                                type="date"
+                                class="form-control form-control-sm"
+                                id="dateToFilter"
+                                [(ngModel)]="dateToFilter"
+                                (change)="onDateFilterChange()" />
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group mb-2">
+                            <label class="form-label mb-1">&nbsp;</label>
+                            <div>
+                                <button
+                                    type="button"
+                                    class="btn btn-secondary btn-sm"
+                                    (click)="clearFilters()"
+                                    title="Clear all filters">
+                                    <i class="fas fa-times"></i>
+                                    Clear
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body pt-0">
                 <div class="table-responsive">
                     <table class="table table-bordered table-striped">
                         <thead>
@@ -1013,7 +1125,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr *ngFor="let order of saleOrders">
+                            <tr *ngFor="let order of filteredSaleOrders">
                                 <td>{{ order.orderNumber }}</td>
                                 <td>{{ order.orderDate | date: 'short' }}</td>
                                 <td *ngIf="isDigitalMarketing">
@@ -1030,15 +1142,19 @@
                                 <td *ngIf="isDigitalMarketing">{{ order.assignedTo || 'N/A' }}</td>
                                 <td *ngIf="isDigitalMarketing">
                                     <div *ngIf="order.submissionStatus">
-                                        <span class="badge" [ngClass]="getSubmissionStatusClass(order.submissionStatus)">
+                                        <span
+                                            class="badge"
+                                            [ngClass]="getSubmissionStatusClass(order.submissionStatus)">
                                             {{ order.submissionStatus }}
                                         </span>
                                         <div *ngIf="order.submittedFilename" class="mt-1">
                                             <small>
-                                                <a (click)="downloadAttachment(order.submittedFilename)" 
-                                                   class="text-primary" 
-                                                   style="cursor: pointer; text-decoration: underline;">
-                                                    <i class="fas fa-download"></i> {{ order.submittedFilename }}
+                                                <a
+                                                    (click)="downloadAttachment(order.submittedFilename)"
+                                                    class="text-primary"
+                                                    style="cursor: pointer; text-decoration: underline">
+                                                    <i class="fas fa-download"></i>
+                                                    {{ order.submittedFilename }}
                                                 </a>
                                             </small>
                                         </div>
@@ -1055,9 +1171,10 @@
                                 </td>
                                 <td *ngIf="!isDigitalMarketing">${{ order.totalAmount.toFixed(2) }}</td>
                                 <td>
-                                    <button type="button"
-                                            class="btn btn-warning btn-sm mr-2"
-                                            (click)="editOrder(order)">
+                                    <button
+                                        type="button"
+                                        class="btn btn-warning btn-sm mr-2"
+                                        (click)="editOrder(order)">
                                         <i class="fas fa-edit"></i>
                                     </button>
                                     <button type="button" class="btn btn-danger btn-sm" (click)="deleteOrder(order)">
@@ -1065,9 +1182,13 @@
                                     </button>
                                 </td>
                             </tr>
-                            <tr *ngIf="saleOrders.length === 0">
+                            <tr *ngIf="filteredSaleOrders.length === 0">
                                 <td [attr.colspan]="isDigitalMarketing ? 10 : 7" class="text-center">
-                                    No sale orders found
+                                    {{
+                                        searchFilter || statusFilter || dateFromFilter || dateToFilter
+                                            ? 'No orders match the current filters'
+                                            : 'No sale orders found'
+                                    }}
                                 </td>
                             </tr>
                         </tbody>
@@ -1091,7 +1212,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            
+
             <form [formGroup]="projectForm" (ngSubmit)="onCreateProject()" *ngIf="projectForm">
                 <div class="modal-body">
                     <div class="row">
@@ -1144,8 +1265,7 @@
                                     [class.is-invalid]="
                                         projectForm.get('projectDescription')?.invalid &&
                                         projectForm.get('projectDescription')?.touched
-                                    ">
-                                </textarea>
+                                    "></textarea>
                                 <div
                                     class="invalid-feedback"
                                     *ngIf="
@@ -1167,10 +1287,7 @@
                                     <i class="fas fa-info-circle"></i>
                                     Project Status *
                                 </label>
-                                <select
-                                    class="form-control"
-                                    id="modalProjectStatus"
-                                    formControlName="projectStatus">
+                                <select class="form-control" id="modalProjectStatus" formControlName="projectStatus">
                                     <option value="1">Active</option>
                                     <option value="2">Inactive</option>
                                     <option value="3">Completed</option>
@@ -1201,10 +1318,7 @@
                                     <i class="fas fa-cogs"></i>
                                     Service Type
                                 </label>
-                                <select
-                                    class="form-control"
-                                    id="modalServiceType"
-                                    formControlName="serviceTypeId">
+                                <select class="form-control" id="modalServiceType" formControlName="serviceTypeId">
                                     <option value="">🔧 Select Service Type</option>
                                     <option *ngFor="let serviceType of serviceTypes" [value]="serviceType.id">
                                         {{ serviceType.name }}
@@ -1220,10 +1334,7 @@
                         <i class="fas fa-times"></i>
                         Cancel
                     </button>
-                    <button
-                        type="submit"
-                        class="btn btn-primary"
-                        [disabled]="projectForm.invalid || isCreatingProject">
+                    <button type="submit" class="btn btn-primary" [disabled]="projectForm.invalid || isCreatingProject">
                         <span *ngIf="isCreatingProject" class="spinner-border spinner-border-sm mr-2"></span>
                         <i class="fas fa-save" *ngIf="!isCreatingProject"></i>
                         {{ isCreatingProject ? 'Creating...' : 'Create Project' }}

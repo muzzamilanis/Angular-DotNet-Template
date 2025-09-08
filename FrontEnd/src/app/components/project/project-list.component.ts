@@ -62,12 +62,15 @@ export class ProjectListComponent implements OnInit {
 
         this.projectService.getAll(params).subscribe({
             next: (response: PaginatedResponse<ProjectListItem>) => {
-                console.log('items', response.items)
+                console.log('items', response.items);
                 // Normalize projectStatus coming from API (number 0..2, 1..3, or strings)
-                this.projects = (response.items || []).map(p => ({
-                    ...p,
-                    projectStatus: this.normalizeStatus(p.projectStatus)
-                }) as ProjectListItem);
+                this.projects = (response.items || []).map(
+                    (p) =>
+                        ({
+                            ...p,
+                            projectStatus: this.normalizeStatus(p.projectStatus),
+                        }) as ProjectListItem
+                );
                 this.totalRecords = response.totalCount;
                 this.totalPages = Math.ceil(this.totalRecords / this.itemsPerPage);
                 this.loading = false;

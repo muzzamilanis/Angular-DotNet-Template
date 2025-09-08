@@ -117,5 +117,107 @@ namespace SimpleApi.Controllers
                 Console.WriteLine($"Failed to send notification email: {ex.Message}");
             }
         }
+
+        [HttpGet("assignments/{saleOrderId}/instructions")]
+        public async Task<ActionResult<List<OrderInstructionDto>>> GetOrderInstructions(int saleOrderId)
+        {
+            try
+            {
+                var userId = GetCurrentUserId();
+                var companyId = GetCurrentUserCompanyId();
+
+                // Verify that the writer is assigned to this order
+                var assignment = await _saleOrderService.GetWriterAssignmentsAsync(userId);
+                if (!assignment.Any(a => a.Id == saleOrderId))
+                {
+                    return Forbid("Access denied. You are not assigned to this order.");
+                }
+
+                var instructions = await _saleOrderService.GetOrderInstructionsAsync(saleOrderId, companyId);
+                return Ok(instructions);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(ex.Message);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("assignments/{saleOrderId}/instructions")]
+        public async Task<ActionResult<OrderInstructionDto>> AddWriterResponse(int saleOrderId, [FromBody] CreateOrderInstructionDto instruction)
+        {
+            try
+            {
+                var userId = GetCurrentUserId();
+                var companyId = GetCurrentUserCompanyId();
+
+                // Verify that the writer is assigned to this order
+                var assignment = await _saleOrderService.GetWriterAssignmentsAsync(userId);
+                if (!assignment.Any(a => a.Id == saleOrderId))
+                {
+                    return Forbid("Access denied. You are not assigned to this order.");
+                }
+
+                // Ensure the instruction is for the correct sale order
+                instruction.SaleOrderId = saleOrderId;
+
+                var result = await _saleOrderService.AddOrderInstructionAsync(instruction, userId, false, companyId);
+                return Ok(result);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(ex.Message);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("assignments/{saleOrderId}/instructions-with-attachment")]
+        public async Task<ActionResult<OrderInstructionDto>> AddWriterResponseWithAttachment(int saleOrderId, [FromForm] CreateOrderInstructionDto instruction, IFormFile? attachmentFile)
+        {
+            try
+            {
+                var userId = GetCurrentUserId();
+                var companyId = GetCurrentUserCompanyId();
+
+                // Verify that the writer is assigned to this order
+                var assignment = await _saleOrderService.GetWriterAssignmentsAsync(userId);
+                if (!assignment.Any(a => a.Id == saleOrderId))
+                {
+                    return Forbid("Access denied. You are not assigned to this order.");
+                }
+
+                // Ensure the instruction is for the correct sale order
+                instruction.SaleOrderId = saleOrderId;
+
+                var result = await _saleOrderService.AddOrderInstructionWithAttachmentAsync(instruction, userId, false, companyId, attachmentFile);
+                return Ok(result);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(ex.Message);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }

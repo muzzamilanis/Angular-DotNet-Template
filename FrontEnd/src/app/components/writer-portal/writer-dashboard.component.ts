@@ -7,7 +7,7 @@ import { WriterAssignmentDto } from '../../models/sale-order.model';
     selector: 'app-writer-dashboard',
     templateUrl: './writer-dashboard.component.html',
     styleUrls: ['./writer-dashboard.component.css'],
-    standalone: false
+    standalone: false,
 })
 export class WriterDashboardComponent implements OnInit {
     currentUser: any = null;
@@ -18,13 +18,13 @@ export class WriterDashboardComponent implements OnInit {
         pending: 0,
         inProgress: 0,
         completed: 0,
-        overdue: 0
+        overdue: 0,
     };
 
     constructor(
         private writerService: WriterService,
         private authService: AuthService
-    ) { }
+    ) {}
 
     ngOnInit(): void {
         this.loadCurrentUser();
@@ -40,7 +40,7 @@ export class WriterDashboardComponent implements OnInit {
             },
             error: (error) => {
                 console.error('Error loading current user:', error);
-            }
+            },
         });
     }
 
@@ -55,19 +55,21 @@ export class WriterDashboardComponent implements OnInit {
             error: (error) => {
                 console.error('Error loading assignments:', error);
                 this.isLoading = false;
-            }
+            },
         });
     }
 
     calculateAssignmentStats(): void {
         this.assignmentStats.total = this.assignments.length;
-        this.assignmentStats.pending = this.assignments.filter(a => !a.status || a.status === 'Pending').length;
-        this.assignmentStats.inProgress = this.assignments.filter(a => a.status === 'In Progress').length;
-        this.assignmentStats.completed = this.assignments.filter(a => a.status === 'Completed' || a.submissionStatus === 'Submitted').length;
-        
+        this.assignmentStats.pending = this.assignments.filter((a) => !a.status || a.status === 'Pending').length;
+        this.assignmentStats.inProgress = this.assignments.filter((a) => a.status === 'In Progress').length;
+        this.assignmentStats.completed = this.assignments.filter(
+            (a) => a.status === 'Completed' || a.submissionStatus === 'Submitted'
+        ).length;
+
         // Calculate overdue assignments
         const today = new Date();
-        this.assignmentStats.overdue = this.assignments.filter(a => {
+        this.assignmentStats.overdue = this.assignments.filter((a) => {
             if (!a.deadline) return false;
             const deadline = new Date(a.deadline);
             return deadline < today && a.status !== 'Completed' && a.submissionStatus !== 'Submitted';
@@ -94,7 +96,7 @@ export class WriterDashboardComponent implements OnInit {
 
     getStatusClass(status: string | undefined): string {
         if (!status) return 'badge-secondary';
-        
+
         switch (status.toLowerCase()) {
             case 'completed':
                 return 'badge-success';

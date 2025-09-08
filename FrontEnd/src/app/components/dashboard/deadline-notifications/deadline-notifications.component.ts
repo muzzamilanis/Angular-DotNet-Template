@@ -1,5 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { DeadlineNotificationService, NotificationDto, DashboardNotificationResponseDto, TestEmailDto } from '../../../services/deadline-notification.service';
+import {
+    DeadlineNotificationService,
+    NotificationDto,
+    DashboardNotificationResponseDto,
+    TestEmailDto,
+} from '../../../services/deadline-notification.service';
 import { AuthService } from '../../../services/auth.service';
 import { NotificationService } from '../../../services/notification.service';
 
@@ -15,7 +20,7 @@ export class DeadlineNotificationsComponent implements OnInit {
     error: string | null = null;
     hasNotifications = false;
     hasCriticalNotifications = false;
-    
+
     // SuperAdmin functionality
     isSendingNotifications = false;
     isTestingEmail = false;
@@ -47,7 +52,7 @@ export class DeadlineNotificationsComponent implements OnInit {
                 console.error('Error loading notifications:', error);
                 this.error = 'Failed to load notifications';
                 this.isLoading = false;
-            }
+            },
         });
     }
 
@@ -102,31 +107,34 @@ export class DeadlineNotificationsComponent implements OnInit {
             return;
         }
 
-        this.notificationService.showConfirm(
-            'This will send deadline notifications to all relevant users. Are you sure you want to proceed?',
-            'Send Manual Notifications'
-        ).then((confirmed) => {
-            if (confirmed) {
-                this.isSendingNotifications = true;
-                
-                this.deadlineNotificationService.sendDeadlineNotifications().subscribe({
-                    next: (response) => {
-                        this.isSendingNotifications = false;
-                        this.notificationService.showSuccess(
-                            `${response.message}. Orders found: ${response.ordersFound || 0}, Notifications sent: ${response.notificationsSent || 0}`,
-                            'Notifications Sent'
-                        );
-                        // Refresh notifications after sending
-                        this.loadNotifications();
-                    },
-                    error: (error) => {
-                        this.isSendingNotifications = false;
-                        const errorMessage = error.error?.message || error.message || 'Failed to send notifications';
-                        this.notificationService.showError(errorMessage, 'Error Sending Notifications');
-                    }
-                });
-            }
-        });
+        this.notificationService
+            .showConfirm(
+                'This will send deadline notifications to all relevant users. Are you sure you want to proceed?',
+                'Send Manual Notifications'
+            )
+            .then((confirmed) => {
+                if (confirmed) {
+                    this.isSendingNotifications = true;
+
+                    this.deadlineNotificationService.sendDeadlineNotifications().subscribe({
+                        next: (response) => {
+                            this.isSendingNotifications = false;
+                            this.notificationService.showSuccess(
+                                `${response.message}. Orders found: ${response.ordersFound || 0}, Notifications sent: ${response.notificationsSent || 0}`,
+                                'Notifications Sent'
+                            );
+                            // Refresh notifications after sending
+                            this.loadNotifications();
+                        },
+                        error: (error) => {
+                            this.isSendingNotifications = false;
+                            const errorMessage =
+                                error.error?.message || error.message || 'Failed to send notifications';
+                            this.notificationService.showError(errorMessage, 'Error Sending Notifications');
+                        },
+                    });
+                }
+            });
     }
 
     openTestEmailModal(): void {
@@ -138,7 +146,7 @@ export class DeadlineNotificationsComponent implements OnInit {
         this.testEmailForm = {
             toEmail: '',
             subject: 'Test Email from SmartBizApp',
-            body: ''
+            body: '',
         };
         this.showTestEmailModal = true;
     }
@@ -150,7 +158,7 @@ export class DeadlineNotificationsComponent implements OnInit {
 
     sendTestEmail(): void {
         this.isTestingEmail = true;
-        
+
         this.deadlineNotificationService.testEmail(this.testEmailForm).subscribe({
             next: (response) => {
                 this.isTestingEmail = false;
@@ -164,7 +172,7 @@ export class DeadlineNotificationsComponent implements OnInit {
                 this.isTestingEmail = false;
                 const errorMessage = error.error?.message || error.message || 'Failed to send test email';
                 this.notificationService.showError(errorMessage, 'Error Sending Test Email');
-            }
+            },
         });
     }
 }

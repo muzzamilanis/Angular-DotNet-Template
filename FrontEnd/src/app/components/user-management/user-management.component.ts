@@ -21,14 +21,14 @@ export class UserManagementComponent implements OnInit {
     isEditing = false;
     isLoading = false;
     currentUserIsSuperAdmin = false;
-    
+
     // Make UserRole accessible in template
     UserRole = UserRole;
 
     readonly roleOptions: { value: UserRole; label: string }[] = [
         { value: UserRole.User, label: 'User' },
-        { value: UserRole.Manager, label: 'Manager' },
-        { value: UserRole.CompanyAdmin, label: 'Admin' },
+        { value: UserRole.Manager, label: 'Team Lead' },
+        { value: UserRole.CompanyAdmin, label: 'CSR' },
         { value: UserRole.Writer, label: 'Writer' },
         //{ value: UserRole.SuperAdmin, label: 'Super Admin' },  only created during company registration
     ];
@@ -67,13 +67,13 @@ export class UserManagementComponent implements OnInit {
     setupCompanySelection(): void {
         // Auto-populate company for non-super admin users
         const currentUserCompanyId = this.authService.getCurrentUserCompanyId();
-            if (currentUserCompanyId) {
-                this.userForm.patchValue({
-                    companyId: currentUserCompanyId.toString()
-                });
-                // Make company field readonly for non-super admin users
-                this.userForm.get('companyId')?.disable();
-            }
+        if (currentUserCompanyId) {
+            this.userForm.patchValue({
+                companyId: currentUserCompanyId.toString(),
+            });
+            // Make company field readonly for non-super admin users
+            this.userForm.get('companyId')?.disable();
+        }
 
         // Setup super admin checkbox validation based on role
         this.setupSuperAdminValidation();
@@ -81,9 +81,9 @@ export class UserManagementComponent implements OnInit {
 
     setupSuperAdminValidation(): void {
         // Listen to role changes to control super admin checkbox
-        this.userForm.get('role')?.valueChanges.subscribe(role => {
+        this.userForm.get('role')?.valueChanges.subscribe((role) => {
             const isSuperAdminControl = this.userForm.get('isSuperAdmin');
-            
+
             if (role === UserRole.SuperAdmin) {
                 // Enable super admin checkbox if Super Admin role is selected
                 isSuperAdminControl?.enable();
@@ -97,7 +97,7 @@ export class UserManagementComponent implements OnInit {
         // Initialize the state based on current role
         const currentRole = this.userForm.get('role')?.value;
         const isSuperAdminControl = this.userForm.get('isSuperAdmin');
-        
+
         if (currentRole !== UserRole.SuperAdmin) {
             isSuperAdminControl?.setValue(false);
             isSuperAdminControl?.disable();
@@ -108,7 +108,7 @@ export class UserManagementComponent implements OnInit {
         this.isLoading = true;
         this.userService.getAll().subscribe({
             next: (users) => {
-                console.log('users: ', users)
+                console.log('users: ', users);
                 this.users = users;
                 this.isLoading = false;
             },
@@ -165,7 +165,7 @@ export class UserManagementComponent implements OnInit {
 
     createUser(user: CreateBackendUserDto): void {
         this.isLoading = true;
-        
+
         this.userService.create(user).subscribe({
             next: (newUser) => {
                 this.users.push(newUser);
@@ -312,7 +312,7 @@ export class UserManagementComponent implements OnInit {
         // Re-add password requirement for new users
         this.userForm.get('password')?.setValidators([Validators.required, Validators.minLength(6)]);
         this.userForm.get('password')?.updateValueAndValidity();
-        
+
         // Re-setup company selection and super admin validation for new user
         this.setupCompanySelection();
     }
@@ -354,14 +354,14 @@ export class UserManagementComponent implements OnInit {
         if (user.isSuperAdmin) {
             return 'Super Admin';
         }
-        
+
         switch (user.role) {
             case UserRole.SuperAdmin:
                 return 'Super Admin';
             case UserRole.CompanyAdmin:
-                return 'Company Admin';
+                return 'CSR';
             case UserRole.Manager:
-                return 'Manager';
+                return 'Team Lead';
             case UserRole.Writer:
                 return 'Writer';
             case UserRole.User:
@@ -371,7 +371,7 @@ export class UserManagementComponent implements OnInit {
     }
 
     // Helper method to check if company field should be readonly
-  get isCompanyFieldReadonly(): boolean {
-    return true; // Always true for now, can be modified based on conditions
-  }
+    get isCompanyFieldReadonly(): boolean {
+        return true; // Always true for now, can be modified based on conditions
+    }
 }

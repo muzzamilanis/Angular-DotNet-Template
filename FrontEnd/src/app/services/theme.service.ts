@@ -37,25 +37,28 @@ export class ThemeService {
     private applyTheme(primaryColor: string): void {
         // Convert hex to RGB for various transparency effects
         const rgbColor = this.hexToRgb(primaryColor);
-        
+
         if (!rgbColor) return;
 
         // Apply CSS custom properties for theme colors
         const root = document.documentElement;
         root.style.setProperty('--primary-color', primaryColor);
         root.style.setProperty('--primary-rgb', `${rgbColor.r}, ${rgbColor.g}, ${rgbColor.b}`);
-        
+
         // Generate complementary colors
         const lighterColor = this.lightenColor(primaryColor, 10);
         const darkerColor = this.darkenColor(primaryColor, 10);
-        
+
         root.style.setProperty('--primary-light', lighterColor);
         root.style.setProperty('--primary-dark', darkerColor);
-        
+
         // Apply gradient colors for cards and buttons
         const gradientSecondary = this.generateComplementaryColor(primaryColor);
-        root.style.setProperty('--primary-gradient', `linear-gradient(135deg, ${primaryColor} 0%, ${gradientSecondary} 100%)`);
-        
+        root.style.setProperty(
+            '--primary-gradient',
+            `linear-gradient(135deg, ${primaryColor} 0%, ${gradientSecondary} 100%)`
+        );
+
         // Update all elements that use the primary color
         this.updateElementStyles(primaryColor);
     }
@@ -63,14 +66,16 @@ export class ThemeService {
     private updateElementStyles(primaryColor: string): void {
         // Update card headers
         const cardHeaders = document.querySelectorAll('.card-header');
-        cardHeaders.forEach(header => {
-            (header as HTMLElement).style.background = `linear-gradient(135deg, ${primaryColor} 0%, ${this.generateComplementaryColor(primaryColor)} 100%)`;
+        cardHeaders.forEach((header) => {
+            (header as HTMLElement).style.background =
+                `linear-gradient(135deg, ${primaryColor} 0%, ${this.generateComplementaryColor(primaryColor)} 100%)`;
         });
 
         // Update primary buttons
         const primaryButtons = document.querySelectorAll('.btn-primary');
-        primaryButtons.forEach(btn => {
-            (btn as HTMLElement).style.background = `linear-gradient(135deg, ${primaryColor} 0%, ${this.darkenColor(primaryColor, 15)} 100%)`;
+        primaryButtons.forEach((btn) => {
+            (btn as HTMLElement).style.background =
+                `linear-gradient(135deg, ${primaryColor} 0%, ${this.darkenColor(primaryColor, 15)} 100%)`;
         });
 
         // Update form focus colors
@@ -81,13 +86,13 @@ export class ThemeService {
                 box-shadow: 0 0 0 0.2rem ${this.hexToRgba(primaryColor, 0.25)} !important;
             }
         `;
-        
+
         // Remove existing theme style if any
         const existingStyle = document.getElementById('dynamic-theme-style');
         if (existingStyle) {
             existingStyle.remove();
         }
-        
+
         style.id = 'dynamic-theme-style';
         document.head.appendChild(style);
     }
@@ -112,8 +117,8 @@ export class ThemeService {
         const rgb = this.hexToRgb(color);
         if (!rgb) return color;
 
-        const lighten = (c: number) => Math.min(255, Math.floor(c + (255 - c) * percent / 100));
-        
+        const lighten = (c: number) => Math.min(255, Math.floor(c + ((255 - c) * percent) / 100));
+
         return `#${lighten(rgb.r).toString(16).padStart(2, '0')}${lighten(rgb.g).toString(16).padStart(2, '0')}${lighten(rgb.b).toString(16).padStart(2, '0')}`;
     }
 
@@ -121,8 +126,8 @@ export class ThemeService {
         const rgb = this.hexToRgb(color);
         if (!rgb) return color;
 
-        const darken = (c: number) => Math.max(0, Math.floor(c * (100 - percent) / 100));
-        
+        const darken = (c: number) => Math.max(0, Math.floor((c * (100 - percent)) / 100));
+
         return `#${darken(rgb.r).toString(16).padStart(2, '0')}${darken(rgb.g).toString(16).padStart(2, '0')}${darken(rgb.b).toString(16).padStart(2, '0')}`;
     }
 
@@ -134,7 +139,7 @@ export class ThemeService {
         const hsl = this.rgbToHsl(rgb.r, rgb.g, rgb.b);
         hsl.h = (hsl.h + 30) % 360; // Shift hue by 30 degrees
         const newRgb = this.hslToRgb(hsl.h, hsl.s, hsl.l);
-        
+
         return `#${Math.round(newRgb.r).toString(16).padStart(2, '0')}${Math.round(newRgb.g).toString(16).padStart(2, '0')}${Math.round(newRgb.b).toString(16).padStart(2, '0')}`;
     }
 
@@ -145,7 +150,8 @@ export class ThemeService {
 
         const max = Math.max(r, g, b);
         const min = Math.min(r, g, b);
-        let h = 0, s = 0;
+        let h = 0,
+            s = 0;
         const l = (max + min) / 2;
 
         if (max === min) {
@@ -155,9 +161,15 @@ export class ThemeService {
             s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
 
             switch (max) {
-                case r: h = (g - b) / d + (g < b ? 6 : 0); break;
-                case g: h = (b - r) / d + 2; break;
-                case b: h = (r - g) / d + 4; break;
+                case r:
+                    h = (g - b) / d + (g < b ? 6 : 0);
+                    break;
+                case g:
+                    h = (b - r) / d + 2;
+                    break;
+                case b:
+                    h = (r - g) / d + 4;
+                    break;
             }
             h /= 6;
         }
@@ -173,9 +185,9 @@ export class ThemeService {
         const hue2rgb = (p: number, q: number, t: number) => {
             if (t < 0) t += 1;
             if (t > 1) t -= 1;
-            if (t < 1/6) return p + (q - p) * 6 * t;
-            if (t < 1/2) return q;
-            if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+            if (t < 1 / 6) return p + (q - p) * 6 * t;
+            if (t < 1 / 2) return q;
+            if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
             return p;
         };
 
@@ -186,9 +198,9 @@ export class ThemeService {
         } else {
             const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
             const p = 2 * l - q;
-            r = hue2rgb(p, q, h + 1/3);
+            r = hue2rgb(p, q, h + 1 / 3);
             g = hue2rgb(p, q, h);
-            b = hue2rgb(p, q, h - 1/3);
+            b = hue2rgb(p, q, h - 1 / 3);
         }
 
         return { r: r * 255, g: g * 255, b: b * 255 };

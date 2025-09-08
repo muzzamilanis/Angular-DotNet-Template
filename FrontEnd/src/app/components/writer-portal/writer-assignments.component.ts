@@ -1,14 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { WriterService } from '../../services/writer.service';
 import { SaleOrderService } from '../../services/sale-order.service';
-import { WriterAssignmentDto } from '../../models/sale-order.model';
+import { WriterAssignmentDto, OrderInstructionDto, CreateOrderInstructionDto } from '../../models/sale-order.model';
 import { NotificationService } from '../../services/notification.service';
 
 @Component({
     selector: 'app-writer-assignments',
     templateUrl: './writer-assignments.component.html',
     styleUrls: ['./writer-assignments.component.css'],
-    standalone: false
+    standalone: false,
 })
 export class WriterAssignmentsComponent implements OnInit {
     assignments: WriterAssignmentDto[] = [];
@@ -19,11 +19,18 @@ export class WriterAssignmentsComponent implements OnInit {
     submissionFile: File | null = null;
     submissionNotes = '';
 
+    // Instructions
+    isInstructionModalOpen = false;
+    instructions: OrderInstructionDto[] = [];
+    newResponseMessage = '';
+    isLoadingInstructions = false;
+    instructionFile: File | null = null;
+
     constructor(
         private writerService: WriterService,
         private saleOrderService: SaleOrderService,
         private notificationService: NotificationService
-    ) { }
+    ) {}
 
     ngOnInit(): void {
         this.loadAssignments();
@@ -39,14 +46,14 @@ export class WriterAssignmentsComponent implements OnInit {
             error: (error) => {
                 console.error('Error loading assignments:', error);
                 this.isLoading = false;
-            }
+            },
         });
     }
 
     openSubmissionModal(assignment: WriterAssignmentDto): void {
         this.selectedAssignment = assignment;
         this.isSubmissionModalOpen = true;
-        this.submissionStatus = '';
+        this.submissionStatus = 'Completed';
         this.submissionFile = null;
         this.submissionNotes = '';
     }
@@ -63,6 +70,13 @@ export class WriterAssignmentsComponent implements OnInit {
         }
     }
 
+    onInstructionFileSelected(event: any): void {
+        const file = event.target.files[0];
+        if (file) {
+            this.instructionFile = file;
+        }
+    }
+
     submitWork(): void {
         if (!this.selectedAssignment || !this.submissionStatus) {
             return;
@@ -71,7 +85,7 @@ export class WriterAssignmentsComponent implements OnInit {
         const submission = {
             saleOrderId: this.selectedAssignment.id,
             submissionStatus: this.submissionStatus,
-            notes: this.submissionNotes
+            notes: this.submissionNotes,
         };
 
         this.writerService.submitWork(submission, this.submissionFile || undefined).subscribe({
@@ -83,7 +97,7 @@ export class WriterAssignmentsComponent implements OnInit {
             error: (error) => {
                 console.error('Error submitting work:', error);
                 this.notificationService.showError('Error submitting work. Please try again.');
-            }
+            },
         });
     }
 
@@ -105,9 +119,11 @@ export class WriterAssignmentsComponent implements OnInit {
                 console.error('Error downloading file:', error);
                 console.error('Error status:', error.status);
                 console.error('Error message:', error.message);
-                
+
                 if (error.status === 403) {
-                    this.notificationService.showError('Access denied. You do not have permission to download this file.');
+                    this.notificationService.showError(
+                        'Access denied. You do not have permission to download this file.'
+                    );
                 } else if (error.status === 404) {
                     this.notificationService.showError('File not found. The attachment may have been deleted.');
                 } else if (error.status === 401) {
@@ -115,42 +131,127 @@ export class WriterAssignmentsComponent implements OnInit {
                 } else {
                     this.notificationService.showError(`Error downloading file: ${error.message || 'Unknown error'}`);
                 }
-            }
+            },
         });
     }
 
     getAttachmentsList(attachmentFilenames: string | undefined): string[] {
-        if (!attachmentFilenames) return [];
-        return attachmentFilenames.split(',').filter(name => name.trim());
+        if (!attachmentFilenames) {
+            return [];
+        }
+        return attachmentFilenames.split(',').filter((name) => name.trim());
     }
 
     formatDate(date: Date | undefined): string {
-        if (!date) return 'N/A';
+        if (!date) {
+            return 'N/A';
+        }
         return new Date(date).toLocaleDateString();
     }
 
     getStatusClass(status: string | undefined): string {
         switch (status) {
-            case 'Completed': return 'badge badge-success';
-            case 'Need clarity': return 'badge badge-warning';
-            case 'InProgress': return 'badge badge-info';
-            default: return 'badge badge-secondary';
+            case 'Completed':
+                return 'badge badge-success';
+            case 'Need clarity':
+                return 'badge badge-warning';
+            case 'InProgress':
+                return 'badge badge-info';
+            default:
+                return 'badge badge-secondary';
         }
     }
 
     getSubmissionStatusClass(submissionStatus: string | undefined): string {
         switch (submissionStatus) {
-            case 'Completed': return 'badge badge-success';
-            case 'Need clarity': return 'badge badge-warning';
-            default: return 'badge badge-light';
+            case 'Completed':
+                return 'badge badge-success';
+            case 'Need clarity':
+                return 'badge badge-warning';
+            default:
+                return 'badge badge-light';
         }
     }
 
     isDeadlineUrgent(deadline: Date | undefined): boolean {
-        if (!deadline) return false;
+        if (!deadline) {
+            return false;
+        }
         const deadlineDate = new Date(deadline);
         const tomorrow = new Date();
         tomorrow.setDate(tomorrow.getDate() + 1);
         return deadlineDate <= tomorrow;
+    }
+
+    // Instructions methods
+    openInstructionsModal(assignment: WriterAssignmentDto): void {
+        this.selectedAssignment = assignment;
+        this.isInstructionModalOpen = true;
+        this.loadInstructions(assignment.id);
+    }
+
+    closeInstructionsModal(): void {
+        this.isInstructionModalOpen = false;
+        this.selectedAssignment = null;
+        this.instructions = [];
+        this.newResponseMessage = '';
+        this.instructionFile = null;
+    }
+
+    loadInstructions(saleOrderId: number): void {
+        this.isLoadingInstructions = true;
+        this.writerService.getOrderInstructions(saleOrderId).subscribe({
+            next: (instructions) => {
+                this.instructions = instructions;
+                this.isLoadingInstructions = false;
+            },
+            error: (error) => {
+                console.error('Error loading instructions:', error);
+                this.notificationService.showError('Error loading instructions.');
+                this.isLoadingInstructions = false;
+            },
+        });
+    }
+
+    addResponse(): void {
+        if (!this.selectedAssignment || !this.newResponseMessage.trim()) {
+            return;
+        }
+
+        const response: CreateOrderInstructionDto = {
+            saleOrderId: this.selectedAssignment.id,
+            message: this.newResponseMessage.trim(),
+        };
+
+        this.writerService
+            .addWriterResponse(this.selectedAssignment.id, response, this.instructionFile || undefined)
+            .subscribe({
+                next: (newResponse) => {
+                    this.instructions.push(newResponse);
+                    this.newResponseMessage = '';
+                    this.instructionFile = null;
+                    // Clear the file input
+                    const fileInput = document.getElementById('instructionFile') as HTMLInputElement;
+                    if (fileInput) {
+                        fileInput.value = '';
+                    }
+                    this.notificationService.showSuccess('Response sent successfully!');
+                },
+                error: (error) => {
+                    console.error('Error sending response:', error);
+                    this.notificationService.showError('Error sending response. Please try again.');
+                },
+            });
+    }
+
+    formatInstructionDate(date: Date): string {
+        return new Date(date).toLocaleString();
+    }
+
+    getInstructionAttachments(attachmentFilenames?: string): string[] {
+        if (!attachmentFilenames) {
+            return [];
+        }
+        return attachmentFilenames.split(',').filter((name) => name.trim());
     }
 }
