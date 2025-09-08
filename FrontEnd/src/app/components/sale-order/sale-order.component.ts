@@ -82,6 +82,17 @@ export class SaleOrderComponent implements OnInit {
     readonly paymentStatusOptions = ['Pending', 'PartialPaid', 'FullPaid'];
     readonly sourceOfPaymentOptions = ['Website', 'Payoneer', 'OnlineTransfer'];
 
+    // Add after other public properties
+    pageOptions = Array.from({ length: 200 }, (_, i) => {
+        const pages = i + 1;
+        const words = pages * 250;
+        return {
+            value: pages,                           // pages count
+            words,
+            label: `${words} Words - ${pages} Page${pages > 1 ? 's' : ''}`
+        };
+    });
+
     constructor(
         private fb: FormBuilder,
         private saleOrderService: SaleOrderService,
@@ -1090,5 +1101,13 @@ export class SaleOrderComponent implements OnInit {
         this.showCreateForm = false;
         this.editingOrder = null;
         this.resetForm();
+    }
+
+    // OPTIONAL: if you have a separate wordCount control and want auto-sync
+    onPagesChanged(): void {
+        const pages = this.saleOrderForm.get('wordsOrPages')?.value;
+        if (pages && this.saleOrderForm.get('wordCount')) {
+            this.saleOrderForm.patchValue({ wordCount: pages * 250 });
+        }
     }
 }
