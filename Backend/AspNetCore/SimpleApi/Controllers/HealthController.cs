@@ -16,11 +16,16 @@ namespace SimpleApi.Controllers
 		}
 
 		[HttpGet("ping")]
-		public async Task<IActionResult> Ping()
+		public IActionResult Ping()
+		{
+			return Ok(new { status = "Healthy", api = "Running" });
+		}
+
+		[HttpGet("dbping")]
+		public async Task<IActionResult> DbPing()
 		{
 			try
 			{
-				// Simple DB connectivity check: try to query a known table
 				var canConnect = await _dbContext.Database.CanConnectAsync();
 				if (canConnect)
 					return Ok(new { status = "Healthy", db = "Connected" });
