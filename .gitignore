@@ -22,5 +22,6 @@ Mobile/SmartBizApp/web-build/
 
 # Environment variables
 *.env
+*.backup
 
 
