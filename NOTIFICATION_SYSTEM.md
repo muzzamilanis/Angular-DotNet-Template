@@ -11,7 +11,7 @@ The notification system supports both Email and WhatsApp notifications with the 
 - **Impact**: Notifications now work immediately when the application starts
 
 ### 2. Added Manual Trigger Endpoints
-Three new API endpoints have been added to the Notifications controller:
+Four new API endpoints have been added to the Notifications controller:
 
 #### GET `/api/Notifications/dashboard`
 - Returns dashboard notifications for the current user
@@ -22,7 +22,8 @@ Three new API endpoints have been added to the Notifications controller:
 - **Access**: Super admins only
 - **Functionality**: 
   - Finds all orders with deadlines within 3 days
-  - Sends email notifications to super admins and assigned writers
+  - Sends notifications to super admins and assigned writers
+  - Uses the configured notification mode (Email or WhatsApp)
   - Returns count of notifications sent
 
 #### POST `/api/Notifications/test-email`
@@ -34,6 +35,18 @@ Three new API endpoints have been added to the Notifications controller:
     "toEmail": "test@example.com", // Optional, defaults to current user
     "subject": "Custom Subject",   // Optional 
     "body": "Custom HTML Body"     // Optional
+  }
+  ```
+
+#### POST `/api/Notifications/test-whatsapp`
+- **Purpose**: Test WhatsApp configuration and functionality
+- **Access**: Super admins only
+- **Requirements**: Notification mode must be set to "WhatsApp"
+- **Parameters**: 
+  ```json
+  {
+    "toPhoneNumber": "+1234567890", // Required, must include country code
+    "message": "Custom message"     // Optional, defaults to test message
   }
   ```
 
@@ -151,6 +164,7 @@ The system supports two notification modes that can be switched via configuratio
 
 ### Manual Testing
 - Use `/api/Notifications/test-email` to verify email configuration
+- Use `/api/Notifications/test-whatsapp` to verify WhatsApp configuration (requires WhatsApp mode)
 - Use `/api/Notifications/send-deadline-notifications` to manually trigger notifications (uses configured mode)
 - Use `/api/Notifications/dashboard` to see what notifications would be shown
 - Switch between Email and WhatsApp by changing `Notification:Mode` in appsettings.json

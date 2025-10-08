@@ -144,6 +144,52 @@ namespace SimpleApi.Controllers
             }
         }
 
+        [HttpPost("test-whatsapp")]
+        public async Task<ActionResult> TestWhatsApp([FromBody] TestWhatsAppDto testWhatsApp)
+        {
+            try
+            {
+                // Only super admins can test WhatsApp functionality
+                if (!GetCurrentUserIsSuperAdmin())
+                {
+                    return Forbid("Only super admins can test WhatsApp functionality");
+                }
+
+                var whatsAppService = _notificationSenderFactory.GetNotificationSender();
+                
+                if (whatsAppService is not WhatsAppNotificationSender)
+                {
+                    return BadRequest(new { message = "WhatsApp mode is not configured. Please set Notification:Mode to 'WhatsApp' in appsettings.json" });
+                }
+
+                var message = testWhatsApp.Message ?? $@"🧪 *WhatsApp Test Message*
+
+This is a test message from SmartBizApp.
+
+🕒 *Sent at:* {DateTime.Now:yyyy-MM-dd HH:mm:ss}
+
+If you receive this message, your WhatsApp notification system is working correctly! ✅";
+
+                var recipient = testWhatsApp.ToPhoneNumber;
+                if (string.IsNullOrEmpty(recipient))
+                {
+                    return BadRequest(new { message = "No recipient phone number provided. Please include country code (e.g., +1234567890)" });
+                }
+
+                await whatsAppService.SendNotificationAsync(recipient, "Test Message", message);
+                
+                return Ok(new { 
+                    message = "Test WhatsApp message sent successfully", 
+                    sentTo = recipient,
+                    sentAt = DateTime.Now
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = "Failed to send test WhatsApp message", error = ex.Message });
+            }
+        }
+
         private static string CreateEmailBody(Models.SaleOrder order)
         {
             var daysUntilDeadline = order.Deadline.HasValue 
