@@ -13,15 +13,18 @@ namespace SimpleApi.Controllers
         private readonly INotificationService _notificationService;
         private readonly IEmailService _emailService;
         private readonly ISaleOrderService _saleOrderService;
+        private readonly INotificationSenderFactory _notificationSenderFactory;
 
         public NotificationsController(
             INotificationService notificationService,
             IEmailService emailService,
-            ISaleOrderService saleOrderService)
+            ISaleOrderService saleOrderService,
+            INotificationSenderFactory notificationSenderFactory)
         {
             _notificationService = notificationService;
             _emailService = emailService;
             _saleOrderService = saleOrderService;
+            _notificationSenderFactory = notificationSenderFactory;
         }
 
         [HttpGet("dashboard")]
@@ -58,6 +61,7 @@ namespace SimpleApi.Controllers
 
                 var companyId = GetCurrentUserCompanyId();
                 var approachingOrders = await _saleOrderService.GetDeadlineApproachingOrdersAsync();
+                var notificationSender = _notificationSenderFactory.GetNotificationSender();
                 
                 if (!approachingOrders.Any())
                 {
@@ -79,9 +83,9 @@ namespace SimpleApi.Controllers
                     if (recipients.Any())
                     {
                         var subject = $"Deadline Reminder: Sale Order {order.OrderNumber}";
-                        var body = CreateEmailBody(order);
+                        var body = notificationSender.FormatDeadlineNotification(order);
                         
-                        await _emailService.SendEmailAsync(recipients, subject, body);
+                        await notificationSender.SendNotificationAsync(recipients, subject, body);
                         notificationsSent++;
                     }
                 }

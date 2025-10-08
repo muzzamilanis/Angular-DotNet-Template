@@ -39,7 +39,8 @@ namespace SimpleApi.Services
 
                 using var scope = _serviceProvider.CreateScope();
                 var saleOrderService = scope.ServiceProvider.GetRequiredService<ISaleOrderService>();
-                var emailService = scope.ServiceProvider.GetRequiredService<IEmailService>();
+                var notificationFactory = scope.ServiceProvider.GetRequiredService<INotificationSenderFactory>();
+                var notificationSender = notificationFactory.GetNotificationSender();
                 var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
                 var approachingOrders = await saleOrderService.GetDeadlineApproachingOrdersAsync();
@@ -83,9 +84,9 @@ namespace SimpleApi.Services
                     if (recipients.Any())
                     {
                         var subject = $"Deadline Reminder: Sale Order {order.OrderNumber}";
-                        var body = CreateEmailBody(order);
+                        var body = notificationSender.FormatDeadlineNotification(order);
                         
-                        await emailService.SendEmailAsync(recipients, subject, body);
+                        await notificationSender.SendNotificationAsync(recipients, subject, body);
                         _logger.LogInformation("Sent deadline notification for order {OrderNumber} to {RecipientCount} recipients",
                             order.OrderNumber, recipients.Count);
                     }
