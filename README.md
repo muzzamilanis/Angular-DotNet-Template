@@ -16,13 +16,13 @@ SmartBizApp is a comprehensive business management platform with **ASP.NET Core*
 
 ### Advanced Features
 - **Role-Based Access Control (RBAC)**: Super Admin and regular user roles with granular permissions and route protection
-- **Email Notification System**: Automated deadline notifications with configurable SMTP settings and manual triggers
+- **Multi-Channel Notification System**: Automated deadline notifications with Email (SMTP) and WhatsApp (Twilio) support, configurable mode switching
 - **Multi-tenant Architecture**: Company-based data isolation, access control, and business nature support
 - **Real-time Notifications**: Dashboard notifications for approaching deadlines with background service monitoring
 - **Team Lead & Writer Portals**: Specialized interfaces for different user roles with tailored functionality
 - **Currency Management**: Multi-currency support for international business operations
 - **Registration System**: Self-service user registration with company association and approval workflows
-- **Background Services**: Automated deadline monitoring, email notifications, and system maintenance tasks
+- **Background Services**: Automated deadline monitoring, notifications, and system maintenance tasks
 - **Responsive Design**: Modern UI that works seamlessly on desktop, tablet, and mobile devices
 - **API Documentation**: Comprehensive Swagger/OpenAPI documentation with interactive testing capabilities
 
@@ -210,15 +210,18 @@ The application implements a sophisticated RBAC system with comprehensive securi
 
 For detailed implementation, see [RBAC_IMPLEMENTATION.md](RBAC_IMPLEMENTATION.md)
 
-### Email Notification System
-Comprehensive automated notification system with advanced features:
-- **Deadline Notifications**: Intelligent email alerts for approaching project deadlines (3-day threshold)
+### Multi-Channel Notification System
+Comprehensive automated notification system with Email and WhatsApp support:
+- **Dual-Channel Support**: Send notifications via Email (SMTP) or WhatsApp (Twilio API) based on configuration
+- **Deadline Notifications**: Intelligent alerts for approaching project deadlines (3-day threshold)
+- **WhatsApp-Friendly Format**: Concise messages with emojis optimized for mobile viewing
+- **Email HTML Templates**: Professional email templates with rich formatting and order details
+- **Configuration-Based Switching**: Easy mode selection via `appsettings.json` (Email or WhatsApp)
 - **Background Services**: Continuous monitoring service that runs immediately on startup and every 24 hours
 - **Manual Triggers**: API endpoints for testing and immediate notification execution (Super Admin only)
-- **SMTP Configuration**: Full support for Gmail, Outlook, and custom SMTP providers
-- **Rich HTML Emails**: Professional email templates with order details and urgency indicators
 - **Multi-recipient Support**: Notifications sent to Super Admins and assigned team members
-- **Configuration Validation**: Comprehensive email setting validation with detailed error logging
+- **Provider Configuration**: Support for Gmail, Outlook SMTP and Twilio WhatsApp Business API
+- **Comprehensive Validation**: Configuration validation with detailed error logging
 
 For setup and configuration, see [NOTIFICATION_SYSTEM.md](NOTIFICATION_SYSTEM.md)
 
@@ -450,7 +453,7 @@ For support and questions, please create an issue in the repository.
 ## Additional Documentation
 
 - **[RBAC Implementation Guide](RBAC_IMPLEMENTATION.md)**: Comprehensive documentation on role-based access control, security features, and user permission management
-- **[Email Notification System](NOTIFICATION_SYSTEM.md)**: Complete setup guide for automated deadline notifications, SMTP configuration, and testing procedures  
+- **[Notification System Guide](NOTIFICATION_SYSTEM.md)**: Complete setup guide for Email and WhatsApp notifications, including SMTP and Twilio configuration, mode switching, and testing procedures  
 - **[Docker Deployment Guide](DOCKER_README.md)**: Detailed containerization instructions, multi-container orchestration, and production deployment
 - **[Company Setup Workflow](COMPANY_SETUP_WORKFLOW.md)**: Step-by-step guide for company configuration, business nature selection, and multi-tenant setup
 
