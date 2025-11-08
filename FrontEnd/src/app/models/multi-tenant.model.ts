@@ -95,4 +95,5 @@ export enum BusinessNatureType {
     GENERAL = 3,
     RETAIL = 4,
     MANUFACTURING = 5,
+    REALESTATE = 6,
 }
