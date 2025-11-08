@@ -91,8 +91,16 @@
                     data-widget="treeview"
                     role="menu"
                     data-accordion="false">
-                    <!-- Dashboard - For SuperAdmin -->
-                    <li class="nav-item" *ngIf="!isWriter() && !isTeamLead()">
+                    <!-- Dashboard - For Real Estate -->
+                    <li class="nav-item" *ngIf="isRealEstate()">
+                        <a routerLink="/realestate/dashboard" class="nav-link" routerLinkActive="active">
+                            <i class="nav-icon fas fa-tachometer-alt"></i>
+                            <p>Dashboard</p>
+                        </a>
+                    </li>
+
+                    <!-- Dashboard - For SuperAdmin and Non-Real Estate -->
+                    <li class="nav-item" *ngIf="!isWriter() && !isTeamLead() && !isRealEstate()">
                         <a routerLink="/dashboard" class="nav-link" routerLinkActive="active">
                             <i class="nav-icon fas fa-tachometer-alt"></i>
                             <p>Dashboard</p>
@@ -100,80 +108,41 @@
                     </li>
 
                     <!-- Writer Dashboard - Only visible to Writers -->
-                    <li class="nav-item" *ngIf="isWriter()">
+                    <li class="nav-item" *ngIf="isWriter() && !isRealEstate()">
                         <a routerLink="/writer/dashboard" class="nav-link" routerLinkActive="active">
                             <i class="nav-icon fas fa-tachometer-alt"></i>
                             <p>Dashboard</p>
                         </a>
                     </li>
 
-                    <!-- Writer Portal - Visible to Writers and SuperAdmin -->
-                    <li class="nav-item" *ngIf="isWriter() || isSuperAdmin()">
+                    <!-- Writer Portal - Visible to Writers and SuperAdmin (Not for Real Estate) -->
+                    <li class="nav-item" *ngIf="(isWriter() || isSuperAdmin()) && !isRealEstate()">
                         <a routerLink="/writer/assignments" class="nav-link" routerLinkActive="active">
                             <i class="nav-icon fas fa-tasks"></i>
                             <p>Writer Portal</p>
                         </a>
                     </li>
 
-                    <!-- Team Lead Portal - Visible to Team Leads only -->
-                    <li class="nav-item" *ngIf="isTeamLead() || isSuperAdmin()">
+                    <!-- Team Lead Portal - Visible to Team Leads only (Not for Real Estate) -->
+                    <li class="nav-item" *ngIf="(isTeamLead() || isSuperAdmin()) && !isRealEstate()">
                         <a routerLink="/team-lead/dashboard" class="nav-link" routerLinkActive="active">
                             <i class="nav-icon fas fa-users-cog"></i>
                             <p>Team Lead Portal</p>
                         </a>
                     </li>
 
-                    <!-- Masters - Hidden from Writers, limited for Team Leads -->
+                    <!-- Masters - Hidden from Writers, limited for Team Leads (Not for Real Estate) -->
                     <li
                         class="nav-item"
                         [class.menu-open]="isMenuOpen('masters')"
-                        *ngIf="!isWriter() && (isSuperAdmin() || isTeamLead())">
+                        *ngIf="!isWriter() && (isSuperAdmin() || isTeamLead()) && !isRealEstate()">
                         <a routerLink="/masters/projects" class="nav-link" routerLinkActive="active">
                             <i class="far fa-circle nav-icon"></i>
                             <p>Projects</p>
                         </a>
-                        <!-- <a (click)="toggleMenuState('masters', $event)" class="nav-link">
-                            <i class="nav-icon fas fa-database"></i>
-                            <p>
-                                Masters
-                                <i class="fas fa-angle-left right"></i>
-                            </p>
-                        </a> -->
-                        <!-- <ul class="nav nav-treeview">
-                            <li class="nav-item" *ngIf="!isDigitalMarketing() && isSuperAdmin()">
-                                <a routerLink="/masters/products" class="nav-link" routerLinkActive="active">
-                                    <i class="far fa-circle nav-icon"></i>
-                                    <p>Products</p>
-                                </a>
-                            </li>
-                            <li class="nav-item" *ngIf="!isDigitalMarketing() && isSuperAdmin()">
-                                <a routerLink="/masters/customers" class="nav-link" routerLinkActive="active">
-                                    <i class="far fa-circle nav-icon"></i>
-                                    <p>Customers</p>
-                                </a>
-                            </li> -->
-                        <!-- <li class="nav-item">
-                                <a routerLink="/masters/projects" class="nav-link" routerLinkActive="active">
-                                    <i class="far fa-circle nav-icon"></i>
-                                    <p>Projects</p>
-                                </a>
-                            </li> -->
-                        <!-- <li class="nav-item" *ngIf="!isDigitalMarketing() && isSuperAdmin()">
-                                <a routerLink="/masters/service-types" class="nav-link" routerLinkActive="active">
-                                    <i class="far fa-circle nav-icon"></i>
-                                    <p>Service Types</p>
-                                </a>
-                            </li> -->
-                        <!-- <li class="nav-item">
-                                <a routerLink="/masters/currency-setup" class="nav-link" routerLinkActive="active">
-                                    <i class="far fa-circle nav-icon"></i>
-                                    <p>Currency Setup</p>
-                                </a>
-                            </li> for the time being not showing this menu
-                        </ul> -->
                     </li>
 
-                    <!-- Transactions - Hidden from Writers and Team Leads -->
+                    <!-- Transactions - Hidden from Writers and Team Leads (Not for Real Estate) -->
                     <li
                         class="nav-item"
                         [class.menu-open]="isMenuOpen('transactions')"
@@ -328,8 +297,8 @@
                         </ul>
                     </li>
 
-                    <!-- Administration -->
-                    <li class="nav-item" [class.menu-open]="isMenuOpen('administration')" *ngIf="isSuperAdmin()">
+                    <!-- Administration (Not for Real Estate users) -->
+                    <li class="nav-item" [class.menu-open]="isMenuOpen('administration')" *ngIf="isSuperAdmin() && !isRealEstate()">
                         <a (click)="toggleMenuState('administration', $event)" class="nav-link">
                             <i class="nav-icon fas fa-cogs"></i>
                             <p>
@@ -359,8 +328,8 @@
                         </ul>
                     </li>
 
-                    <!-- Reports - Hidden from Writers and Team Leads -->
-                    <li class="nav-item" *ngIf="!isDigitalMarketing()">
+                    <!-- Reports - Hidden from Writers and Team Leads and Real Estate -->
+                    <li class="nav-item" *ngIf="!isDigitalMarketing() && !isRealEstate()">
                         <a href="#" class="nav-link">
                             <i class="nav-icon fas fa-chart-bar"></i>
                             <p>

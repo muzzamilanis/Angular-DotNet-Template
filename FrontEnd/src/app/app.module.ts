@@ -26,6 +26,20 @@ import { WriterDashboardComponent } from './components/writer-portal/writer-dash
 import { TeamLeadOrdersComponent } from './components/team-lead/team-lead-orders.component';
 import { TeamLeadDashboardComponent } from './components/team-lead/team-lead-dashboard.component';
 import { BrandingDemoComponent } from './components/branding-demo/branding-demo.component';
+// Real Estate Components
+import { RealEstateDashboardComponent } from './components/realestate/realestate-dashboard/realestate-dashboard.component';
+import { PropertyRegistrationComponent } from './components/realestate/property-registration/property-registration.component';
+import { PropertyPurchaseComponent } from './components/realestate/property-purchase/property-purchase.component';
+import { PropertySaleComponent } from './components/realestate/property-sale/property-sale.component';
+import { OwnershipTransferComponent } from './components/realestate/ownership-transfer/ownership-transfer.component';
+// Accounting Components
+import { ChartOfAccountsComponent } from './components/accounting/chart-of-accounts/chart-of-accounts.component';
+import { VoucherManagementComponent } from './components/accounting/voucher-management/voucher-management.component';
+// Reports Components
+import { GeneralLedgerComponent } from './components/reports/general-ledger/general-ledger.component';
+import { TrialBalanceComponent } from './components/reports/trial-balance/trial-balance.component';
+import { BalanceSheetComponent } from './components/reports/balance-sheet/balance-sheet.component';
+import { ProfitLossComponent } from './components/reports/profit-loss/profit-loss.component';
 // import { CurrencySetupComponent } from './components/currency-setup/currency-setup.component';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { ThemeService } from './services/theme.service';
@@ -70,6 +84,20 @@ export function initializeAppTheme(themeService: ThemeService, companyService: C
         TeamLeadOrdersComponent,
         TeamLeadDashboardComponent,
         BrandingDemoComponent,
+        // Real Estate Components
+        RealEstateDashboardComponent,
+        PropertyRegistrationComponent,
+        PropertyPurchaseComponent,
+        PropertySaleComponent,
+        OwnershipTransferComponent,
+        // Accounting Components
+        ChartOfAccountsComponent,
+        VoucherManagementComponent,
+        // Reports Components
+        GeneralLedgerComponent,
+        TrialBalanceComponent,
+        BalanceSheetComponent,
+        ProfitLossComponent,
         // CurrencySetupComponent,
     ],
     imports: [
