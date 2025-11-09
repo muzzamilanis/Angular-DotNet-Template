@@ -7,6 +7,28 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+var port = Environment.GetEnvironmentVariable("PORT") ?? "5000";
+
+// Only enforce HTTPS in Development
+if (builder.Environment.IsDevelopment())
+{
+	builder.WebHost.ConfigureKestrel(options =>
+	{
+		options.ListenAnyIP(5000); // HTTP
+		options.ListenAnyIP(5001, listenOptions =>
+		{
+			listenOptions.UseHttps(); // only for local dev cert
+		});
+	});
+}
+else
+{
+	builder.WebHost.ConfigureKestrel(options =>
+	{
+		options.ListenAnyIP(int.Parse(port)); // only HTTP in production
+	});
+}
+
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
