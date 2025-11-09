@@ -1,14 +1,264 @@
+<!-- Chart of Accounts -->
 <div class="row">
-    <div class="col-12">
-        <div class="card card-primary">
+    <div class="col-md-12">
+        <div class="card card-info">
             <div class="card-header">
-                <h3 class="card-title"><i class="fas fa-cog mr-2"></i>Chart Of Accounts</h3>
+                <h3 class="card-title">
+                    <i class="fas fa-calculator mr-2"></i>
+                    {{ editingAccount ? 'Edit' : 'Create' }} Account
+                </h3>
+                <div class="card-tools">
+                    <button type="button" class="btn btn-sm btn-light" (click)="initializeDefaultAccounts()" [disabled]="loading">
+                        <i class="fas fa-magic"></i>
+                        Initialize Default Accounts
+                    </button>
+                </div>
+            </div>
+            <form [formGroup]="accountForm" (ngSubmit)="onSubmit()">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="accountCode">Account Code *</label>
+                                <input type="text" class="form-control" id="accountCode" formControlName="accountCode" placeholder="e.g., 1100" [class.is-invalid]="accountForm.get('accountCode')?.invalid && accountForm.get('accountCode')?.touched" />
+                                <div class="invalid-feedback" *ngIf="accountForm.get('accountCode')?.invalid && accountForm.get('accountCode')?.touched">Account code is required</div>
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="form-group">
+                                <label for="accountName">Account Name *</label>
+                                <input type="text" class="form-control" id="accountName" formControlName="accountName" placeholder="e.g., Cash" [class.is-invalid]="accountForm.get('accountName')?.invalid && accountForm.get('accountName')?.touched" />
+                                <div class="invalid-feedback" *ngIf="accountForm.get('accountName')?.invalid && accountForm.get('accountName')?.touched">Account name is required</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="accountType">Account Type *</label>
+                                <select class="form-control" id="accountType" formControlName="accountType">
+                                    <option *ngFor="let type of accountTypes" [value]="type">{{ type }}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="accountCategory">Account Category</label>
+                                <select class="form-control" id="accountCategory" formControlName="accountCategory">
+                                    <option value="">-- Select Category --</option>
+                                    <option *ngFor="let category of accountCategories" [value]="category">{{ category }}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="openingBalance">Opening Balance *</label>
+                                <input type="number" class="form-control" id="openingBalance" formControlName="openingBalance" placeholder="0.00" step="0.01" [class.is-invalid]="accountForm.get('openingBalance')?.invalid && accountForm.get('openingBalance')?.touched" />
+                                <div class="invalid-feedback" *ngIf="accountForm.get('openingBalance')?.invalid && accountForm.get('openingBalance')?.touched">Opening balance is required</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="description">Description</label>
+                                <textarea class="form-control" id="description" formControlName="description" placeholder="Enter account description" rows="2"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <button type="submit" class="btn btn-info" [disabled]="!accountForm.valid || loading">
+                        <i class="fas" [ngClass]="loading ? 'fa-spinner fa-spin' : 'fa-save'"></i>
+                        {{ loading ? 'Saving...' : (editingAccount ? 'Update Account' : 'Create Account') }}
+                    </button>
+                    <button type="button" class="btn btn-secondary ml-2" (click)="resetForm()" [disabled]="loading">
+                        <i class="fas fa-times"></i>
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Accounts List by Type -->
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title"><i class="fas fa-list mr-2"></i>Chart of Accounts</h3>
             </div>
             <div class="card-body">
-                <p class="text-center text-muted">
-                    <i class="fas fa-tools fa-3x mb-3"></i><br/>
-                    This feature is under development.
-                </p>
+                <!-- Assets -->
+                <h5 class="text-primary"><i class="fas fa-coins mr-2"></i>Assets</h5>
+                <div class="table-responsive mb-4">
+                    <table class="table table-bordered table-sm">
+                        <thead class="bg-light">
+                            <tr>
+                                <th>Code</th>
+                                <th>Account Name</th>
+                                <th>Category</th>
+                                <th>Opening Balance</th>
+                                <th>Current Balance</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let account of getAccountsByType('Asset')">
+                                <td><strong>{{ account.accountCode }}</strong></td>
+                                <td>{{ account.accountName }}</td>
+                                <td><span class="badge badge-secondary">{{ account.accountCategory }}</span></td>
+                                <td>${{ account.openingBalance | number:'1.2-2' }}</td>
+                                <td>${{ account.currentBalance | number:'1.2-2' }}</td>
+                                <td>
+                                    <button class="btn btn-xs btn-primary mr-1" (click)="editAccount(account)"><i class="fas fa-edit"></i></button>
+                                    <button class="btn btn-xs btn-danger" (click)="deleteAccount(account)"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                            <tr *ngIf="getAccountsByType('Asset').length === 0">
+                                <td colspan="6" class="text-center text-muted">No asset accounts</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Liabilities -->
+                <h5 class="text-danger"><i class="fas fa-file-invoice-dollar mr-2"></i>Liabilities</h5>
+                <div class="table-responsive mb-4">
+                    <table class="table table-bordered table-sm">
+                        <thead class="bg-light">
+                            <tr>
+                                <th>Code</th>
+                                <th>Account Name</th>
+                                <th>Category</th>
+                                <th>Opening Balance</th>
+                                <th>Current Balance</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let account of getAccountsByType('Liability')">
+                                <td><strong>{{ account.accountCode }}</strong></td>
+                                <td>{{ account.accountName }}</td>
+                                <td><span class="badge badge-secondary">{{ account.accountCategory }}</span></td>
+                                <td>${{ account.openingBalance | number:'1.2-2' }}</td>
+                                <td>${{ account.currentBalance | number:'1.2-2' }}</td>
+                                <td>
+                                    <button class="btn btn-xs btn-primary mr-1" (click)="editAccount(account)"><i class="fas fa-edit"></i></button>
+                                    <button class="btn btn-xs btn-danger" (click)="deleteAccount(account)"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                            <tr *ngIf="getAccountsByType('Liability').length === 0">
+                                <td colspan="6" class="text-center text-muted">No liability accounts</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Equity -->
+                <h5 class="text-secondary"><i class="fas fa-balance-scale mr-2"></i>Equity</h5>
+                <div class="table-responsive mb-4">
+                    <table class="table table-bordered table-sm">
+                        <thead class="bg-light">
+                            <tr>
+                                <th>Code</th>
+                                <th>Account Name</th>
+                                <th>Category</th>
+                                <th>Opening Balance</th>
+                                <th>Current Balance</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let account of getAccountsByType('Equity')">
+                                <td><strong>{{ account.accountCode }}</strong></td>
+                                <td>{{ account.accountName }}</td>
+                                <td><span class="badge badge-secondary">{{ account.accountCategory }}</span></td>
+                                <td>${{ account.openingBalance | number:'1.2-2' }}</td>
+                                <td>${{ account.currentBalance | number:'1.2-2' }}</td>
+                                <td>
+                                    <button class="btn btn-xs btn-primary mr-1" (click)="editAccount(account)"><i class="fas fa-edit"></i></button>
+                                    <button class="btn btn-xs btn-danger" (click)="deleteAccount(account)"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                            <tr *ngIf="getAccountsByType('Equity').length === 0">
+                                <td colspan="6" class="text-center text-muted">No equity accounts</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Revenue -->
+                <h5 class="text-success"><i class="fas fa-arrow-up mr-2"></i>Revenue</h5>
+                <div class="table-responsive mb-4">
+                    <table class="table table-bordered table-sm">
+                        <thead class="bg-light">
+                            <tr>
+                                <th>Code</th>
+                                <th>Account Name</th>
+                                <th>Category</th>
+                                <th>Opening Balance</th>
+                                <th>Current Balance</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let account of getAccountsByType('Revenue')">
+                                <td><strong>{{ account.accountCode }}</strong></td>
+                                <td>{{ account.accountName }}</td>
+                                <td><span class="badge badge-secondary">{{ account.accountCategory }}</span></td>
+                                <td>${{ account.openingBalance | number:'1.2-2' }}</td>
+                                <td>${{ account.currentBalance | number:'1.2-2' }}</td>
+                                <td>
+                                    <button class="btn btn-xs btn-primary mr-1" (click)="editAccount(account)"><i class="fas fa-edit"></i></button>
+                                    <button class="btn btn-xs btn-danger" (click)="deleteAccount(account)"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                            <tr *ngIf="getAccountsByType('Revenue').length === 0">
+                                <td colspan="6" class="text-center text-muted">No revenue accounts</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Expense -->
+                <h5 class="text-warning"><i class="fas fa-arrow-down mr-2"></i>Expense</h5>
+                <div class="table-responsive mb-4">
+                    <table class="table table-bordered table-sm">
+                        <thead class="bg-light">
+                            <tr>
+                                <th>Code</th>
+                                <th>Account Name</th>
+                                <th>Category</th>
+                                <th>Opening Balance</th>
+                                <th>Current Balance</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let account of getAccountsByType('Expense')">
+                                <td><strong>{{ account.accountCode }}</strong></td>
+                                <td>{{ account.accountName }}</td>
+                                <td><span class="badge badge-secondary">{{ account.accountCategory }}</span></td>
+                                <td>${{ account.openingBalance | number:'1.2-2' }}</td>
+                                <td>${{ account.currentBalance | number:'1.2-2' }}</td>
+                                <td>
+                                    <button class="btn btn-xs btn-primary mr-1" (click)="editAccount(account)"><i class="fas fa-edit"></i></button>
+                                    <button class="btn btn-xs btn-danger" (click)="deleteAccount(account)"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                            <tr *ngIf="getAccountsByType('Expense').length === 0">
+                                <td colspan="6" class="text-center text-muted">No expense accounts</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div *ngIf="accounts.length === 0" class="text-center text-muted p-4">
+                    <i class="fas fa-info-circle fa-3x mb-3"></i>
+                    <p>No accounts found. Click "Initialize Default Accounts" to create standard accounting accounts.</p>
+                </div>
             </div>
         </div>
     </div>

@@ -1,14 +1,210 @@
+<!-- Property Purchase Form -->
 <div class="row">
-    <div class="col-12">
-        <div class="card card-primary">
+    <div class="col-md-12">
+        <div class="card card-success">
             <div class="card-header">
-                <h3 class="card-title"><i class="fas fa-cog mr-2"></i>Property Purchase</h3>
+                <h3 class="card-title">
+                    <i class="fas fa-shopping-bag mr-2"></i>
+                    {{ editingPurchase ? 'Edit' : 'Record' }} Property Purchase
+                </h3>
             </div>
-            <div class="card-body">
-                <p class="text-center text-muted">
-                    <i class="fas fa-tools fa-3x mb-3"></i><br/>
-                    This feature is under development.
-                </p>
+            <form [formGroup]="purchaseForm" (ngSubmit)="onSubmit()">
+                <div class="card-body">
+                    <!-- Property Selection -->
+                    <h5 class="mb-3"><i class="fas fa-building mr-2"></i>Property Information</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="propertyId">Select Property *</label>
+                                <select class="form-control" id="propertyId" formControlName="propertyId" [class.is-invalid]="purchaseForm.get('propertyId')?.invalid && purchaseForm.get('propertyId')?.touched">
+                                    <option [value]="null">-- Select Property --</option>
+                                    <option *ngFor="let property of properties" [value]="property.id">{{ property.propertyName }} ({{ property.propertyType }})</option>
+                                </select>
+                                <div class="invalid-feedback" *ngIf="purchaseForm.get('propertyId')?.invalid && purchaseForm.get('propertyId')?.touched">Property selection is required</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="purchaseNumber">Purchase Number *</label>
+                                <input type="text" class="form-control" id="purchaseNumber" formControlName="purchaseNumber" placeholder="e.g., PUR-2024-001" [class.is-invalid]="purchaseForm.get('purchaseNumber')?.invalid && purchaseForm.get('purchaseNumber')?.touched" />
+                                <div class="invalid-feedback" *ngIf="purchaseForm.get('purchaseNumber')?.invalid && purchaseForm.get('purchaseNumber')?.touched">Purchase number is required</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Seller Information -->
+                    <h5 class="mb-3 mt-3"><i class="fas fa-user mr-2"></i>Seller Information</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="sellerName">Seller Name *</label>
+                                <input type="text" class="form-control" id="sellerName" formControlName="sellerName" placeholder="Enter seller name" [class.is-invalid]="purchaseForm.get('sellerName')?.invalid && purchaseForm.get('sellerName')?.touched" />
+                                <div class="invalid-feedback" *ngIf="purchaseForm.get('sellerName')?.invalid && purchaseForm.get('sellerName')?.touched">Seller name is required</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="sellerPhone">Seller Phone</label>
+                                <input type="text" class="form-control" id="sellerPhone" formControlName="sellerPhone" placeholder="Enter phone number" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="sellerEmail">Seller Email</label>
+                                <input type="email" class="form-control" id="sellerEmail" formControlName="sellerEmail" placeholder="Enter email address" />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="sellerAddress">Seller Address</label>
+                                <input type="text" class="form-control" id="sellerAddress" formControlName="sellerAddress" placeholder="Enter address" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Financial Information -->
+                    <h5 class="mb-3 mt-3"><i class="fas fa-dollar-sign mr-2"></i>Financial Details</h5>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="purchaseDate">Purchase Date *</label>
+                                <input type="date" class="form-control" id="purchaseDate" formControlName="purchaseDate" [class.is-invalid]="purchaseForm.get('purchaseDate')?.invalid && purchaseForm.get('purchaseDate')?.touched" />
+                                <div class="invalid-feedback" *ngIf="purchaseForm.get('purchaseDate')?.invalid && purchaseForm.get('purchaseDate')?.touched">Purchase date is required</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="purchasePrice">Purchase Price *</label>
+                                <input type="number" class="form-control" id="purchasePrice" formControlName="purchasePrice" placeholder="0.00" min="0" step="0.01" [class.is-invalid]="purchaseForm.get('purchasePrice')?.invalid && purchaseForm.get('purchasePrice')?.touched" />
+                                <div class="invalid-feedback" *ngIf="purchaseForm.get('purchasePrice')?.invalid && purchaseForm.get('purchasePrice')?.touched">Purchase price is required</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="advancePayment">Advance Payment</label>
+                                <input type="number" class="form-control" id="advancePayment" formControlName="advancePayment" placeholder="0.00" min="0" step="0.01" />
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Remaining Payment</label>
+                                <input type="text" class="form-control" [value]="getRemainingPayment() | number:'1.2-2'" readonly style="background-color: #f4f6f9;" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Payment Information -->
+                    <h5 class="mb-3 mt-3"><i class="fas fa-credit-card mr-2"></i>Payment Information</h5>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="paymentStatus">Payment Status</label>
+                                <select class="form-control" id="paymentStatus" formControlName="paymentStatus">
+                                    <option *ngFor="let status of paymentStatuses" [value]="status">{{ status }}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="paymentMethod">Payment Method</label>
+                                <select class="form-control" id="paymentMethod" formControlName="paymentMethod">
+                                    <option *ngFor="let method of paymentMethods" [value]="method">{{ method }}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="bankName">Bank Name</label>
+                                <input type="text" class="form-control" id="bankName" formControlName="bankName" placeholder="Enter bank name" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="chequeNumber">Cheque Number</label>
+                                <input type="text" class="form-control" id="chequeNumber" formControlName="chequeNumber" placeholder="Enter cheque number" />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="notes">Notes</label>
+                                <textarea class="form-control" id="notes" formControlName="notes" placeholder="Enter any additional notes" rows="2"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-footer">
+                    <button type="submit" class="btn btn-success" [disabled]="!purchaseForm.valid || loading">
+                        <i class="fas" [ngClass]="loading ? 'fa-spinner fa-spin' : 'fa-save'"></i>
+                        {{ loading ? 'Recording...' : (editingPurchase ? 'Update Purchase' : 'Record Purchase') }}
+                    </button>
+                    <button type="button" class="btn btn-secondary ml-2" (click)="resetForm()" [disabled]="loading">
+                        <i class="fas fa-times"></i>
+                        Cancel
+                    </button>
+                    <small class="text-muted ml-3">
+                        <i class="fas fa-info-circle"></i>
+                        Accounting voucher will be created automatically
+                    </small>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Purchases List -->
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title"><i class="fas fa-list mr-2"></i>Purchase Records</h3>
+            </div>
+            <div class="card-body table-responsive">
+                <table class="table table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th>Purchase #</th>
+                            <th>Property</th>
+                            <th>Seller</th>
+                            <th>Date</th>
+                            <th>Purchase Price</th>
+                            <th>Advance</th>
+                            <th>Remaining</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let purchase of purchases">
+                            <td><strong>{{ purchase.purchaseNumber }}</strong></td>
+                            <td>{{ getPropertyName(purchase.propertyId) }}</td>
+                            <td>{{ purchase.sellerName }}</td>
+                            <td>{{ purchase.purchaseDate | date:'shortDate' }}</td>
+                            <td>${{ purchase.purchasePrice | number:'1.2-2' }}</td>
+                            <td>${{ purchase.advancePayment | number:'1.2-2' }}</td>
+                            <td>${{ purchase.remainingPayment | number:'1.2-2' }}</td>
+                            <td><span class="badge" [ngClass]="{'badge-success': purchase.paymentStatus === 'Completed', 'badge-warning': purchase.paymentStatus === 'Partial', 'badge-danger': purchase.paymentStatus === 'Pending'}">{{ purchase.paymentStatus }}</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-primary mr-1" (click)="editPurchase(purchase)" title="Edit">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-danger" (click)="deletePurchase(purchase)" title="Delete">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr *ngIf="purchases.length === 0">
+                            <td colspan="9" class="text-center text-muted">
+                                <i class="fas fa-info-circle mr-2"></i>
+                                No purchases recorded yet. Start by recording your first property purchase!
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>

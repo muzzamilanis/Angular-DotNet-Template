@@ -1,1 +1,11 @@
-/* Component styles */
+/* Chart of Accounts Styles */
+h5 {
+    border-bottom: 2px solid;
+    padding-bottom: 5px;
+    margin-top: 20px;
+}
+
+.btn-xs {
+    padding: 0.125rem 0.25rem;
+    font-size: 0.75rem;
+}
