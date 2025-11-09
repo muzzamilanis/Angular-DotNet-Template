@@ -1,161 +1,400 @@
 <div class="wrapper" [class.sidebar-collapse]="sidebarCollapsed">
-  <!-- Navbar -->
-  <nav class="main-header navbar navbar-expand navbar-dark">
-    <ul class="navbar-nav">
-      <li class="nav-item">
-        <a class="nav-link" (click)="toggleSidebar()" role="button">
-          <i class="fas fa-bars"></i>
-        </a>
-      </li>
-    </ul>
-    
-    <div class="navbar-brand">
-      <span class="brand-text font-weight-light">Angular DotNet Template</span>
-    </div>
-    
-    <ul class="navbar-nav ml-auto">
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-          <i class="fas fa-user"></i>
-          <span class="ml-2">Admin</span>
-        </a>
-        <ul class="dropdown-menu dropdown-menu-end">
-          <li><a class="dropdown-item" href="#"><i class="fas fa-user-cog mr-2"></i>Profile</a></li>
-          <li><hr class="dropdown-divider"></li>
-          <li><a class="dropdown-item" (click)="logout()"><i class="fas fa-sign-out-alt mr-2"></i>Logout</a></li>
+    <!-- Navbar -->
+    <nav class="main-header navbar navbar-expand navbar-dark">
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" (click)="toggleSidebar()" role="button">
+                    <i class="fas fa-bars"></i>
+                </a>
+            </li>
         </ul>
-      </li>
-    </ul>
-  </nav>
 
-  <!-- Main Sidebar Container -->
-  <aside class="main-sidebar sidebar-dark-primary elevation-4">
-    <!-- Brand Logo -->
-    <a href="#" class="brand-link">
-      <i class="fas fa-cogs brand-image" style="font-size: 2rem; color: white; margin-right: 0.5rem;"></i>
-      <span class="brand-text font-weight-light">DotNet Template</span>
-    </a>
-
-    <!-- Sidebar -->
-    <div class="sidebar">
-      <!-- Sidebar Menu -->
-      <nav class="mt-2">
-        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-          
-          <!-- Dashboard -->
-          <li class="nav-item">
-            <a routerLink="/" class="nav-link" routerLinkActive="active">
-              <i class="nav-icon fas fa-tachometer-alt"></i>
-              <p>Dashboard</p>
-            </a>
-          </li>
-
-          <!-- Masters -->
-          <li class="nav-item" [class.menu-open]="isMenuOpen('masters')">
-            <a (click)="toggleMenuState('masters', $event)" class="nav-link">
-              <i class="nav-icon fas fa-database"></i>
-              <p>
-                Masters
-                <i class="fas fa-angle-left right"></i>
-              </p>
-            </a>
-            <ul class="nav nav-treeview">
-              <li class="nav-item">
-                <a routerLink="/masters/products" class="nav-link" routerLinkActive="active">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Products</p>
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item dropdown">
+                <a
+                    class="nav-link dropdown-toggle"
+                    id="navbarDropdown"
+                    role="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false">
+                    <i class="fas fa-user"></i>
+                    <span class="ml-2" *ngIf="!isLoadingUser">{{ getUserDisplayName() }}</span>
+                    <span class="ml-2" *ngIf="isLoadingUser">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        Loading...
+                    </span>
+                    <span class="ml-2">
+                        <a (click)="logout()" style="cursor: pointer">
+                            <i class="fas fa-sign-out-alt mr-2"></i>
+                        </a>
+                    </span>
                 </a>
-              </li>
-              <li class="nav-item">
-                <a routerLink="/masters/customers" class="nav-link" routerLinkActive="active">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Customers</p>
-                </a>
-              </li>
-            </ul>
-          </li>
-
-          <!-- Transactions -->
-          <li class="nav-item" [class.menu-open]="isMenuOpen('transactions')">
-            <a (click)="toggleMenuState('transactions', $event)" class="nav-link">
-              <i class="nav-icon fas fa-shopping-cart"></i>
-              <p>
-                Transactions
-                <i class="fas fa-angle-left right"></i>
-              </p>
-            </a>
-            <ul class="nav nav-treeview">
-              <li class="nav-item">
-                <a routerLink="/transactions/sale-orders" class="nav-link" routerLinkActive="active">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Sale Orders</p>
-                </a>
-              </li>
-            </ul>
-          </li>
-
-          <!-- Reports -->
-          <li class="nav-item">
-            <a href="#" class="nav-link">
-              <i class="nav-icon fas fa-chart-bar"></i>
-              <p>
-                Reports
-                <i class="fas fa-angle-left right"></i>
-              </p>
-            </a>
-            <ul class="nav nav-treeview">
-              <li class="nav-item">
-                <a href="#" class="nav-link">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Sales Report</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="#" class="nav-link">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Customer Report</p>
-                </a>
-              </li>
-            </ul>
-          </li>
-
+                <!-- <ul class="dropdown-menu dropdown-menu-end">
+                    <li class="dropdown-header" *ngIf="currentUser">
+                        <strong>{{ getUserDisplayName() }}</strong>
+                        <br />
+                        <small class="text-muted">{{ getUserEmail() }}</small>
+                    </li>
+                    <li><hr class="dropdown-divider" /></li>
+                    <li>
+                        <a class="dropdown-item" href="#">
+                            <i class="fas fa-user-cog mr-2"></i>
+                            Profile
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="#">
+                            <i class="fas fa-cog mr-2"></i>
+                            Settings
+                        </a>
+                    </li>
+                    <li><hr class="dropdown-divider" /></li>
+                    <li>
+                    <a class="dropdown-item logout-btn" (click)="logout()" style="cursor: pointer;">
+                        <i class="fas fa-sign-out-alt mr-2"></i>
+                        Logout
+                    </a>
+                    </li>
+                </ul> -->
+            </li>
         </ul>
-      </nav>
-    </div>
-  </aside>
+    </nav>
 
-  <!-- Content Wrapper -->
-  <div class="content-wrapper">
-    <!-- Content Header -->
-    <div class="content-header">
-      <div class="container-fluid">
-        <div class="row mb-2">
-          <div class="col-sm-6">
-            <h1 class="m-0">Dashboard</h1>
-          </div>
-          <div class="col-sm-6">
-            <ol class="breadcrumb float-sm-right">
-              <li class="breadcrumb-item"><a href="#">Home</a></li>
-              <li class="breadcrumb-item active">Dashboard</li>
-            </ol>
-          </div>
+    <!-- Main Sidebar Container -->
+    <aside class="main-sidebar sidebar-dark-primary elevation-4">
+        <!-- Brand Logo -->
+        <a href="#" class="brand-link">
+            <img
+                *ngIf="getCompanyLogo(); else defaultIcon"
+                [src]="getCompanyLogo()"
+                alt="Company Logo"
+                class="brand-image"
+                style="height: 2rem; object-fit: contain; margin-right: 0.5rem" />
+            <ng-template #defaultIcon>
+                <i class="fas fa-user-cog brand-image" style="font-size: 2rem; color: white; margin-right: 0.5rem"></i>
+            </ng-template>
+            <span *ngIf="getCompanyName()" class="brand-text font-weight-light">
+                <h5>{{ getCompanyName() }}</h5>
+            </span>
+        </a>
+        <!-- <div class="navbar-brand" style="color: white;">
+            <span class="brand-text font-weight-light"></span>
+            <span *ngIf="getCompanyName()" class="company-text ml-2">- {{ getCompanyName() }}</span>
+        </div> -->
+
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <!-- Sidebar Menu -->
+            <nav class="mt-2">
+                <ul
+                    class="nav nav-pills nav-sidebar flex-column"
+                    data-widget="treeview"
+                    role="menu"
+                    data-accordion="false">
+                    <!-- Dashboard - For Real Estate -->
+                    <li class="nav-item" *ngIf="isRealEstate()">
+                        <a routerLink="/realestate/dashboard" class="nav-link" routerLinkActive="active">
+                            <i class="nav-icon fas fa-tachometer-alt"></i>
+                            <p>Dashboard</p>
+                        </a>
+                    </li>
+
+                    <!-- Dashboard - For SuperAdmin and Non-Real Estate -->
+                    <li class="nav-item" *ngIf="!isWriter() && !isTeamLead() && !isRealEstate()">
+                        <a routerLink="/dashboard" class="nav-link" routerLinkActive="active">
+                            <i class="nav-icon fas fa-tachometer-alt"></i>
+                            <p>Dashboard</p>
+                        </a>
+                    </li>
+
+                    <!-- Writer Dashboard - Only visible to Writers -->
+                    <li class="nav-item" *ngIf="isWriter() && !isRealEstate()">
+                        <a routerLink="/writer/dashboard" class="nav-link" routerLinkActive="active">
+                            <i class="nav-icon fas fa-tachometer-alt"></i>
+                            <p>Dashboard</p>
+                        </a>
+                    </li>
+
+                    <!-- Writer Portal - Visible to Writers and SuperAdmin (Not for Real Estate) -->
+                    <li class="nav-item" *ngIf="(isWriter() || isSuperAdmin()) && !isRealEstate()">
+                        <a routerLink="/writer/assignments" class="nav-link" routerLinkActive="active">
+                            <i class="nav-icon fas fa-tasks"></i>
+                            <p>Writer Portal</p>
+                        </a>
+                    </li>
+
+                    <!-- Team Lead Portal - Visible to Team Leads only (Not for Real Estate) -->
+                    <li class="nav-item" *ngIf="(isTeamLead() || isSuperAdmin()) && !isRealEstate()">
+                        <a routerLink="/team-lead/dashboard" class="nav-link" routerLinkActive="active">
+                            <i class="nav-icon fas fa-users-cog"></i>
+                            <p>Team Lead Portal</p>
+                        </a>
+                    </li>
+
+                    <!-- Masters - Hidden from Writers, limited for Team Leads (Not for Real Estate) -->
+                    <li
+                        class="nav-item"
+                        [class.menu-open]="isMenuOpen('masters')"
+                        *ngIf="!isWriter() && (isSuperAdmin() || isTeamLead()) && !isRealEstate()">
+                        <a routerLink="/masters/projects" class="nav-link" routerLinkActive="active">
+                            <i class="far fa-circle nav-icon"></i>
+                            <p>Projects</p>
+                        </a>
+                    </li>
+
+                    <!-- Transactions - Hidden from Writers and Team Leads (Not for Real Estate) -->
+                    <li
+                        class="nav-item"
+                        [class.menu-open]="isMenuOpen('transactions')"
+                        *ngIf="!isWriter() && !isTeamLead() && !isRealEstate()">
+                        <a routerLink="/transactions/sale-orders" class="nav-link" routerLinkActive="active">
+                            <i class="far fa-circle nav-icon"></i>
+                            <p>Order Log</p>
+                        </a>
+                        <!-- <a (click)="toggleMenuState('transactions', $event)" class="nav-link">
+                            <i class="nav-icon fas fa-shopping-cart"></i>
+                            <p>
+                                Transactions
+                                <i class="fas fa-angle-left right"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a routerLink="/transactions/sale-orders" class="nav-link" routerLinkActive="active">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Order Log</p>
+                                </a>
+                            </li>
+                        </ul> -->
+                    </li>
+
+                    <!-- Real Estate Modules - Only visible when Real Estate business nature is selected -->
+                    <li class="nav-item" [class.menu-open]="isMenuOpen('realestate')" *ngIf="isRealEstate()">
+                        <a (click)="toggleMenuState('realestate', $event)" class="nav-link">
+                            <i class="nav-icon fas fa-building"></i>
+                            <p>
+                                Real Estate
+                                <i class="fas fa-angle-left right"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a
+                                    routerLink="/realestate/properties"
+                                    class="nav-link"
+                                    routerLinkActive="active">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Property Registration</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a
+                                    routerLink="/realestate/purchases"
+                                    class="nav-link"
+                                    routerLinkActive="active">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Land Purchase</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a
+                                    routerLink="/realestate/sales"
+                                    class="nav-link"
+                                    routerLinkActive="active">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Land Selling</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a
+                                    routerLink="/realestate/ownership-transfers"
+                                    class="nav-link"
+                                    routerLinkActive="active">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Ownership Transfer</p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <!-- Accounting Modules - Only visible for Real Estate -->
+                    <li class="nav-item" [class.menu-open]="isMenuOpen('accounting')" *ngIf="isRealEstate()">
+                        <a (click)="toggleMenuState('accounting', $event)" class="nav-link">
+                            <i class="nav-icon fas fa-calculator"></i>
+                            <p>
+                                Accounting
+                                <i class="fas fa-angle-left right"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a
+                                    routerLink="/accounting/chart-of-accounts"
+                                    class="nav-link"
+                                    routerLinkActive="active">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Chart of Accounts</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a
+                                    routerLink="/accounting/vouchers"
+                                    class="nav-link"
+                                    routerLinkActive="active">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Voucher Management</p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <!-- Reports - Only visible for Real Estate -->
+                    <li class="nav-item" [class.menu-open]="isMenuOpen('reports')" *ngIf="isRealEstate()">
+                        <a (click)="toggleMenuState('reports', $event)" class="nav-link">
+                            <i class="nav-icon fas fa-chart-line"></i>
+                            <p>
+                                Financial Reports
+                                <i class="fas fa-angle-left right"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a
+                                    routerLink="/reports/general-ledger"
+                                    class="nav-link"
+                                    routerLinkActive="active">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>General Ledger</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a
+                                    routerLink="/reports/trial-balance"
+                                    class="nav-link"
+                                    routerLinkActive="active">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Trial Balance</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a
+                                    routerLink="/reports/balance-sheet"
+                                    class="nav-link"
+                                    routerLinkActive="active">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Balance Sheet</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a
+                                    routerLink="/reports/profit-loss"
+                                    class="nav-link"
+                                    routerLinkActive="active">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Profit & Loss</p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <!-- Administration (Not for Real Estate users) -->
+                    <li class="nav-item" [class.menu-open]="isMenuOpen('administration')" *ngIf="isSuperAdmin() && !isRealEstate()">
+                        <a (click)="toggleMenuState('administration', $event)" class="nav-link">
+                            <i class="nav-icon fas fa-cogs"></i>
+                            <p>
+                                Administration
+                                <i class="fas fa-angle-left right"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a
+                                    routerLink="/administration/company-setup"
+                                    class="nav-link"
+                                    routerLinkActive="active">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Company Setup</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a
+                                    routerLink="/administration/user-management"
+                                    class="nav-link"
+                                    routerLinkActive="active">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>User Management</p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <!-- Reports - Hidden from Writers and Team Leads and Real Estate -->
+                    <li class="nav-item" *ngIf="!isDigitalMarketing() && !isRealEstate()">
+                        <a href="#" class="nav-link">
+                            <i class="nav-icon fas fa-chart-bar"></i>
+                            <p>
+                                Reports
+                                <i class="fas fa-angle-left right"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a href="#" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Sales Report</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Customer Report</p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </nav>
         </div>
-      </div>
+    </aside>
+
+    <!-- Content Wrapper -->
+    <div class="content-wrapper">
+        <!-- Content Header -->
+        <div class="content-header" *ngIf="shouldShowBreadcrumb()">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1 class="m-0">{{ getCurrentPageTitle() }}</h1>
+                    </div>
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-right">
+                            <li class="breadcrumb-item"><a href="#">Home</a></li>
+                            <li class="breadcrumb-item active">{{ getCurrentPageTitle() }}</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main content -->
+        <section class="content">
+            <div class="container-fluid">
+                <router-outlet></router-outlet>
+            </div>
+        </section>
     </div>
 
-    <!-- Main content -->
-    <section class="content">
-      <div class="container-fluid">
-        <router-outlet></router-outlet>
-      </div>
-    </section>
-  </div>
-
-  <!-- Footer -->
-  <footer class="main-footer">
-    <div class="float-right d-none d-sm-block">
-      <b>Version</b> 1.0.0
-    </div>
-    <strong>Copyright &copy; 2024 <a href="#">Angular DotNet Template</a>.</strong> All rights reserved.
-  </footer>
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="float-right d-none d-sm-block">
+            <b>Version</b>
+            1.0.0
+        </div>
+        <strong>
+            Copyright &copy; {{ getCurrentYear() }}
+            <a href="#">SmartBizApp</a>
+            .
+        </strong>
+        All rights reserved.
+    </footer>
 </div>

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SimpleApi.DTOs;
 using SimpleApi.Services;
@@ -6,7 +7,7 @@ namespace SimpleApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class TokenAuthController : ControllerBase
+    public class TokenAuthController : BaseController
     {
         private readonly IAuthService _authService;
 
@@ -46,6 +47,7 @@ namespace SimpleApi.Controllers
         }
 
         [HttpGet("GetCurrentLoginInformations")]
+        [Authorize]
         public async Task<ActionResult<object>> GetCurrentLoginInformations()
         {
             try

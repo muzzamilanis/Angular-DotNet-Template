@@ -1,0 +1,316 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <!-- Use consistent card structure like Product form -->
+            <div class="card card-primary">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-building mr-2"></i>
+                        {{ isEditing ? 'Edit Company' : 'Company Setup' }}
+                    </h3>
+                    <p class="card-text mb-0 mt-2" style="opacity: 0.9">
+                        {{
+                            isEditing
+                                ? 'Update your company profile information.'
+                                : 'Set up your company profile to get started with industry-specific features.'
+                        }}
+                    </p>
+                </div>
+
+                <form [formGroup]="companyForm" (ngSubmit)="onSubmit()">
+                    <div class="card-body">
+                        <div *ngIf="isLoading" class="text-center">
+                            <div class="spinner-border" role="status">
+                                <span class="sr-only">Loading...</span>
+                            </div>
+                            <p class="mt-2">Loading business types...</p>
+                        </div>
+
+                        <div *ngIf="!isLoading">
+                            <!-- Business Nature Selection -->
+                            <div class="form-group">
+                                <label for="businessNatureId">
+                                    <i class="fas fa-industry"></i>
+                                    Business Type
+                                    <span class="text-danger">*</span>
+                                </label>
+                                <select
+                                    class="form-control"
+                                    id="businessNatureId"
+                                    formControlName="businessNatureId"
+                                    (change)="onBusinessNatureChange()"
+                                    [class.is-invalid]="f['businessNatureId'].invalid && f['businessNatureId'].touched"
+                                    [class.loading]="isLoading">
+                                    <option value="" disabled>🏢 Select your business type</option>
+                                    <option *ngFor="let bn of businessNatures" [value]="bn.id">
+                                        {{ bn.displayName }}
+                                    </option>
+                                </select>
+                                <div
+                                    *ngIf="f['businessNatureId'].invalid && f['businessNatureId'].touched"
+                                    class="invalid-feedback">
+                                    <i class="fas fa-exclamation-circle mr-1"></i>
+                                    Please select a business type.
+                                </div>
+                            </div>
+
+                            <!-- Selected Business Nature Info -->
+                            <div *ngIf="selectedBusinessNature" class="alert alert-info">
+                                <h6>
+                                    <i class="fas fa-info-circle mr-2"></i>
+                                    {{ selectedBusinessNature.displayName }}
+                                </h6>
+                                <p class="mb-0">{{ selectedBusinessNature.description }}</p>
+                            </div>
+
+                            <!-- Company Information Row -->
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="companyName">
+                                            Company Name
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        <input
+                                            type="text"
+                                            class="form-control"
+                                            id="companyName"
+                                            formControlName="companyName"
+                                            placeholder="Enter your company name"
+                                            [class.is-invalid]="f['companyName'].invalid && f['companyName'].touched" />
+                                        <div
+                                            *ngIf="f['companyName'].invalid && f['companyName'].touched"
+                                            class="invalid-feedback">
+                                            <div *ngIf="f['companyName'].errors?.['required']">
+                                                Company name is required.
+                                            </div>
+                                            <div *ngIf="f['companyName'].errors?.['minlength']">
+                                                Company name must be at least 2 characters.
+                                            </div>
+                                            <div *ngIf="f['companyName'].errors?.['maxlength']">
+                                                Company name cannot exceed 200 characters.
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="email">Email</label>
+                                        <input
+                                            type="email"
+                                            class="form-control"
+                                            id="email"
+                                            formControlName="email"
+                                            placeholder="Enter company email"
+                                            [class.is-invalid]="f['email'].invalid && f['email'].touched" />
+                                        <div *ngIf="f['email'].invalid && f['email'].touched" class="invalid-feedback">
+                                            <div *ngIf="f['email'].errors?.['email']">
+                                                Please enter a valid email address.
+                                            </div>
+                                            <div *ngIf="f['email'].errors?.['maxlength']">
+                                                Email cannot exceed 200 characters.
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Address -->
+                            <div class="form-group">
+                                <label for="address">Address</label>
+                                <textarea
+                                    class="form-control"
+                                    id="address"
+                                    formControlName="address"
+                                    placeholder="Enter company address"
+                                    rows="3"
+                                    [class.is-invalid]="f['address'].invalid && f['address'].touched"></textarea>
+                                <div *ngIf="f['address'].invalid && f['address'].touched" class="invalid-feedback">
+                                    <div *ngIf="f['address'].errors?.['maxlength']">
+                                        Address cannot exceed 500 characters.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Phone and Contact Person Row -->
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="phone">Phone</label>
+                                        <input
+                                            type="tel"
+                                            class="form-control"
+                                            id="phone"
+                                            formControlName="phone"
+                                            placeholder="Enter phone number"
+                                            [class.is-invalid]="f['phone'].invalid && f['phone'].touched" />
+                                        <div *ngIf="f['phone'].invalid && f['phone'].touched" class="invalid-feedback">
+                                            <div *ngIf="f['phone'].errors?.['maxlength']">
+                                                Phone number cannot exceed 50 characters.
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="contactPerson">Contact Person</label>
+                                        <input
+                                            type="text"
+                                            class="form-control"
+                                            id="contactPerson"
+                                            formControlName="contactPerson"
+                                            placeholder="Enter contact person name"
+                                            [class.is-invalid]="
+                                                f['contactPerson'].invalid && f['contactPerson'].touched
+                                            " />
+                                        <div
+                                            *ngIf="f['contactPerson'].invalid && f['contactPerson'].touched"
+                                            class="invalid-feedback">
+                                            <div *ngIf="f['contactPerson'].errors?.['maxlength']">
+                                                Contact person name cannot exceed 100 characters.
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Company Branding Section -->
+                        <div class="card mt-3">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">
+                                    <i class="fas fa-palette mr-2"></i>
+                                    Company Branding
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <!-- Logo Upload Section -->
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="logoUpload">
+                                                Company Logo
+                                                <small class="text-muted">(Max 5MB - JPG, PNG, GIF, SVG)</small>
+                                            </label>
+
+                                            <!-- Logo Preview -->
+                                            <div *ngIf="logoPreviewUrl" class="logo-preview mb-3">
+                                                <img
+                                                    [src]="logoPreviewUrl"
+                                                    alt="Company Logo"
+                                                    class="logo-preview-img" />
+                                                <button
+                                                    type="button"
+                                                    class="btn btn-sm btn-danger logo-remove-btn"
+                                                    (click)="removeLogo()"
+                                                    title="Remove logo">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                            </div>
+
+                                            <!-- File Upload Button -->
+                                            <div class="file-upload-container">
+                                                <input
+                                                    type="file"
+                                                    id="logoUpload"
+                                                    class="file-input"
+                                                    accept="image/*"
+                                                    (change)="onLogoFileSelected($event)"
+                                                    [disabled]="isUploadingLogo" />
+                                                <label for="logoUpload" class="file-upload-btn">
+                                                    <span *ngIf="!isUploadingLogo">
+                                                        <i class="fas fa-cloud-upload-alt mr-2"></i>
+                                                        {{ logoPreviewUrl ? 'Change Logo' : 'Upload Logo' }}
+                                                    </span>
+                                                    <span *ngIf="isUploadingLogo">
+                                                        <i class="fas fa-spinner fa-spin mr-2"></i>
+                                                        Uploading...
+                                                    </span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Color Theme Section -->
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="primaryColor">
+                                                Primary Color Theme
+                                                <small class="text-muted">
+                                                    (This will be applied throughout the app)
+                                                </small>
+                                            </label>
+
+                                            <!-- Color Picker -->
+                                            <div class="color-picker-container">
+                                                <input
+                                                    type="color"
+                                                    id="primaryColor"
+                                                    class="form-control color-input"
+                                                    formControlName="primaryColor"
+                                                    (change)="onColorChange($event.target.value)" />
+
+                                                <!-- Color Preview -->
+                                                <div
+                                                    class="color-preview"
+                                                    [style.background-color]="companyForm.get('primaryColor')?.value">
+                                                    <span class="color-value">
+                                                        {{ companyForm.get('primaryColor')?.value }}
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                            <!-- Color Presets -->
+                                            <div class="color-presets mt-3">
+                                                <label class="small text-muted">Quick Color Presets:</label>
+                                                <div class="color-preset-grid">
+                                                    <button
+                                                        *ngFor="let color of colorPresets"
+                                                        type="button"
+                                                        class="color-preset-btn"
+                                                        [style.background-color]="color"
+                                                        [class.active]="
+                                                            companyForm.get('primaryColor')?.value === color
+                                                        "
+                                                        (click)="selectColorPreset(color)"
+                                                        [title]="color"></button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-footer">
+                        <button type="submit" class="btn btn-primary" [disabled]="companyForm.invalid || isSubmitting">
+                            <span
+                                *ngIf="isSubmitting"
+                                class="spinner-border spinner-border-sm mr-2"
+                                role="status"></span>
+                            <i *ngIf="!isSubmitting" class="fas fa-save mr-2"></i>
+                            {{
+                                isSubmitting
+                                    ? isEditing
+                                        ? 'Updating...'
+                                        : 'Creating...'
+                                    : isEditing
+                                      ? 'Update Company'
+                                      : 'Create Company Profile'
+                            }}
+                        </button>
+                        <button
+                            type="button"
+                            class="btn btn-secondary ml-2"
+                            (click)="resetForm()"
+                            [disabled]="isSubmitting">
+                            <i class="fas fa-times mr-2"></i>
+                            Cancel
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

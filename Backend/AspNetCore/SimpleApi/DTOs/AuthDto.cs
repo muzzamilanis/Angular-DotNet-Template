@@ -1,11 +1,12 @@
 using System.ComponentModel.DataAnnotations;
+using SimpleApi.Models;
 
 namespace SimpleApi.DTOs
 {
     public class LoginDto
     {
         [Required]
-        public string Username { get; set; } = string.Empty;
+        public string UsernameOrEmail { get; set; } = string.Empty;
 
         [Required]
         public string Password { get; set; } = string.Empty;
@@ -25,6 +26,9 @@ namespace SimpleApi.DTOs
         public string EmailAddress { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
         public string Surname { get; set; } = string.Empty;
+        public string CompanyId { get; set; } = string.Empty;
+        public bool IsSuperAdmin { get; set; } = false;
+        public UserRole Role { get; set; }
     }
 
     public class SessionInfoDto

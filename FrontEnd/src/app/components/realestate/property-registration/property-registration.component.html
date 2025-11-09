@@ -1,0 +1,242 @@
+<!-- Property Registration Form -->
+<div class="row">
+    <div class="col-md-12">
+        <div class="card card-primary">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-building mr-2"></i>
+                    {{ editingProperty ? 'Edit' : 'Register' }} Property
+                </h3>
+            </div>
+            <form [formGroup]="propertyForm" (ngSubmit)="onSubmit()">
+                <div class="card-body">
+                    <!-- Basic Information -->
+                    <h5 class="mb-3"><i class="fas fa-info-circle mr-2"></i>Basic Information</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="propertyName">Property Name *</label>
+                                <input type="text" class="form-control" id="propertyName" formControlName="propertyName" placeholder="Enter property name" [class.is-invalid]="propertyForm.get('propertyName')?.invalid && propertyForm.get('propertyName')?.touched" />
+                                <div class="invalid-feedback" *ngIf="propertyForm.get('propertyName')?.invalid && propertyForm.get('propertyName')?.touched">Property name is required</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="propertyType">Property Type *</label>
+                                <select class="form-control" id="propertyType" formControlName="propertyType">
+                                    <option *ngFor="let type of propertyTypes" [value]="type">{{ type }}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Location Information -->
+                    <h5 class="mb-3 mt-3"><i class="fas fa-map-marker-alt mr-2"></i>Location Information</h5>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="address">Address</label>
+                                <textarea class="form-control" id="address" formControlName="address" placeholder="Enter address" rows="2"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="city">City</label>
+                                <input type="text" class="form-control" id="city" formControlName="city" placeholder="Enter city" />
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="state">State/Province</label>
+                                <input type="text" class="form-control" id="state" formControlName="state" placeholder="Enter state" />
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="zipCode">Zip Code</label>
+                                <input type="text" class="form-control" id="zipCode" formControlName="zipCode" placeholder="Enter zip code" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Area Information -->
+                    <h5 class="mb-3 mt-3"><i class="fas fa-ruler-combined mr-2"></i>Area Information</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="totalArea">Total Area *</label>
+                                <input type="number" class="form-control" id="totalArea" formControlName="totalArea" placeholder="Enter total area" min="0" step="0.01" [class.is-invalid]="propertyForm.get('totalArea')?.invalid && propertyForm.get('totalArea')?.touched" />
+                                <div class="invalid-feedback" *ngIf="propertyForm.get('totalArea')?.invalid && propertyForm.get('totalArea')?.touched">Total area is required</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="areaUnit">Area Unit</label>
+                                <select class="form-control" id="areaUnit" formControlName="areaUnit">
+                                    <option *ngFor="let unit of areaUnits" [value]="unit">{{ unit }}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Structure Details -->
+                    <h5 class="mb-3 mt-3"><i class="fas fa-home mr-2"></i>Structure Details</h5>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="numberOfRooms">Number of Rooms</label>
+                                <input type="number" class="form-control" id="numberOfRooms" formControlName="numberOfRooms" placeholder="0" min="0" />
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="numberOfFloors">Number of Floors</label>
+                                <input type="number" class="form-control" id="numberOfFloors" formControlName="numberOfFloors" placeholder="0" min="0" />
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Has Lawn</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="hasLawn" formControlName="hasLawn" />
+                                    <label class="form-check-label" for="hasLawn">Yes</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="lawnArea">Lawn Area</label>
+                                <input type="number" class="form-control" id="lawnArea" formControlName="lawnArea" placeholder="0" min="0" step="0.01" [disabled]="!propertyForm.get('hasLawn')?.value" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Has Gallery</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="hasGallery" formControlName="hasGallery" />
+                                    <label class="form-check-label" for="hasGallery">Yes</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="numberOfGalleries">Number of Galleries</label>
+                                <input type="number" class="form-control" id="numberOfGalleries" formControlName="numberOfGalleries" placeholder="0" min="0" [disabled]="!propertyForm.get('hasGallery')?.value" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="customStructureDetails">Custom Structure Details</label>
+                                <textarea class="form-control" id="customStructureDetails" formControlName="customStructureDetails" placeholder="Enter any additional structure details" rows="3"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Financial Information -->
+                    <h5 class="mb-3 mt-3"><i class="fas fa-dollar-sign mr-2"></i>Financial Information</h5>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="currentValue">Current Value *</label>
+                                <input type="number" class="form-control" id="currentValue" formControlName="currentValue" placeholder="Enter current value" min="0" step="0.01" [class.is-invalid]="propertyForm.get('currentValue')?.invalid && propertyForm.get('currentValue')?.touched" />
+                                <div class="invalid-feedback" *ngIf="propertyForm.get('currentValue')?.invalid && propertyForm.get('currentValue')?.touched">Current value is required</div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="acquisitionDate">Acquisition Date *</label>
+                                <input type="date" class="form-control" id="acquisitionDate" formControlName="acquisitionDate" [class.is-invalid]="propertyForm.get('acquisitionDate')?.invalid && propertyForm.get('acquisitionDate')?.touched" />
+                                <div class="invalid-feedback" *ngIf="propertyForm.get('acquisitionDate')?.invalid && propertyForm.get('acquisitionDate')?.touched">Acquisition date is required</div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="propertyStatus">Property Status</label>
+                                <select class="form-control" id="propertyStatus" formControlName="propertyStatus">
+                                    <option *ngFor="let status of propertyStatuses" [value]="status">{{ status }}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="description">Description</label>
+                                <textarea class="form-control" id="description" formControlName="description" placeholder="Enter property description" rows="3"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-footer">
+                    <button type="submit" class="btn btn-primary" [disabled]="!propertyForm.valid || loading">
+                        <i class="fas" [ngClass]="loading ? 'fa-spinner fa-spin' : 'fa-save'"></i>
+                        {{ loading ? 'Saving...' : (editingProperty ? 'Update Property' : 'Register Property') }}
+                    </button>
+                    <button type="button" class="btn btn-secondary ml-2" (click)="resetForm()" [disabled]="loading">
+                        <i class="fas fa-times"></i>
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Properties List -->
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title"><i class="fas fa-list mr-2"></i>Registered Properties</h3>
+            </div>
+            <div class="card-body table-responsive">
+                <table class="table table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th>Property Name</th>
+                            <th>Type</th>
+                            <th>Location</th>
+                            <th>Area</th>
+                            <th>Rooms/Floors</th>
+                            <th>Value</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let property of properties">
+                            <td><strong>{{ property.propertyName }}</strong></td>
+                            <td><span class="badge badge-info">{{ property.propertyType }}</span></td>
+                            <td>{{ property.city || 'N/A' }}, {{ property.state || 'N/A' }}</td>
+                            <td>{{ property.totalArea }} {{ property.areaUnit }}</td>
+                            <td>{{ property.numberOfRooms }} rooms / {{ property.numberOfFloors }} floors</td>
+                            <td>${{ property.currentValue | number:'1.2-2' }}</td>
+                            <td><span class="badge" [ngClass]="{'badge-success': property.propertyStatus === 'Available', 'badge-warning': property.propertyStatus === 'Rented', 'badge-danger': property.propertyStatus === 'Sold', 'badge-info': property.propertyStatus === 'Under Development'}">{{ property.propertyStatus }}</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-primary mr-1" (click)="editProperty(property)" title="Edit">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-danger" (click)="deleteProperty(property)" title="Delete">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr *ngIf="properties.length === 0">
+                            <td colspan="8" class="text-center text-muted">
+                                <i class="fas fa-info-circle mr-2"></i>
+                                No properties registered yet. Start by registering your first property!
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,132 @@
+/* User Management Component Styles */
+
+.content-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    margin-bottom: 0;
+}
+
+.content-header h1 {
+    color: white;
+}
+
+.breadcrumb {
+    background: transparent;
+}
+
+.breadcrumb-item a {
+    color: #f8f9fa;
+}
+
+.breadcrumb-item.active {
+    color: #dee2e6;
+}
+
+.card {
+    box-shadow:
+        0 0 1px rgba(0, 0, 0, 0.125),
+        0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.card-header {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+}
+
+.text-primary {
+    color: #007bff !important;
+}
+
+.text-info {
+    color: #17a2b8 !important;
+}
+
+.form-control:focus {
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #004085;
+}
+
+.table th {
+    background-color: #f8f9fa;
+    border-top: none;
+}
+
+.badge-success {
+    background-color: #28a745;
+}
+
+.badge-danger {
+    background-color: #dc3545;
+}
+
+.badge-info {
+    background-color: #17a2b8;
+}
+
+.btn-group .btn {
+    margin-right: 2px;
+}
+
+.btn-group .btn:last-child {
+    margin-right: 0;
+}
+
+.btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+}
+
+.fa-spinner {
+    color: #007bff;
+}
+
+.invalid-feedback {
+    display: block;
+}
+
+.form-control.is-invalid {
+    border-color: #dc3545;
+}
+
+.form-text {
+    margin-top: 0.25rem;
+    font-size: 0.875rem;
+    color: #6c757d;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .table-responsive {
+        font-size: 0.875rem;
+    }
+
+    .btn-sm {
+        padding: 0.125rem 0.25rem;
+        font-size: 0.75rem;
+    }
+
+    .card-body {
+        padding: 1rem;
+    }
+
+    .btn-group {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .btn-group .btn {
+        margin-right: 0;
+        margin-bottom: 2px;
+        border-radius: 0.25rem !important;
+    }
+}

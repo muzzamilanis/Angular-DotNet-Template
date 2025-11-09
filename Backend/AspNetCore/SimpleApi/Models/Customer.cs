@@ -20,5 +20,11 @@ namespace SimpleApi.Models
         public string? Email { get; set; }
 
         public bool IsActive { get; set; } = true;
+
+        // Foreign key for Company (Tenant)
+        public int CompanyId { get; set; }
+        
+        // Navigation property
+        public virtual Company? Company { get; set; }
     }
 }

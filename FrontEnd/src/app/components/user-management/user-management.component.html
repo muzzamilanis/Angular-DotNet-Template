@@ -1,0 +1,352 @@
+<!-- Content Header (Page header) -->
+<!-- <div class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <h1 class="m-0">User Management</h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><a href="#">Home</a></li>
+          <li class="breadcrumb-item"><a href="#">Administration</a></li>
+          <li class="breadcrumb-item active">User Management</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</div> -->
+
+<!-- Main content -->
+<section class="content">
+    <div class="container-fluid">
+        <!-- User Form Card -->
+        <div class="card card-primary">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-user-plus mr-2"></i>
+                    {{ isEditing ? 'Edit User' : 'Create New User' }}
+                </h3>
+            </div>
+
+            <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+                <div class="card-body">
+                    <div class="row">
+                        <!-- Personal Information -->
+                        <div class="col-md-6">
+                            <h5 class="text-primary mb-3">
+                                <i class="fas fa-user mr-2"></i>
+                                Personal Information
+                            </h5>
+
+                            <div class="form-group">
+                                <label for="name">
+                                    Full Name
+                                    <span class="text-danger">*</span>
+                                </label>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="name"
+                                    formControlName="name"
+                                    [class.is-invalid]="isFieldInvalid('name')"
+                                    placeholder="Enter full name" />
+                                <div class="invalid-feedback" *ngIf="isFieldInvalid('name')">
+                                    {{ getFieldError('name') }}
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="email">
+                                    Email
+                                    <span class="text-danger">*</span>
+                                </label>
+                                <input
+                                    type="email"
+                                    class="form-control"
+                                    id="email"
+                                    formControlName="email"
+                                    [class.is-invalid]="isFieldInvalid('email')"
+                                    placeholder="Enter email address" />
+                                <div class="invalid-feedback" *ngIf="isFieldInvalid('email')">
+                                    {{ getFieldError('email') }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Account Information -->
+                        <div class="col-md-6">
+                            <h5 class="text-primary mb-3">
+                                <i class="fas fa-cog mr-2"></i>
+                                Account Information
+                            </h5>
+
+                            <div class="form-group" *ngIf="!isEditing">
+                                <label for="password">
+                                    Password
+                                    <span class="text-danger">*</span>
+                                </label>
+                                <input
+                                    type="password"
+                                    class="form-control"
+                                    id="password"
+                                    formControlName="password"
+                                    [class.is-invalid]="isFieldInvalid('password')"
+                                    placeholder="Enter password" />
+                                <div class="invalid-feedback" *ngIf="isFieldInvalid('password')">
+                                    {{ getFieldError('password') }}
+                                </div>
+                                <small class="form-text text-muted">Password must be at least 6 characters long</small>
+                            </div>
+
+                            <!-- Company Selection -->
+                            <div class="form-group">
+                                <label for="companyId">
+                                    <i class="fas fa-building"></i>
+                                    Company
+                                    <span class="text-danger">*</span>
+                                </label>
+                                <select
+                                    class="form-control"
+                                    id="companyId"
+                                    formControlName="companyId"
+                                    [class.is-invalid]="isFieldInvalid('companyId')">
+                                    <option value="">🏢 Select Company</option>
+                                    <option *ngFor="let company of companies" [value]="company.id">
+                                        {{ company.name }}
+                                    </option>
+                                </select>
+                                <div class="invalid-feedback" *ngIf="isFieldInvalid('companyId')">
+                                    {{ getFieldError('companyId') }}
+                                </div>
+                                <small class="form-text text-muted" *ngIf="!currentUserIsSuperAdmin">
+                                    Company is automatically set to your organization
+                                </small>
+                            </div>
+
+                            <!-- Role Selection -->
+                            <div class="form-group">
+                                <label for="role">
+                                    <i class="fas fa-user-tag"></i>
+                                    Role
+                                    <span class="text-danger">*</span>
+                                </label>
+                                <select
+                                    class="form-control"
+                                    id="role"
+                                    formControlName="role"
+                                    [class.is-invalid]="isFieldInvalid('role')">
+                                    <option value="">👤 Select Role</option>
+                                    <option
+                                        *ngFor="let roleOption of roleOptions; trackBy: trackByRoleValue"
+                                        [ngValue]="roleOption.value">
+                                        {{ roleOption.label }}
+                                    </option>
+                                </select>
+                                <div class="invalid-feedback" *ngIf="isFieldInvalid('role')">
+                                    {{ getFieldError('role') }}
+                                </div>
+                                <small class="form-text text-muted" hidden="true">
+                                    Select the appropriate role for this user
+                                </small>
+                            </div>
+
+                            <!-- Super Admin Checkbox -->
+                            <div class="form-group">
+                                <div class="form-check" hidden="true">
+                                    <input
+                                        type="checkbox"
+                                        class="form-check-input"
+                                        id="isSuperAdmin"
+                                        formControlName="isSuperAdmin" />
+                                    <label class="form-check-label" for="isSuperAdmin">
+                                        <i class="fas fa-crown mr-1 text-warning"></i>
+                                        Super Administrator
+                                    </label>
+                                    <small class="form-text text-muted" *ngIf="userForm.get('isSuperAdmin')?.enabled">
+                                        Super admins have full access to all system features
+                                    </small>
+                                    <small
+                                        class="form-text text-warning"
+                                        *ngIf="userForm.get('isSuperAdmin')?.disabled">
+                                        <i class="fas fa-exclamation-triangle mr-1"></i>
+                                        Super Admin access only available when "Super Admin" role is selected
+                                    </small>
+                                </div>
+                            </div>
+
+                            <!-- Active Status -->
+                            <div class="form-group" *ngIf="isEditing">
+                                <div class="form-check">
+                                    <input
+                                        type="checkbox"
+                                        class="form-check-input"
+                                        id="isActive"
+                                        formControlName="isActive" />
+                                    <label class="form-check-label" for="isActive">
+                                        <i class="fas fa-check-circle mr-1 text-success"></i>
+                                        Active User
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-footer">
+                    <button type="submit" class="btn btn-primary mr-2" [disabled]="!userForm.valid || isLoading">
+                        <i class="fas fa-save mr-2"></i>
+                        <span *ngIf="!isLoading">{{ isEditing ? 'Update User' : 'Create User' }}</span>
+                        <span *ngIf="isLoading">
+                            <i class="fas fa-spinner fa-spin mr-1"></i>
+                            {{ isEditing ? 'Updating...' : 'Creating...' }}
+                        </span>
+                    </button>
+                    <button type="button" class="btn btn-secondary" (click)="resetForm()">
+                        <i class="fas fa-times mr-2"></i>
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Users List Card -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-users mr-2"></i>
+                    Users List
+                </h3>
+                <div class="card-tools">
+                    <span class="badge badge-info">{{ users.length }} total users</span>
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div *ngIf="isLoading" class="text-center py-4">
+                    <i class="fas fa-spinner fa-spin fa-2x text-primary"></i>
+                    <p class="mt-2">Loading users...</p>
+                </div>
+
+                <div *ngIf="!isLoading && users.length === 0" class="text-center py-4">
+                    <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                    <h5 class="text-muted">No users found</h5>
+                    <p class="text-muted">Create your first user using the form above.</p>
+                </div>
+
+                <div class="table-responsive" *ngIf="!isLoading && users.length > 0">
+                    <table class="table table-bordered table-striped">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>
+                                    <i class="fas fa-user mr-1"></i>
+                                    Name
+                                </th>
+                                <th>
+                                    <i class="fas fa-envelope mr-1"></i>
+                                    Email
+                                </th>
+                                <th>
+                                    <i class="fas fa-building mr-1"></i>
+                                    Company
+                                </th>
+                                <th>
+                                    <i class="fas fa-crown mr-1"></i>
+                                    Role
+                                </th>
+                                <th>
+                                    <i class="fas fa-toggle-on mr-1"></i>
+                                    Status
+                                </th>
+                                <th>
+                                    <i class="fas fa-calendar mr-1"></i>
+                                    Created
+                                </th>
+                                <th width="200">
+                                    <i class="fas fa-cogs mr-1"></i>
+                                    Actions
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let user of users">
+                                <td>
+                                    <strong>{{ user.name }}</strong>
+                                </td>
+                                <td>{{ user.email }}</td>
+                                <td>
+                                    <span class="badge badge-info">{{ getCompanyName(user.companyId) }}</span>
+                                </td>
+                                <td>
+                                    <span
+                                        class="badge"
+                                        [class.badge-warning]="user.isSuperAdmin"
+                                        [class.badge-secondary]="!user.isSuperAdmin">
+                                        <i
+                                            class="fas"
+                                            [class.fa-crown]="user.isSuperAdmin"
+                                            [class.fa-user]="!user.isSuperAdmin"
+                                            class="mr-1"></i>
+                                        {{ getUserRoleText(user) }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span
+                                        class="badge"
+                                        [class.badge-success]="user.isActive"
+                                        [class.badge-danger]="!user.isActive">
+                                        <i
+                                            class="fas"
+                                            [class.fa-check-circle]="user.isActive"
+                                            [class.fa-times-circle]="!user.isActive"
+                                            class="mr-1"></i>
+                                        {{ getUserStatusText(user) }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <small>{{ user.createdAt | date: 'short' }}</small>
+                                </td>
+                                <td>
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <button
+                                            type="button"
+                                            class="btn btn-outline-primary"
+                                            (click)="editUser(user)"
+                                            title="Edit User">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button
+                                            type="button"
+                                            class="btn"
+                                            [class.btn-outline-success]="!user.isActive"
+                                            [class.btn-outline-warning]="user.isActive"
+                                            (click)="toggleUserStatus(user)"
+                                            [title]="user.isActive ? 'Deactivate User' : 'Activate User'">
+                                            <i
+                                                class="fas"
+                                                [class.fa-check]="!user.isActive"
+                                                [class.fa-ban]="user.isActive"></i>
+                                        </button>
+                                        <button
+                                            type="button"
+                                            class="btn btn-outline-info"
+                                            (click)="resetPassword(user)"
+                                            title="Reset Password">
+                                            <i class="fas fa-key"></i>
+                                        </button>
+                                        <button
+                                            type="button"
+                                            class="btn btn-outline-danger"
+                                            (click)="deleteUser(user)"
+                                            title="Delete User">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

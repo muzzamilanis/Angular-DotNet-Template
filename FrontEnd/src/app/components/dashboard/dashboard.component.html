@@ -1,0 +1,155 @@
+<div class="row">
+    <div class="col-12">
+        <h1 class="m-0">Welcome to SmartBizApp</h1>
+        <p class="text-muted">Your business management dashboard</p>
+    </div>
+</div>
+
+<!-- Deadline Notifications -->
+<div class="row mt-4">
+    <div class="col-12">
+        <app-deadline-notifications></app-deadline-notifications>
+    </div>
+</div>
+
+<!-- Info Boxes -->
+<div class="row mt-4">
+    <div class="col-lg-3 col-6">
+        <div class="small-box bg-info">
+            <div class="inner">
+                <h3>150</h3>
+                <p>Products</p>
+            </div>
+            <div class="icon">
+                <i class="fas fa-box"></i>
+            </div>
+            <a routerLink="/masters/products" class="small-box-footer">
+                More info
+                <i class="fas fa-arrow-circle-right"></i>
+            </a>
+        </div>
+    </div>
+
+    <div class="col-lg-3 col-6">
+        <div class="small-box bg-success">
+            <div class="inner">
+                <h3>53</h3>
+                <p>Customers</p>
+            </div>
+            <div class="icon">
+                <i class="fas fa-users"></i>
+            </div>
+            <a routerLink="/masters/customers" class="small-box-footer">
+                More info
+                <i class="fas fa-arrow-circle-right"></i>
+            </a>
+        </div>
+    </div>
+
+    <div class="col-lg-3 col-6">
+        <div class="small-box bg-warning">
+            <div class="inner">
+                <h3>44</h3>
+                <p>Sale Orders</p>
+            </div>
+            <div class="icon">
+                <i class="fas fa-shopping-cart"></i>
+            </div>
+            <a routerLink="/transactions/sale-orders" class="small-box-footer">
+                More info
+                <i class="fas fa-arrow-circle-right"></i>
+            </a>
+        </div>
+    </div>
+
+    <div class="col-lg-3 col-6">
+        <div class="small-box bg-danger">
+            <div class="inner">
+                <h3>65</h3>
+                <p>Reports</p>
+            </div>
+            <div class="icon">
+                <i class="fas fa-chart-bar"></i>
+            </div>
+            <a href="#" class="small-box-footer">
+                More info
+                <i class="fas fa-arrow-circle-right"></i>
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Main Content -->
+<div class="row mt-4">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Quick Actions</h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4 text-center mb-3">
+                        <a routerLink="/transactions/sale-orders" class="btn btn-primary btn-lg d-block">
+                            <i class="fas fa-plus-circle mb-2"></i>
+                            <br />
+                            Create Sale Order
+                        </a>
+                    </div>
+                    <div class="col-md-4 text-center mb-3">
+                        <a routerLink="/masters/products" class="btn btn-success btn-lg d-block">
+                            <i class="fas fa-box mb-2"></i>
+                            <br />
+                            Manage Products
+                        </a>
+                    </div>
+                    <div class="col-md-4 text-center mb-3">
+                        <a routerLink="/masters/customers" class="btn btn-info btn-lg d-block">
+                            <i class="fas fa-user-plus mb-2"></i>
+                            <br />
+                            Add Customer
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Recent Activity</h3>
+            </div>
+            <div class="card-body">
+                <div class="timeline">
+                    <div class="time-label">
+                        <span class="bg-red">Today</span>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-icon bg-primary">
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                        <div class="timeline-content">
+                            <h3 class="timeline-header">New sale order created</h3>
+                            <div class="timeline-body">Order #SO-001 for customer John Doe</div>
+                            <div class="timeline-footer">
+                                <small class="text-muted">2 hours ago</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-icon bg-success">
+                            <i class="fas fa-box"></i>
+                        </div>
+                        <div class="timeline-content">
+                            <h3 class="timeline-header">Product added</h3>
+                            <div class="timeline-body">New product "Widget Pro" added to inventory</div>
+                            <div class="timeline-footer">
+                                <small class="text-muted">4 hours ago</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,128 @@
+/* Team Lead Dashboard Specific Styles */
+
+.small-box {
+    border-radius: 0.25rem;
+    box-shadow:
+        0 0 1px rgba(0, 0, 0, 0.125),
+        0 1px 3px rgba(0, 0, 0, 0.2);
+    display: block;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.small-box > .inner {
+    padding: 10px;
+}
+
+.small-box > .small-box-footer {
+    background-color: rgba(0, 0, 0, 0.1);
+    color: rgba(255, 255, 255, 0.8);
+    display: block;
+    padding: 3px 0;
+    position: relative;
+    text-align: center;
+    text-decoration: none;
+    z-index: 10;
+}
+
+.small-box > .small-box-footer:hover {
+    background-color: rgba(0, 0, 0, 0.15);
+    color: #fff;
+}
+
+.small-box .icon {
+    color: rgba(255, 255, 255, 0.15);
+    z-index: 0;
+}
+
+.small-box .icon > i {
+    font-size: 70px;
+    position: absolute;
+    right: 15px;
+    top: 15px;
+}
+
+.description-block {
+    display: block;
+    margin: 0 0 10px;
+    text-align: center;
+}
+
+.description-block.border-right {
+    border-right: 1px solid #dee2e6;
+}
+
+.description-block > .description-header {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 0 5px;
+}
+
+.description-block > .description-text {
+    color: #6c757d;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.description-percentage {
+    color: #6c757d;
+    display: block;
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.card {
+    box-shadow:
+        0 0 1px rgba(0, 0, 0, 0.125),
+        0 1px 3px rgba(0, 0, 0, 0.2);
+    margin-bottom: 1rem;
+}
+
+.alert {
+    border: 0;
+    border-radius: 0.25rem;
+}
+
+.badge {
+    font-size: 75%;
+}
+
+.table th {
+    border-top: none;
+    font-weight: 600;
+}
+
+/* Loading animation */
+.fa-spin {
+    animation: fa-spin 2s infinite linear;
+}
+
+@keyframes fa-spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(359deg);
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 767.98px) {
+    .small-box .icon > i {
+        font-size: 50px;
+        right: 10px;
+        top: 10px;
+    }
+
+    .small-box > .inner {
+        padding: 8px;
+    }
+
+    .description-block.border-right {
+        border-right: none;
+        border-bottom: 1px solid #dee2e6;
+        margin-bottom: 15px;
+        padding-bottom: 15px;
+    }
+}

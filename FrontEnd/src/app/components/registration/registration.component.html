@@ -1,0 +1,346 @@
+<div class="login-page">
+    <div class="login-box">
+        <div class="login-logo">
+            <a href="#">
+                <b>Smart</b>
+                BizApp
+            </a>
+        </div>
+
+        <div class="card">
+            <div class="card-body login-card-body">
+                <!-- Progress Steps -->
+                <div class="registration-steps mb-4">
+                    <div class="step-indicator">
+                        <div class="step" [class.active]="currentStep === 1" [class.completed]="currentStep > 1">
+                            <div class="step-number">1</div>
+                            <div class="step-title">User Details</div>
+                        </div>
+                        <div class="step-line" [class.completed]="currentStep > 1"></div>
+                        <div class="step" [class.active]="currentStep === 2">
+                            <div class="step-number">2</div>
+                            <div class="step-title">Company Details</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 1: User Registration -->
+                <div *ngIf="currentStep === 1">
+                    <p class="login-box-msg">Register your user account</p>
+
+                    <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+                        <div class="input-group mb-3">
+                            <input
+                                type="text"
+                                class="form-control"
+                                placeholder="Full Name"
+                                formControlName="name"
+                                [class.is-invalid]="userForm.get('name')?.invalid && userForm.get('name')?.touched" />
+                            <div class="input-group-append">
+                                <div class="input-group-text">
+                                    <span class="fas fa-user"></span>
+                                </div>
+                            </div>
+                            <div
+                                class="invalid-feedback"
+                                *ngIf="userForm.get('name')?.invalid && userForm.get('name')?.touched">
+                                <div *ngIf="userForm.get('name')?.errors?.['required']">Full name is required</div>
+                                <div *ngIf="userForm.get('name')?.errors?.['maxlength']">
+                                    Name must be 100 characters or less
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="input-group mb-3">
+                            <input
+                                type="email"
+                                class="form-control"
+                                placeholder="Email"
+                                formControlName="email"
+                                [class.is-invalid]="userForm.get('email')?.invalid && userForm.get('email')?.touched" />
+                            <div class="input-group-append">
+                                <div class="input-group-text">
+                                    <span class="fas fa-envelope"></span>
+                                </div>
+                            </div>
+                            <div
+                                class="invalid-feedback"
+                                *ngIf="userForm.get('email')?.invalid && userForm.get('email')?.touched">
+                                <div *ngIf="userForm.get('email')?.errors?.['required']">Email is required</div>
+                                <div *ngIf="userForm.get('email')?.errors?.['email']">Please enter a valid email</div>
+                                <div *ngIf="userForm.get('email')?.errors?.['maxlength']">
+                                    Email must be 200 characters or less
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="input-group mb-3">
+                            <input
+                                type="password"
+                                class="form-control"
+                                placeholder="Password"
+                                formControlName="password"
+                                [class.is-invalid]="
+                                    userForm.get('password')?.invalid && userForm.get('password')?.touched
+                                " />
+                            <div class="input-group-append">
+                                <div class="input-group-text">
+                                    <span class="fas fa-lock"></span>
+                                </div>
+                            </div>
+                            <div
+                                class="invalid-feedback"
+                                *ngIf="userForm.get('password')?.invalid && userForm.get('password')?.touched">
+                                <div *ngIf="userForm.get('password')?.errors?.['required']">Password is required</div>
+                                <div *ngIf="userForm.get('password')?.errors?.['minlength']">
+                                    Password must be at least 6 characters
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="input-group mb-3">
+                            <input
+                                type="password"
+                                class="form-control"
+                                placeholder="Confirm Password"
+                                formControlName="confirmPassword"
+                                [class.is-invalid]="
+                                    userForm.get('confirmPassword')?.invalid && userForm.get('confirmPassword')?.touched
+                                " />
+                            <div class="input-group-append">
+                                <div class="input-group-text">
+                                    <span class="fas fa-lock"></span>
+                                </div>
+                            </div>
+                            <div
+                                class="invalid-feedback"
+                                *ngIf="
+                                    userForm.get('confirmPassword')?.invalid && userForm.get('confirmPassword')?.touched
+                                ">
+                                <div *ngIf="userForm.get('confirmPassword')?.errors?.['required']">
+                                    Please confirm your password
+                                </div>
+                                <div *ngIf="userForm.get('confirmPassword')?.errors?.['passwordMismatch']">
+                                    Passwords do not match
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-6">
+                                <button type="button" class="btn btn-secondary btn-block" (click)="goToLogin()">
+                                    Back to Login
+                                </button>
+                            </div>
+                            <div class="col-6">
+                                <button type="submit" class="btn btn-primary btn-block" [disabled]="userForm.invalid">
+                                    Next Step
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Step 2: Company Registration -->
+                <div *ngIf="currentStep === 2">
+                    <p class="login-box-msg">Register your company</p>
+
+                    <form [formGroup]="companyForm" (ngSubmit)="onSubmit()">
+                        <div class="input-group mb-3">
+                            <input
+                                type="text"
+                                class="form-control"
+                                placeholder="Company Name"
+                                formControlName="companyName"
+                                [class.is-invalid]="
+                                    companyForm.get('companyName')?.invalid && companyForm.get('companyName')?.touched
+                                " />
+                            <div class="input-group-append">
+                                <div class="input-group-text">
+                                    <span class="fas fa-building"></span>
+                                </div>
+                            </div>
+                            <div
+                                class="invalid-feedback"
+                                *ngIf="
+                                    companyForm.get('companyName')?.invalid && companyForm.get('companyName')?.touched
+                                ">
+                                <div *ngIf="companyForm.get('companyName')?.errors?.['required']">
+                                    Company name is required
+                                </div>
+                                <div *ngIf="companyForm.get('companyName')?.errors?.['maxlength']">
+                                    Company name must be 200 characters or less
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="input-group mb-3">
+                            <select
+                                class="form-control"
+                                formControlName="businessNatureId"
+                                (change)="onBusinessNatureChange($any($event.target).value)"
+                                [class.is-invalid]="
+                                    companyForm.get('businessNatureId')?.invalid &&
+                                    companyForm.get('businessNatureId')?.touched
+                                ">
+                                <option value="">Select Business Type</option>
+                                <option *ngFor="let businessNature of businessNatures" [value]="businessNature.id">
+                                    {{ businessNature.displayName }}
+                                </option>
+                            </select>
+                            <div class="input-group-append">
+                                <div class="input-group-text">
+                                    <span class="fas fa-industry"></span>
+                                </div>
+                            </div>
+                            <div
+                                class="invalid-feedback"
+                                *ngIf="
+                                    companyForm.get('businessNatureId')?.invalid &&
+                                    companyForm.get('businessNatureId')?.touched
+                                ">
+                                <div *ngIf="companyForm.get('businessNatureId')?.errors?.['required']">
+                                    Business type is required
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Business Nature Information Display -->
+                        <div *ngIf="selectedBusinessNature" class="alert alert-info" role="alert">
+                            <h6>
+                                <i class="fas fa-info-circle"></i>
+                                {{ selectedBusinessNature.displayName }}
+                            </h6>
+                            <p class="mb-0">{{ selectedBusinessNature.description }}</p>
+                        </div>
+
+                        <div class="input-group mb-3">
+                            <input
+                                type="text"
+                                class="form-control"
+                                placeholder="Company Address"
+                                formControlName="address"
+                                [class.is-invalid]="
+                                    companyForm.get('address')?.invalid && companyForm.get('address')?.touched
+                                " />
+                            <div class="input-group-append">
+                                <div class="input-group-text">
+                                    <span class="fas fa-map-marker-alt"></span>
+                                </div>
+                            </div>
+                            <div
+                                class="invalid-feedback"
+                                *ngIf="companyForm.get('address')?.invalid && companyForm.get('address')?.touched">
+                                <div *ngIf="companyForm.get('address')?.errors?.['maxlength']">
+                                    Address must be 500 characters or less
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="input-group mb-3">
+                            <input
+                                type="text"
+                                class="form-control"
+                                placeholder="Company Phone"
+                                formControlName="phone"
+                                [class.is-invalid]="
+                                    companyForm.get('phone')?.invalid && companyForm.get('phone')?.touched
+                                " />
+                            <div class="input-group-append">
+                                <div class="input-group-text">
+                                    <span class="fas fa-phone"></span>
+                                </div>
+                            </div>
+                            <div
+                                class="invalid-feedback"
+                                *ngIf="companyForm.get('phone')?.invalid && companyForm.get('phone')?.touched">
+                                <div *ngIf="companyForm.get('phone')?.errors?.['maxlength']">
+                                    Phone must be 50 characters or less
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="input-group mb-3">
+                            <input
+                                type="email"
+                                class="form-control"
+                                placeholder="Company Email"
+                                formControlName="email"
+                                [class.is-invalid]="
+                                    companyForm.get('email')?.invalid && companyForm.get('email')?.touched
+                                " />
+                            <div class="input-group-append">
+                                <div class="input-group-text">
+                                    <span class="fas fa-envelope"></span>
+                                </div>
+                            </div>
+                            <div
+                                class="invalid-feedback"
+                                *ngIf="companyForm.get('email')?.invalid && companyForm.get('email')?.touched">
+                                <div *ngIf="companyForm.get('email')?.errors?.['email']">
+                                    Please enter a valid email
+                                </div>
+                                <div *ngIf="companyForm.get('email')?.errors?.['maxlength']">
+                                    Email must be 200 characters or less
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="input-group mb-3">
+                            <input
+                                type="text"
+                                class="form-control"
+                                placeholder="Contact Person"
+                                formControlName="contactPerson"
+                                [class.is-invalid]="
+                                    companyForm.get('contactPerson')?.invalid &&
+                                    companyForm.get('contactPerson')?.touched
+                                " />
+                            <div class="input-group-append">
+                                <div class="input-group-text">
+                                    <span class="fas fa-user-tie"></span>
+                                </div>
+                            </div>
+                            <div
+                                class="invalid-feedback"
+                                *ngIf="
+                                    companyForm.get('contactPerson')?.invalid &&
+                                    companyForm.get('contactPerson')?.touched
+                                ">
+                                <div *ngIf="companyForm.get('contactPerson')?.errors?.['maxlength']">
+                                    Contact person must be 100 characters or less
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-6">
+                                <button type="button" class="btn btn-secondary btn-block" (click)="previousStep()">
+                                    Previous
+                                </button>
+                            </div>
+                            <div class="col-6">
+                                <button
+                                    type="submit"
+                                    class="btn btn-success btn-block"
+                                    [disabled]="companyForm.invalid || loading">
+                                    <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
+                                    Complete Registration
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="alert alert-danger mt-3" *ngIf="error" role="alert">
+                    {{ error }}
+                </div>
+
+                <p class="mb-0 text-center mt-3">
+                    Already have an account?
+                    <a (click)="goToLogin()" class="text-center cursor-pointer">Sign in here</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>

@@ -3,7 +3,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using SimpleApi.Data;
 using SimpleApi.Services;
+using System;
 using System.Text;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,13 +32,34 @@ else
 }
 
 // Add services to the container.
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(o =>
+{
+	o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+});
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// Add HttpContextAccessor for JWT claims access
+builder.Services.AddHttpContextAccessor();
+
 // Add Entity Framework
+builder.Configuration
+	.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+	.AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true)
+	.AddEnvironmentVariables();
+
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+if (string.IsNullOrEmpty(connectionString))
+{
+    throw new InvalidOperationException(
+        "Database connection string 'DefaultConnection' is not configured. " +
+        "Please set the ConnectionStrings__DefaultConnection environment variable or " +
+        "add DefaultConnection to appsettings.json");
+}
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+	options.UseNpgsql(connectionString));
 
 // Add AutoMapper
 builder.Services.AddAutoMapper(typeof(MappingProfile));
@@ -45,7 +68,31 @@ builder.Services.AddAutoMapper(typeof(MappingProfile));
 builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ISaleOrderService, SaleOrderService>();
+builder.Services.AddScoped<IProjectService, ProjectService>();
+builder.Services.AddScoped<ICompanyNatureService, CompanyNatureService>();
+builder.Services.AddScoped<ICompanyService, CompanyService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IRegistrationService, RegistrationService>();
+builder.Services.AddScoped<IServiceTypeService, ServiceTypeService>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
+builder.Services.AddScoped<ICurrencyService, CurrencyService>();
+builder.Services.AddScoped<IExchangeRateService, ExchangeRateService>();
+
+// Add Real Estate and Accounting services
+builder.Services.AddScoped<IPropertyService, PropertyService>();
+builder.Services.AddScoped<IPropertyPurchaseService, PropertyPurchaseService>();
+builder.Services.AddScoped<IPropertySaleService, PropertySaleService>();
+builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<IVoucherService, VoucherService>();
+builder.Services.AddScoped<IAccountingService, AccountingService>();
+
+// Add HttpClient for external API calls
+builder.Services.AddHttpClient<IExchangeRateService, ExchangeRateService>();
+
+// Add background services
+builder.Services.AddHostedService<DeadlineNotificationService>();
 
 // Add CORS
 builder.Services.AddCors(options =>
@@ -60,7 +107,9 @@ builder.Services.AddCors(options =>
 
 // Add JWT Authentication
 var jwtKey = builder.Configuration["Jwt:Key"] ?? "your-secret-key-must-be-at-least-256-bits-long-for-security";
-var key = Encoding.ASCII.GetBytes(jwtKey);
+Console.WriteLine($"JWT Key length: {builder.Configuration["JWT:Key"]?.Length}");
+Console.WriteLine($"JWT Key value: {jwtKey}");
+var key = Encoding.UTF8.GetBytes(jwtKey);
 
 builder.Services.AddAuthentication(x =>
 {

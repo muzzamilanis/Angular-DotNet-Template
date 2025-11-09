@@ -1,0 +1,120 @@
+<!-- Trial Balance Report -->
+<div class="row">
+    <div class="col-12">
+        <div class="card card-success">
+            <div class="card-header">
+                <h3 class="card-title"><i class="fas fa-balance-scale mr-2"></i>Trial Balance</h3>
+            </div>
+            <div class="card-body">
+                <!-- Filter Form -->
+                <form [formGroup]="filterForm" (ngSubmit)="generateReport()">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="asOfDate">As Of Date</label>
+                                <input type="date" class="form-control" id="asOfDate" formControlName="asOfDate" />
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label>&nbsp;</label>
+                                <button type="submit" class="btn btn-success btn-block" [disabled]="loading">
+                                    <i class="fas" [ngClass]="loading ? 'fa-spinner fa-spin' : 'fa-search'"></i>
+                                    {{ loading ? 'Loading...' : 'Generate' }}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+                <!-- Report Header -->
+                <div class="mt-4">
+                    <div class="row mb-3">
+                        <div class="col-md-12 text-center">
+                            <h4 class="font-weight-bold">Trial Balance</h4>
+                            <p class="text-muted">As of {{ filterForm.get('asOfDate')?.value | date:'mediumDate' }}</p>
+                        </div>
+                    </div>
+
+                    <!-- Export Buttons -->
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <button class="btn btn-success mr-2" (click)="exportToExcel()">
+                                <i class="fas fa-file-excel"></i> Export to Excel
+                            </button>
+                            <button class="btn btn-danger" (click)="exportToPDF()">
+                                <i class="fas fa-file-pdf"></i> Export to PDF
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Balance Status Alert -->
+                    <div class="row" *ngIf="trialBalanceEntries.length > 0">
+                        <div class="col-md-12">
+                            <div class="alert" [ngClass]="isBalanced ? 'alert-success' : 'alert-danger'">
+                                <i class="fas" [ngClass]="isBalanced ? 'fa-check-circle' : 'fa-exclamation-triangle'"></i>
+                                <strong>{{ isBalanced ? 'Balanced!' : 'Out of Balance!' }}</strong>
+                                {{ isBalanced ? 'Debits equal Credits' : 'Debits and Credits do not match' }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Trial Balance Table -->
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th>Account Code</th>
+                                    <th>Account Name</th>
+                                    <th>Account Type</th>
+                                    <th class="text-right">Debit</th>
+                                    <th class="text-right">Credit</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let entry of trialBalanceEntries">
+                                    <td>{{ entry.accountCode }}</td>
+                                    <td>{{ entry.accountName }}</td>
+                                    <td><span class="badge badge-info">{{ entry.accountType }}</span></td>
+                                    <td class="text-right">{{ entry.debit > 0 ? (entry.debit | number:'1.2-2') : '-' }}</td>
+                                    <td class="text-right">{{ entry.credit > 0 ? (entry.credit | number:'1.2-2') : '-' }}</td>
+                                </tr>
+                                <tr *ngIf="trialBalanceEntries.length === 0">
+                                    <td colspan="5" class="text-center text-muted">
+                                        <i class="fas fa-info-circle mr-2"></i>
+                                        No accounts with balances found
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tfoot class="font-weight-bold bg-light">
+                                <tr [ngClass]="isBalanced ? 'bg-success text-white' : 'bg-danger text-white'">
+                                    <td colspan="3" class="text-right">Totals:</td>
+                                    <td class="text-right">${{ totalDebits | number:'1.2-2' }}</td>
+                                    <td class="text-right">${{ totalCredits | number:'1.2-2' }}</td>
+                                </tr>
+                                <tr *ngIf="!isBalanced" class="bg-warning">
+                                    <td colspan="3" class="text-right">Difference:</td>
+                                    <td colspan="2" class="text-right">${{ (totalDebits - totalCredits) | number:'1.2-2' }}</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Print Styles -->
+<style>
+@media print {
+    .card-header, .btn, .form-group, form {
+        display: none !important;
+    }
+    .card {
+        border: none !important;
+        box-shadow: none !important;
+    }
+}
+</style>
+

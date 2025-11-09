@@ -10,3 +10,18 @@ aspnet-core/src/AbpCompanyName.AbpProjectName.Migrator/Logs/Logs.txt
 aspnet-core/build/outputs/
 aspnet-core/docker/mvc/Mvc-Logs/
 
+# Angular build artifacts
+FrontEnd/dist/
+FrontEnd/node_modules/
+
+# Mobile app artifacts
+Mobile/SmartBizApp/node_modules/
+Mobile/SmartBizApp/.expo/
+Mobile/SmartBizApp/dist/
+Mobile/SmartBizApp/web-build/
+
+# Environment variables
+*.env
+*.backup
+
+

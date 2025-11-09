@@ -1,243 +1,1354 @@
-<!-- Sale Order Form -->
-<div class="row">
-  <div class="col-md-12">
-    <div class="card card-primary">
-      <div class="card-header">
-        <h3 class="card-title">{{ editingOrder ? 'Edit' : 'Create' }} Sale Order</h3>
-      </div>
-      <form [formGroup]="saleOrderForm" (ngSubmit)="onSubmit()">
-        <div class="card-body">
-          <div class="row">
-            <div class="col-md-6">
-              <div class="form-group">
-                <label for="orderNumber">Order Number *</label>
-                <input type="text" 
-                       class="form-control" 
-                       id="orderNumber" 
-                       formControlName="orderNumber"
-                       placeholder="Enter order number"
-                       [class.is-invalid]="saleOrderForm.get('orderNumber')?.invalid && saleOrderForm.get('orderNumber')?.touched">
-                <div class="invalid-feedback" *ngIf="saleOrderForm.get('orderNumber')?.invalid && saleOrderForm.get('orderNumber')?.touched">
-                  <div *ngIf="saleOrderForm.get('orderNumber')?.errors?.['required']">Order number is required</div>
-                  <div *ngIf="saleOrderForm.get('orderNumber')?.errors?.['maxlength']">Order number must be 50 characters or less</div>
+<!-- Sale Order Form - Only show when showCreateForm is true -->
+<div class="row" *ngIf="showCreateForm">
+    <div class="col-md-12">
+        <div class="card card-primary">
+            <div class="card-header">
+                <h3 class="card-title">
+                    {{ editingOrder ? 'Edit' : 'Create' }} {{ isDigitalMarketing ? 'Order Log' : 'Sale Order' }}
+                </h3>
+                <div class="card-tools">
+                    <button type="button" class="btn btn-tool" (click)="exitCreateMode()" title="Exit Create Mode">
+                        <i class="fas fa-times"></i>
+                    </button>
                 </div>
-              </div>
             </div>
-            <div class="col-md-6">
-              <div class="form-group">
-                <label for="orderDate">Order Date *</label>
-                <input type="date" 
-                       class="form-control" 
-                       id="orderDate" 
-                       formControlName="orderDate"
-                       [class.is-invalid]="saleOrderForm.get('orderDate')?.invalid && saleOrderForm.get('orderDate')?.touched">
-                <div class="invalid-feedback" *ngIf="saleOrderForm.get('orderDate')?.invalid && saleOrderForm.get('orderDate')?.touched">
-                  Order date is required
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          <div class="row">
-            <div class="col-md-6">
-              <div class="form-group">
-                <label for="customerName">Customer Name *</label>
-                <input type="text" 
-                       class="form-control" 
-                       id="customerName" 
-                       formControlName="customerName"
-                       placeholder="Enter customer name"
-                       [class.is-invalid]="saleOrderForm.get('customerName')?.invalid && saleOrderForm.get('customerName')?.touched">
-                <div class="invalid-feedback" *ngIf="saleOrderForm.get('customerName')?.invalid && saleOrderForm.get('customerName')?.touched">
-                  <div *ngIf="saleOrderForm.get('customerName')?.errors?.['required']">Customer name is required</div>
-                  <div *ngIf="saleOrderForm.get('customerName')?.errors?.['maxlength']">Customer name must be 200 characters or less</div>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="form-group">
-                <label for="customerAddress">Customer Address</label>
-                <textarea class="form-control" 
-                          id="customerAddress" 
-                          formControlName="customerAddress"
-                          placeholder="Enter customer address"
-                          rows="3"
-                          [class.is-invalid]="saleOrderForm.get('customerAddress')?.invalid && saleOrderForm.get('customerAddress')?.touched"></textarea>
-                <div class="invalid-feedback" *ngIf="saleOrderForm.get('customerAddress')?.invalid && saleOrderForm.get('customerAddress')?.touched">
-                  <div *ngIf="saleOrderForm.get('customerAddress')?.errors?.['maxlength']">Customer address must be 500 characters or less</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Order Items -->
-          <div class="row">
-            <div class="col-md-12">
-              <div class="card">
-                <div class="card-header">
-                  <h4 class="card-title">Order Items</h4>
-                  <button type="button" class="btn btn-success btn-sm float-right" (click)="addItem()">
-                    <i class="fas fa-plus"></i> Add Item
-                  </button>
-                </div>
+            <form [formGroup]="saleOrderForm" (ngSubmit)="onSubmit()">
                 <div class="card-body">
-                  <div class="table-responsive">
-                    <table class="table table-bordered">
-                      <thead>
-                        <tr>
-                          <th>Product *</th>
-                          <th>Quantity *</th>
-                          <th>Date *</th>
-                          <th>Price *</th>
-                          <th>Line Total</th>
-                          <th>Actions</th>
-                        </tr>
-                      </thead>
-                      <tbody formArrayName="items">
-                        <tr *ngFor="let item of items.controls; let i = index" [formGroupName]="i">
-                          <td>
-                            <select class="form-control" 
-                                    formControlName="productId" 
-                                    (change)="onProductChange(i, $event.target.value)"
-                                    [class.is-invalid]="item.get('productId')?.invalid && item.get('productId')?.touched">
-                              <option value="">Select Product</option>
-                              <option *ngFor="let product of products" [value]="product.id">
-                                {{ product.name }} - ${{ product.price }}
-                              </option>
-                            </select>
-                            <div class="invalid-feedback" *ngIf="item.get('productId')?.invalid && item.get('productId')?.touched">
-                              Product is required
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="orderNumber">Order ID *</label>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="orderNumber"
+                                    formControlName="orderNumber"
+                                    placeholder="Enter order number"
+                                    [disabled]="isFormReadonly()"
+                                    [class.is-invalid]="
+                                        saleOrderForm.get('orderNumber')?.invalid &&
+                                        saleOrderForm.get('orderNumber')?.touched
+                                    " />
+                                <div
+                                    class="invalid-feedback"
+                                    *ngIf="
+                                        saleOrderForm.get('orderNumber')?.invalid &&
+                                        saleOrderForm.get('orderNumber')?.touched
+                                    ">
+                                    <div *ngIf="saleOrderForm.get('orderNumber')?.errors?.['required']">
+                                        Order number is required
+                                    </div>
+                                    <div *ngIf="saleOrderForm.get('orderNumber')?.errors?.['maxlength']">
+                                        Order number must be 50 characters or less
+                                    </div>
+                                </div>
                             </div>
-                          </td>
-                          <td>
-                            <input type="number" 
-                                   class="form-control" 
-                                   formControlName="quantity" 
-                                   min="1"
-                                   [class.is-invalid]="item.get('quantity')?.invalid && item.get('quantity')?.touched">
-                            <div class="invalid-feedback" *ngIf="item.get('quantity')?.invalid && item.get('quantity')?.touched">
-                              <div *ngIf="item.get('quantity')?.errors?.['required']">Quantity is required</div>
-                              <div *ngIf="item.get('quantity')?.errors?.['min']">Quantity must be at least 1</div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="orderDate">Date *</label>
+                                <input
+                                    type="date"
+                                    class="form-control"
+                                    id="orderDate"
+                                    formControlName="orderDate"
+                                    [class.is-invalid]="
+                                        saleOrderForm.get('orderDate')?.invalid &&
+                                        saleOrderForm.get('orderDate')?.touched
+                                    " />
+                                <div
+                                    class="invalid-feedback"
+                                    *ngIf="
+                                        saleOrderForm.get('orderDate')?.invalid &&
+                                        saleOrderForm.get('orderDate')?.touched
+                                    ">
+                                    Order date is required
+                                </div>
                             </div>
-                          </td>
-                          <td>
-                            <input type="date" 
-                                   class="form-control" 
-                                   formControlName="date"
-                                   [class.is-invalid]="item.get('date')?.invalid && item.get('date')?.touched">
-                            <div class="invalid-feedback" *ngIf="item.get('date')?.invalid && item.get('date')?.touched">
-                              Date is required
+                        </div>
+                    </div>
+
+                    <!-- Digital Marketing specific fields -->
+                    <div class="row" *ngIf="isDigitalMarketing">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="projectId">
+                                    <i class="fas fa-project-diagram"></i>
+                                    Project
+                                </label>
+                                <div class="input-group">
+                                    <select class="form-control" id="projectId" formControlName="projectId">
+                                        <option value="">🎯 Select Project</option>
+                                        <option *ngFor="let project of projects" [value]="project.id">
+                                            {{ project.projectName }}
+                                        </option>
+                                    </select>
+                                    <div class="input-group-append">
+                                        <button
+                                            type="button"
+                                            class="btn btn-outline-success"
+                                            (click)="openCreateProjectModal()"
+                                            title="Create New Project">
+                                            <i class="fas fa-plus"></i>
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
-                          </td>
-                          <td>
-                            <input type="number" 
-                                   class="form-control" 
-                                   formControlName="price" 
-                                   min="0" 
-                                   step="0.01"
-                                   [class.is-invalid]="item.get('price')?.invalid && item.get('price')?.touched">
-                            <div class="invalid-feedback" *ngIf="item.get('price')?.invalid && item.get('price')?.touched">
-                              <div *ngIf="item.get('price')?.errors?.['required']">Price is required</div>
-                              <div *ngIf="item.get('price')?.errors?.['min']">Price must be 0 or greater</div>
+                        </div>
+                        <!-- Service Type field -->
+                        <div class="col-md-6" *ngIf="!isDigitalMarketing">
+                            <div class="form-group">
+                                <label for="serviceTypeId">
+                                    <i class="fas fa-cogs"></i>
+                                    Service Type
+                                </label>
+                                <select
+                                    class="form-control"
+                                    id="serviceTypeId"
+                                    formControlName="serviceTypeId"
+                                    [class.is-invalid]="
+                                        saleOrderForm.get('serviceTypeId')?.invalid &&
+                                        saleOrderForm.get('serviceTypeId')?.touched
+                                    ">
+                                    <option value="">🔧 Select Service Type</option>
+                                    <option *ngFor="let serviceType of serviceTypes" [value]="serviceType.id">
+                                        {{ serviceType.name }}
+                                    </option>
+                                </select>
+                                <div
+                                    class="invalid-feedback"
+                                    *ngIf="
+                                        saleOrderForm.get('serviceTypeId')?.invalid &&
+                                        saleOrderForm.get('serviceTypeId')?.touched
+                                    ">
+                                    Service Type is required
+                                </div>
                             </div>
-                          </td>
-                          <td>
-                            <strong>${{ getLineTotal(i).toFixed(2) }}</strong>
-                          </td>
-                          <td>
-                            <button type="button" 
-                                    class="btn btn-danger btn-sm" 
-                                    (click)="removeItem(i)"
-                                    [disabled]="items.length === 1">
-                              <i class="fas fa-trash"></i>
-                            </button>
-                          </td>
-                        </tr>
-                        <tr *ngIf="items.length === 0">
-                          <td colspan="6" class="text-center">No items added yet</td>
-                        </tr>
-                      </tbody>
-                      <tfoot *ngIf="items.length > 0">
-                        <tr>
-                          <td colspan="4" class="text-right"><strong>Total Amount:</strong></td>
-                          <td><strong>${{ getTotalAmount().toFixed(2) }}</strong></td>
-                          <td></td>
-                        </tr>
-                      </tfoot>
-                    </table>
-                  </div>
+                        </div>
+                    </div>
+
+                    <div class="row" *ngIf="isDigitalMarketing">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="clientName">Client Name *</label>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="clientName"
+                                    formControlName="clientName"
+                                    placeholder="Enter client name"
+                                    [class.is-invalid]="
+                                        saleOrderForm.get('clientName')?.invalid &&
+                                        saleOrderForm.get('clientName')?.touched
+                                    " />
+                                <div
+                                    class="invalid-feedback"
+                                    *ngIf="
+                                        saleOrderForm.get('clientName')?.invalid &&
+                                        saleOrderForm.get('clientName')?.touched
+                                    "></div>
+
+                                <div class="row" *ngIf="isDigitalMarketing">
+                                    <!-- <div *ngIf="saleOrderForm.get('clientName')?.errors?.['required']">
+                                        Client name is required
+                                    </div> -->
+                                    <div *ngIf="saleOrderForm.get('clientName')?.errors?.['maxlength']">
+                                        Client name must be 200 characters or less
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="contactEmail">Contact Email</label>
+                                <input
+                                    type="email"
+                                    class="form-control"
+                                    id="contactEmail"
+                                    formControlName="contactEmail"
+                                    placeholder="Enter contact email"
+                                    [class.is-invalid]="
+                                        saleOrderForm.get('contactEmail')?.invalid &&
+                                        saleOrderForm.get('contactEmail')?.touched
+                                    " />
+                                <div
+                                    class="invalid-feedback"
+                                    *ngIf="
+                                        saleOrderForm.get('contactEmail')?.invalid &&
+                                        saleOrderForm.get('contactEmail')?.touched
+                                    ">
+                                    <div *ngIf="saleOrderForm.get('contactEmail')?.errors?.['email']">
+                                        Please enter a valid email address
+                                    </div>
+                                    <div *ngIf="saleOrderForm.get('contactEmail')?.errors?.['maxlength']">
+                                        Email must be 200 characters or less
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="contactPhone">Contact Phone</label>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="contactPhone"
+                                    formControlName="contactPhone"
+                                    placeholder="Enter contact phone"
+                                    [class.is-invalid]="
+                                        saleOrderForm.get('contactPhone')?.invalid &&
+                                        saleOrderForm.get('contactPhone')?.touched
+                                    " />
+                                <div
+                                    class="invalid-feedback"
+                                    *ngIf="
+                                        saleOrderForm.get('contactPhone')?.invalid &&
+                                        saleOrderForm.get('contactPhone')?.touched
+                                    ">
+                                    <div *ngIf="saleOrderForm.get('contactPhone')?.errors?.['maxlength']">
+                                        Phone must be 50 characters or less
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row" *ngIf="isDigitalMarketing">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="orderDetails">
+                                    <i class="fas fa-clipboard-list"></i>
+                                    Order Details
+                                </label>
+                                <textarea
+                                    class="form-control"
+                                    id="orderDetails"
+                                    formControlName="orderDetails"
+                                    placeholder="Detailed requirements and specifications for the order"
+                                    rows="4"
+                                    [class.is-invalid]="
+                                        saleOrderForm.get('orderDetails')?.invalid &&
+                                        saleOrderForm.get('orderDetails')?.touched
+                                    "></textarea>
+                                <div
+                                    class="invalid-feedback"
+                                    *ngIf="
+                                        saleOrderForm.get('orderDetails')?.invalid &&
+                                        saleOrderForm.get('orderDetails')?.touched
+                                    ">
+                                    <div *ngIf="saleOrderForm.get('orderDetails')?.errors?.['maxlength']">
+                                        Order Details must be 1000 characters or less
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row" *ngIf="isDigitalMarketing">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="wordsOrPages">
+                                    <i class="fas fa-file-alt"></i>
+                                    Words / Pages
+                                </label>
+                                <select
+                                    id="wordsOrPages"
+                                    class="form-control"
+                                    formControlName="wordsOrPages"
+                                    (change)="onPagesChanged()"
+                                    [class.is-invalid]="saleOrderForm.get('wordsOrPages')?.invalid && saleOrderForm.get('wordsOrPages')?.touched">
+                                    <option value="">Select No of Pages</option>
+                                    <option *ngFor="let opt of pageOptions" [value]="opt.value">
+                                        {{ opt.label }}
+                                    </option>
+                                </select>
+                                <div class="invalid-feedback" *ngIf="saleOrderForm.get('wordsOrPages')?.invalid && saleOrderForm.get('wordsOrPages')?.touched">
+                                    Please select pages.
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- OPTIONAL display of computed words if you keep a wordCount control -->
+                        <div class="form-group col-md-3" *ngIf="saleOrderForm.get('wordCount')">
+                            <label>
+                                <i class="fas fa-hashtag"></i>
+                                Total Words
+                            </label>
+                            <input
+                                type="number"
+                                class="form-control"
+                                formControlName="wordCount"
+                                readonly>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="deadline">Deadline</label>
+                                <input type="date" class="form-control" id="deadline" formControlName="deadline" />
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="status">Status</label>
+                                <select
+                                    id="status"
+                                    class="form-control"
+                                    formControlName="status"
+                                    [class.is-invalid]="
+                                        saleOrderForm.get('status')?.invalid && saleOrderForm.get('status')?.touched
+                                    ">
+                                    <option value="">Select Status</option>
+                                    <option *ngFor="let s of statusOptions" [value]="s">{{ s }}</option>
+                                </select>
+                                <div
+                                    class="invalid-feedback"
+                                    *ngIf="
+                                        saleOrderForm.get('status')?.invalid && saleOrderForm.get('status')?.touched
+                                    ">
+                                    <div *ngIf="saleOrderForm.get('status')?.errors?.['maxlength']">
+                                        Status must be 50 characters or less
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4" style="visibility: hidden">
+                            <div class="form-group">
+                                <label for="totalPayment">
+                                    <i class="fas fa-money-bill-wave"></i>
+                                    Total Payment
+                                </label>
+                                <input
+                                    type="number"
+                                    class="form-control"
+                                    id="totalPayment"
+                                    formControlName="totalPayment"
+                                    min="0"
+                                    step="0.01"
+                                    [class.is-invalid]="
+                                        saleOrderForm.get('totalPayment')?.invalid &&
+                                        saleOrderForm.get('totalPayment')?.touched
+                                    " />
+                                <div
+                                    class="invalid-feedback"
+                                    *ngIf="
+                                        saleOrderForm.get('totalPayment')?.invalid &&
+                                        saleOrderForm.get('totalPayment')?.touched
+                                    ">
+                                    <div *ngIf="saleOrderForm.get('totalPayment')?.errors?.['min']">
+                                        Total Payment must be 0 or greater
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Currency Section for Digital Marketing -->
+                    <div class="row" *ngIf="isDigitalMarketing">
+                        <div class="col-md-12">
+                            <h5 class="text-primary mb-3">
+                                <i class="fas fa-money-bill-wave"></i>
+                                Currency & Payment Information
+                            </h5>
+                        </div>
+                    </div>
+
+                    <div class="row" *ngIf="isDigitalMarketing">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="country">
+                                    <i class="fas fa-globe"></i>
+                                    Country
+                                </label>
+                                <select
+                                    class="form-control"
+                                    id="country"
+                                    (change)="onCountryChange($event.target.value)"
+                                    [value]="selectedCountry"
+                                    [disabled]="isFormReadonly()">
+                                    <option value="">🌍 Select Country</option>
+                                    <option *ngFor="let country of countries" [value]="country.code">
+                                        {{ country.name }} ({{ country.currency }})
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="currencyCode">
+                                    <i class="fas fa-coins"></i>
+                                    Currency Code
+                                </label>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="currencyCode"
+                                    formControlName="currencyCode"
+                                    readonly
+                                    placeholder="Auto-selected based on country" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row" *ngIf="isDigitalMarketing && selectedCurrencyCode">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="foreignCurrencyAmount">
+                                    {{ selectedCurrencySymbol }}
+                                    Amount ({{ selectedCurrencyCode }})
+                                </label>
+                                <input
+                                    type="number"
+                                    class="form-control"
+                                    id="foreignCurrencyAmount"
+                                    formControlName="foreignCurrencyAmount"
+                                    placeholder="Enter amount in {{ selectedCurrencyCode }}"
+                                    step="0.01"
+                                    min="0"
+                                    (input)="onForeignAmountChange()"
+                                    [disabled]="isFormReadonly()" />
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="pkrAmount">
+                                    <i class="fas fa-rupee-sign"></i>
+                                    PKR Equivalent
+                                    <span *ngIf="isLoadingRate" class="text-muted">
+                                        <i class="fas fa-spinner fa-spin"></i>
+                                        Loading rate...
+                                    </span>
+                                    <span *ngIf="currentExchangeRate > 0" class="text-muted">
+                                        (Rate: 1 {{ selectedCurrencyCode }} = {{ currentExchangeRate }} PKR)
+                                    </span>
+                                </label>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="pkrAmount"
+                                    formControlName="pkrAmount"
+                                    readonly
+                                    placeholder="Auto-calculated PKR amount" />
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="amountReceived">Advance Amount</label>
+                                <input
+                                    type="number"
+                                    class="form-control"
+                                    id="amountReceived"
+                                    formControlName="amountReceived"
+                                    min="0"
+                                    step="0.01"
+                                    (input)="onAdvanceAmountChange()"
+                                    [class.is-invalid]="
+                                        saleOrderForm.get('amountReceived')?.invalid &&
+                                        saleOrderForm.get('amountReceived')?.touched
+                                    " />
+                                <div
+                                    class="invalid-feedback"
+                                    *ngIf="
+                                        saleOrderForm.get('amountReceived')?.invalid &&
+                                        saleOrderForm.get('amountReceived')?.touched
+                                    ">
+                                    <div *ngIf="saleOrderForm.get('amountReceived')?.errors?.['min']">
+                                        Amount must be 0 or greater
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="amountReceivedInPkr">Advance Amount In Pkr</label>
+                                <input
+                                    type="number"
+                                    class="form-control"
+                                    id="amountReceivedInPkr"
+                                    formControlName="amountReceivedInPkr"
+                                    min="0"
+                                    step="0.01"
+                                    readonly
+                                    [class.is-invalid]="
+                                        saleOrderForm.get('amountReceivedInPkr')?.invalid &&
+                                        saleOrderForm.get('amountReceivedInPkr')?.touched
+                                    " />
+                                <div
+                                    class="invalid-feedback"
+                                    *ngIf="
+                                        saleOrderForm.get('amountReceivedInPkr')?.invalid &&
+                                        saleOrderForm.get('amountReceivedInPkr')?.touched
+                                    ">
+                                    <div *ngIf="saleOrderForm.get('amountReceivedInPkr')?.errors?.['min']">
+                                        Amount must be 0 or greater
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="paymentStatus">Payment Status</label>
+                                <select
+                                    id="paymentStatus"
+                                    class="form-control"
+                                    formControlName="paymentStatus"
+                                    [class.is-invalid]="
+                                        (saleOrderForm.get('paymentStatus')?.touched || saleOrderForm.touched) &&
+                                        (saleOrderForm.hasError('advancePendingConflict') ||
+                                            saleOrderForm.hasError('fullPaidMustEqualTotal'))
+                                    ">
+                                    <option value="">Select Payment Status</option>
+                                    <option *ngFor="let p of paymentStatusOptions" [value]="p">{{ p }}</option>
+                                </select>
+                                <div class="invalid-feedback" *ngIf="saleOrderForm.hasError('advancePendingConflict')">
+                                    Payment cannot be Pending when an advance amount is greater than 0.
+                                </div>
+                                <div class="invalid-feedback" *ngIf="saleOrderForm.hasError('fullPaidMustEqualTotal')">
+                                    For Full Paid, Advance Amount must equal Total Amount (PKR).
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="sourceOfPayment">Source of Payment</label>
+                                <select
+                                    id="sourceOfPayment"
+                                    class="form-control"
+                                    formControlName="sourceOfPayment"
+                                    [class.is-invalid]="
+                                        saleOrderForm.get('sourceOfPayment')?.invalid &&
+                                        saleOrderForm.get('sourceOfPayment')?.touched
+                                    ">
+                                    <option value="">Select Source</option>
+                                    <option *ngFor="let s of sourceOfPaymentOptions" [value]="s">{{ s }}</option>
+                                </select>
+                                <div
+                                    class="invalid-feedback"
+                                    *ngIf="
+                                        saleOrderForm.get('sourceOfPayment')?.invalid &&
+                                        saleOrderForm.get('sourceOfPayment')?.touched
+                                    ">
+                                    <div *ngIf="saleOrderForm.get('sourceOfPayment')?.errors?.['maxlength']">
+                                        Must be 50 characters or less
+                                    </div>
+                                    <div *ngIf="saleOrderForm.get('sourceOfPayment')?.errors?.['required']">
+                                        Source of payment is required
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row" *ngIf="isDigitalMarketing && isSuperAdmin">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="assignedTo">Assigned To</label>
+                                <select
+                                    class="form-control"
+                                    id="assignedTo"
+                                    formControlName="assignedTo"
+                                    [class.is-invalid]="
+                                        saleOrderForm.get('assignedTo')?.invalid &&
+                                        saleOrderForm.get('assignedTo')?.touched
+                                    ">
+                                    <option value="">Select Writer</option>
+                                    <option *ngFor="let writer of writers" [value]="writer.name">
+                                        {{ writer.name }} ({{ writer.email }})
+                                    </option>
+                                </select>
+                                <div
+                                    class="invalid-feedback"
+                                    *ngIf="
+                                        saleOrderForm.get('assignedTo')?.invalid &&
+                                        saleOrderForm.get('assignedTo')?.touched
+                                    ">
+                                    <div *ngIf="saleOrderForm.get('assignedTo')?.errors?.['maxlength']">
+                                        Assigned to must be 200 characters or less
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- File Attachments Section -->
+                    <div class="row" *ngIf="isDigitalMarketing">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="attachments">
+                                    <i class="fas fa-paperclip mr-2"></i>
+                                    Attachments
+                                </label>
+                                <div class="file-upload-container">
+                                    <input
+                                        type="file"
+                                        class="file-input"
+                                        id="attachments"
+                                        multiple
+                                        (change)="onFilesSelected($event)"
+                                        accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png,.webp"
+                                        #fileInput />
+                                    <label for="attachments" class="file-upload-btn">
+                                        <i class="fas fa-cloud-upload-alt mr-2"></i>
+                                        Choose Files
+                                    </label>
+                                </div>
+                                <small class="text-muted">
+                                    <i class="fas fa-info-circle mr-1"></i>
+                                    Supported formats: PDF, DOC, DOCX, TXT, JPG, PNG, WebP
+                                </small>
+
+                                <!-- Show selected files -->
+                                <div *ngIf="selectedFiles.length > 0" class="mt-2">
+                                    <h6>Selected Files:</h6>
+                                    <ul class="list-group">
+                                        <li
+                                            *ngFor="let file of selectedFiles; let i = index"
+                                            class="list-group-item d-flex justify-content-between align-items-center">
+                                            {{ file.name }} ({{ formatFileSize(file.size) }})
+                                            <button type="button" class="btn btn-sm btn-danger" (click)="removeFile(i)">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </li>
+                                    </ul>
+                                </div>
+
+                                <!-- Show existing attachments for editing -->
+                                <div *ngIf="editingOrder && currentOrder?.attachmentFilenames" class="mt-2">
+                                    <h6>Existing Attachments:</h6>
+                                    <ul class="list-group">
+                                        <li
+                                            *ngFor="
+                                                let filename of getAttachmentsList(currentOrder.attachmentFilenames)
+                                            "
+                                            class="list-group-item d-flex justify-content-between align-items-center">
+                                            {{ filename }}
+                                            <button
+                                                type="button"
+                                                class="btn btn-sm btn-info"
+                                                (click)="downloadAttachment(filename)">
+                                                <i class="fas fa-download"></i>
+                                            </button>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Traditional Customer fields for non-digital marketing companies -->
+                    <div class="row" *ngIf="!isDigitalMarketing">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="customerName">Customer Name *</label>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="customerName"
+                                    formControlName="customerName"
+                                    placeholder="Enter customer name"
+                                    [class.is-invalid]="
+                                        saleOrderForm.get('customerName')?.invalid &&
+                                        saleOrderForm.get('customerName')?.touched
+                                    " />
+                                <div
+                                    class="invalid-feedback"
+                                    *ngIf="
+                                        saleOrderForm.get('customerName')?.invalid &&
+                                        saleOrderForm.get('customerName')?.touched
+                                    ">
+                                    <div *ngIf="saleOrderForm.get('customerName')?.errors?.['required']">
+                                        Customer name is required
+                                    </div>
+                                    <div *ngIf="saleOrderForm.get('customerName')?.errors?.['maxlength']">
+                                        Customer name must be 200 characters or less
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="customerAddress">Customer Address</label>
+                                <textarea
+                                    class="form-control"
+                                    id="customerAddress"
+                                    formControlName="customerAddress"
+                                    placeholder="Enter customer address"
+                                    rows="3"
+                                    [class.is-invalid]="
+                                        saleOrderForm.get('customerAddress')?.invalid &&
+                                        saleOrderForm.get('customerAddress')?.touched
+                                    "></textarea>
+                                <div
+                                    class="invalid-feedback"
+                                    *ngIf="
+                                        saleOrderForm.get('customerAddress')?.invalid &&
+                                        saleOrderForm.get('customerAddress')?.touched
+                                    ">
+                                    <div *ngIf="saleOrderForm.get('customerAddress')?.errors?.['maxlength']">
+                                        Customer address must be 500 characters or less
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Order Items - only for non-digital marketing companies -->
+                    <div class="row" *ngIf="!isDigitalMarketing">
+                        <div class="col-md-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h4 class="card-title">Order Items</h4>
+                                    <button
+                                        type="button"
+                                        class="btn btn-success btn-sm float-right"
+                                        (click)="addItem()">
+                                        <i class="fas fa-plus"></i>
+                                        Add Item
+                                    </button>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered">
+                                            <thead>
+                                                <tr>
+                                                    <th>Product *</th>
+                                                    <th>Quantity *</th>
+                                                    <th>Date *</th>
+                                                    <th>Price *</th>
+                                                    <th *ngIf="isDigitalMarketing">Order Details</th>
+                                                    <th *ngIf="isDigitalMarketing">Paper Type</th>
+                                                    <th *ngIf="isDigitalMarketing">Service Type</th>
+                                                    <th *ngIf="isDigitalMarketing">Words or Pages</th>
+                                                    <th *ngIf="isDigitalMarketing">Page Count</th>
+                                                    <th *ngIf="isDigitalMarketing">Item Deadline</th>
+                                                    <th>Line Total</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody formArrayName="items">
+                                                <tr
+                                                    *ngFor="let item of items.controls; let i = index"
+                                                    [formGroupName]="i">
+                                                    <td>
+                                                        <select
+                                                            class="form-control"
+                                                            formControlName="productId"
+                                                            (change)="onProductChange(i, $event.target.value)"
+                                                            [class.is-invalid]="
+                                                                item.get('productId')?.invalid &&
+                                                                item.get('productId')?.touched
+                                                            ">
+                                                            <option value="">📦 Select Product</option>
+                                                            <option
+                                                                *ngFor="let product of products"
+                                                                [value]="product.id">
+                                                                {{ product.name }} - ${{ product.price }}
+                                                            </option>
+                                                        </select>
+                                                        <div
+                                                            class="invalid-feedback"
+                                                            *ngIf="
+                                                                item.get('productId')?.invalid &&
+                                                                item.get('productId')?.touched
+                                                            ">
+                                                            Product is required
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <input
+                                                            type="number"
+                                                            class="form-control"
+                                                            formControlName="quantity"
+                                                            min="1"
+                                                            [class.is-invalid]="
+                                                                item.get('quantity')?.invalid &&
+                                                                item.get('quantity')?.touched
+                                                            " />
+                                                        <div
+                                                            class="invalid-feedback"
+                                                            *ngIf="
+                                                                item.get('quantity')?.invalid &&
+                                                                item.get('quantity')?.touched
+                                                            ">
+                                                            <div *ngIf="item.get('quantity')?.errors?.['required']">
+                                                                Quantity is required
+                                                            </div>
+                                                            <div *ngIf="item.get('quantity')?.errors?.['min']">
+                                                                Quantity must be at least 1
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <input
+                                                            type="date"
+                                                            class="form-control"
+                                                            formControlName="date"
+                                                            [class.is-invalid]="
+                                                                item.get('date')?.invalid && item.get('date')?.touched
+                                                            " />
+                                                        <div
+                                                            class="invalid-feedback"
+                                                            *ngIf="
+                                                                item.get('date')?.invalid && item.get('date')?.touched
+                                                            ">
+                                                            Date is required
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <input
+                                                            type="number"
+                                                            class="form-control"
+                                                            formControlName="price"
+                                                            min="0"
+                                                            step="0.01"
+                                                            [class.is-invalid]="
+                                                                item.get('price')?.invalid && item.get('price')?.touched
+                                                            " />
+                                                        <div
+                                                            class="invalid-feedback"
+                                                            *ngIf="
+                                                                item.get('price')?.invalid && item.get('price')?.touched
+                                                            ">
+                                                            <div *ngIf="item.get('price')?.errors?.['required']">
+                                                                Price is required
+                                                            </div>
+                                                            <div *ngIf="item.get('price')?.errors?.['min']">
+                                                                Price must be 0 or greater
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td *ngIf="isDigitalMarketing">
+                                                        <input
+                                                            type="text"
+                                                            class="form-control"
+                                                            formControlName="workTitle"
+                                                            placeholder="Order Details"
+                                                            [class.is-invalid]="
+                                                                item.get('workTitle')?.invalid &&
+                                                                item.get('workTitle')?.touched
+                                                            " />
+                                                        <div
+                                                            class="invalid-feedback"
+                                                            *ngIf="
+                                                                item.get('workTitle')?.invalid &&
+                                                                item.get('workTitle')?.touched
+                                                            ">
+                                                            <div *ngIf="item.get('workTitle')?.errors?.['maxlength']">
+                                                                Work title must be 200 characters or less
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td *ngIf="isDigitalMarketing">
+                                                        <input
+                                                            type="text"
+                                                            class="form-control"
+                                                            formControlName="paperType"
+                                                            placeholder="Paper Type"
+                                                            [class.is-invalid]="
+                                                                item.get('paperType')?.invalid &&
+                                                                item.get('paperType')?.touched
+                                                            " />
+                                                        <div
+                                                            class="invalid-feedback"
+                                                            *ngIf="
+                                                                item.get('paperType')?.invalid &&
+                                                                item.get('paperType')?.touched
+                                                            ">
+                                                            <div *ngIf="item.get('paperType')?.errors?.['maxlength']">
+                                                                Paper type must be 100 characters or less
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td *ngIf="isDigitalMarketing">
+                                                        <input
+                                                            type="text"
+                                                            class="form-control"
+                                                            formControlName="serviceType"
+                                                            placeholder="Service Type"
+                                                            [class.is-invalid]="
+                                                                item.get('serviceType')?.invalid &&
+                                                                item.get('serviceType')?.touched
+                                                            " />
+                                                        <div
+                                                            class="invalid-feedback"
+                                                            *ngIf="
+                                                                item.get('serviceType')?.invalid &&
+                                                                item.get('serviceType')?.touched
+                                                            ">
+                                                            <div *ngIf="item.get('serviceType')?.errors?.['maxlength']">
+                                                                Service type must be 100 characters or less
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td *ngIf="isDigitalMarketing">
+                                                        <input
+                                                            type="number"
+                                                            class="form-control"
+                                                            formControlName="wordCount"
+                                                            placeholder="Words Count"
+                                                            min="0"
+                                                            [class.is-invalid]="
+                                                                item.get('wordCount')?.invalid &&
+                                                                item.get('wordCount')?.touched
+                                                            " />
+                                                        <div
+                                                            class="invalid-feedback"
+                                                            *ngIf="
+                                                                item.get('wordCount')?.invalid &&
+                                                                item.get('wordCount')?.touched
+                                                            ">
+                                                            <div *ngIf="item.get('wordCount')?.errors?.['min']">
+                                                                Word count must be 0 or greater
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td *ngIf="isDigitalMarketing">
+                                                        <input
+                                                            type="number"
+                                                            class="form-control"
+                                                            formControlName="pageCount"
+                                                            placeholder="Page Count"
+                                                            min="0"
+                                                            [class.is-invalid]="
+                                                                item.get('pageCount')?.invalid &&
+                                                                item.get('pageCount')?.touched
+                                                            " />
+                                                        <div
+                                                            class="invalid-feedback"
+                                                            *ngIf="
+                                                                item.get('pageCount')?.invalid &&
+                                                                item.get('pageCount')?.touched
+                                                            ">
+                                                            <div *ngIf="item.get('pageCount')?.errors?.['min']">
+                                                                Page count must be 0 or greater
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td *ngIf="isDigitalMarketing">
+                                                        <input
+                                                            type="date"
+                                                            class="form-control"
+                                                            formControlName="itemDeadline"
+                                                            placeholder="Item Deadline" />
+                                                    </td>
+                                                    <td>
+                                                        <strong>${{ getLineTotal(i).toFixed(2) }}</strong>
+                                                    </td>
+                                                    <td>
+                                                        <button
+                                                            type="button"
+                                                            class="btn btn-danger btn-sm"
+                                                            (click)="removeItem(i)"
+                                                            [disabled]="items.length === 1">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                                <tr *ngIf="items.length === 0">
+                                                    <td
+                                                        [attr.colspan]="isDigitalMarketing ? 12 : 6"
+                                                        class="text-center">
+                                                        No items added yet
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                            <tfoot *ngIf="items.length > 0">
+                                                <tr>
+                                                    <td [attr.colspan]="isDigitalMarketing ? 10 : 4" class="text-right">
+                                                        <strong>
+                                                            {{
+                                                                isDigitalMarketing ? 'Total Payment:' : 'Total Amount:'
+                                                            }}
+                                                        </strong>
+                                                    </td>
+                                                    <td>
+                                                        <strong>${{ getTotalAmount().toFixed(2) }}</strong>
+                                                    </td>
+                                                    <td></td>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-              </div>
-            </div>
-          </div>
+
+                <div class="card-footer">
+                    <button
+                        type="submit"
+                        class="btn btn-primary"
+                        [disabled]="
+                            saleOrderForm.invalid || (!isDigitalMarketing && items.length === 0) || isFormReadonly()
+                        ">
+                        <i class="fas fa-save"></i>
+                        {{ editingOrder ? 'Update' : 'Create' }} Order
+                    </button>
+                    <button type="button" class="btn btn-secondary ml-2" (click)="exitCreateMode()">
+                        <i class="fas fa-times"></i>
+                        Cancel
+                    </button>
+                    <!-- Create Project button for Digital Marketing businesses -->
+                    <button
+                        type="button"
+                        class="btn btn-success ml-2"
+                        *ngIf="isDigitalMarketing"
+                        hidden
+                        (click)="openCreateProjectModal()">
+                        <i class="fas fa-plus"></i>
+                        Create Project
+                    </button>
+                </div>
+            </form>
         </div>
-        
-        <div class="card-footer">
-          <button type="submit" 
-                  class="btn btn-primary" 
-                  [disabled]="saleOrderForm.invalid || items.length === 0">
-            <i class="fas fa-save"></i> {{ editingOrder ? 'Update' : 'Create' }} Order
-          </button>
-          <button type="button" 
-                  class="btn btn-secondary ml-2" 
-                  (click)="resetForm()">
-            <i class="fas fa-times"></i> Cancel
-          </button>
-        </div>
-      </form>
     </div>
-  </div>
 </div>
 
-<!-- Sale Orders List -->
-<div class="row mt-4">
-  <div class="col-md-12">
-    <div class="card">
-      <div class="card-header">
-        <h3 class="card-title">Sale Orders</h3>
-      </div>
-      <div class="card-body">
-        <div class="table-responsive">
-          <table class="table table-bordered table-striped">
-            <thead>
-              <tr>
-                <th>Order Number</th>
-                <th>Order Date</th>
-                <th>Customer Name</th>
-                <th>Customer Address</th>
-                <th>Items Count</th>
-                <th>Total Amount</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let order of saleOrders">
-                <td>{{ order.orderNumber }}</td>
-                <td>{{ order.orderDate | date:'short' }}</td>
-                <td>{{ order.customerName }}</td>
-                <td>{{ order.customerAddress }}</td>
-                <td>{{ order.items.length }}</td>
-                <td>${{ order.totalAmount.toFixed(2) }}</td>
-                <td>
-                  <button type="button" 
-                          class="btn btn-warning btn-sm mr-2" 
-                          (click)="editOrder(order)">
-                    <i class="fas fa-edit"></i>
-                  </button>
-                  <button type="button" 
-                          class="btn btn-danger btn-sm" 
-                          (click)="deleteOrder(order)">
-                    <i class="fas fa-trash"></i>
-                  </button>
-                </td>
-              </tr>
-              <tr *ngIf="saleOrders.length === 0">
-                <td colspan="7" class="text-center">No sale orders found</td>
-              </tr>
-            </tbody>
-          </table>
+<!-- Sale Orders List - Only show when showCreateForm is false -->
+<div class="row mt-4" *ngIf="!showCreateForm">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">{{ isDigitalMarketing ? 'Order Log' : 'Sale Orders' }}</h3>
+                <div class="card-tools">
+                    <button type="button" class="btn btn-primary btn-sm" (click)="enterCreateMode()">
+                        <i class="fas fa-plus"></i>
+                        {{ isDigitalMarketing ? 'Create Order' : 'Add Order' }}
+                    </button>
+                </div>
+            </div>
+            <!-- Filter Controls -->
+            <div class="card-body pb-2">
+                <div class="row mb-3">
+                    <div class="col-md-2">
+                        <div class="form-group mb-2">
+                            <label for="searchFilter" class="form-label mb-1">Search</label>
+                            <input
+                                type="text"
+                                class="form-control form-control-sm"
+                                id="searchFilter"
+                                [(ngModel)]="searchFilter"
+                                (input)="onSearchFilterChange()"
+                                placeholder="Search orders..." />
+                        </div>
+                    </div>
+                    <div class="col-md-2" *ngIf="isDigitalMarketing">
+                        <div class="form-group mb-2">
+                            <label for="projectFilter" class="form-label mb-1">Project</label>
+                            <select
+                                class="form-control form-control-sm"
+                                id="projectFilter"
+                                [(ngModel)]="projectFilter"
+                                (change)="onProjectFilterChange()">
+                                <option value="">All Projects</option>
+                                <option *ngFor="let project of projects" [value]="project.id">
+                                    {{ project.projectName }}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-2" *ngIf="isDigitalMarketing">
+                        <div class="form-group mb-2">
+                            <label for="statusFilter" class="form-label mb-1">Status</label>
+                            <select
+                                class="form-control form-control-sm"
+                                id="statusFilter"
+                                [(ngModel)]="statusFilter"
+                                (change)="onStatusFilterChange()">
+                                <option value="">All Status</option>
+                                <option *ngFor="let status of statusOptions" [value]="status">{{ status }}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group mb-2">
+                            <label for="dateFromFilter" class="form-label mb-1">From Date</label>
+                            <input
+                                type="date"
+                                class="form-control form-control-sm"
+                                id="dateFromFilter"
+                                [(ngModel)]="dateFromFilter"
+                                (change)="onDateFilterChange()" />
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group mb-2">
+                            <label for="dateToFilter" class="form-label mb-1">To Date</label>
+                            <input
+                                type="date"
+                                class="form-control form-control-sm"
+                                id="dateToFilter"
+                                [(ngModel)]="dateToFilter"
+                                (change)="onDateFilterChange()" />
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group mb-2">
+                            <label class="form-label mb-1">&nbsp;</label>
+                            <div>
+                                <button
+                                    type="button"
+                                    class="btn btn-secondary btn-sm"
+                                    (click)="clearFilters()"
+                                    title="Clear all filters">
+                                    <i class="fas fa-times"></i>
+                                    Clear
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body pt-0">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Date</th>
+                                <th *ngIf="isDigitalMarketing">Client Name</th>
+                                <th *ngIf="!isDigitalMarketing">Customer Name</th>
+                                <th>Company</th>
+                                <th *ngIf="isDigitalMarketing">Project</th>
+                                <th *ngIf="isDigitalMarketing">Service Type</th>
+                                <th *ngIf="isDigitalMarketing">Deadline</th>
+                                <th *ngIf="isDigitalMarketing">Status</th>
+                                <th *ngIf="isDigitalMarketing">Task Assigned To</th>
+                                <th *ngIf="isDigitalMarketing">Submission Status</th>
+                                <th *ngIf="isDigitalMarketing">Advance Payment</th>
+                                <th *ngIf="!isDigitalMarketing">Customer Address</th>
+                                <th *ngIf="!isDigitalMarketing">Items Count</th>
+                                <th *ngIf="isDigitalMarketing">Total Payment</th>
+                                <th *ngIf="!isDigitalMarketing">Total Amount</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let order of filteredSaleOrders">
+                                <td>{{ order.orderNumber }}</td>
+                                <td>{{ order.orderDate | date: 'short' }}</td>
+                                <td *ngIf="isDigitalMarketing">
+                                    {{ order.clientName || order.customerName || 'N/A' }}
+                                </td>
+                                <td *ngIf="!isDigitalMarketing">{{ order.customerName }}</td>
+                                <td>{{ order.companyName || 'Unknown' }}</td>
+                                <td *ngIf="isDigitalMarketing">{{ order.projectName || 'N/A' }}</td>
+                                <td *ngIf="isDigitalMarketing">{{ order.serviceTypeName || 'N/A' }}</td>
+                                <td *ngIf="isDigitalMarketing">
+                                    {{ order.deadline ? (order.deadline | date: 'short') : 'N/A' }}
+                                </td>
+                                <td *ngIf="isDigitalMarketing">{{ order.status || 'N/A' }}</td>
+                                <td *ngIf="isDigitalMarketing">{{ order.assignedTo || 'N/A' }}</td>
+                                <td *ngIf="isDigitalMarketing">
+                                    <div *ngIf="order.submissionStatus">
+                                        <span
+                                            class="badge"
+                                            [ngClass]="getSubmissionStatusClass(order.submissionStatus)">
+                                            {{ order.submissionStatus }}
+                                        </span>
+                                        <div *ngIf="order.submittedFilename" class="mt-1">
+                                            <small>
+                                                <a
+                                                    (click)="downloadAttachment(order.submittedFilename)"
+                                                    class="text-primary"
+                                                    style="cursor: pointer; text-decoration: underline">
+                                                    <i class="fas fa-download"></i>
+                                                    {{ order.submittedFilename }}
+                                                </a>
+                                            </small>
+                                        </div>
+                                    </div>
+                                    <span *ngIf="!order.submissionStatus" class="text-muted">Not Submitted</span>
+                                </td>
+                                <td *ngIf="!isDigitalMarketing">{{ order.customerAddress }}</td>
+                                <td *ngIf="!isDigitalMarketing">{{ order.items.length }}</td>
+                                <td *ngIf="isDigitalMarketing">
+                                    {{ (order.amountReceivedInPkr || 0).toFixed(2) }}
+                                </td>
+                                <td *ngIf="isDigitalMarketing">
+                                    {{ (order.pkrAmount || 0).toFixed(2) }}
+                                </td>
+                                <td *ngIf="!isDigitalMarketing">${{ order.totalAmount.toFixed(2) }}</td>
+                                <td>
+                                    <button
+                                        type="button"
+                                        class="btn btn-warning btn-sm mr-2"
+                                        (click)="editOrder(order)">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-danger btn-sm" (click)="deleteOrder(order)">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr *ngIf="filteredSaleOrders.length === 0">
+                                <td [attr.colspan]="isDigitalMarketing ? 10 : 7" class="text-center">
+                                    {{
+                                        searchFilter || statusFilter || dateFromFilter || dateToFilter
+                                            ? 'No orders match the current filters'
+                                            : 'No sale orders found'
+                                    }}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
+</div>
+
+<!-- Project Creation Modal for Digital Marketing -->
+<div class="modal fade" id="createProjectModal" tabindex="-1" role="dialog" *ngIf="isDigitalMarketing">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">
+                    <i class="fas fa-project-diagram mr-2"></i>
+                    Create New Project
+                </h4>
+                <button type="button" class="close" (click)="closeCreateProjectModal()" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <form [formGroup]="projectForm" (ngSubmit)="onCreateProject()" *ngIf="projectForm">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="modalProjectName">
+                                    <i class="fas fa-project-diagram"></i>
+                                    Project Name *
+                                </label>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="modalProjectName"
+                                    formControlName="projectName"
+                                    placeholder="Enter project name"
+                                    [class.is-invalid]="
+                                        projectForm.get('projectName')?.invalid &&
+                                        projectForm.get('projectName')?.touched
+                                    " />
+                                <div
+                                    class="invalid-feedback"
+                                    *ngIf="
+                                        projectForm.get('projectName')?.invalid &&
+                                        projectForm.get('projectName')?.touched
+                                    ">
+                                    <div *ngIf="projectForm.get('projectName')?.errors?.['required']">
+                                        Project name is required
+                                    </div>
+                                    <div *ngIf="projectForm.get('projectName')?.errors?.['maxlength']">
+                                        Project name must be 200 characters or less
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="modalProjectDescription">
+                                    <i class="fas fa-align-left"></i>
+                                    Project Description
+                                </label>
+                                <textarea
+                                    class="form-control"
+                                    id="modalProjectDescription"
+                                    formControlName="projectDescription"
+                                    rows="3"
+                                    placeholder="Enter project description (optional)"
+                                    [class.is-invalid]="
+                                        projectForm.get('projectDescription')?.invalid &&
+                                        projectForm.get('projectDescription')?.touched
+                                    "></textarea>
+                                <div
+                                    class="invalid-feedback"
+                                    *ngIf="
+                                        projectForm.get('projectDescription')?.invalid &&
+                                        projectForm.get('projectDescription')?.touched
+                                    ">
+                                    <div *ngIf="projectForm.get('projectDescription')?.errors?.['maxlength']">
+                                        Description must be 1000 characters or less
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="modalProjectStatus">
+                                    <i class="fas fa-info-circle"></i>
+                                    Project Status *
+                                </label>
+                                <select class="form-control" id="modalProjectStatus" formControlName="projectStatus">
+                                    <option value="1">Active</option>
+                                    <option value="2">Inactive</option>
+                                    <option value="3">Completed</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <div class="custom-control custom-checkbox mt-4">
+                                    <input
+                                        type="checkbox"
+                                        id="modalIsActive"
+                                        class="custom-control-input"
+                                        formControlName="isActive" />
+                                    <label for="modalIsActive" class="custom-control-label">Active Project</label>
+                                </div>
+                                <small class="form-text text-muted">
+                                    Inactive projects will not appear in dropdown selections
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="modalServiceType">
+                                    <i class="fas fa-cogs"></i>
+                                    Service Type
+                                </label>
+                                <select class="form-control" id="modalServiceType" formControlName="serviceTypeId">
+                                    <option value="">🔧 Select Service Type</option>
+                                    <option *ngFor="let serviceType of serviceTypes" [value]="serviceType.id">
+                                        {{ serviceType.name }}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" (click)="closeCreateProjectModal()">
+                        <i class="fas fa-times"></i>
+                        Cancel
+                    </button>
+                    <button type="submit" class="btn btn-primary" [disabled]="projectForm.invalid || isCreatingProject">
+                        <span *ngIf="isCreatingProject" class="spinner-border spinner-border-sm mr-2"></span>
+                        <i class="fas fa-save" *ngIf="!isCreatingProject"></i>
+                        {{ isCreatingProject ? 'Creating...' : 'Create Project' }}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>

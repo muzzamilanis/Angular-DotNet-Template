@@ -19,5 +19,21 @@ namespace SimpleApi.Models
         public decimal Price { get; set; }
 
         public decimal LineTotal => Quantity * Price;
+
+        // Digital Marketing specific fields
+        [StringLength(200)]
+        public string? WorkTitle { get; set; }
+
+        [StringLength(100)]
+        public string? PaperType { get; set; }
+
+        [StringLength(100)]
+        public string? ServiceType { get; set; }
+
+        public int? WordCount { get; set; }
+
+        public int? PageCount { get; set; }
+
+        public DateTime? ItemDeadline { get; set; }
     }
 }
