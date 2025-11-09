@@ -1,0 +1,150 @@
+<!-- Profit & Loss Report -->
+<div class="row">
+    <div class="col-12">
+        <div class="card card-warning">
+            <div class="card-header">
+                <h3 class="card-title"><i class="fas fa-chart-line mr-2"></i>Profit & Loss Statement</h3>
+            </div>
+            <div class="card-body">
+                <!-- Filter Form -->
+                <form [formGroup]="filterForm" (ngSubmit)="generateReport()">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="fromDate">From Date</label>
+                                <input type="date" class="form-control" id="fromDate" formControlName="fromDate" />
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="toDate">To Date</label>
+                                <input type="date" class="form-control" id="toDate" formControlName="toDate" />
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label>&nbsp;</label>
+                                <button type="submit" class="btn btn-warning btn-block" [disabled]="loading">
+                                    <i class="fas" [ngClass]="loading ? 'fa-spinner fa-spin' : 'fa-search'"></i>
+                                    {{ loading ? 'Loading...' : 'Generate' }}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+                <!-- Report Header -->
+                <div class="mt-4">
+                    <div class="row mb-3">
+                        <div class="col-md-12 text-center">
+                            <h4 class="font-weight-bold">Profit & Loss Statement</h4>
+                            <p class="text-muted">{{ filterForm.get('fromDate')?.value | date:'mediumDate' }} to {{ filterForm.get('toDate')?.value | date:'mediumDate' }}</p>
+                        </div>
+                    </div>
+
+                    <!-- Export Buttons -->
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <button class="btn btn-success mr-2" (click)="exportToExcel()">
+                                <i class="fas fa-file-excel"></i> Export to Excel
+                            </button>
+                            <button class="btn btn-danger" (click)="exportToPDF()">
+                                <i class="fas fa-file-pdf"></i> Export to PDF
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Revenue Section -->
+                    <div class="card">
+                        <div class="card-header bg-success text-white">
+                            <h5 class="card-title mb-0"><i class="fas fa-arrow-up mr-2"></i>REVENUE</h5>
+                        </div>
+                        <div class="card-body p-0">
+                            <table class="table table-sm mb-0">
+                                <tbody>
+                                    <tr *ngFor="let account of revenue.accounts">
+                                        <td>{{ account.code }}</td>
+                                        <td>{{ account.name }}</td>
+                                        <td class="text-right">${{ account.balance | number:'1.2-2' }}</td>
+                                    </tr>
+                                    <tr *ngIf="revenue.accounts.length === 0">
+                                        <td colspan="3" class="text-center text-muted">No revenue accounts</td>
+                                    </tr>
+                                </tbody>
+                                <tfoot class="font-weight-bold bg-light">
+                                    <tr>
+                                        <td colspan="2">Total Revenue</td>
+                                        <td class="text-right">${{ revenue.total | number:'1.2-2' }}</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Expenses Section -->
+                    <div class="card mt-3">
+                        <div class="card-header bg-warning">
+                            <h5 class="card-title mb-0"><i class="fas fa-arrow-down mr-2"></i>EXPENSES</h5>
+                        </div>
+                        <div class="card-body p-0">
+                            <table class="table table-sm mb-0">
+                                <tbody>
+                                    <tr *ngFor="let account of expenses.accounts">
+                                        <td>{{ account.code }}</td>
+                                        <td>{{ account.name }}</td>
+                                        <td class="text-right">${{ account.balance | number:'1.2-2' }}</td>
+                                    </tr>
+                                    <tr *ngIf="expenses.accounts.length === 0">
+                                        <td colspan="3" class="text-center text-muted">No expense accounts</td>
+                                    </tr>
+                                </tbody>
+                                <tfoot class="font-weight-bold bg-light">
+                                    <tr>
+                                        <td colspan="2">Total Expenses</td>
+                                        <td class="text-right">${{ expenses.total | number:'1.2-2' }}</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Net Profit/Loss -->
+                    <div class="card mt-3" [ngClass]="isProfit ? 'bg-success' : 'bg-danger'">
+                        <div class="card-body text-white">
+                            <div class="row">
+                                <div class="col-8">
+                                    <h4 class="mb-0">
+                                        <i class="fas" [ngClass]="isProfit ? 'fa-thumbs-up' : 'fa-thumbs-down'"></i>
+                                        {{ isProfit ? 'Net Profit' : 'Net Loss' }}
+                                    </h4>
+                                </div>
+                                <div class="col-4 text-right">
+                                    <h4 class="mb-0">${{ Math.abs(netProfit) | number:'1.2-2' }}</h4>
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-12">
+                                    <small>Revenue - Expenses = {{ isProfit ? 'Profit' : 'Loss' }}</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Print Styles -->
+<style>
+@media print {
+    .card-header, .btn, .form-group, form {
+        display: none !important;
+    }
+    .card {
+        border: none !important;
+        box-shadow: none !important;
+    }
+}
+</style>
+

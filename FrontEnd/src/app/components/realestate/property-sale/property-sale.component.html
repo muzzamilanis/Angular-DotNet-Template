@@ -1,0 +1,234 @@
+<!-- Property Sale Form -->
+<div class="row">
+    <div class="col-md-12">
+        <div class="card card-warning">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-dollar-sign mr-2"></i>
+                    {{ editingSale ? 'Edit' : 'Record' }} Property Sale
+                </h3>
+            </div>
+            <form [formGroup]="saleForm" (ngSubmit)="onSubmit()">
+                <div class="card-body">
+                    <!-- Property Selection -->
+                    <h5 class="mb-3"><i class="fas fa-building mr-2"></i>Property Information</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="propertyId">Select Property *</label>
+                                <select class="form-control" id="propertyId" formControlName="propertyId" [class.is-invalid]="saleForm.get('propertyId')?.invalid && saleForm.get('propertyId')?.touched">
+                                    <option [value]="null">-- Select Property --</option>
+                                    <option *ngFor="let property of properties" [value]="property.id">{{ property.propertyName }} ({{ property.propertyType }})</option>
+                                </select>
+                                <div class="invalid-feedback" *ngIf="saleForm.get('propertyId')?.invalid && saleForm.get('propertyId')?.touched">Property selection is required</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="saleNumber">Sale Number *</label>
+                                <input type="text" class="form-control" id="saleNumber" formControlName="saleNumber" placeholder="e.g., SALE-2024-001" [class.is-invalid]="saleForm.get('saleNumber')?.invalid && saleForm.get('saleNumber')?.touched" />
+                                <div class="invalid-feedback" *ngIf="saleForm.get('saleNumber')?.invalid && saleForm.get('saleNumber')?.touched">Sale number is required</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Buyer Information -->
+                    <h5 class="mb-3 mt-3"><i class="fas fa-user-tie mr-2"></i>Buyer Information</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="buyerName">Buyer Name *</label>
+                                <input type="text" class="form-control" id="buyerName" formControlName="buyerName" placeholder="Enter buyer name" [class.is-invalid]="saleForm.get('buyerName')?.invalid && saleForm.get('buyerName')?.touched" />
+                                <div class="invalid-feedback" *ngIf="saleForm.get('buyerName')?.invalid && saleForm.get('buyerName')?.touched">Buyer name is required</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="buyerPhone">Buyer Phone</label>
+                                <input type="text" class="form-control" id="buyerPhone" formControlName="buyerPhone" placeholder="Enter phone number" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="buyerEmail">Buyer Email</label>
+                                <input type="email" class="form-control" id="buyerEmail" formControlName="buyerEmail" placeholder="Enter email address" />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="buyerAddress">Buyer Address</label>
+                                <input type="text" class="form-control" id="buyerAddress" formControlName="buyerAddress" placeholder="Enter address" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Financial Information -->
+                    <h5 class="mb-3 mt-3"><i class="fas fa-chart-line mr-2"></i>Financial Details</h5>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="saleDate">Sale Date *</label>
+                                <input type="date" class="form-control" id="saleDate" formControlName="saleDate" [class.is-invalid]="saleForm.get('saleDate')?.invalid && saleForm.get('saleDate')?.touched" />
+                                <div class="invalid-feedback" *ngIf="saleForm.get('saleDate')?.invalid && saleForm.get('saleDate')?.touched">Sale date is required</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="salePrice">Sale Price *</label>
+                                <input type="number" class="form-control" id="salePrice" formControlName="salePrice" placeholder="0.00" min="0" step="0.01" [class.is-invalid]="saleForm.get('salePrice')?.invalid && saleForm.get('salePrice')?.touched" />
+                                <div class="invalid-feedback" *ngIf="saleForm.get('salePrice')?.invalid && saleForm.get('salePrice')?.touched">Sale price is required</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="costPrice">Cost Price *</label>
+                                <input type="number" class="form-control" id="costPrice" formControlName="costPrice" placeholder="0.00" min="0" step="0.01" [class.is-invalid]="saleForm.get('costPrice')?.invalid && saleForm.get('costPrice')?.touched" />
+                                <div class="invalid-feedback" *ngIf="saleForm.get('costPrice')?.invalid && saleForm.get('costPrice')?.touched">Cost price is required</div>
+                                <small class="form-text text-muted">Original purchase/acquisition cost</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Profit / Loss</label>
+                                <input type="text" class="form-control font-weight-bold" [value]="getProfitLoss() | number:'1.2-2'" readonly [ngClass]="{'text-success': getProfitLoss() >= 0, 'text-danger': getProfitLoss() < 0}" style="background-color: #f4f6f9;" />
+                                <small class="form-text" [ngClass]="{'text-success': getProfitLoss() >= 0, 'text-danger': getProfitLoss() < 0}">
+                                    {{ getProfitLoss() >= 0 ? 'Capital Gain' : 'Capital Loss' }}
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="advanceReceived">Advance Received</label>
+                                <input type="number" class="form-control" id="advanceReceived" formControlName="advanceReceived" placeholder="0.00" min="0" step="0.01" />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Remaining Receivable</label>
+                                <input type="text" class="form-control" [value]="getRemainingReceivable() | number:'1.2-2'" readonly style="background-color: #f4f6f9;" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Payment Information -->
+                    <h5 class="mb-3 mt-3"><i class="fas fa-credit-card mr-2"></i>Payment Information</h5>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="paymentStatus">Payment Status</label>
+                                <select class="form-control" id="paymentStatus" formControlName="paymentStatus">
+                                    <option *ngFor="let status of paymentStatuses" [value]="status">{{ status }}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="paymentMethod">Payment Method</label>
+                                <select class="form-control" id="paymentMethod" formControlName="paymentMethod">
+                                    <option *ngFor="let method of paymentMethods" [value]="method">{{ method }}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4" *ngIf="saleForm.get('paymentMethod')?.value !== 'Cash'">
+                            <div class="form-group">
+                                <label for="bankName">Bank Name <span *ngIf="saleForm.get('paymentMethod')?.value === 'Bank' || saleForm.get('paymentMethod')?.value === 'Cheque'">*</span></label>
+                                <input type="text" class="form-control" id="bankName" formControlName="bankName" placeholder="Enter bank name" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" *ngIf="saleForm.get('paymentMethod')?.value === 'Cheque'">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="chequeNumber">Cheque Number *</label>
+                                <input type="text" class="form-control" id="chequeNumber" formControlName="chequeNumber" placeholder="Enter cheque number" />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="notes">Notes</label>
+                                <textarea class="form-control" id="notes" formControlName="notes" placeholder="Enter any additional notes" rows="2"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-footer">
+                    <button type="submit" class="btn btn-warning" [disabled]="!saleForm.valid || loading">
+                        <i class="fas" [ngClass]="loading ? 'fa-spinner fa-spin' : 'fa-save'"></i>
+                        {{ loading ? 'Recording...' : (editingSale ? 'Update Sale' : 'Record Sale') }}
+                    </button>
+                    <button type="button" class="btn btn-secondary ml-2" (click)="resetForm()" [disabled]="loading">
+                        <i class="fas fa-times"></i>
+                        Cancel
+                    </button>
+                    <small class="text-muted ml-3">
+                        <i class="fas fa-info-circle"></i>
+                        Accounting voucher with profit/loss entry will be created automatically
+                    </small>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Sales List -->
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title"><i class="fas fa-list mr-2"></i>Sale Records</h3>
+            </div>
+            <div class="card-body table-responsive">
+                <table class="table table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th>Sale #</th>
+                            <th>Property</th>
+                            <th>Buyer</th>
+                            <th>Date</th>
+                            <th>Sale Price</th>
+                            <th>Cost Price</th>
+                            <th>Profit/Loss</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let sale of sales">
+                            <td><strong>{{ sale.saleNumber }}</strong></td>
+                            <td>{{ getPropertyName(sale.propertyId) }}</td>
+                            <td>{{ sale.buyerName }}</td>
+                            <td>{{ sale.saleDate | date:'shortDate' }}</td>
+                            <td>${{ sale.salePrice | number:'1.2-2' }}</td>
+                            <td>${{ sale.costPrice | number:'1.2-2' }}</td>
+                            <td>
+                                <span [ngClass]="{'text-success font-weight-bold': sale.profitOrLoss >= 0, 'text-danger font-weight-bold': sale.profitOrLoss < 0}">
+                                    ${{ sale.profitOrLoss | number:'1.2-2' }}
+                                </span>
+                            </td>
+                            <td><span class="badge" [ngClass]="{'badge-success': sale.paymentStatus === 'Completed', 'badge-warning': sale.paymentStatus === 'Partial', 'badge-danger': sale.paymentStatus === 'Pending'}">{{ sale.paymentStatus }}</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-primary mr-1" (click)="editSale(sale)" title="Edit">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-danger" (click)="deleteSale(sale)" title="Delete">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr *ngIf="sales.length === 0">
+                            <td colspan="9" class="text-center text-muted">
+                                <i class="fas fa-info-circle mr-2"></i>
+                                No sales recorded yet. Start by recording your first property sale!
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

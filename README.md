@@ -7,12 +7,23 @@ SmartBizApp is a comprehensive business management platform with **ASP.NET Core*
 ### Core Business Management
 - **User Management**: Comprehensive user administration with role-based access control (RBAC)
 - **Dashboard**: Real-time business insights and analytics with deadline notifications
-- **Company Setup**: Multi-tenant company configuration with business nature selection (Retail, Manufacturing, Services, Hospitality)
+- **Company Setup**: Multi-tenant company configuration with business nature selection (Retail, Manufacturing, Services, Hospitality, Real Estate)
 - **Project Management**: Complete project lifecycle management with status tracking, deadlines, and service type assignments
 - **Sales Order Management**: Full sales order processing with customer assignments, project linking, and deadline tracking
 - **Customer Management**: Comprehensive customer database with company associations and relationship management
 - **Product Management**: Product catalog management with detailed information and company-based organization
 - **Service Types Management**: Configurable service categories for project classification and workflow management
+
+### Real Estate Management (NEW)
+- **Property Registration**: Complete property/land management with detailed structure information (rooms, lawns, galleries, floors, custom details)
+- **Land Purchase Transactions**: Property acquisition tracking with automated accounting voucher generation
+- **Land Selling Transactions**: Property sale management with automatic profit/loss calculation and accounting entries
+- **Ownership Transfer**: Track property ownership changes with legal documentation
+- **Chart of Accounts**: Comprehensive accounting system with hierarchical account structure
+- **Automated Accounting**: Automatic debit/credit entries for purchase and sale transactions
+- **Voucher Management**: Journal, Cash, and Bank vouchers with automatic balance updates
+- **Financial Reports**: General Ledger, Trial Balance, Balance Sheet, and Profit & Loss statements
+- **Multi-tenant Support**: Complete data isolation per company with business-nature-based menu visibility
 
 ### Advanced Features
 - **Role-Based Access Control (RBAC)**: Super Admin and regular user roles with granular permissions and route protection

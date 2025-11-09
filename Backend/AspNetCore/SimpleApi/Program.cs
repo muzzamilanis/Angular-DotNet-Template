@@ -78,6 +78,14 @@ builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<ICurrencyService, CurrencyService>();
 builder.Services.AddScoped<IExchangeRateService, ExchangeRateService>();
 
+// Add Real Estate and Accounting services
+builder.Services.AddScoped<IPropertyService, PropertyService>();
+builder.Services.AddScoped<IPropertyPurchaseService, PropertyPurchaseService>();
+builder.Services.AddScoped<IPropertySaleService, PropertySaleService>();
+builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<IVoucherService, VoucherService>();
+builder.Services.AddScoped<IAccountingService, AccountingService>();
+
 // Add HttpClient for external API calls
 builder.Services.AddHttpClient<IExchangeRateService, ExchangeRateService>();
 

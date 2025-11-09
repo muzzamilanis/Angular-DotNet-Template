@@ -1,0 +1,148 @@
+<div class="row">
+    <div class="col-12">
+        <h1 class="m-0">Real Estate Dashboard</h1>
+        <p class="text-muted">Manage your property portfolio</p>
+    </div>
+</div>
+
+<!-- Info Boxes -->
+<div class="row mt-4">
+    <div class="col-lg-3 col-6">
+        <div class="small-box bg-info">
+            <div class="inner">
+                <h3>{{ totalProperties }}</h3>
+                <p>Total Properties</p>
+            </div>
+            <div class="icon">
+                <i class="fas fa-building"></i>
+            </div>
+            <a routerLink="/realestate/properties" class="small-box-footer">
+                Manage Properties
+                <i class="fas fa-arrow-circle-right"></i>
+            </a>
+        </div>
+    </div>
+
+    <div class="col-lg-3 col-6">
+        <div class="small-box bg-success">
+            <div class="inner">
+                <h3>{{ totalPurchases }}</h3>
+                <p>Total Purchases</p>
+            </div>
+            <div class="icon">
+                <i class="fas fa-shopping-bag"></i>
+            </div>
+            <a routerLink="/realestate/purchases" class="small-box-footer">
+                View Purchases
+                <i class="fas fa-arrow-circle-right"></i>
+            </a>
+        </div>
+    </div>
+
+    <div class="col-lg-3 col-6">
+        <div class="small-box bg-warning">
+            <div class="inner">
+                <h3>{{ totalSales }}</h3>
+                <p>Total Sales</p>
+            </div>
+            <div class="icon">
+                <i class="fas fa-dollar-sign"></i>
+            </div>
+            <a routerLink="/realestate/sales" class="small-box-footer">
+                View Sales
+                <i class="fas fa-arrow-circle-right"></i>
+            </a>
+        </div>
+    </div>
+
+    <div class="col-lg-3 col-6">
+        <div class="small-box bg-danger">
+            <div class="inner">
+                <h3>${{ (totalValue / 1000).toFixed(0) }}K</h3>
+                <p>Total Portfolio Value</p>
+            </div>
+            <div class="icon">
+                <i class="fas fa-chart-line"></i>
+            </div>
+            <a routerLink="/reports/balance-sheet" class="small-box-footer">
+                View Reports
+                <i class="fas fa-arrow-circle-right"></i>
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-tasks mr-2"></i>
+                    Quick Actions
+                </h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3 text-center mb-3">
+                        <a routerLink="/realestate/properties" class="btn btn-primary btn-lg d-block">
+                            <i class="fas fa-plus-circle mb-2 fa-2x"></i>
+                            <br />
+                            Register Property
+                        </a>
+                    </div>
+                    <div class="col-md-3 text-center mb-3">
+                        <a routerLink="/realestate/purchases" class="btn btn-success btn-lg d-block">
+                            <i class="fas fa-shopping-bag mb-2 fa-2x"></i>
+                            <br />
+                            Record Purchase
+                        </a>
+                    </div>
+                    <div class="col-md-3 text-center mb-3">
+                        <a routerLink="/realestate/sales" class="btn btn-warning btn-lg d-block">
+                            <i class="fas fa-dollar-sign mb-2 fa-2x"></i>
+                            <br />
+                            Record Sale
+                        </a>
+                    </div>
+                    <div class="col-md-3 text-center mb-3">
+                        <a routerLink="/accounting/chart-of-accounts" class="btn btn-info btn-lg d-block">
+                            <i class="fas fa-calculator mb-2 fa-2x"></i>
+                            <br />
+                            View Accounts
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Activities -->
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-clock mr-2"></i>
+                    Recent Activity
+                </h3>
+            </div>
+            <div class="card-body">
+                <p class="text-muted text-center" *ngIf="loading">
+                    <i class="fas fa-spinner fa-spin mr-2"></i>
+                    Loading dashboard data...
+                </p>
+                <p class="text-muted text-center" *ngIf="!loading && totalProperties === 0">
+                    No properties registered yet. Start by registering your first property!
+                </p>
+                <div *ngIf="!loading && totalProperties > 0">
+                    <p class="text-success">
+                        <i class="fas fa-check-circle mr-2"></i>
+                        Dashboard loaded successfully. You have {{ totalProperties }} properties in your portfolio.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

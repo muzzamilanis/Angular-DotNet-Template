@@ -1,0 +1,151 @@
+<!-- Voucher Management -->
+<div class="row">
+    <div class="col-md-12">
+        <div class="card card-primary">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-file-invoice mr-2"></i>
+                    Voucher Management
+                </h3>
+            </div>
+            <div class="card-body">
+                <!-- Filter -->
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label>Filter by Type:</label>
+                        <select class="form-control" [(ngModel)]="selectedType" (change)="filterByType()">
+                            <option value="">All Types</option>
+                            <option *ngFor="let type of voucherTypes" [value]="type">{{ type }}</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Vouchers Table -->
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th>Voucher #</th>
+                                <th>Type</th>
+                                <th>Date</th>
+                                <th>Reference</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let voucher of vouchers">
+                                <td><strong>{{ voucher.voucherNumber }}</strong></td>
+                                <td><span class="badge" [ngClass]="{'badge-primary': voucher.voucherType === 'Journal', 'badge-success': voucher.voucherType === 'Cash', 'badge-info': voucher.voucherType === 'Bank'}">{{ voucher.voucherType }}</span></td>
+                                <td>{{ voucher.voucherDate | date:'shortDate' }}</td>
+                                <td>{{ voucher.referenceNumber || 'N/A' }}</td>
+                                <td>${{ voucher.totalAmount | number:'1.2-2' }}</td>
+                                <td><span class="badge" [ngClass]="{'badge-success': voucher.isPosted, 'badge-warning': !voucher.isPosted}">{{ voucher.isPosted ? 'Posted' : 'Draft' }}</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-info mr-1" (click)="viewVoucher(voucher)" title="View Details">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-danger" (click)="deleteVoucher(voucher)" title="Delete" *ngIf="!voucher.isPosted">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr *ngIf="vouchers.length === 0 && !loading">
+                                <td colspan="7" class="text-center text-muted">
+                                    <i class="fas fa-info-circle mr-2"></i>
+                                    No vouchers found. Vouchers are automatically created when you record purchases or sales.
+                                </td>
+                            </tr>
+                            <tr *ngIf="loading">
+                                <td colspan="7" class="text-center">
+                                    <i class="fas fa-spinner fa-spin mr-2"></i>
+                                    Loading vouchers...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Voucher Details Modal -->
+<div class="modal fade show" *ngIf="selectedVoucher" style="display: block; background: rgba(0,0,0,0.5);">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary">
+                <h5 class="modal-title">
+                    <i class="fas fa-file-invoice mr-2"></i>
+                    Voucher Details: {{ selectedVoucher.voucherNumber }}
+                </h5>
+                <button type="button" class="close text-white" (click)="closeVoucherDetails()">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <strong>Type:</strong> <span class="badge badge-primary">{{ selectedVoucher.voucherType }}</span>
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Date:</strong> {{ selectedVoucher.voucherDate | date:'fullDate' }}
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <strong>Reference:</strong> {{ selectedVoucher.referenceNumber || 'N/A' }}
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Status:</strong> <span class="badge" [ngClass]="{'badge-success': selectedVoucher.isPosted, 'badge-warning': !selectedVoucher.isPosted}">{{ selectedVoucher.isPosted ? 'Posted' : 'Draft' }}</span>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <strong>Description:</strong> {{ selectedVoucher.description || 'N/A' }}
+                    </div>
+                </div>
+
+                <h6 class="mt-4 mb-3"><i class="fas fa-list mr-2"></i>Journal Entries</h6>
+                <table class="table table-bordered table-sm">
+                    <thead class="bg-light">
+                        <tr>
+                            <th>Account</th>
+                            <th>Description</th>
+                            <th class="text-right">Debit</th>
+                            <th class="text-right">Credit</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let entry of selectedVoucher.journalEntries">
+                            <td><strong>{{ entry.accountName }}</strong></td>
+                            <td>{{ entry.description }}</td>
+                            <td class="text-right">{{ entry.entryType === 'Debit' ? (entry.amount | number:'1.2-2') : '-' }}</td>
+                            <td class="text-right">{{ entry.entryType === 'Credit' ? (entry.amount | number:'1.2-2') : '-' }}</td>
+                        </tr>
+                    </tbody>
+                    <tfoot class="font-weight-bold">
+                        <tr>
+                            <td colspan="2" class="text-right">Total:</td>
+                            <td class="text-right">${{ getTotalDebit(selectedVoucher) | number:'1.2-2' }}</td>
+                            <td class="text-right">${{ getTotalCredit(selectedVoucher) | number:'1.2-2' }}</td>
+                        </tr>
+                    </tfoot>
+                </table>
+
+                <div *ngIf="getTotalDebit(selectedVoucher) === getTotalCredit(selectedVoucher)" class="alert alert-success">
+                    <i class="fas fa-check-circle mr-2"></i>
+                    Voucher is balanced (Debits = Credits)
+                </div>
+                <div *ngIf="getTotalDebit(selectedVoucher) !== getTotalCredit(selectedVoucher)" class="alert alert-danger">
+                    <i class="fas fa-exclamation-triangle mr-2"></i>
+                    Warning: Voucher is not balanced!
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" (click)="closeVoucherDetails()">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
