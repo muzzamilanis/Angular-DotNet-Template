@@ -1,15 +1,182 @@
+<!-- Balance Sheet Report -->
 <div class="row">
     <div class="col-12">
         <div class="card card-primary">
             <div class="card-header">
-                <h3 class="card-title"><i class="fas fa-cog mr-2"></i>Balance Sheet</h3>
+                <h3 class="card-title"><i class="fas fa-file-invoice-dollar mr-2"></i>Balance Sheet</h3>
             </div>
             <div class="card-body">
-                <p class="text-center text-muted">
-                    <i class="fas fa-tools fa-3x mb-3"></i><br/>
-                    This feature is under development.
-                </p>
+                <!-- Filter Form -->
+                <form [formGroup]="filterForm" (ngSubmit)="generateReport()">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="asOfDate">As Of Date</label>
+                                <input type="date" class="form-control" id="asOfDate" formControlName="asOfDate" />
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label>&nbsp;</label>
+                                <button type="submit" class="btn btn-primary btn-block" [disabled]="loading">
+                                    <i class="fas" [ngClass]="loading ? 'fa-spinner fa-spin' : 'fa-search'"></i>
+                                    {{ loading ? 'Loading...' : 'Generate' }}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+                <!-- Report Header -->
+                <div class="mt-4">
+                    <div class="row mb-3">
+                        <div class="col-md-12 text-center">
+                            <h4 class="font-weight-bold">Balance Sheet</h4>
+                            <p class="text-muted">As of {{ filterForm.get('asOfDate')?.value | date:'mediumDate' }}</p>
+                        </div>
+                    </div>
+
+                    <!-- Export Buttons -->
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <button class="btn btn-success mr-2" (click)="exportToExcel()">
+                                <i class="fas fa-file-excel"></i> Export to Excel
+                            </button>
+                            <button class="btn btn-danger" (click)="exportToPDF()">
+                                <i class="fas fa-file-pdf"></i> Export to PDF
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Balance Status Alert -->
+                    <div class="row" *ngIf="assets.accounts.length > 0 || liabilities.accounts.length > 0 || equity.accounts.length > 0">
+                        <div class="col-md-12">
+                            <div class="alert" [ngClass]="isBalanced ? 'alert-success' : 'alert-danger'">
+                                <i class="fas" [ngClass]="isBalanced ? 'fa-check-circle' : 'fa-exclamation-triangle'"></i>
+                                <strong>{{ isBalanced ? 'Balanced!' : 'Out of Balance!' }}</strong>
+                                {{ isBalanced ? 'Assets = Liabilities + Equity' : 'Balance Sheet does not balance' }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Balance Sheet -->
+                    <div class="row">
+                        <!-- Assets Column -->
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header bg-info">
+                                    <h5 class="card-title mb-0 text-white"><i class="fas fa-dollar-sign mr-2"></i>ASSETS</h5>
+                                </div>
+                                <div class="card-body p-0">
+                                    <table class="table table-sm mb-0">
+                                        <tbody>
+                                            <tr *ngFor="let account of assets.accounts">
+                                                <td>{{ account.code }}</td>
+                                                <td>{{ account.name }}</td>
+                                                <td class="text-right">${{ account.balance | number:'1.2-2' }}</td>
+                                            </tr>
+                                            <tr *ngIf="assets.accounts.length === 0">
+                                                <td colspan="3" class="text-center text-muted">No asset accounts</td>
+                                            </tr>
+                                        </tbody>
+                                        <tfoot class="font-weight-bold bg-light">
+                                            <tr>
+                                                <td colspan="2">Total Assets</td>
+                                                <td class="text-right">${{ assets.total | number:'1.2-2' }}</td>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Liabilities & Equity Column -->
+                        <div class="col-md-6">
+                            <!-- Liabilities -->
+                            <div class="card">
+                                <div class="card-header bg-danger">
+                                    <h5 class="card-title mb-0 text-white"><i class="fas fa-credit-card mr-2"></i>LIABILITIES</h5>
+                                </div>
+                                <div class="card-body p-0">
+                                    <table class="table table-sm mb-0">
+                                        <tbody>
+                                            <tr *ngFor="let account of liabilities.accounts">
+                                                <td>{{ account.code }}</td>
+                                                <td>{{ account.name }}</td>
+                                                <td class="text-right">${{ account.balance | number:'1.2-2' }}</td>
+                                            </tr>
+                                            <tr *ngIf="liabilities.accounts.length === 0">
+                                                <td colspan="3" class="text-center text-muted">No liability accounts</td>
+                                            </tr>
+                                        </tbody>
+                                        <tfoot class="font-weight-bold bg-light">
+                                            <tr>
+                                                <td colspan="2">Total Liabilities</td>
+                                                <td class="text-right">${{ liabilities.total | number:'1.2-2' }}</td>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- Equity -->
+                            <div class="card mt-3">
+                                <div class="card-header bg-secondary">
+                                    <h5 class="card-title mb-0 text-white"><i class="fas fa-balance-scale mr-2"></i>EQUITY</h5>
+                                </div>
+                                <div class="card-body p-0">
+                                    <table class="table table-sm mb-0">
+                                        <tbody>
+                                            <tr *ngFor="let account of equity.accounts">
+                                                <td>{{ account.code }}</td>
+                                                <td>{{ account.name }}</td>
+                                                <td class="text-right">${{ account.balance | number:'1.2-2' }}</td>
+                                            </tr>
+                                            <tr *ngIf="equity.accounts.length === 0">
+                                                <td colspan="3" class="text-center text-muted">No equity accounts</td>
+                                            </tr>
+                                        </tbody>
+                                        <tfoot class="font-weight-bold bg-light">
+                                            <tr>
+                                                <td colspan="2">Total Equity</td>
+                                                <td class="text-right">${{ equity.total | number:'1.2-2' }}</td>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- Total Liabilities & Equity -->
+                            <div class="card mt-3 bg-primary text-white">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-8">
+                                            <h5 class="mb-0">Total Liabilities + Equity</h5>
+                                        </div>
+                                        <div class="col-4 text-right">
+                                            <h5 class="mb-0">${{ totalLiabilitiesAndEquity | number:'1.2-2' }}</h5>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+<!-- Print Styles -->
+<style>
+@media print {
+    .card-header, .btn, .form-group, form {
+        display: none !important;
+    }
+    .card {
+        border: none !important;
+        box-shadow: none !important;
+    }
+}
+</style>
+

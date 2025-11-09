@@ -133,17 +133,17 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-4" *ngIf="saleForm.get('paymentMethod')?.value !== 'Cash'">
                             <div class="form-group">
-                                <label for="bankName">Bank Name</label>
+                                <label for="bankName">Bank Name <span *ngIf="saleForm.get('paymentMethod')?.value === 'Bank' || saleForm.get('paymentMethod')?.value === 'Cheque'">*</span></label>
                                 <input type="text" class="form-control" id="bankName" formControlName="bankName" placeholder="Enter bank name" />
                             </div>
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row" *ngIf="saleForm.get('paymentMethod')?.value === 'Cheque'">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="chequeNumber">Cheque Number</label>
+                                <label for="chequeNumber">Cheque Number *</label>
                                 <input type="text" class="form-control" id="chequeNumber" formControlName="chequeNumber" placeholder="Enter cheque number" />
                             </div>
                         </div>

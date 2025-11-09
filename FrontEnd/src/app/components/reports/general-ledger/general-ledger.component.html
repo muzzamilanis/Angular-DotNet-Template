@@ -1,15 +1,148 @@
+<!-- General Ledger Report -->
 <div class="row">
     <div class="col-12">
-        <div class="card card-primary">
+        <div class="card card-info">
             <div class="card-header">
-                <h3 class="card-title"><i class="fas fa-cog mr-2"></i>General Ledger</h3>
+                <h3 class="card-title"><i class="fas fa-book mr-2"></i>General Ledger</h3>
             </div>
             <div class="card-body">
-                <p class="text-center text-muted">
-                    <i class="fas fa-tools fa-3x mb-3"></i><br/>
-                    This feature is under development.
-                </p>
+                <!-- Filter Form -->
+                <form [formGroup]="filterForm" (ngSubmit)="generateReport()">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="accountId">Select Account *</label>
+                                <select class="form-control" id="accountId" formControlName="accountId">
+                                    <option [value]="null">-- Select Account --</option>
+                                    <option *ngFor="let account of accounts" [value]="account.id">
+                                        {{ account.accountCode }} - {{ account.accountName }}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="fromDate">From Date</label>
+                                <input type="date" class="form-control" id="fromDate" formControlName="fromDate" />
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="toDate">To Date</label>
+                                <input type="date" class="form-control" id="toDate" formControlName="toDate" />
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label>&nbsp;</label>
+                                <button type="submit" class="btn btn-info btn-block" [disabled]="loading">
+                                    <i class="fas" [ngClass]="loading ? 'fa-spinner fa-spin' : 'fa-search'"></i>
+                                    {{ loading ? 'Loading...' : 'Generate' }}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+                <!-- Report Header -->
+                <div *ngIf="selectedAccount" class="mt-4">
+                    <div class="row mb-3">
+                        <div class="col-md-12 text-center">
+                            <h4 class="font-weight-bold">General Ledger</h4>
+                            <h5>{{ selectedAccount.accountCode }} - {{ selectedAccount.accountName }}</h5>
+                            <p class="text-muted">{{ filterForm.get('fromDate')?.value | date:'mediumDate' }} to {{ filterForm.get('toDate')?.value | date:'mediumDate' }}</p>
+                        </div>
+                    </div>
+
+                    <!-- Export Buttons -->
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <button class="btn btn-success mr-2" (click)="exportToExcel()">
+                                <i class="fas fa-file-excel"></i> Export to Excel
+                            </button>
+                            <button class="btn btn-danger mr-2" (click)="exportToPDF()">
+                                <i class="fas fa-file-pdf"></i> Export to PDF
+                            </button>
+                            <button class="btn btn-secondary" (click)="clearReport()">
+                                <i class="fas fa-times"></i> Clear
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Opening Balance -->
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="alert alert-info">
+                                <strong>Opening Balance:</strong> ${{ openingBalance | number:'1.2-2' }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Ledger Entries Table -->
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Voucher #</th>
+                                    <th>Description</th>
+                                    <th class="text-right">Debit</th>
+                                    <th class="text-right">Credit</th>
+                                    <th class="text-right">Balance</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let entry of ledgerEntries">
+                                    <td>{{ entry.date | date:'shortDate' }}</td>
+                                    <td>{{ entry.voucherNumber }}</td>
+                                    <td>{{ entry.description }}</td>
+                                    <td class="text-right">{{ entry.debit > 0 ? (entry.debit | number:'1.2-2') : '-' }}</td>
+                                    <td class="text-right">{{ entry.credit > 0 ? (entry.credit | number:'1.2-2') : '-' }}</td>
+                                    <td class="text-right font-weight-bold">{{ entry.balance | number:'1.2-2' }}</td>
+                                </tr>
+                                <tr *ngIf="ledgerEntries.length === 0">
+                                    <td colspan="6" class="text-center text-muted">
+                                        <i class="fas fa-info-circle mr-2"></i>
+                                        No transactions found for selected period
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tfoot class="font-weight-bold bg-light">
+                                <tr>
+                                    <td colspan="3" class="text-right">Totals:</td>
+                                    <td class="text-right">${{ totalDebits | number:'1.2-2' }}</td>
+                                    <td class="text-right">${{ totalCredits | number:'1.2-2' }}</td>
+                                    <td class="text-right"></td>
+                                </tr>
+                                <tr class="bg-info text-white">
+                                    <td colspan="5" class="text-right font-weight-bold">Closing Balance:</td>
+                                    <td class="text-right font-weight-bold">${{ closingBalance | number:'1.2-2' }}</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- No Report Yet -->
+                <div *ngIf="!selectedAccount && !loading" class="text-center text-muted mt-4">
+                    <i class="fas fa-chart-line fa-3x mb-3"></i>
+                    <p>Select an account and date range to generate the General Ledger report</p>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+<!-- Print Styles -->
+<style>
+@media print {
+    .card-header, .btn, .form-group, form {
+        display: none !important;
+    }
+    .card {
+        border: none !important;
+        box-shadow: none !important;
+    }
+}
+</style>
+

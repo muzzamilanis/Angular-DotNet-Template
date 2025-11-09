@@ -57,6 +57,18 @@ export class PropertySaleComponent implements OnInit {
         this.saleForm.get('salePrice')?.valueChanges.subscribe(() => this.calculateProfitLoss());
         this.saleForm.get('costPrice')?.valueChanges.subscribe(() => this.calculateProfitLoss());
         this.saleForm.get('advanceReceived')?.valueChanges.subscribe(() => this.calculateRemaining());
+        
+        // Auto-populate cost price when property is selected
+        this.saleForm.get('propertyId')?.valueChanges.subscribe((propertyId) => {
+            if (propertyId) {
+                const property = this.properties.find(p => p.id === propertyId);
+                if (property) {
+                    this.saleForm.patchValue({
+                        costPrice: property.currentValue
+                    });
+                }
+            }
+        });
     }
 
     calculateProfitLoss(): void {
