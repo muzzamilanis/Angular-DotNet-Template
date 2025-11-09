@@ -110,15 +110,15 @@ export class GeneralLedgerComponent implements OnInit {
             const relevantEntries = voucher.journalEntries?.filter(je => je.accountId === accountId) || [];
             
             relevantEntries.forEach(entry => {
-                const debit = entry.debitAmount || 0;
-                const credit = entry.creditAmount || 0;
+                const debit = entry.entryType === 'Debit' ? entry.amount : 0;
+                const credit = entry.entryType === 'Credit' ? entry.amount : 0;
                 
                 runningBalance += debit - credit;
                 
                 this.ledgerEntries.push({
                     date: new Date(voucher.voucherDate),
                     voucherNumber: voucher.voucherNumber,
-                    description: entry.description || voucher.reference || 'Transaction',
+                    description: entry.description || voucher.referenceNumber || voucher.description || 'Transaction',
                     debit: debit,
                     credit: credit,
                     balance: runningBalance,
@@ -187,7 +187,7 @@ export class GeneralLedgerComponent implements OnInit {
         this.ledgerEntries = [];
         this.filterForm.reset({
             fromDate: new Date(new Date().getFullYear(), 0, 1).toISOString().split('T')[0],
-            toDate: new Date().toISOString().split('T')[0]},
+            toDate: new Date().toISOString().split('T')[0],
         });
     }
 }
