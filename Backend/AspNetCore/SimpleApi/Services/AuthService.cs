@@ -30,8 +30,9 @@ namespace SimpleApi.Services
 
         public async Task<LoginResponseDto> LoginAsync(LoginDto input)
         {
-            // Find user by email or name (case-insensitive)
+            // Find user by email or name (case-insensitive) and include Company
             var user = await _context.Users
+                .Include(u => u.Company)
                 .FirstOrDefaultAsync(u => (u.Email.ToLower() == input.UsernameOrEmail.ToLower() || u.Name.ToLower() == input.UsernameOrEmail.ToLower()) && u.IsActive);
 
             if (user == null)
@@ -54,7 +55,8 @@ namespace SimpleApi.Services
 				Surname = "", // User model doesn't have surname, keeping empty for compatibility
 				CompanyId = user.CompanyId.ToString(), // Assuming CompanyId is a string, adjust as necessary
                 IsSuperAdmin = user.IsSuperAdmin,
-                Role = user.Role
+                Role = user.Role,
+                BusinessNatureId = user.Company?.BusinessNatureId ?? 0
 			};
 
             var token = GenerateJwtToken(userInfo);
@@ -86,8 +88,11 @@ namespace SimpleApi.Services
                 throw new UnauthorizedAccessException("Invalid user ID in token");
             }
 
-            // Get user details from database to ensure data is current
-            var user = await _context.Users.FindAsync(userId);
+            // Get user details from database to ensure data is current and include Company
+            var user = await _context.Users
+                .Include(u => u.Company)
+                .FirstOrDefaultAsync(u => u.Id == userId);
+            
             if (user == null)
             {
                 throw new UnauthorizedAccessException("User not found");
@@ -104,7 +109,8 @@ namespace SimpleApi.Services
                     Surname = "", // User model doesn't have surname, keeping empty for compatibility
                     CompanyId = user.CompanyId.ToString(), // Assuming CompanyId is a string, adjust as necessary
                     IsSuperAdmin = user.IsSuperAdmin,
-                    Role = user.Role
+                    Role = user.Role,
+                    BusinessNatureId = user.Company?.BusinessNatureId ?? 0
 				},
                 Application = new ApplicationInfoDto
                 {

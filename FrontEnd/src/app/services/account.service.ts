@@ -50,8 +50,13 @@ export class VoucherService {
 
     constructor(private http: HttpClient) {}
 
-    getVouchers(): Observable<PaginatedResponse<Voucher>> {
-        return this.http.get<PaginatedResponse<Voucher>>(this.apiUrl);
+    getVouchers(skipCount: number = 0, maxResultCount: number = 1000): Observable<PaginatedResponse<Voucher>> {
+        return this.http.get<PaginatedResponse<Voucher>>(this.apiUrl, {
+            params: {
+                SkipCount: skipCount.toString(),
+                MaxResultCount: maxResultCount.toString()
+            }
+        });
     }
 
     getVouchersByType(type: string): Observable<Voucher[]> {
