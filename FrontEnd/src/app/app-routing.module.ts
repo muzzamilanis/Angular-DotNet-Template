@@ -18,6 +18,20 @@ import { WriterDashboardComponent } from './components/writer-portal/writer-dash
 import { TeamLeadOrdersComponent } from './components/team-lead/team-lead-orders.component';
 import { TeamLeadDashboardComponent } from './components/team-lead/team-lead-dashboard.component';
 import { BrandingDemoComponent } from './components/branding-demo/branding-demo.component';
+// Real Estate components
+import { RealEstateDashboardComponent } from './components/realestate/realestate-dashboard/realestate-dashboard.component';
+import { PropertyRegistrationComponent } from './components/realestate/property-registration/property-registration.component';
+import { PropertyPurchaseComponent } from './components/realestate/property-purchase/property-purchase.component';
+import { PropertySaleComponent } from './components/realestate/property-sale/property-sale.component';
+import { OwnershipTransferComponent } from './components/realestate/ownership-transfer/ownership-transfer.component';
+// Accounting components
+import { ChartOfAccountsComponent } from './components/accounting/chart-of-accounts/chart-of-accounts.component';
+import { VoucherManagementComponent } from './components/accounting/voucher-management/voucher-management.component';
+// Reports components
+import { GeneralLedgerComponent } from './components/reports/general-ledger/general-ledger.component';
+import { TrialBalanceComponent } from './components/reports/trial-balance/trial-balance.component';
+import { BalanceSheetComponent } from './components/reports/balance-sheet/balance-sheet.component';
+import { ProfitLossComponent } from './components/reports/profit-loss/profit-loss.component';
 // import { CurrencySetupComponent } from './components/currency-setup/currency-setup.component';
 import { AuthGuard } from './guards/auth.guard';
 import { SuperAdminGuard } from './guards/super-admin.guard';
@@ -36,6 +50,25 @@ const routes: Routes = [
         children: [
             { path: '', component: DashboardComponent, canActivate: [AdminDashboardGuard] },
             { path: 'dashboard', component: DashboardComponent, canActivate: [AdminDashboardGuard] },
+            
+            // Real Estate Routes
+            { path: 'realestate/dashboard', component: RealEstateDashboardComponent },
+            { path: 'realestate/properties', component: PropertyRegistrationComponent },
+            { path: 'realestate/purchases', component: PropertyPurchaseComponent },
+            { path: 'realestate/sales', component: PropertySaleComponent },
+            { path: 'realestate/ownership-transfers', component: OwnershipTransferComponent },
+            
+            // Accounting Routes
+            { path: 'accounting/chart-of-accounts', component: ChartOfAccountsComponent },
+            { path: 'accounting/vouchers', component: VoucherManagementComponent },
+            
+            // Reports Routes
+            { path: 'reports/general-ledger', component: GeneralLedgerComponent },
+            { path: 'reports/trial-balance', component: TrialBalanceComponent },
+            { path: 'reports/balance-sheet', component: BalanceSheetComponent },
+            { path: 'reports/profit-loss', component: ProfitLossComponent },
+            
+            // Existing Routes
             { path: 'transactions/sale-orders', component: SaleOrderComponent },
             { path: 'masters/products', component: ProductComponent },
             { path: 'masters/customers', component: CustomerComponent },

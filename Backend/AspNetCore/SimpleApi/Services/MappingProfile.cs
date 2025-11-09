@@ -58,6 +58,38 @@ namespace SimpleApi.Services
             CreateMap<Currency, CurrencyDto>();
             CreateMap<CreateCurrencyDto, Currency>();
             CreateMap<UpdateCurrencyDto, Currency>();
+
+            // Property mappings
+            CreateMap<Property, PropertyDto>();
+            CreateMap<CreatePropertyDto, Property>();
+            CreateMap<UpdatePropertyDto, Property>();
+
+            // PropertyPurchase mappings
+            CreateMap<PropertyPurchase, PropertyPurchaseDto>()
+                .ForMember(dest => dest.Property, opt => opt.MapFrom(src => src.Property));
+            CreateMap<CreatePropertyPurchaseDto, PropertyPurchase>();
+            CreateMap<UpdatePropertyPurchaseDto, PropertyPurchase>();
+
+            // PropertySale mappings
+            CreateMap<PropertySale, PropertySaleDto>()
+                .ForMember(dest => dest.Property, opt => opt.MapFrom(src => src.Property));
+            CreateMap<CreatePropertySaleDto, PropertySale>();
+            CreateMap<UpdatePropertySaleDto, PropertySale>();
+
+            // Account mappings
+            CreateMap<Account, AccountDto>();
+            CreateMap<CreateAccountDto, Account>();
+            CreateMap<UpdateAccountDto, Account>();
+
+            // Voucher mappings
+            CreateMap<Voucher, VoucherDto>()
+                .ForMember(dest => dest.JournalEntries, opt => opt.MapFrom(src => src.JournalEntries));
+            CreateMap<CreateVoucherDto, Voucher>();
+
+            // JournalEntry mappings
+            CreateMap<JournalEntry, JournalEntryDto>()
+                .ForMember(dest => dest.AccountName, opt => opt.MapFrom(src => src.Account!.AccountName));
+            CreateMap<CreateJournalEntryDto, JournalEntry>();
         }
     }
 }

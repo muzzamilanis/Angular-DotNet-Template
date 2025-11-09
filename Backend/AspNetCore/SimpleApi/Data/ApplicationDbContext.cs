@@ -20,6 +20,17 @@ namespace SimpleApi.Data
 		public DbSet<ServiceType> ServiceTypes { get; set; }
 		public DbSet<Currency> Currencies { get; set; }
 		public DbSet<OrderInstruction> OrderInstructions { get; set; }
+		
+		// Real Estate Module
+		public DbSet<Property> Properties { get; set; }
+		public DbSet<PropertyPurchase> PropertyPurchases { get; set; }
+		public DbSet<PropertySale> PropertySales { get; set; }
+		public DbSet<OwnershipTransfer> OwnershipTransfers { get; set; }
+		
+		// Accounting Module
+		public DbSet<Account> Accounts { get; set; }
+		public DbSet<Voucher> Vouchers { get; set; }
+		public DbSet<JournalEntry> JournalEntries { get; set; }
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
@@ -225,6 +236,155 @@ namespace SimpleApi.Data
 					  .OnDelete(DeleteBehavior.Restrict);
 			});
 
+			// Configure Property
+			modelBuilder.Entity<Property>(entity =>
+			{
+				entity.HasKey(e => e.Id);
+				entity.Property(e => e.PropertyName).IsRequired().HasMaxLength(200);
+				entity.Property(e => e.PropertyType).IsRequired().HasMaxLength(100);
+				entity.Property(e => e.TotalArea).HasColumnType("decimal(18,2)");
+				entity.Property(e => e.LawnArea).HasColumnType("decimal(18,2)");
+				entity.Property(e => e.CurrentValue).HasColumnType("decimal(18,2)");
+
+				entity.HasOne(e => e.Company)
+					  .WithMany()
+					  .HasForeignKey(e => e.CompanyId)
+					  .OnDelete(DeleteBehavior.Restrict);
+			});
+
+			// Configure PropertyPurchase
+			modelBuilder.Entity<PropertyPurchase>(entity =>
+			{
+				entity.HasKey(e => e.Id);
+				entity.Property(e => e.PurchaseNumber).IsRequired().HasMaxLength(100);
+				entity.Property(e => e.PurchasePrice).HasColumnType("decimal(18,2)");
+				entity.Property(e => e.AdvancePayment).HasColumnType("decimal(18,2)");
+				entity.Property(e => e.RemainingPayment).HasColumnType("decimal(18,2)");
+
+				entity.HasOne(e => e.Company)
+					  .WithMany()
+					  .HasForeignKey(e => e.CompanyId)
+					  .OnDelete(DeleteBehavior.Restrict);
+
+				entity.HasOne(e => e.Property)
+					  .WithMany(e => e.Purchases)
+					  .HasForeignKey(e => e.PropertyId)
+					  .OnDelete(DeleteBehavior.Restrict);
+
+				entity.HasOne(e => e.Voucher)
+					  .WithMany()
+					  .HasForeignKey(e => e.VoucherId)
+					  .OnDelete(DeleteBehavior.SetNull);
+			});
+
+			// Configure PropertySale
+			modelBuilder.Entity<PropertySale>(entity =>
+			{
+				entity.HasKey(e => e.Id);
+				entity.Property(e => e.SaleNumber).IsRequired().HasMaxLength(100);
+				entity.Property(e => e.SalePrice).HasColumnType("decimal(18,2)");
+				entity.Property(e => e.CostPrice).HasColumnType("decimal(18,2)");
+				entity.Property(e => e.ProfitOrLoss).HasColumnType("decimal(18,2)");
+				entity.Property(e => e.AdvanceReceived).HasColumnType("decimal(18,2)");
+				entity.Property(e => e.RemainingReceivable).HasColumnType("decimal(18,2)");
+
+				entity.HasOne(e => e.Company)
+					  .WithMany()
+					  .HasForeignKey(e => e.CompanyId)
+					  .OnDelete(DeleteBehavior.Restrict);
+
+				entity.HasOne(e => e.Property)
+					  .WithMany(e => e.Sales)
+					  .HasForeignKey(e => e.PropertyId)
+					  .OnDelete(DeleteBehavior.Restrict);
+
+				entity.HasOne(e => e.Voucher)
+					  .WithMany()
+					  .HasForeignKey(e => e.VoucherId)
+					  .OnDelete(DeleteBehavior.SetNull);
+			});
+
+			// Configure OwnershipTransfer
+			modelBuilder.Entity<OwnershipTransfer>(entity =>
+			{
+				entity.HasKey(e => e.Id);
+				entity.Property(e => e.TransferNumber).IsRequired().HasMaxLength(100);
+				entity.Property(e => e.TransferValue).HasColumnType("decimal(18,2)");
+
+				entity.HasOne(e => e.Company)
+					  .WithMany()
+					  .HasForeignKey(e => e.CompanyId)
+					  .OnDelete(DeleteBehavior.Restrict);
+
+				entity.HasOne(e => e.Property)
+					  .WithMany(e => e.OwnershipTransfers)
+					  .HasForeignKey(e => e.PropertyId)
+					  .OnDelete(DeleteBehavior.Restrict);
+			});
+
+			// Configure Account
+			modelBuilder.Entity<Account>(entity =>
+			{
+				entity.HasKey(e => e.Id);
+				entity.Property(e => e.AccountCode).IsRequired().HasMaxLength(50);
+				entity.Property(e => e.AccountName).IsRequired().HasMaxLength(200);
+				entity.Property(e => e.AccountType).IsRequired().HasMaxLength(50);
+				entity.Property(e => e.OpeningBalance).HasColumnType("decimal(18,2)");
+				entity.Property(e => e.CurrentBalance).HasColumnType("decimal(18,2)");
+
+				entity.HasOne(e => e.Company)
+					  .WithMany()
+					  .HasForeignKey(e => e.CompanyId)
+					  .OnDelete(DeleteBehavior.Restrict);
+
+				entity.HasOne(e => e.ParentAccount)
+					  .WithMany(e => e.SubAccounts)
+					  .HasForeignKey(e => e.ParentAccountId)
+					  .OnDelete(DeleteBehavior.Restrict);
+			});
+
+			// Configure Voucher
+			modelBuilder.Entity<Voucher>(entity =>
+			{
+				entity.HasKey(e => e.Id);
+				entity.Property(e => e.VoucherNumber).IsRequired().HasMaxLength(100);
+				entity.Property(e => e.VoucherType).IsRequired().HasMaxLength(50);
+				entity.Property(e => e.TotalAmount).HasColumnType("decimal(18,2)");
+
+				entity.HasOne(e => e.Company)
+					  .WithMany()
+					  .HasForeignKey(e => e.CompanyId)
+					  .OnDelete(DeleteBehavior.Restrict);
+
+				entity.HasOne(e => e.PostedByUser)
+					  .WithMany()
+					  .HasForeignKey(e => e.PostedByUserId)
+					  .OnDelete(DeleteBehavior.SetNull);
+			});
+
+			// Configure JournalEntry
+			modelBuilder.Entity<JournalEntry>(entity =>
+			{
+				entity.HasKey(e => e.Id);
+				entity.Property(e => e.EntryType).IsRequired().HasMaxLength(10);
+				entity.Property(e => e.Amount).HasColumnType("decimal(18,2)");
+
+				entity.HasOne(e => e.Company)
+					  .WithMany()
+					  .HasForeignKey(e => e.CompanyId)
+					  .OnDelete(DeleteBehavior.Restrict);
+
+				entity.HasOne(e => e.Voucher)
+					  .WithMany(e => e.JournalEntries)
+					  .HasForeignKey(e => e.VoucherId)
+					  .OnDelete(DeleteBehavior.Cascade);
+
+				entity.HasOne(e => e.Account)
+					  .WithMany(e => e.JournalEntries)
+					  .HasForeignKey(e => e.AccountId)
+					  .OnDelete(DeleteBehavior.Restrict);
+			});
+
 			// Define a fixed seed date to avoid constant model changes
 			var seedDate = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
@@ -234,7 +394,8 @@ namespace SimpleApi.Data
 				new BusinessNature { Id = 2, Name = "Automobile", DisplayName = "Automobile", Description = "Automotive industry and vehicle-related services", IsActive = true, CreatedAt = seedDate },
 				new BusinessNature { Id = 3, Name = "General", DisplayName = "General", Description = "General business operations and services", IsActive = true, CreatedAt = seedDate },
 				new BusinessNature { Id = 4, Name = "Retail", DisplayName = "Retail & E-commerce", Description = "Traditional retail and online commerce operations", IsActive = true, CreatedAt = seedDate },
-				new BusinessNature { Id = 5, Name = "Manufacturing", DisplayName = "Manufacturing", Description = "Manufacturing and production businesses", IsActive = true, CreatedAt = seedDate }
+				new BusinessNature { Id = 5, Name = "Manufacturing", DisplayName = "Manufacturing", Description = "Manufacturing and production businesses", IsActive = true, CreatedAt = seedDate },
+				new BusinessNature { Id = 6, Name = "RealEstate", DisplayName = "Real Estate", Description = "Real estate property management, buying, selling, and rental services", IsActive = true, CreatedAt = seedDate }
 			);
 
 			// Seed data - Create companies with business nature references
