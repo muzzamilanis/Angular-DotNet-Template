@@ -100,43 +100,43 @@ const routes: Routes = [
             {
                 path: 'construction/payments',
                 loadComponent: () =>
-                    import('./components/construction/construction-placeholder.component').then(
-                        (m) => m.ConstructionPlaceholderComponent
+                    import('./components/construction/payments/construction-payments.component').then(
+                        (m) => m.ConstructionPaymentsComponent
                     ),
             },
             {
                 path: 'construction/expenses',
                 loadComponent: () =>
-                    import('./components/construction/construction-placeholder.component').then(
-                        (m) => m.ConstructionPlaceholderComponent
+                    import('./components/construction/expenses/construction-expenses.component').then(
+                        (m) => m.ConstructionExpensesComponent
                     ),
             },
             {
                 path: 'construction/project-ledger',
                 loadComponent: () =>
-                    import('./components/construction/construction-placeholder.component').then(
-                        (m) => m.ConstructionPlaceholderComponent
+                    import('./components/construction/ledgers/construction-ledgers.component').then(
+                        (m) => m.ConstructionLedgersComponent
                     ),
             },
             {
                 path: 'construction/client-ledger',
                 loadComponent: () =>
-                    import('./components/construction/construction-placeholder.component').then(
-                        (m) => m.ConstructionPlaceholderComponent
+                    import('./components/construction/ledgers/construction-ledgers.component').then(
+                        (m) => m.ConstructionLedgersComponent
                     ),
             },
             {
                 path: 'construction/investor-ledger',
                 loadComponent: () =>
-                    import('./components/construction/construction-placeholder.component').then(
-                        (m) => m.ConstructionPlaceholderComponent
+                    import('./components/construction/ledgers/construction-ledgers.component').then(
+                        (m) => m.ConstructionLedgersComponent
                     ),
             },
             {
                 path: 'construction/profit-loss',
                 loadComponent: () =>
-                    import('./components/construction/construction-placeholder.component').then(
-                        (m) => m.ConstructionPlaceholderComponent
+                    import('./components/construction/ledgers/construction-profit-loss.component').then(
+                        (m) => m.ConstructionProfitLossComponent
                     ),
             },
             

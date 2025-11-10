@@ -1,0 +1,158 @@
+<div class="content-wrapper">
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6"><h1>Construction Ledgers</h1></div>
+            </div>
+        </div>
+    </section>
+
+    <section class="content">
+        <div class="container-fluid">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Ledger Type</label>
+                                <select class="form-control" [(ngModel)]="ledgerType" (change)="onLedgerTypeChange()">
+                                    <option value="project">Project Ledger</option>
+                                    <option value="client">Client Ledger</option>
+                                    <option value="investor">Investor Ledger</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4" *ngIf="ledgerType === 'project' || ledgerType === 'client' || ledgerType === 'investor'">
+                            <div class="form-group">
+                                <label>Select Project</label>
+                                <select class="form-control" [(ngModel)]="selectedProjectId" (change)="onProjectChange()">
+                                    <option value="0">-- Select Project --</option>
+                                    <option *ngFor="let project of projects" [value]="project.id">{{ project.projectName }}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4" *ngIf="ledgerType === 'client' && selectedProjectId">
+                            <div class="form-group">
+                                <label>Select Client</label>
+                                <select class="form-control" [(ngModel)]="selectedClientId" (change)="onClientChange()">
+                                    <option value="0">-- Select Client --</option>
+                                    <option *ngFor="let client of clients" [value]="client.id">{{ client.clientName }}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4" *ngIf="ledgerType === 'investor' && selectedProjectId">
+                            <div class="form-group">
+                                <label>Select Investor</label>
+                                <select class="form-control" [(ngModel)]="selectedInvestorId" (change)="onInvestorChange()">
+                                    <option value="0">-- Select Investor --</option>
+                                    <option *ngFor="let investor of investors" [value]="investor.id">{{ investor.investorName }}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Project Ledger -->
+            <div class="card" *ngIf="ledgerType === 'project' && selectedProjectId">
+                <div class="card-header"><h3 class="card-title">Project Ledger Entries</h3></div>
+                <div class="card-body p-0">
+                    <div *ngIf="loading" class="text-center p-5"><div class="spinner-border"></div></div>
+                    <table class="table table-striped" *ngIf="!loading && projectEntries.length > 0">
+                        <thead>
+                            <tr>
+                                <th>Entry #</th>
+                                <th>Date</th>
+                                <th>Type</th>
+                                <th>Entry</th>
+                                <th>Amount</th>
+                                <th>Balance</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let entry of projectEntries">
+                                <td>{{ entry.entryNumber }}</td>
+                                <td>{{ formatDate(entry.entryDate) }}</td>
+                                <td><span class="badge badge-info">{{ entry.transactionType }}</span></td>
+                                <td [class]="getEntryTypeClass(entry.entryType)"><strong>{{ entry.entryType }}</strong></td>
+                                <td>{{ formatCurrency(entry.amount) }}</td>
+                                <td><strong>{{ formatCurrency(entry.balance) }}</strong></td>
+                                <td>{{ entry.description }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div *ngIf="!loading && projectEntries.length === 0" class="text-center p-5">
+                        <p>No ledger entries found.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Client Ledger -->
+            <div class="card" *ngIf="ledgerType === 'client' && selectedClientId">
+                <div class="card-header"><h3 class="card-title">Client Ledger Entries</h3></div>
+                <div class="card-body p-0">
+                    <div *ngIf="loading" class="text-center p-5"><div class="spinner-border"></div></div>
+                    <table class="table table-striped" *ngIf="!loading && clientEntries.length > 0">
+                        <thead>
+                            <tr>
+                                <th>Entry #</th>
+                                <th>Date</th>
+                                <th>Entry Type</th>
+                                <th>Amount</th>
+                                <th>Balance</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let entry of clientEntries">
+                                <td>{{ entry.entryNumber }}</td>
+                                <td>{{ formatDate(entry.entryDate) }}</td>
+                                <td [class]="getEntryTypeClass(entry.entryType)"><strong>{{ entry.entryType }}</strong></td>
+                                <td>{{ formatCurrency(entry.amount) }}</td>
+                                <td><strong>{{ formatCurrency(entry.balance) }}</strong></td>
+                                <td>{{ entry.description }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div *ngIf="!loading && clientEntries.length === 0" class="text-center p-5">
+                        <p>No ledger entries found.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Investor Ledger -->
+            <div class="card" *ngIf="ledgerType === 'investor' && selectedInvestorId">
+                <div class="card-header"><h3 class="card-title">Investor Ledger Entries</h3></div>
+                <div class="card-body p-0">
+                    <div *ngIf="loading" class="text-center p-5"><div class="spinner-border"></div></div>
+                    <table class="table table-striped" *ngIf="!loading && investorEntries.length > 0">
+                        <thead>
+                            <tr>
+                                <th>Entry #</th>
+                                <th>Date</th>
+                                <th>Entry Type</th>
+                                <th>Amount</th>
+                                <th>Balance</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let entry of investorEntries">
+                                <td>{{ entry.entryNumber }}</td>
+                                <td>{{ formatDate(entry.entryDate) }}</td>
+                                <td [class]="getEntryTypeClass(entry.entryType)"><strong>{{ entry.entryType }}</strong></td>
+                                <td>{{ formatCurrency(entry.amount) }}</td>
+                                <td><strong>{{ formatCurrency(entry.balance) }}</strong></td>
+                                <td>{{ entry.description }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div *ngIf="!loading && investorEntries.length === 0" class="text-center p-5">
+                        <p>No ledger entries found.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>

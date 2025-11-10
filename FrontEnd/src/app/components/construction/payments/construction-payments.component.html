@@ -1,0 +1,153 @@
+<div class="content-wrapper">
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6"><h1>Project Payments</h1></div>
+                <div class="col-sm-6">
+                    <button class="btn btn-success float-right" (click)="openForm()" [disabled]="!selectedProjectId">
+                        <i class="fas fa-plus"></i> Record Payment
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="content">
+        <div class="container-fluid">
+            <div class="card">
+                <div class="card-body">
+                    <div class="form-group">
+                        <label>Select Project</label>
+                        <select class="form-control" [(ngModel)]="selectedProjectId" (change)="onProjectChange()">
+                            <option value="0">-- Select a Project --</option>
+                            <option *ngFor="let project of projects" [value]="project.id">{{ project.projectName }}</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" *ngIf="selectedProjectId">
+                <div class="card-header"><h3 class="card-title">Payment List</h3></div>
+                <div class="card-body p-0">
+                    <div *ngIf="loading" class="text-center p-5"><div class="spinner-border"></div></div>
+
+                    <table class="table table-striped" *ngIf="!loading && payments.length > 0">
+                        <thead>
+                            <tr>
+                                <th>Payment #</th>
+                                <th>Date</th>
+                                <th>Source</th>
+                                <th>From</th>
+                                <th>Amount</th>
+                                <th>Method</th>
+                                <th>Reference</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let payment of payments">
+                                <td>{{ payment.paymentNumber }}</td>
+                                <td>{{ formatDate(payment.paymentDate) }}</td>
+                                <td><span class="badge badge-info">{{ payment.paymentSource }}</span></td>
+                                <td>{{ payment.clientName || payment.investorName }}</td>
+                                <td class="text-success"><strong>{{ formatCurrency(payment.amount) }}</strong></td>
+                                <td>{{ payment.paymentMethod }}</td>
+                                <td>{{ payment.referenceNumber || 'N/A' }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div *ngIf="!loading && payments.length === 0" class="text-center p-5">
+                        <i class="fas fa-money-bill-wave fa-3x text-muted mb-3"></i>
+                        <p>No payments recorded for this project.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<div class="modal fade" [class.show]="showForm" [style.display]="showForm ? 'block' : 'none'">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5>Record Payment</h5>
+                <button type="button" class="close" (click)="closeForm()"><span>&times;</span></button>
+            </div>
+            <form [formGroup]="paymentForm" (ngSubmit)="onSubmit()">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Payment Source <span class="text-danger">*</span></label>
+                                <select class="form-control" formControlName="paymentSource">
+                                    <option *ngFor="let source of paymentSources" [value]="source">{{ source }}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6" *ngIf="paymentForm.get('paymentSource')?.value === 'Client'">
+                            <div class="form-group">
+                                <label>Client <span class="text-danger">*</span></label>
+                                <select class="form-control" formControlName="projectClientId">
+                                    <option value="">-- Select Client --</option>
+                                    <option *ngFor="let client of clients" [value]="client.id">{{ client.clientName }}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6" *ngIf="paymentForm.get('paymentSource')?.value === 'Investor'">
+                            <div class="form-group">
+                                <label>Investor <span class="text-danger">*</span></label>
+                                <select class="form-control" formControlName="projectInvestorId">
+                                    <option value="">-- Select Investor --</option>
+                                    <option *ngFor="let investor of investors" [value]="investor.id">{{ investor.investorName }}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Amount <span class="text-danger">*</span></label>
+                                <input type="number" class="form-control" formControlName="amount" />
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Payment Date <span class="text-danger">*</span></label>
+                                <input type="date" class="form-control" formControlName="paymentDate" />
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Payment Method</label>
+                                <select class="form-control" formControlName="paymentMethod">
+                                    <option *ngFor="let method of paymentMethods" [value]="method">{{ method }}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Reference Number</label>
+                                <input type="text" class="form-control" formControlName="referenceNumber" />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Description</label>
+                                <input type="text" class="form-control" formControlName="description" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" (click)="closeForm()">Cancel</button>
+                    <button type="submit" class="btn btn-success" [disabled]="loading || paymentForm.invalid">
+                        Record Payment
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="modal-backdrop fade" [class.show]="showForm" *ngIf="showForm"></div>
