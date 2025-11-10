@@ -132,4 +132,8 @@ export class AuthService {
     getCurrentUserCompanyId(): number | null {
         return this.currentUserInfo?.companyId ? parseInt(this.currentUserInfo.companyId) : null;
     }
+
+    getBusinessNatureId(): number {
+        return this.currentUserInfo?.businessNatureId || 0;
+    }
 }
