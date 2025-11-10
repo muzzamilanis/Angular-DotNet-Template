@@ -29,6 +29,10 @@ export class AdminDashboardGuard implements CanActivate {
                 // Redirect team leads to their specific dashboard (unless they are also SuperAdmin)
                 this.router.navigate(['/team-lead/dashboard']);
                 return of(false);
+            } else if (this.authService.getBusinessNatureId() === 6) {
+                // Redirect RealEstate users to their specific dashboard
+                this.router.navigate(['/realestate/dashboard']);
+                return of(false);
             } else {
                 return of(true);
             }
@@ -46,6 +50,10 @@ export class AdminDashboardGuard implements CanActivate {
                     } else if ((user.role === 'Manager' || user.role === 1) && !user.isSuperAdmin) {
                         // Redirect team leads to their specific dashboard (unless they are also SuperAdmin)
                         this.router.navigate(['/team-lead/dashboard']);
+                        return false;
+                    } else if (user.businessNatureId === 6) {
+                        // Redirect RealEstate users to their specific dashboard
+                        this.router.navigate(['/realestate/dashboard']);
                         return false;
                     } else {
                         return true;
