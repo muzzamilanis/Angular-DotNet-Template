@@ -86,6 +86,14 @@ builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IVoucherService, VoucherService>();
 builder.Services.AddScoped<IAccountingService, AccountingService>();
 
+// Add Construction services
+builder.Services.AddScoped<ConstructionProjectService>();
+builder.Services.AddScoped<ProjectClientService>();
+builder.Services.AddScoped<ProjectInvestorService>();
+builder.Services.AddScoped<ProjectPaymentService>();
+builder.Services.AddScoped<ProjectExpenseService>();
+builder.Services.AddScoped<ConstructionLedgerService>();
+
 // Add HttpClient for external API calls
 builder.Services.AddHttpClient<IExchangeRateService, ExchangeRateService>();
 
