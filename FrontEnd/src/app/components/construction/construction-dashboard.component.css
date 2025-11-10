@@ -1,0 +1,36 @@
+/* Add any specific styling for construction dashboard here */
+.small-box {
+    border-radius: 0.25rem;
+    box-shadow: 0 0 1px rgba(0, 0, 0, 0.125), 0 1px 3px rgba(0, 0, 0, 0.2);
+    display: block;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.small-box > .inner {
+    padding: 10px;
+}
+
+.small-box .icon {
+    color: rgba(0, 0, 0, 0.15);
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    font-size: 70px;
+}
+
+.small-box-footer {
+    background-color: rgba(0, 0, 0, 0.1);
+    color: rgba(255, 255, 255, 0.8);
+    display: block;
+    padding: 3px 0;
+    position: relative;
+    text-align: center;
+    text-decoration: none;
+    z-index: 10;
+}
+
+.small-box-footer:hover {
+    background-color: rgba(0, 0, 0, 0.15);
+    color: #fff;
+}

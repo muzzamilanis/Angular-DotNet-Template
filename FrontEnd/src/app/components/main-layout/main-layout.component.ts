@@ -131,6 +131,11 @@ export class MainLayoutComponent implements OnInit {
         return this.currentCompany?.businessNatureId === BusinessNatureType.REALESTATE;
     }
 
+    // Check if current company is Construction
+    isConstruction(): boolean {
+        return this.currentCompany?.businessNatureId === BusinessNatureType.CONSTRUCTION;
+    }
+
     toggleSidebar(): void {
         this.sidebarCollapsed = !this.sidebarCollapsed;
     }
