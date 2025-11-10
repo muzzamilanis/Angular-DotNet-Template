@@ -172,7 +172,82 @@ namespace SimpleApi.Migrations
                             DisplayName = "Real Estate",
                             IsActive = true,
                             Name = "RealEstate"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Construction project management with client, investor, and financial tracking",
+                            DisplayName = "Construction",
+                            IsActive = true,
+                            Name = "Construction"
                         });
+                });
+
+            modelBuilder.Entity("SimpleApi.Models.ClientLedgerEntry", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("Balance")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ConstructionProjectId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<DateTime>("EntryDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("EntryNumber")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("EntryType")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("ProjectClientId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("ProjectPaymentId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ReferenceNumber")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("ConstructionProjectId");
+
+                    b.HasIndex("ProjectClientId");
+
+                    b.HasIndex("ProjectPaymentId");
+
+                    b.ToTable("ClientLedgerEntries");
                 });
 
             modelBuilder.Entity("SimpleApi.Models.Company", b =>
@@ -252,6 +327,72 @@ namespace SimpleApi.Migrations
                             Name = "Digital Marketing Pro",
                             Phone = "555-0002"
                         });
+                });
+
+            modelBuilder.Entity("SimpleApi.Models.ConstructionProject", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("ActualCost")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("ActualEndDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Contractor")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<decimal>("EstimatedBudget")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("ExpectedEndDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Location")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<string>("ProjectDescription")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<string>("ProjectManager")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("ProjectName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<DateTime?>("StartDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.ToTable("ConstructionProjects");
                 });
 
             modelBuilder.Entity("SimpleApi.Models.Currency", b =>
@@ -346,6 +487,72 @@ namespace SimpleApi.Migrations
                             Name = "Jane Smith",
                             Phone = "555-5678"
                         });
+                });
+
+            modelBuilder.Entity("SimpleApi.Models.InvestorLedgerEntry", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("Balance")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ConstructionProjectId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<DateTime>("EntryDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("EntryNumber")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("EntryType")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("ProjectInvestorId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("ProjectPaymentId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ReferenceNumber")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("ConstructionProjectId");
+
+                    b.HasIndex("ProjectInvestorId");
+
+                    b.HasIndex("ProjectPaymentId");
+
+                    b.ToTable("InvestorLedgerEntries");
                 });
 
             modelBuilder.Entity("SimpleApi.Models.JournalEntry", b =>
@@ -654,6 +861,352 @@ namespace SimpleApi.Migrations
                             ServiceTypeId = 1,
                             UpdatedDate = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
                         });
+                });
+
+            modelBuilder.Entity("SimpleApi.Models.ProjectClient", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Address")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<string>("ClientName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("CnicOrNtn")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ConstructionProjectId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ContactPerson")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Phone")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<decimal>("SharePercentage")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("ConstructionProjectId");
+
+                    b.ToTable("ProjectClients");
+                });
+
+            modelBuilder.Entity("SimpleApi.Models.ProjectExpense", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ConstructionProjectId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<string>("ExpenseCategory")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<DateTime>("ExpenseDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ExpenseNumber")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("InvoiceNumber")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("PaymentMethod")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("ReferenceNumber")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("VendorName")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<int?>("VoucherId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("ConstructionProjectId");
+
+                    b.HasIndex("VoucherId");
+
+                    b.ToTable("ProjectExpenses");
+                });
+
+            modelBuilder.Entity("SimpleApi.Models.ProjectInvestor", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Address")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<string>("CnicOrNtn")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ConstructionProjectId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ContactPerson")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<decimal>("InvestmentAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("InvestorName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Phone")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<decimal>("SharePercentage")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("ConstructionProjectId");
+
+                    b.ToTable("ProjectInvestors");
+                });
+
+            modelBuilder.Entity("SimpleApi.Models.ProjectLedgerEntry", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("Balance")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ConstructionProjectId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<DateTime>("EntryDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("EntryNumber")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("EntryType")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<int?>("ProjectExpenseId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("ProjectPaymentId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ReferenceNumber")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("TransactionType")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<int?>("VoucherId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("ConstructionProjectId");
+
+                    b.HasIndex("ProjectExpenseId");
+
+                    b.HasIndex("ProjectPaymentId");
+
+                    b.HasIndex("VoucherId");
+
+                    b.ToTable("ProjectLedgerEntries");
+                });
+
+            modelBuilder.Entity("SimpleApi.Models.ProjectPayment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ConstructionProjectId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime>("PaymentDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("PaymentMethod")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("PaymentNumber")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<int>("PaymentSource")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("ProjectClientId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("ProjectInvestorId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ReferenceNumber")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int?>("VoucherId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("ConstructionProjectId");
+
+                    b.HasIndex("ProjectClientId");
+
+                    b.HasIndex("ProjectInvestorId");
+
+                    b.HasIndex("VoucherId");
+
+                    b.ToTable("ProjectPayments");
                 });
 
             modelBuilder.Entity("SimpleApi.Models.Property", b =>
@@ -1372,6 +1925,40 @@ namespace SimpleApi.Migrations
                     b.Navigation("ParentAccount");
                 });
 
+            modelBuilder.Entity("SimpleApi.Models.ClientLedgerEntry", b =>
+                {
+                    b.HasOne("SimpleApi.Models.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("SimpleApi.Models.ConstructionProject", "ConstructionProject")
+                        .WithMany()
+                        .HasForeignKey("ConstructionProjectId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("SimpleApi.Models.ProjectClient", "ProjectClient")
+                        .WithMany("LedgerEntries")
+                        .HasForeignKey("ProjectClientId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("SimpleApi.Models.ProjectPayment", "ProjectPayment")
+                        .WithMany()
+                        .HasForeignKey("ProjectPaymentId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Company");
+
+                    b.Navigation("ConstructionProject");
+
+                    b.Navigation("ProjectClient");
+
+                    b.Navigation("ProjectPayment");
+                });
+
             modelBuilder.Entity("SimpleApi.Models.Company", b =>
                 {
                     b.HasOne("SimpleApi.Models.BusinessNature", "BusinessNature")
@@ -1381,6 +1968,17 @@ namespace SimpleApi.Migrations
                         .IsRequired();
 
                     b.Navigation("BusinessNature");
+                });
+
+            modelBuilder.Entity("SimpleApi.Models.ConstructionProject", b =>
+                {
+                    b.HasOne("SimpleApi.Models.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Company");
                 });
 
             modelBuilder.Entity("SimpleApi.Models.Currency", b =>
@@ -1403,6 +2001,40 @@ namespace SimpleApi.Migrations
                         .IsRequired();
 
                     b.Navigation("Company");
+                });
+
+            modelBuilder.Entity("SimpleApi.Models.InvestorLedgerEntry", b =>
+                {
+                    b.HasOne("SimpleApi.Models.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("SimpleApi.Models.ConstructionProject", "ConstructionProject")
+                        .WithMany()
+                        .HasForeignKey("ConstructionProjectId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("SimpleApi.Models.ProjectInvestor", "ProjectInvestor")
+                        .WithMany("LedgerEntries")
+                        .HasForeignKey("ProjectInvestorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("SimpleApi.Models.ProjectPayment", "ProjectPayment")
+                        .WithMany()
+                        .HasForeignKey("ProjectPaymentId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Company");
+
+                    b.Navigation("ConstructionProject");
+
+                    b.Navigation("ProjectInvestor");
+
+                    b.Navigation("ProjectPayment");
                 });
 
             modelBuilder.Entity("SimpleApi.Models.JournalEntry", b =>
@@ -1497,6 +2129,150 @@ namespace SimpleApi.Migrations
                     b.Navigation("Company");
 
                     b.Navigation("ServiceType");
+                });
+
+            modelBuilder.Entity("SimpleApi.Models.ProjectClient", b =>
+                {
+                    b.HasOne("SimpleApi.Models.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("SimpleApi.Models.ConstructionProject", "ConstructionProject")
+                        .WithMany("ProjectClients")
+                        .HasForeignKey("ConstructionProjectId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Company");
+
+                    b.Navigation("ConstructionProject");
+                });
+
+            modelBuilder.Entity("SimpleApi.Models.ProjectExpense", b =>
+                {
+                    b.HasOne("SimpleApi.Models.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("SimpleApi.Models.ConstructionProject", "ConstructionProject")
+                        .WithMany("ProjectExpenses")
+                        .HasForeignKey("ConstructionProjectId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("SimpleApi.Models.Voucher", "Voucher")
+                        .WithMany()
+                        .HasForeignKey("VoucherId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Company");
+
+                    b.Navigation("ConstructionProject");
+
+                    b.Navigation("Voucher");
+                });
+
+            modelBuilder.Entity("SimpleApi.Models.ProjectInvestor", b =>
+                {
+                    b.HasOne("SimpleApi.Models.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("SimpleApi.Models.ConstructionProject", "ConstructionProject")
+                        .WithMany("ProjectInvestors")
+                        .HasForeignKey("ConstructionProjectId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Company");
+
+                    b.Navigation("ConstructionProject");
+                });
+
+            modelBuilder.Entity("SimpleApi.Models.ProjectLedgerEntry", b =>
+                {
+                    b.HasOne("SimpleApi.Models.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("SimpleApi.Models.ConstructionProject", "ConstructionProject")
+                        .WithMany("ProjectLedgerEntries")
+                        .HasForeignKey("ConstructionProjectId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("SimpleApi.Models.ProjectExpense", "ProjectExpense")
+                        .WithMany()
+                        .HasForeignKey("ProjectExpenseId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("SimpleApi.Models.ProjectPayment", "ProjectPayment")
+                        .WithMany()
+                        .HasForeignKey("ProjectPaymentId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("SimpleApi.Models.Voucher", "Voucher")
+                        .WithMany()
+                        .HasForeignKey("VoucherId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Company");
+
+                    b.Navigation("ConstructionProject");
+
+                    b.Navigation("ProjectExpense");
+
+                    b.Navigation("ProjectPayment");
+
+                    b.Navigation("Voucher");
+                });
+
+            modelBuilder.Entity("SimpleApi.Models.ProjectPayment", b =>
+                {
+                    b.HasOne("SimpleApi.Models.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("SimpleApi.Models.ConstructionProject", "ConstructionProject")
+                        .WithMany("ProjectPayments")
+                        .HasForeignKey("ConstructionProjectId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("SimpleApi.Models.ProjectClient", "ProjectClient")
+                        .WithMany()
+                        .HasForeignKey("ProjectClientId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("SimpleApi.Models.ProjectInvestor", "ProjectInvestor")
+                        .WithMany()
+                        .HasForeignKey("ProjectInvestorId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("SimpleApi.Models.Voucher", "Voucher")
+                        .WithMany()
+                        .HasForeignKey("VoucherId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Company");
+
+                    b.Navigation("ConstructionProject");
+
+                    b.Navigation("ProjectClient");
+
+                    b.Navigation("ProjectInvestor");
+
+                    b.Navigation("Voucher");
                 });
 
             modelBuilder.Entity("SimpleApi.Models.Property", b =>
@@ -1663,9 +2439,32 @@ namespace SimpleApi.Migrations
                     b.Navigation("Projects");
                 });
 
+            modelBuilder.Entity("SimpleApi.Models.ConstructionProject", b =>
+                {
+                    b.Navigation("ProjectClients");
+
+                    b.Navigation("ProjectExpenses");
+
+                    b.Navigation("ProjectInvestors");
+
+                    b.Navigation("ProjectLedgerEntries");
+
+                    b.Navigation("ProjectPayments");
+                });
+
             modelBuilder.Entity("SimpleApi.Models.Project", b =>
                 {
                     b.Navigation("SaleOrders");
+                });
+
+            modelBuilder.Entity("SimpleApi.Models.ProjectClient", b =>
+                {
+                    b.Navigation("LedgerEntries");
+                });
+
+            modelBuilder.Entity("SimpleApi.Models.ProjectInvestor", b =>
+                {
+                    b.Navigation("LedgerEntries");
                 });
 
             modelBuilder.Entity("SimpleApi.Models.Property", b =>

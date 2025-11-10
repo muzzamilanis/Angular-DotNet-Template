@@ -31,6 +31,16 @@ namespace SimpleApi.Data
 		public DbSet<Account> Accounts { get; set; }
 		public DbSet<Voucher> Vouchers { get; set; }
 		public DbSet<JournalEntry> JournalEntries { get; set; }
+		
+		// Construction Module
+		public DbSet<ConstructionProject> ConstructionProjects { get; set; }
+		public DbSet<ProjectClient> ProjectClients { get; set; }
+		public DbSet<ProjectInvestor> ProjectInvestors { get; set; }
+		public DbSet<ProjectPayment> ProjectPayments { get; set; }
+		public DbSet<ProjectExpense> ProjectExpenses { get; set; }
+		public DbSet<ClientLedgerEntry> ClientLedgerEntries { get; set; }
+		public DbSet<InvestorLedgerEntry> InvestorLedgerEntries { get; set; }
+		public DbSet<ProjectLedgerEntry> ProjectLedgerEntries { get; set; }
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
@@ -385,6 +395,205 @@ namespace SimpleApi.Data
 					  .OnDelete(DeleteBehavior.Restrict);
 			});
 
+			// Configure ConstructionProject
+			modelBuilder.Entity<ConstructionProject>(entity =>
+			{
+				entity.HasKey(e => e.Id);
+				entity.Property(e => e.ProjectName).IsRequired().HasMaxLength(200);
+				entity.Property(e => e.EstimatedBudget).HasColumnType("decimal(18,2)");
+				entity.Property(e => e.ActualCost).HasColumnType("decimal(18,2)");
+
+				entity.HasOne(e => e.Company)
+					  .WithMany()
+					  .HasForeignKey(e => e.CompanyId)
+					  .OnDelete(DeleteBehavior.Restrict);
+			});
+
+			// Configure ProjectClient
+			modelBuilder.Entity<ProjectClient>(entity =>
+			{
+				entity.HasKey(e => e.Id);
+				entity.Property(e => e.ClientName).IsRequired().HasMaxLength(200);
+				entity.Property(e => e.SharePercentage).HasColumnType("decimal(18,2)");
+
+				entity.HasOne(e => e.Company)
+					  .WithMany()
+					  .HasForeignKey(e => e.CompanyId)
+					  .OnDelete(DeleteBehavior.Restrict);
+
+				entity.HasOne(e => e.ConstructionProject)
+					  .WithMany(e => e.ProjectClients)
+					  .HasForeignKey(e => e.ConstructionProjectId)
+					  .OnDelete(DeleteBehavior.Restrict);
+			});
+
+			// Configure ProjectInvestor
+			modelBuilder.Entity<ProjectInvestor>(entity =>
+			{
+				entity.HasKey(e => e.Id);
+				entity.Property(e => e.InvestorName).IsRequired().HasMaxLength(200);
+				entity.Property(e => e.InvestmentAmount).HasColumnType("decimal(18,2)");
+				entity.Property(e => e.SharePercentage).HasColumnType("decimal(18,2)");
+
+				entity.HasOne(e => e.Company)
+					  .WithMany()
+					  .HasForeignKey(e => e.CompanyId)
+					  .OnDelete(DeleteBehavior.Restrict);
+
+				entity.HasOne(e => e.ConstructionProject)
+					  .WithMany(e => e.ProjectInvestors)
+					  .HasForeignKey(e => e.ConstructionProjectId)
+					  .OnDelete(DeleteBehavior.Restrict);
+			});
+
+			// Configure ProjectPayment
+			modelBuilder.Entity<ProjectPayment>(entity =>
+			{
+				entity.HasKey(e => e.Id);
+				entity.Property(e => e.PaymentNumber).IsRequired().HasMaxLength(100);
+				entity.Property(e => e.Amount).HasColumnType("decimal(18,2)");
+
+				entity.HasOne(e => e.Company)
+					  .WithMany()
+					  .HasForeignKey(e => e.CompanyId)
+					  .OnDelete(DeleteBehavior.Restrict);
+
+				entity.HasOne(e => e.ConstructionProject)
+					  .WithMany(e => e.ProjectPayments)
+					  .HasForeignKey(e => e.ConstructionProjectId)
+					  .OnDelete(DeleteBehavior.Restrict);
+
+				entity.HasOne(e => e.ProjectClient)
+					  .WithMany()
+					  .HasForeignKey(e => e.ProjectClientId)
+					  .OnDelete(DeleteBehavior.SetNull);
+
+				entity.HasOne(e => e.ProjectInvestor)
+					  .WithMany()
+					  .HasForeignKey(e => e.ProjectInvestorId)
+					  .OnDelete(DeleteBehavior.SetNull);
+
+				entity.HasOne(e => e.Voucher)
+					  .WithMany()
+					  .HasForeignKey(e => e.VoucherId)
+					  .OnDelete(DeleteBehavior.SetNull);
+			});
+
+			// Configure ProjectExpense
+			modelBuilder.Entity<ProjectExpense>(entity =>
+			{
+				entity.HasKey(e => e.Id);
+				entity.Property(e => e.ExpenseNumber).IsRequired().HasMaxLength(100);
+				entity.Property(e => e.Amount).HasColumnType("decimal(18,2)");
+
+				entity.HasOne(e => e.Company)
+					  .WithMany()
+					  .HasForeignKey(e => e.CompanyId)
+					  .OnDelete(DeleteBehavior.Restrict);
+
+				entity.HasOne(e => e.ConstructionProject)
+					  .WithMany(e => e.ProjectExpenses)
+					  .HasForeignKey(e => e.ConstructionProjectId)
+					  .OnDelete(DeleteBehavior.Restrict);
+
+				entity.HasOne(e => e.Voucher)
+					  .WithMany()
+					  .HasForeignKey(e => e.VoucherId)
+					  .OnDelete(DeleteBehavior.SetNull);
+			});
+
+			// Configure ClientLedgerEntry
+			modelBuilder.Entity<ClientLedgerEntry>(entity =>
+			{
+				entity.HasKey(e => e.Id);
+				entity.Property(e => e.EntryNumber).IsRequired().HasMaxLength(100);
+				entity.Property(e => e.Amount).HasColumnType("decimal(18,2)");
+				entity.Property(e => e.Balance).HasColumnType("decimal(18,2)");
+
+				entity.HasOne(e => e.Company)
+					  .WithMany()
+					  .HasForeignKey(e => e.CompanyId)
+					  .OnDelete(DeleteBehavior.Restrict);
+
+				entity.HasOne(e => e.ProjectClient)
+					  .WithMany(e => e.LedgerEntries)
+					  .HasForeignKey(e => e.ProjectClientId)
+					  .OnDelete(DeleteBehavior.Restrict);
+
+				entity.HasOne(e => e.ConstructionProject)
+					  .WithMany()
+					  .HasForeignKey(e => e.ConstructionProjectId)
+					  .OnDelete(DeleteBehavior.Restrict);
+
+				entity.HasOne(e => e.ProjectPayment)
+					  .WithMany()
+					  .HasForeignKey(e => e.ProjectPaymentId)
+					  .OnDelete(DeleteBehavior.SetNull);
+			});
+
+			// Configure InvestorLedgerEntry
+			modelBuilder.Entity<InvestorLedgerEntry>(entity =>
+			{
+				entity.HasKey(e => e.Id);
+				entity.Property(e => e.EntryNumber).IsRequired().HasMaxLength(100);
+				entity.Property(e => e.Amount).HasColumnType("decimal(18,2)");
+				entity.Property(e => e.Balance).HasColumnType("decimal(18,2)");
+
+				entity.HasOne(e => e.Company)
+					  .WithMany()
+					  .HasForeignKey(e => e.CompanyId)
+					  .OnDelete(DeleteBehavior.Restrict);
+
+				entity.HasOne(e => e.ProjectInvestor)
+					  .WithMany(e => e.LedgerEntries)
+					  .HasForeignKey(e => e.ProjectInvestorId)
+					  .OnDelete(DeleteBehavior.Restrict);
+
+				entity.HasOne(e => e.ConstructionProject)
+					  .WithMany()
+					  .HasForeignKey(e => e.ConstructionProjectId)
+					  .OnDelete(DeleteBehavior.Restrict);
+
+				entity.HasOne(e => e.ProjectPayment)
+					  .WithMany()
+					  .HasForeignKey(e => e.ProjectPaymentId)
+					  .OnDelete(DeleteBehavior.SetNull);
+			});
+
+			// Configure ProjectLedgerEntry
+			modelBuilder.Entity<ProjectLedgerEntry>(entity =>
+			{
+				entity.HasKey(e => e.Id);
+				entity.Property(e => e.EntryNumber).IsRequired().HasMaxLength(100);
+				entity.Property(e => e.Amount).HasColumnType("decimal(18,2)");
+				entity.Property(e => e.Balance).HasColumnType("decimal(18,2)");
+
+				entity.HasOne(e => e.Company)
+					  .WithMany()
+					  .HasForeignKey(e => e.CompanyId)
+					  .OnDelete(DeleteBehavior.Restrict);
+
+				entity.HasOne(e => e.ConstructionProject)
+					  .WithMany(e => e.ProjectLedgerEntries)
+					  .HasForeignKey(e => e.ConstructionProjectId)
+					  .OnDelete(DeleteBehavior.Restrict);
+
+				entity.HasOne(e => e.ProjectPayment)
+					  .WithMany()
+					  .HasForeignKey(e => e.ProjectPaymentId)
+					  .OnDelete(DeleteBehavior.SetNull);
+
+				entity.HasOne(e => e.ProjectExpense)
+					  .WithMany()
+					  .HasForeignKey(e => e.ProjectExpenseId)
+					  .OnDelete(DeleteBehavior.SetNull);
+
+				entity.HasOne(e => e.Voucher)
+					  .WithMany()
+					  .HasForeignKey(e => e.VoucherId)
+					  .OnDelete(DeleteBehavior.SetNull);
+			});
+
 			// Define a fixed seed date to avoid constant model changes
 			var seedDate = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
@@ -395,7 +604,8 @@ namespace SimpleApi.Data
 				new BusinessNature { Id = 3, Name = "General", DisplayName = "General", Description = "General business operations and services", IsActive = true, CreatedAt = seedDate },
 				new BusinessNature { Id = 4, Name = "Retail", DisplayName = "Retail & E-commerce", Description = "Traditional retail and online commerce operations", IsActive = true, CreatedAt = seedDate },
 				new BusinessNature { Id = 5, Name = "Manufacturing", DisplayName = "Manufacturing", Description = "Manufacturing and production businesses", IsActive = true, CreatedAt = seedDate },
-				new BusinessNature { Id = 6, Name = "RealEstate", DisplayName = "Real Estate", Description = "Real estate property management, buying, selling, and rental services", IsActive = true, CreatedAt = seedDate }
+				new BusinessNature { Id = 6, Name = "RealEstate", DisplayName = "Real Estate", Description = "Real estate property management, buying, selling, and rental services", IsActive = true, CreatedAt = seedDate },
+				new BusinessNature { Id = 7, Name = "Construction", DisplayName = "Construction", Description = "Construction project management with client, investor, and financial tracking", IsActive = true, CreatedAt = seedDate }
 			);
 
 			// Seed data - Create companies with business nature references
