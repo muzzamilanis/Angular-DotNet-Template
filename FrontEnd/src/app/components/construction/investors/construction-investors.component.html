@@ -1,0 +1,156 @@
+<div class="content-wrapper">
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1>Project Investors</h1>
+                </div>
+                <div class="col-sm-6">
+                    <button class="btn btn-primary float-right" (click)="openForm()" [disabled]="!selectedProjectId">
+                        <i class="fas fa-plus"></i> New Investor
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="content">
+        <div class="container-fluid">
+            <div class="card">
+                <div class="card-body">
+                    <div class="form-group">
+                        <label>Select Project</label>
+                        <select class="form-control" [(ngModel)]="selectedProjectId" (change)="onProjectChange()">
+                            <option value="0">-- Select a Project --</option>
+                            <option *ngFor="let project of projects" [value]="project.id">
+                                {{ project.projectName }}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" *ngIf="selectedProjectId">
+                <div class="card-header">
+                    <h3 class="card-title">Investor List</h3>
+                </div>
+                <div class="card-body p-0">
+                    <div *ngIf="loading" class="text-center p-5">
+                        <div class="spinner-border" role="status"></div>
+                    </div>
+
+                    <table class="table table-striped" *ngIf="!loading && investors.length > 0">
+                        <thead>
+                            <tr>
+                                <th>Investor Name</th>
+                                <th>Contact</th>
+                                <th>Email</th>
+                                <th>Investment</th>
+                                <th>Share %</th>
+                                <th>Ledger Balance</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let investor of investors">
+                                <td><strong>{{ investor.investorName }}</strong><br /><small>{{ investor.cnicOrNtn }}</small></td>
+                                <td>{{ investor.contactPerson || 'N/A' }}<br /><small>{{ investor.phone }}</small></td>
+                                <td>{{ investor.email || 'N/A' }}</td>
+                                <td>{{ formatCurrency(investor.investmentAmount) }}</td>
+                                <td>{{ investor.sharePercentage }}%</td>
+                                <td>{{ formatCurrency(investor.ledgerBalance) }}</td>
+                                <td>
+                                    <button class="btn btn-sm btn-info mr-1" (click)="openForm(investor)"><i class="fas fa-edit"></i></button>
+                                    <button class="btn btn-sm btn-danger" (click)="deleteInvestor(investor)"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div *ngIf="!loading && investors.length === 0" class="text-center p-5">
+                        <i class="fas fa-hand-holding-usd fa-3x text-muted mb-3"></i>
+                        <p>No investors found for this project.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<div class="modal fade" [class.show]="showForm" [style.display]="showForm ? 'block' : 'none'">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5>{{ editingInvestor ? 'Edit Investor' : 'New Investor' }}</h5>
+                <button type="button" class="close" (click)="closeForm()"><span>&times;</span></button>
+            </div>
+            <form [formGroup]="investorForm" (ngSubmit)="onSubmit()">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Investor Name <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" formControlName="investorName" />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Contact Person</label>
+                                <input type="text" class="form-control" formControlName="contactPerson" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Phone</label>
+                                <input type="text" class="form-control" formControlName="phone" />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Email</label>
+                                <input type="email" class="form-control" formControlName="email" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>CNIC / NTN</label>
+                                <input type="text" class="form-control" formControlName="cnicOrNtn" />
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Investment Amount <span class="text-danger">*</span></label>
+                                <input type="number" class="form-control" formControlName="investmentAmount" />
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Share % <span class="text-danger">*</span></label>
+                                <input type="number" class="form-control" formControlName="sharePercentage" min="0" max="100" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label>Address</label>
+                                <textarea class="form-control" rows="2" formControlName="address"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" (click)="closeForm()">Cancel</button>
+                    <button type="submit" class="btn btn-primary" [disabled]="loading || investorForm.invalid">
+                        {{ editingInvestor ? 'Update' : 'Create' }} Investor
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="modal-backdrop fade" [class.show]="showForm" *ngIf="showForm"></div>

@@ -79,22 +79,22 @@ const routes: Routes = [
             {
                 path: 'construction/projects',
                 loadComponent: () =>
-                    import('./components/construction/construction-placeholder.component').then(
-                        (m) => m.ConstructionPlaceholderComponent
+                    import('./components/construction/projects/construction-projects.component').then(
+                        (m) => m.ConstructionProjectsComponent
                     ),
             },
             {
                 path: 'construction/clients',
                 loadComponent: () =>
-                    import('./components/construction/construction-placeholder.component').then(
-                        (m) => m.ConstructionPlaceholderComponent
+                    import('./components/construction/clients/construction-clients.component').then(
+                        (m) => m.ConstructionClientsComponent
                     ),
             },
             {
                 path: 'construction/investors',
                 loadComponent: () =>
-                    import('./components/construction/construction-placeholder.component').then(
-                        (m) => m.ConstructionPlaceholderComponent
+                    import('./components/construction/investors/construction-investors.component').then(
+                        (m) => m.ConstructionInvestorsComponent
                     ),
             },
             {
