@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { ConstructionProjectService } from '../../../services/construction-project.service';
-import { ConstructionDashboard } from '../../../models/construction.model';
+import { ConstructionProjectService } from '../../services/construction-project.service';
+import { ConstructionDashboard } from '../../models/construction.model';
 
 @Component({
     selector: 'app-construction-dashboard',
