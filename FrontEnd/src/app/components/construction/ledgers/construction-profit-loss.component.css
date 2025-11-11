@@ -1,1 +1,168 @@
-/* P&L styling */
+/* Construction Profit/Loss Component Styling */
+
+/* Card Styling */
+.card {
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 2px 6px rgba(0, 0, 0, 0.06);
+    margin-bottom: 20px;
+    border: none;
+}
+
+.card-header {
+    background-color: #f8f9fa;
+    border-bottom: 2px solid #e9ecef;
+    padding: 15px 20px;
+    border-radius: 0.5rem 0.5rem 0 0 !important;
+}
+
+.card-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0;
+    color: #495057;
+}
+
+.card-body {
+    padding: 20px;
+}
+
+.card-body h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 10px 0;
+}
+
+.card-body h4 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #495057;
+}
+
+/* Background Cards */
+.bg-light {
+    background-color: #f8f9fa !important;
+    border: 1px solid #e9ecef;
+    border-radius: 0.5rem;
+}
+
+.bg-success {
+    background-color: #28a745 !important;
+    color: white !important;
+    border-radius: 0.5rem;
+}
+
+.bg-danger {
+    background-color: #dc3545 !important;
+    color: white !important;
+    border-radius: 0.5rem;
+}
+
+.bg-info {
+    background-color: #17a2b8 !important;
+    color: white !important;
+    border-radius: 0.5rem;
+}
+
+/* Form Styling */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+}
+
+.form-control {
+    border-radius: 0.375rem;
+    border: 1px solid #ced4da;
+    padding: 10px 15px;
+    font-size: 0.95rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-control:focus {
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.15);
+}
+
+select.form-control {
+    cursor: pointer;
+}
+
+/* Table Styling */
+.table {
+    margin-bottom: 0;
+}
+
+.table thead th {
+    background-color: #f8f9fa;
+    border-bottom: 2px solid #dee2e6;
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: #495057;
+    padding: 15px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.table tbody td {
+    padding: 15px;
+    vertical-align: middle;
+    font-size: 0.9rem;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(0, 0, 0, 0.02);
+}
+
+.table-striped tbody tr:hover {
+    background-color: rgba(0, 0, 0, 0.04);
+    transition: background-color 0.2s;
+}
+
+/* Text Colors */
+.text-success {
+    color: #28a745 !important;
+    font-weight: 600;
+}
+
+.text-danger {
+    color: #dc3545 !important;
+    font-weight: 600;
+}
+
+.text-white {
+    color: white !important;
+}
+
+/* Loading State */
+.spinner-border {
+    width: 3rem;
+    height: 3rem;
+    border-width: 0.3em;
+}
+
+/* Spacing */
+.mt-3 {
+    margin-top: 1.5rem !important;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .card-body h2 {
+        font-size: 1.5rem;
+    }
+    
+    .table {
+        font-size: 0.85rem;
+    }
+    
+    .table thead th,
+    .table tbody td {
+        padding: 10px;
+    }
+}
