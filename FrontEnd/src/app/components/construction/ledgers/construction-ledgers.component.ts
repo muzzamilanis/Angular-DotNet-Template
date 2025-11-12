@@ -22,6 +22,9 @@ export class ConstructionLedgersComponent implements OnInit {
     selectedClientId: number = 0;
     selectedInvestorId: number = 0;
     
+    selectedClientName: string = '';
+    selectedInvestorName: string = '';
+    
     clientEntries: ClientLedgerEntry[] = [];
     investorEntries: InvestorLedgerEntry[] = [];
     projectEntries: ProjectLedgerEntry[] = [];
@@ -94,12 +97,16 @@ export class ConstructionLedgersComponent implements OnInit {
 
     onClientChange(): void {
         if (this.selectedClientId) {
+            const selectedClient = this.clients.find(c => c.id === Number(this.selectedClientId));
+            this.selectedClientName = selectedClient?.clientName || '';
             this.loadClientLedger();
         }
     }
 
     onInvestorChange(): void {
         if (this.selectedInvestorId) {
+            const selectedInvestor = this.investors.find(i => i.id === Number(this.selectedInvestorId));
+            this.selectedInvestorName = selectedInvestor?.investorName || '';
             this.loadInvestorLedger();
         }
     }
@@ -159,5 +166,13 @@ export class ConstructionLedgersComponent implements OnInit {
 
     getEntryTypeClass(entryType: string): string {
         return entryType === 'Debit' ? 'text-danger' : 'text-success';
+    }
+
+    getTotalAmount(entries: ClientLedgerEntry[] | InvestorLedgerEntry[]): number {
+        return entries.reduce((sum, entry) => sum + entry.amount, 0);
+    }
+
+    getTotalBalance(entries: ClientLedgerEntry[] | InvestorLedgerEntry[]): number {
+        return entries.length > 0 ? entries[entries.length - 1].balance : 0;
     }
 }

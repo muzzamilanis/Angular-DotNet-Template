@@ -90,7 +90,12 @@
 
             <!-- Client Ledger -->
             <div class="card" *ngIf="ledgerType === 'client' && selectedClientId">
-                <div class="card-header"><h3 class="card-title">Client Ledger Entries</h3></div>
+                <div class="card-header">
+                    <h3 class="card-title">Client Ledger - {{ selectedClientName }}</h3>
+                    <div class="card-tools" *ngIf="clientEntries.length > 0">
+                        <span class="badge badge-primary">Total Balance: {{ formatCurrency(getTotalBalance(clientEntries)) }}</span>
+                    </div>
+                </div>
                 <div class="card-body p-0">
                     <div *ngIf="loading" class="text-center p-5"><div class="spinner-border"></div></div>
                     <table class="table table-striped" *ngIf="!loading && clientEntries.length > 0">
@@ -98,32 +103,48 @@
                             <tr>
                                 <th>Entry #</th>
                                 <th>Date</th>
+                                <th>Client Name</th>
                                 <th>Entry Type</th>
                                 <th>Amount</th>
-                                <th>Balance</th>
+                                <th>Running Balance</th>
+                                <th>Reference</th>
                                 <th>Description</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr *ngFor="let entry of clientEntries">
-                                <td>{{ entry.entryNumber }}</td>
+                                <td><span class="badge badge-secondary">{{ entry.entryNumber }}</span></td>
                                 <td>{{ formatDate(entry.entryDate) }}</td>
+                                <td><strong>{{ entry.clientName }}</strong></td>
                                 <td [class]="getEntryTypeClass(entry.entryType)"><strong>{{ entry.entryType }}</strong></td>
-                                <td>{{ formatCurrency(entry.amount) }}</td>
-                                <td><strong>{{ formatCurrency(entry.balance) }}</strong></td>
+                                <td class="text-right"><strong>{{ formatCurrency(entry.amount) }}</strong></td>
+                                <td class="text-right"><span class="badge badge-success">{{ formatCurrency(entry.balance) }}</span></td>
+                                <td>{{ entry.referenceNumber || '-' }}</td>
                                 <td>{{ entry.description }}</td>
                             </tr>
                         </tbody>
+                        <tfoot>
+                            <tr class="bg-light">
+                                <td colspan="4" class="text-right"><strong>Total Payments Received:</strong></td>
+                                <td class="text-right"><strong>{{ formatCurrency(getTotalAmount(clientEntries)) }}</strong></td>
+                                <td colspan="3"></td>
+                            </tr>
+                        </tfoot>
                     </table>
                     <div *ngIf="!loading && clientEntries.length === 0" class="text-center p-5">
-                        <p>No ledger entries found.</p>
+                        <p>No payment entries found for this client.</p>
                     </div>
                 </div>
             </div>
 
             <!-- Investor Ledger -->
             <div class="card" *ngIf="ledgerType === 'investor' && selectedInvestorId">
-                <div class="card-header"><h3 class="card-title">Investor Ledger Entries</h3></div>
+                <div class="card-header">
+                    <h3 class="card-title">Investor Ledger - {{ selectedInvestorName }}</h3>
+                    <div class="card-tools" *ngIf="investorEntries.length > 0">
+                        <span class="badge badge-info">Total Investment: {{ formatCurrency(getTotalBalance(investorEntries)) }}</span>
+                    </div>
+                </div>
                 <div class="card-body p-0">
                     <div *ngIf="loading" class="text-center p-5"><div class="spinner-border"></div></div>
                     <table class="table table-striped" *ngIf="!loading && investorEntries.length > 0">
@@ -131,25 +152,36 @@
                             <tr>
                                 <th>Entry #</th>
                                 <th>Date</th>
+                                <th>Investor Name</th>
                                 <th>Entry Type</th>
                                 <th>Amount</th>
-                                <th>Balance</th>
+                                <th>Running Balance</th>
+                                <th>Reference</th>
                                 <th>Description</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr *ngFor="let entry of investorEntries">
-                                <td>{{ entry.entryNumber }}</td>
+                                <td><span class="badge badge-secondary">{{ entry.entryNumber }}</span></td>
                                 <td>{{ formatDate(entry.entryDate) }}</td>
+                                <td><strong>{{ entry.investorName }}</strong></td>
                                 <td [class]="getEntryTypeClass(entry.entryType)"><strong>{{ entry.entryType }}</strong></td>
-                                <td>{{ formatCurrency(entry.amount) }}</td>
-                                <td><strong>{{ formatCurrency(entry.balance) }}</strong></td>
+                                <td class="text-right"><strong>{{ formatCurrency(entry.amount) }}</strong></td>
+                                <td class="text-right"><span class="badge badge-info">{{ formatCurrency(entry.balance) }}</span></td>
+                                <td>{{ entry.referenceNumber || '-' }}</td>
                                 <td>{{ entry.description }}</td>
                             </tr>
                         </tbody>
+                        <tfoot>
+                            <tr class="bg-light">
+                                <td colspan="4" class="text-right"><strong>Total Investments Received:</strong></td>
+                                <td class="text-right"><strong>{{ formatCurrency(getTotalAmount(investorEntries)) }}</strong></td>
+                                <td colspan="3"></td>
+                            </tr>
+                        </tfoot>
                     </table>
                     <div *ngIf="!loading && investorEntries.length === 0" class="text-center p-5">
-                        <p>No ledger entries found.</p>
+                        <p>No investment entries found for this investor.</p>
                     </div>
                 </div>
             </div>
