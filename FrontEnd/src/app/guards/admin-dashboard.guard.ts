@@ -33,6 +33,10 @@ export class AdminDashboardGuard implements CanActivate {
                 // Redirect RealEstate users to their specific dashboard
                 this.router.navigate(['/realestate/dashboard']);
                 return of(false);
+            } else if (this.authService.getBusinessNatureId() === 7) {
+                // Redirect Construction users to their specific dashboard
+                this.router.navigate(['/construction/dashboard']);
+                return of(false);
             } else {
                 return of(true);
             }
@@ -54,6 +58,10 @@ export class AdminDashboardGuard implements CanActivate {
                     } else if (user.businessNatureId === 6) {
                         // Redirect RealEstate users to their specific dashboard
                         this.router.navigate(['/realestate/dashboard']);
+                        return false;
+                    } else if (user.businessNatureId === 7) {
+                        // Redirect Construction users to their specific dashboard
+                        this.router.navigate(['/construction/dashboard']);
                         return false;
                     } else {
                         return true;

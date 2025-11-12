@@ -99,8 +99,16 @@
                         </a>
                     </li>
 
-                    <!-- Dashboard - For SuperAdmin and Non-Real Estate -->
-                    <li class="nav-item" *ngIf="!isWriter() && !isTeamLead() && !isRealEstate()">
+                    <!-- Dashboard - For Construction -->
+                    <li class="nav-item" *ngIf="isConstruction()">
+                        <a routerLink="/construction/dashboard" class="nav-link" routerLinkActive="active">
+                            <i class="nav-icon fas fa-tachometer-alt"></i>
+                            <p>Dashboard</p>
+                        </a>
+                    </li>
+
+                    <!-- Dashboard - For SuperAdmin and Non-Real Estate, Non-Construction -->
+                    <li class="nav-item" *ngIf="!isWriter() && !isTeamLead() && !isRealEstate() && !isConstruction()">
                         <a routerLink="/dashboard" class="nav-link" routerLinkActive="active">
                             <i class="nav-icon fas fa-tachometer-alt"></i>
                             <p>Dashboard</p>
@@ -108,45 +116,45 @@
                     </li>
 
                     <!-- Writer Dashboard - Only visible to Writers -->
-                    <li class="nav-item" *ngIf="isWriter() && !isRealEstate()">
+                    <li class="nav-item" *ngIf="isWriter() && !isRealEstate() && !isConstruction()">
                         <a routerLink="/writer/dashboard" class="nav-link" routerLinkActive="active">
                             <i class="nav-icon fas fa-tachometer-alt"></i>
                             <p>Dashboard</p>
                         </a>
                     </li>
 
-                    <!-- Writer Portal - Visible to Writers and SuperAdmin (Not for Real Estate) -->
-                    <li class="nav-item" *ngIf="(isWriter() || isSuperAdmin()) && !isRealEstate()">
+                    <!-- Writer Portal - Visible to Writers and SuperAdmin (Not for Real Estate or Construction) -->
+                    <li class="nav-item" *ngIf="(isWriter() || isSuperAdmin()) && !isRealEstate() && !isConstruction()">
                         <a routerLink="/writer/assignments" class="nav-link" routerLinkActive="active">
                             <i class="nav-icon fas fa-tasks"></i>
                             <p>Writer Portal</p>
                         </a>
                     </li>
 
-                    <!-- Team Lead Portal - Visible to Team Leads only (Not for Real Estate) -->
-                    <li class="nav-item" *ngIf="(isTeamLead() || isSuperAdmin()) && !isRealEstate()">
+                    <!-- Team Lead Portal - Visible to Team Leads only (Not for Real Estate or Construction) -->
+                    <li class="nav-item" *ngIf="(isTeamLead() || isSuperAdmin()) && !isRealEstate() && !isConstruction()">
                         <a routerLink="/team-lead/dashboard" class="nav-link" routerLinkActive="active">
                             <i class="nav-icon fas fa-users-cog"></i>
                             <p>Team Lead Portal</p>
                         </a>
                     </li>
 
-                    <!-- Masters - Hidden from Writers, limited for Team Leads (Not for Real Estate) -->
+                    <!-- Masters - Hidden from Writers, limited for Team Leads (Not for Real Estate or Construction) -->
                     <li
                         class="nav-item"
                         [class.menu-open]="isMenuOpen('masters')"
-                        *ngIf="!isWriter() && (isSuperAdmin() || isTeamLead()) && !isRealEstate()">
+                        *ngIf="!isWriter() && (isSuperAdmin() || isTeamLead()) && !isRealEstate() && !isConstruction()">
                         <a routerLink="/masters/projects" class="nav-link" routerLinkActive="active">
                             <i class="far fa-circle nav-icon"></i>
                             <p>Projects</p>
                         </a>
                     </li>
 
-                    <!-- Transactions - Hidden from Writers and Team Leads (Not for Real Estate) -->
+                    <!-- Transactions - Hidden from Writers and Team Leads (Not for Real Estate or Construction) -->
                     <li
                         class="nav-item"
                         [class.menu-open]="isMenuOpen('transactions')"
-                        *ngIf="!isWriter() && !isTeamLead() && !isRealEstate()">
+                        *ngIf="!isWriter() && !isTeamLead() && !isRealEstate() && !isConstruction()">
                         <a routerLink="/transactions/sale-orders" class="nav-link" routerLinkActive="active">
                             <i class="far fa-circle nav-icon"></i>
                             <p>Order Log</p>
@@ -297,8 +305,115 @@
                         </ul>
                     </li>
 
-                    <!-- Administration (Not for Real Estate users) -->
-                    <li class="nav-item" [class.menu-open]="isMenuOpen('administration')" *ngIf="isSuperAdmin() && !isRealEstate()">
+                    <!-- Construction Modules - Only visible when Construction business nature is selected -->
+                    <li class="nav-item" [class.menu-open]="isMenuOpen('construction')" *ngIf="isConstruction()">
+                        <a (click)="toggleMenuState('construction', $event)" class="nav-link">
+                            <i class="nav-icon fas fa-hard-hat"></i>
+                            <p>
+                                Construction
+                                <i class="fas fa-angle-left right"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a
+                                    routerLink="/construction/projects"
+                                    class="nav-link"
+                                    routerLinkActive="active">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Projects</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a
+                                    routerLink="/construction/clients"
+                                    class="nav-link"
+                                    routerLinkActive="active">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Clients</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a
+                                    routerLink="/construction/investors"
+                                    class="nav-link"
+                                    routerLinkActive="active">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Investors</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a
+                                    routerLink="/construction/payments"
+                                    class="nav-link"
+                                    routerLinkActive="active">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Payments</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a
+                                    routerLink="/construction/expenses"
+                                    class="nav-link"
+                                    routerLinkActive="active">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Expenses</p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <!-- Ledgers & Reports - Only visible for Construction -->
+                    <li class="nav-item" [class.menu-open]="isMenuOpen('construction-reports')" *ngIf="isConstruction()">
+                        <a (click)="toggleMenuState('construction-reports', $event)" class="nav-link">
+                            <i class="nav-icon fas fa-chart-line"></i>
+                            <p>
+                                Reports & Ledgers
+                                <i class="fas fa-angle-left right"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a
+                                    routerLink="/construction/project-ledger"
+                                    class="nav-link"
+                                    routerLinkActive="active">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Project Ledger</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a
+                                    routerLink="/construction/client-ledger"
+                                    class="nav-link"
+                                    routerLinkActive="active">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Client Ledger</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a
+                                    routerLink="/construction/investor-ledger"
+                                    class="nav-link"
+                                    routerLinkActive="active">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Investor Ledger</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a
+                                    routerLink="/construction/profit-loss"
+                                    class="nav-link"
+                                    routerLinkActive="active">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Profit & Loss</p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <!-- Administration (Not for Real Estate or Construction users) -->
+                    <li class="nav-item" [class.menu-open]="isMenuOpen('administration')" *ngIf="isSuperAdmin() && !isRealEstate() && !isConstruction()">
                         <a (click)="toggleMenuState('administration', $event)" class="nav-link">
                             <i class="nav-icon fas fa-cogs"></i>
                             <p>

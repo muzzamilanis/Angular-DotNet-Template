@@ -1,0 +1,149 @@
+<div class="content-wrapper">
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6"><h1>Project Expenses</h1></div>
+                <div class="col-sm-6">
+                    <button class="btn btn-warning float-right" (click)="openForm()" [disabled]="!selectedProjectId">
+                        <i class="fas fa-plus"></i> Add Expense
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="content">
+        <div class="container-fluid">
+            <div class="card">
+                <div class="card-body">
+                    <div class="form-group">
+                        <label>Select Project</label>
+                        <select class="form-control" [(ngModel)]="selectedProjectId" (change)="onProjectChange()">
+                            <option value="0">-- Select a Project --</option>
+                            <option *ngFor="let project of projects" [value]="project.id">{{ project.projectName }}</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" *ngIf="selectedProjectId">
+                <div class="card-header"><h3 class="card-title">Expense List</h3></div>
+                <div class="card-body p-0">
+                    <div *ngIf="loading" class="text-center p-5"><div class="spinner-border"></div></div>
+
+                    <table class="table table-striped" *ngIf="!loading && expenses.length > 0">
+                        <thead>
+                            <tr>
+                                <th>Expense #</th>
+                                <th>Date</th>
+                                <th>Category</th>
+                                <th>Description</th>
+                                <th>Vendor</th>
+                                <th>Amount</th>
+                                <th>Invoice</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let expense of expenses">
+                                <td>{{ expense.expenseNumber }}</td>
+                                <td>{{ formatDate(expense.expenseDate) }}</td>
+                                <td><span [class]="getCategoryBadgeClass(expense.expenseCategory)">{{ expense.expenseCategory }}</span></td>
+                                <td>{{ expense.description }}</td>
+                                <td>{{ expense.vendorName || 'N/A' }}</td>
+                                <td class="text-danger"><strong>{{ formatCurrency(expense.amount) }}</strong></td>
+                                <td>{{ expense.invoiceNumber || 'N/A' }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div *ngIf="!loading && expenses.length === 0" class="text-center p-5">
+                        <i class="fas fa-file-invoice-dollar fa-3x text-muted mb-3"></i>
+                        <p>No expenses recorded for this project.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<div class="modal fade" [class.show]="showForm" [style.display]="showForm ? 'block' : 'none'">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5>Add Expense</h5>
+                <button type="button" class="close" (click)="closeForm()"><span>&times;</span></button>
+            </div>
+            <form [formGroup]="expenseForm" (ngSubmit)="onSubmit()">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Category <span class="text-danger">*</span></label>
+                                <select class="form-control" formControlName="expenseCategory">
+                                    <option *ngFor="let category of expenseCategories" [value]="category">{{ category }}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Amount <span class="text-danger">*</span></label>
+                                <input type="number" class="form-control" formControlName="amount" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label>Description <span class="text-danger">*</span></label>
+                                <textarea class="form-control" rows="2" formControlName="description"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Expense Date <span class="text-danger">*</span></label>
+                                <input type="date" class="form-control" formControlName="expenseDate" />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Vendor Name</label>
+                                <input type="text" class="form-control" formControlName="vendorName" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Invoice Number</label>
+                                <input type="text" class="form-control" formControlName="invoiceNumber" />
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Payment Method</label>
+                                <select class="form-control" formControlName="paymentMethod">
+                                    <option *ngFor="let method of paymentMethods" [value]="method">{{ method }}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Reference Number</label>
+                                <input type="text" class="form-control" formControlName="referenceNumber" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" (click)="closeForm()">Cancel</button>
+                    <button type="submit" class="btn btn-warning" [disabled]="loading || expenseForm.invalid">
+                        Add Expense
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="modal-backdrop fade" [class.show]="showForm" *ngIf="showForm"></div>

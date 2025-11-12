@@ -1,0 +1,98 @@
+<div class="content-wrapper">
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6"><h1>Profit & Loss Statement</h1></div>
+            </div>
+        </div>
+    </section>
+
+    <section class="content">
+        <div class="container-fluid">
+            <div class="card">
+                <div class="card-body">
+                    <div class="form-group">
+                        <label>Select Project</label>
+                        <select class="form-control" [(ngModel)]="selectedProjectId" (change)="onProjectChange()">
+                            <option value="0">-- Select Project --</option>
+                            <option *ngFor="let project of projects" [value]="project.id">{{ project.projectName }}</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" *ngIf="profitLoss && selectedProjectId">
+                <div class="card-header">
+                    <h3 class="card-title">{{ profitLoss.projectName }} - Financial Summary</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h4>Revenue</h4>
+                                    <h2 class="text-success">{{ formatCurrency(profitLoss.totalRevenue) }}</h2>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h4>Expenses</h4>
+                                    <h2 class="text-danger">{{ formatCurrency(profitLoss.totalExpenses) }}</h2>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <div class="card" [class.bg-success]="profitLoss.profitOrLoss >= 0" [class.bg-danger]="profitLoss.profitOrLoss < 0">
+                                <div class="card-body text-white">
+                                    <h4>{{ profitLoss.profitOrLoss >= 0 ? 'Net Profit' : 'Net Loss' }}</h4>
+                                    <h2>{{ formatCurrency(profitLoss.profitOrLoss) }}</h2>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card bg-info">
+                                <div class="card-body text-white">
+                                    <h4>Profit Margin</h4>
+                                    <h2>{{ formatPercentage(profitLoss.profitMargin) }}</h2>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-3" *ngIf="profitLoss.expenseBreakdown && profitLoss.expenseBreakdown.length > 0">
+                        <div class="col-md-12">
+                            <h4>Expense Breakdown</h4>
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Category</th>
+                                        <th>Amount</th>
+                                        <th>Percentage</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let expense of profitLoss.expenseBreakdown">
+                                        <td>{{ expense.category }}</td>
+                                        <td>{{ formatCurrency(expense.amount) }}</td>
+                                        <td>{{ formatPercentage(expense.percentage) }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" *ngIf="loading">
+                <div class="card-body text-center p-5">
+                    <div class="spinner-border"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>

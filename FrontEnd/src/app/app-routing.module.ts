@@ -68,6 +68,81 @@ const routes: Routes = [
             { path: 'reports/balance-sheet', component: BalanceSheetComponent },
             { path: 'reports/profit-loss', component: ProfitLossComponent },
             
+            // Construction Routes
+            {
+                path: 'construction/dashboard',
+                loadComponent: () =>
+                    import('./components/construction/construction-dashboard.component').then(
+                        (m) => m.ConstructionDashboardComponent
+                    ),
+            },
+            {
+                path: 'construction/projects',
+                loadComponent: () =>
+                    import('./components/construction/projects/construction-projects.component').then(
+                        (m) => m.ConstructionProjectsComponent
+                    ),
+            },
+            {
+                path: 'construction/clients',
+                loadComponent: () =>
+                    import('./components/construction/clients/construction-clients.component').then(
+                        (m) => m.ConstructionClientsComponent
+                    ),
+            },
+            {
+                path: 'construction/investors',
+                loadComponent: () =>
+                    import('./components/construction/investors/construction-investors.component').then(
+                        (m) => m.ConstructionInvestorsComponent
+                    ),
+            },
+            {
+                path: 'construction/payments',
+                loadComponent: () =>
+                    import('./components/construction/payments/construction-payments.component').then(
+                        (m) => m.ConstructionPaymentsComponent
+                    ),
+            },
+            {
+                path: 'construction/expenses',
+                loadComponent: () =>
+                    import('./components/construction/expenses/construction-expenses.component').then(
+                        (m) => m.ConstructionExpensesComponent
+                    ),
+            },
+            {
+                path: 'construction/project-ledger',
+                data: { ledgerType: 'project' },
+                loadComponent: () =>
+                    import('./components/construction/ledgers/construction-ledgers.component').then(
+                        (m) => m.ConstructionLedgersComponent
+                    ),
+            },
+            {
+                path: 'construction/client-ledger',
+                data: { ledgerType: 'client' },
+                loadComponent: () =>
+                    import('./components/construction/ledgers/construction-ledgers.component').then(
+                        (m) => m.ConstructionLedgersComponent
+                    ),
+            },
+            {
+                path: 'construction/investor-ledger',
+                data: { ledgerType: 'investor' },
+                loadComponent: () =>
+                    import('./components/construction/ledgers/construction-ledgers.component').then(
+                        (m) => m.ConstructionLedgersComponent
+                    ),
+            },
+            {
+                path: 'construction/profit-loss',
+                loadComponent: () =>
+                    import('./components/construction/ledgers/construction-profit-loss.component').then(
+                        (m) => m.ConstructionProfitLossComponent
+                    ),
+            },
+            
             // Existing Routes
             { path: 'transactions/sale-orders', component: SaleOrderComponent },
             { path: 'masters/products', component: ProductComponent },

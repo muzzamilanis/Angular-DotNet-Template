@@ -1,0 +1,170 @@
+<div class="content-wrapper">
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1>Project Clients</h1>
+                </div>
+                <div class="col-sm-6">
+                    <button class="btn btn-primary float-right" (click)="openForm()" [disabled]="!selectedProjectId">
+                        <i class="fas fa-plus"></i> New Client
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="content">
+        <div class="container-fluid">
+            <!-- Project Selector -->
+            <div class="card">
+                <div class="card-body">
+                    <div class="form-group">
+                        <label>Select Project</label>
+                        <select class="form-control" [(ngModel)]="selectedProjectId" (change)="onProjectChange()">
+                            <option value="0">-- Select a Project --</option>
+                            <option *ngFor="let project of projects" [value]="project.id">
+                                {{ project.projectName }}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Clients Table -->
+            <div class="card" *ngIf="selectedProjectId">
+                <div class="card-header">
+                    <h3 class="card-title">Client List</h3>
+                </div>
+                <div class="card-body p-0">
+                    <div *ngIf="loading" class="text-center p-5">
+                        <div class="spinner-border" role="status">
+                            <span class="sr-only">Loading...</span>
+                        </div>
+                    </div>
+
+                    <table class="table table-striped" *ngIf="!loading && clients.length > 0">
+                        <thead>
+                            <tr>
+                                <th>Client Name</th>
+                                <th>Contact</th>
+                                <th>Email</th>
+                                <th>Share %</th>
+                                <th>Ledger Balance</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let client of clients">
+                                <td>
+                                    <strong>{{ client.clientName }}</strong>
+                                    <br />
+                                    <small class="text-muted">{{ client.cnicOrNtn }}</small>
+                                </td>
+                                <td>
+                                    {{ client.contactPerson || 'N/A' }}<br />
+                                    <small>{{ client.phone }}</small>
+                                </td>
+                                <td>{{ client.email || 'N/A' }}</td>
+                                <td>{{ client.sharePercentage }}%</td>
+                                <td>{{ formatCurrency(client.ledgerBalance) }}</td>
+                                <td>
+                                    <button class="btn btn-sm btn-info mr-1" (click)="openForm(client)" title="Edit">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-danger" (click)="deleteClient(client)" title="Delete">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div *ngIf="!loading && clients.length === 0" class="text-center p-5">
+                        <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                        <p>No clients found for this project.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<!-- Client Form Modal -->
+<div class="modal fade" [class.show]="showForm" [style.display]="showForm ? 'block' : 'none'" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">{{ editingClient ? 'Edit Client' : 'New Client' }}</h5>
+                <button type="button" class="close" (click)="closeForm()">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <form [formGroup]="clientForm" (ngSubmit)="onSubmit()">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Client Name <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" formControlName="clientName" />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Contact Person</label>
+                                <input type="text" class="form-control" formControlName="contactPerson" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Phone</label>
+                                <input type="text" class="form-control" formControlName="phone" />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Email</label>
+                                <input type="email" class="form-control" formControlName="email" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>CNIC / NTN</label>
+                                <input type="text" class="form-control" formControlName="cnicOrNtn" />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Share Percentage <span class="text-danger">*</span></label>
+                                <input type="number" class="form-control" formControlName="sharePercentage" min="0" max="100" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label>Address</label>
+                                <textarea class="form-control" rows="2" formControlName="address"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" (click)="closeForm()">Cancel</button>
+                    <button type="submit" class="btn btn-primary" [disabled]="loading || clientForm.invalid">
+                        <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
+                        {{ editingClient ? 'Update' : 'Create' }} Client
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="modal-backdrop fade" [class.show]="showForm" *ngIf="showForm"></div>
