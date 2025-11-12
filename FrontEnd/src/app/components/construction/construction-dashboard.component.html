@@ -1,0 +1,270 @@
+<div class="content-wrapper">
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1>Construction Dashboard</h1>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="content">
+        <div class="container-fluid">
+            <!-- Loading State -->
+            <div *ngIf="loading" class="text-center">
+                <div class="spinner-border" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+                <p>Loading dashboard data...</p>
+            </div>
+
+            <!-- Error State -->
+            <div *ngIf="error" class="alert alert-danger">
+                <i class="fas fa-exclamation-triangle"></i> {{ error }}
+                <button (click)="loadDashboard()" class="btn btn-sm btn-primary ml-2">Retry</button>
+            </div>
+
+            <!-- Dashboard Content -->
+            <div *ngIf="!loading && !error && dashboard">
+                <!-- Summary Cards Row 1 -->
+                <div class="row">
+                    <div class="col-lg-3 col-6">
+                        <div class="small-box bg-info" style="cursor: pointer;" (click)="navigateToProjects()">
+                            <div class="inner">
+                                <h3>{{ dashboard.totalProjects }}</h3>
+                                <p>Total Projects</p>
+                            </div>
+                            <div class="icon">
+                                <i class="fas fa-hard-hat"></i>
+                            </div>
+                            <a class="small-box-footer">
+                                View Details <i class="fas fa-arrow-circle-right"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-3 col-6">
+                        <div class="small-box bg-success">
+                            <div class="inner">
+                                <h3>{{ dashboard.activeProjects }}</h3>
+                                <p>Active Projects</p>
+                            </div>
+                            <div class="icon">
+                                <i class="fas fa-tasks"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-3 col-6">
+                        <div class="small-box bg-warning">
+                            <div class="inner">
+                                <h3>{{ dashboard.completedProjects }}</h3>
+                                <p>Completed Projects</p>
+                            </div>
+                            <div class="icon">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-3 col-6">
+                        <div class="small-box bg-secondary">
+                            <div class="inner">
+                                <h3>{{ dashboard.onHoldProjects }}</h3>
+                                <p>On Hold Projects</p>
+                            </div>
+                            <div class="icon">
+                                <i class="fas fa-pause-circle"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Financial Summary Row -->
+                <div class="row">
+                    <div class="col-lg-3 col-6">
+                        <div class="small-box bg-primary" style="cursor: pointer;" (click)="navigateToClients()">
+                            <div class="inner">
+                                <h3>{{ dashboard.totalClients }}</h3>
+                                <p>Total Clients</p>
+                            </div>
+                            <div class="icon">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <a class="small-box-footer">
+                                View Clients <i class="fas fa-arrow-circle-right"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-3 col-6">
+                        <div class="small-box bg-info" style="cursor: pointer;" (click)="navigateToInvestors()">
+                            <div class="inner">
+                                <h3>{{ dashboard.totalInvestors }}</h3>
+                                <p>Total Investors</p>
+                            </div>
+                            <div class="icon">
+                                <i class="fas fa-hand-holding-usd"></i>
+                            </div>
+                            <a class="small-box-footer">
+                                View Investors <i class="fas fa-arrow-circle-right"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-3 col-6">
+                        <div class="small-box bg-success" style="cursor: pointer;" (click)="navigateToPayments()">
+                            <div class="inner">
+                                <h3>{{ formatCurrency(dashboard.totalPaymentsReceived) }}</h3>
+                                <p>Total Payments</p>
+                            </div>
+                            <div class="icon">
+                                <i class="fas fa-money-bill-wave"></i>
+                            </div>
+                            <a class="small-box-footer">
+                                View Payments <i class="fas fa-arrow-circle-right"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-3 col-6">
+                        <div class="small-box bg-danger" style="cursor: pointer;" (click)="navigateToExpenses()">
+                            <div class="inner">
+                                <h3>{{ formatCurrency(dashboard.totalExpenses) }}</h3>
+                                <p>Total Expenses</p>
+                            </div>
+                            <div class="icon">
+                                <i class="fas fa-file-invoice-dollar"></i>
+                            </div>
+                            <a class="small-box-footer">
+                                View Expenses <i class="fas fa-arrow-circle-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Budget and Profit/Loss Row -->
+                <div class="row">
+                    <div class="col-lg-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Budget Overview</h3>
+                            </div>
+                            <div class="card-body">
+                                <p><strong>Estimated Budget:</strong> {{ formatCurrency(dashboard.totalEstimatedBudget) }}</p>
+                                <p><strong>Actual Cost:</strong> {{ formatCurrency(dashboard.totalActualCost) }}</p>
+                                <p><strong>Variance:</strong> 
+                                    <span [class]="dashboard.totalEstimatedBudget - dashboard.totalActualCost >= 0 ? 'text-success' : 'text-danger'">
+                                        {{ formatCurrency(dashboard.totalEstimatedBudget - dashboard.totalActualCost) }}
+                                    </span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Profit & Loss</h3>
+                            </div>
+                            <div class="card-body">
+                                <p><strong>Total Revenue:</strong> {{ formatCurrency(dashboard.totalPaymentsReceived) }}</p>
+                                <p><strong>Total Expenses:</strong> {{ formatCurrency(dashboard.totalExpenses) }}</p>
+                                <p><strong>Net Profit/Loss:</strong> 
+                                    <span [class]="getStatusColor(dashboard.overallProfitOrLoss)">
+                                        <strong>{{ formatCurrency(dashboard.overallProfitOrLoss) }}</strong>
+                                    </span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Quick Actions</h3>
+                            </div>
+                            <div class="card-body">
+                                <button (click)="navigateToProjects()" class="btn btn-primary btn-block mb-2">
+                                    <i class="fas fa-plus"></i> New Project
+                                </button>
+                                <button (click)="navigateToPayments()" class="btn btn-success btn-block mb-2">
+                                    <i class="fas fa-money-bill"></i> Record Payment
+                                </button>
+                                <button (click)="navigateToExpenses()" class="btn btn-warning btn-block">
+                                    <i class="fas fa-file-invoice"></i> Add Expense
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Payments and Expenses -->
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Recent Payments</h3>
+                            </div>
+                            <div class="card-body p-0">
+                                <table class="table table-striped" *ngIf="dashboard.recentPayments && dashboard.recentPayments.length > 0">
+                                    <thead>
+                                        <tr>
+                                            <th>Date</th>
+                                            <th>Project</th>
+                                            <th>From</th>
+                                            <th>Amount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let payment of dashboard.recentPayments">
+                                            <td>{{ payment.paymentDate | date: 'short' }}</td>
+                                            <td>{{ payment.projectName }}</td>
+                                            <td>{{ payment.clientName || payment.investorName }}</td>
+                                            <td class="text-success">{{ formatCurrency(payment.amount) }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <p class="text-center p-3" *ngIf="!dashboard.recentPayments || dashboard.recentPayments.length === 0">
+                                    No recent payments
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Recent Expenses</h3>
+                            </div>
+                            <div class="card-body p-0">
+                                <table class="table table-striped" *ngIf="dashboard.recentExpenses && dashboard.recentExpenses.length > 0">
+                                    <thead>
+                                        <tr>
+                                            <th>Date</th>
+                                            <th>Project</th>
+                                            <th>Category</th>
+                                            <th>Amount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let expense of dashboard.recentExpenses">
+                                            <td>{{ expense.expenseDate | date: 'short' }}</td>
+                                            <td>{{ expense.projectName }}</td>
+                                            <td>{{ expense.expenseCategory }}</td>
+                                            <td class="text-danger">{{ formatCurrency(expense.amount) }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <p class="text-center p-3" *ngIf="!dashboard.recentExpenses || dashboard.recentExpenses.length === 0">
+                                    No recent expenses
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>

@@ -29,6 +29,7 @@ namespace SimpleApi.DTOs
         public string CompanyId { get; set; } = string.Empty;
         public bool IsSuperAdmin { get; set; } = false;
         public UserRole Role { get; set; }
+        public int BusinessNatureId { get; set; }
     }
 
     public class SessionInfoDto

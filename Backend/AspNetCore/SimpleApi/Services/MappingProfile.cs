@@ -90,6 +90,29 @@ namespace SimpleApi.Services
             CreateMap<JournalEntry, JournalEntryDto>()
                 .ForMember(dest => dest.AccountName, opt => opt.MapFrom(src => src.Account!.AccountName));
             CreateMap<CreateJournalEntryDto, JournalEntry>();
+
+            // Construction mappings
+            CreateMap<ConstructionProject, ConstructionProjectDto>();
+            CreateMap<CreateConstructionProjectDto, ConstructionProject>();
+            CreateMap<UpdateConstructionProjectDto, ConstructionProject>();
+
+            CreateMap<ProjectClient, ProjectClientDto>();
+            CreateMap<CreateProjectClientDto, ProjectClient>();
+            CreateMap<UpdateProjectClientDto, ProjectClient>();
+
+            CreateMap<ProjectInvestor, ProjectInvestorDto>();
+            CreateMap<CreateProjectInvestorDto, ProjectInvestor>();
+            CreateMap<UpdateProjectInvestorDto, ProjectInvestor>();
+
+            CreateMap<ProjectPayment, ProjectPaymentDto>();
+            CreateMap<CreateProjectPaymentDto, ProjectPayment>();
+
+            CreateMap<ProjectExpense, ProjectExpenseDto>();
+            CreateMap<CreateProjectExpenseDto, ProjectExpense>();
+
+            CreateMap<ClientLedgerEntry, ClientLedgerEntryDto>();
+            CreateMap<InvestorLedgerEntry, InvestorLedgerEntryDto>();
+            CreateMap<ProjectLedgerEntry, ProjectLedgerEntryDto>();
         }
     }
 }
