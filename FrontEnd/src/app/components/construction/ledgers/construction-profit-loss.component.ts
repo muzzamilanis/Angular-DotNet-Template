@@ -55,7 +55,7 @@ export class ConstructionProfitLossComponent implements OnInit {
     formatCurrency(value: number): string {
         return new Intl.NumberFormat('en-US', {
             style: 'currency',
-            currency: 'USD',
+            currency: 'PKR',
         }).format(value);
     }
 

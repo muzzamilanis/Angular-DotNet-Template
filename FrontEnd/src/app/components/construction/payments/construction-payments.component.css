@@ -207,3 +207,20 @@ select.form-control {
         transform: translateY(0);
     }
 }
+
+/* Override AdminLTE margin-left */
+@media (min-width: 768px) {
+  body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .content-wrapper {
+    margin-left: 0 !important;
+  }
+}
+
+/* If you want to expand to full width */
+.content-wrapper {
+  margin-left: 0 !important;
+}
+
+/* Fix content padding */
+.content-wrapper > .content {
+  padding: 15px 0.5rem !important;
+}

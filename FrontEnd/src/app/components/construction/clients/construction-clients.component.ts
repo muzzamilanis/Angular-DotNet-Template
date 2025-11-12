@@ -176,10 +176,10 @@ export class ConstructionClientsComponent implements OnInit {
     }
 
     formatCurrency(value: number | undefined): string {
-        if (!value) return '$0.00';
+        if (!value) return '0.00';
         return new Intl.NumberFormat('en-US', {
             style: 'currency',
-            currency: 'USD',
+            currency: 'PKR',
         }).format(value);
     }
 
