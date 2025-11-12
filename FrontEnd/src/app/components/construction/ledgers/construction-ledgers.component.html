@@ -15,7 +15,7 @@
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label>Ledger Type</label>
-                                <select class="form-control" [(ngModel)]="ledgerType" (change)="onLedgerTypeChange()">
+                                <select class="form-control" [(ngModel)]="ledgerType" (change)="onLedgerTypeChange()" [disabled]="isLedgerTypeReadonly">
                                     <option value="project">Project Ledger</option>
                                     <option value="client">Client Ledger</option>
                                     <option value="investor">Investor Ledger</option>

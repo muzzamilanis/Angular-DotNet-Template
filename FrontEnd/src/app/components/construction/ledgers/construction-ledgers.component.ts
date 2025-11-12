@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { ConstructionLedgerService, ConstructionClientService, ConstructionInvestorService } from '../../../services/construction-services';
 import { ConstructionProjectService } from '../../../services/construction-project.service';
 import { ClientLedgerEntry, InvestorLedgerEntry, ProjectLedgerEntry } from '../../../models/construction.model';
@@ -13,7 +14,8 @@ import { ClientLedgerEntry, InvestorLedgerEntry, ProjectLedgerEntry } from '../.
     styleUrls: ['./construction-ledgers.component.css'],
 })
 export class ConstructionLedgersComponent implements OnInit {
-    ledgerType: 'client' | 'investor' | 'project' = 'project';
+    ledgerType: string = 'project';
+    isLedgerTypeReadonly: boolean = false;
     projects: any[] = [];
     clients: any[] = [];
     investors: any[] = [];
@@ -25,13 +27,14 @@ export class ConstructionLedgersComponent implements OnInit {
     selectedClientName: string = '';
     selectedInvestorName: string = '';
     
-    clientEntries: ClientLedgerEntry[] = [];
-    investorEntries: InvestorLedgerEntry[] = [];
-    projectEntries: ProjectLedgerEntry[] = [];
+    projectEntries: any[] = [];
+    clientEntries: any[] = [];
+    investorEntries: any[] = [];
     
     loading = false;
 
     constructor(
+        private route: ActivatedRoute,
         private ledgerService: ConstructionLedgerService,
         private projectService: ConstructionProjectService,
         private clientService: ConstructionClientService,
@@ -39,6 +42,14 @@ export class ConstructionLedgersComponent implements OnInit {
     ) {}
 
     ngOnInit(): void {
+        // Get ledger type from route data
+        this.route.data.subscribe(data => {
+        if (data['ledgerType']) {
+            this.ledgerType = data['ledgerType'];
+            this.isLedgerTypeReadonly = true;
+            this.onLedgerTypeChange();
+        }
+        });
         this.loadProjects();
     }
 
@@ -52,9 +63,12 @@ export class ConstructionLedgersComponent implements OnInit {
     }
 
     onLedgerTypeChange(): void {
+        this.selectedProjectId = null;
+        this.selectedClientId = null;
+        this.selectedInvestorId = null;
+        this.projectEntries = [];
         this.clientEntries = [];
         this.investorEntries = [];
-        this.projectEntries = [];
         
         if (this.ledgerType === 'project' && this.selectedProjectId) {
             this.loadProjectLedger();

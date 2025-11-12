@@ -113,6 +113,7 @@ const routes: Routes = [
             },
             {
                 path: 'construction/project-ledger',
+                data: { ledgerType: 'project' },
                 loadComponent: () =>
                     import('./components/construction/ledgers/construction-ledgers.component').then(
                         (m) => m.ConstructionLedgersComponent
@@ -120,6 +121,7 @@ const routes: Routes = [
             },
             {
                 path: 'construction/client-ledger',
+                data: { ledgerType: 'client' },
                 loadComponent: () =>
                     import('./components/construction/ledgers/construction-ledgers.component').then(
                         (m) => m.ConstructionLedgersComponent
@@ -127,6 +129,7 @@ const routes: Routes = [
             },
             {
                 path: 'construction/investor-ledger',
+                data: { ledgerType: 'investor' },
                 loadComponent: () =>
                     import('./components/construction/ledgers/construction-ledgers.component').then(
                         (m) => m.ConstructionLedgersComponent
