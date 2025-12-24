@@ -13,10 +13,16 @@ on:
       - '.github/workflows/mobile-ci.yml'
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   build-and-test:
     name: Build and Test Mobile App
     runs-on: ubuntu-latest
+    
+    permissions:
+      contents: read
     
     defaults:
       run:

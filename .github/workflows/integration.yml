@@ -7,10 +7,16 @@ on:
     branches: [ main, master, develop ]
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   docker-compose-test:
     name: Docker Compose Integration Test
     runs-on: ubuntu-latest
+    
+    permissions:
+      contents: read
     
     steps:
     - name: Checkout code
@@ -64,6 +70,9 @@ jobs:
   build-all:
     name: Build All Components
     runs-on: ubuntu-latest
+    
+    permissions:
+      contents: read
     
     steps:
     - name: Checkout code

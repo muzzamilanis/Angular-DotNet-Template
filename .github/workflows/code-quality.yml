@@ -7,10 +7,17 @@ on:
     branches: [ main, master, develop ]
   workflow_dispatch:
 
+permissions:
+  contents: read
+  security-events: write
+
 jobs:
   frontend-quality:
     name: Frontend Code Quality
     runs-on: ubuntu-latest
+    
+    permissions:
+      contents: read
     
     defaults:
       run:
@@ -46,6 +53,9 @@ jobs:
     name: Backend Code Quality
     runs-on: ubuntu-latest
     
+    permissions:
+      contents: read
+    
     defaults:
       run:
         working-directory: ./Backend/AspNetCore/SimpleApi
@@ -73,6 +83,10 @@ jobs:
     name: Security Scanning
     runs-on: ubuntu-latest
     
+    permissions:
+      contents: read
+      security-events: write
+    
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -98,6 +112,9 @@ jobs:
     name: Dependency Review
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
+    
+    permissions:
+      contents: read
     
     steps:
     - name: Checkout code
