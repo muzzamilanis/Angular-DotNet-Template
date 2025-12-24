@@ -1,5 +1,10 @@
 # SmartBizApp
 
+[![Backend CI/CD](https://github.com/muzzamilanis/Angular-DotNet-Template/workflows/Backend%20CI%2FCD/badge.svg)](https://github.com/muzzamilanis/Angular-DotNet-Template/actions/workflows/backend-ci.yml)
+[![Frontend CI/CD](https://github.com/muzzamilanis/Angular-DotNet-Template/workflows/Frontend%20CI%2FCD/badge.svg)](https://github.com/muzzamilanis/Angular-DotNet-Template/actions/workflows/frontend-ci.yml)
+[![Full Stack Integration](https://github.com/muzzamilanis/Angular-DotNet-Template/workflows/Full%20Stack%20Integration/badge.svg)](https://github.com/muzzamilanis/Angular-DotNet-Template/actions/workflows/integration.yml)
+[![Code Quality](https://github.com/muzzamilanis/Angular-DotNet-Template/workflows/Code%20Quality/badge.svg)](https://github.com/muzzamilanis/Angular-DotNet-Template/actions/workflows/code-quality.yml)
+
 SmartBizApp is a comprehensive business management platform with **ASP.NET Core** backend, **Angular** web frontend, and **React Native** mobile app, designed to streamline business operations and enhance productivity across all devices.
 
 ## Features

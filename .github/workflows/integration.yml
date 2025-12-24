@@ -1,0 +1,92 @@
+name: Full Stack Integration
+
+on:
+  push:
+    branches: [ main, master, develop ]
+  pull_request:
+    branches: [ main, master, develop ]
+  workflow_dispatch:
+
+jobs:
+  docker-compose-test:
+    name: Docker Compose Integration Test
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Create environment file
+      run: |
+        cat > environment-configuration.env << EOF
+        POSTGRES_HOST=postgres
+        POSTGRES_DB=smartbizapp_test
+        POSTGRES_USER=postgres
+        POSTGRES_PASSWORD=test_password_123
+        EOF
+        
+    - name: Build and start services
+      run: docker-compose up -d --build
+      
+    - name: Wait for services to be healthy
+      run: |
+        echo "Waiting for services to start..."
+        sleep 30
+        
+    - name: Check API health
+      run: |
+        for i in {1..30}; do
+          if curl -f http://localhost:8080/swagger/index.html > /dev/null 2>&1; then
+            echo "API is responding!"
+            exit 0
+          fi
+          echo "Waiting for API to be ready... ($i/30)"
+          sleep 2
+        done
+        echo "API failed to respond"
+        exit 1
+        
+    - name: Check PostgreSQL
+      run: docker-compose exec -T postgres pg_isready -U postgres
+      
+    - name: Show API logs
+      if: always()
+      run: docker-compose logs api
+      
+    - name: Show PostgreSQL logs
+      if: always()
+      run: docker-compose logs postgres
+      
+    - name: Stop services
+      if: always()
+      run: docker-compose down -v
+
+  build-all:
+    name: Build All Components
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+        
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+        
+    - name: Build Backend
+      working-directory: ./Backend/AspNetCore/SimpleApi
+      run: |
+        dotnet restore
+        dotnet build --configuration Release
+        
+    - name: Build Frontend
+      working-directory: ./FrontEnd
+      run: |
+        npm ci
+        npm run build -- --configuration production
