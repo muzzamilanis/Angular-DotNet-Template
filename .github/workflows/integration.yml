@@ -88,5 +88,5 @@ jobs:
     - name: Build Frontend
       working-directory: ./FrontEnd
       run: |
-        npm ci
+        npm install
         npm run build -- --configuration production

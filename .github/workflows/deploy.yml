@@ -58,7 +58,7 @@ jobs:
         
     - name: Install dependencies
       working-directory: ./FrontEnd
-      run: npm ci
+      run: npm install
       
     - name: Build for production
       working-directory: ./FrontEnd

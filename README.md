@@ -85,12 +85,14 @@ SmartBizApp is a comprehensive business management platform with **ASP.NET Core*
 ### Development & Deployment
 - **Linting**: ESLint 9.21.0 with Angular-specific rules and TypeScript integration
 - **Code Quality**: Prettier 5.2.3 for consistent code formatting
+- **CI/CD Pipeline**: GitHub Actions with automated builds, tests, and deployments
 - **Containerization**: Docker with multi-stage builds and Docker Compose orchestration
 - **Production Database**: PostgreSQL 15+ with Npgsql.EntityFrameworkCore.PostgreSQL 9.0.0
 - **Development Database**: SQLite for streamlined local development
 - **Package Management**: npm with lock file support and security auditing
 - **Testing**: Jasmine 5.6.0 and Karma 6.4.4 for unit testing
 - **Build Tools**: Angular CLI 19.2.1 with Webpack bundling and optimization
+- **Security Scanning**: Trivy vulnerability scanner for dependencies and containers
 
 # Default Login Credentials
 
@@ -417,6 +419,50 @@ dotnet ef database update
 dotnet ef migrations script
 ```
 
+## CI/CD Pipeline
+
+This project includes a comprehensive CI/CD pipeline using GitHub Actions that automatically builds, tests, and validates all components.
+
+### Pipeline Features
+
+- **🔧 Automated Building**: Backend (.NET), Frontend (Angular), and Mobile (React Native) builds
+- **🧪 Automated Testing**: Unit tests, integration tests, and code quality checks
+- **🐳 Docker Support**: Automated Docker image builds and validation
+- **🔒 Security Scanning**: Vulnerability detection with Trivy scanner
+- **📦 Artifact Management**: Build artifacts for deployment
+- **🚀 Smart Execution**: Only runs workflows for changed components
+
+### Workflows
+
+The CI/CD system includes these workflows:
+
+1. **Main CI/CD Pipeline** - Orchestrates all workflows based on changes
+2. **Backend CI** - Builds and tests ASP.NET Core API
+3. **Frontend CI** - Builds and tests Angular application
+4. **Mobile CI** - Validates React Native mobile app
+5. **Integration Tests** - Tests Docker Compose full-stack deployment
+6. **Code Quality** - ESLint, Prettier, TypeScript checks, and security scanning
+7. **Deploy** - Production deployment and Docker image publishing
+
+### Status Checks
+
+All pull requests are validated by the CI/CD pipeline. The following checks must pass:
+
+- ✅ Backend build and tests
+- ✅ Frontend build and tests
+- ✅ Code quality and linting
+- ✅ Docker integration tests
+
+### Running Workflows Manually
+
+Workflows can be triggered manually from the GitHub Actions tab:
+1. Go to the **Actions** tab
+2. Select a workflow
+3. Click **"Run workflow"**
+4. Choose the branch and click **"Run workflow"**
+
+For detailed CI/CD documentation, see [CI_CD_SETUP.md](CI_CD_SETUP.md).
+
 ## Contributing
 
 1. **Fork the repository**
@@ -465,6 +511,7 @@ For support and questions, please create an issue in the repository.
 
 ## Additional Documentation
 
+- **[CI/CD Pipeline Setup Guide](CI_CD_SETUP.md)**: Complete guide for continuous integration and deployment, workflow configuration, and automation
 - **[RBAC Implementation Guide](RBAC_IMPLEMENTATION.md)**: Comprehensive documentation on role-based access control, security features, and user permission management
 - **[Email Notification System](NOTIFICATION_SYSTEM.md)**: Complete setup guide for automated deadline notifications, SMTP configuration, and testing procedures  
 - **[Docker Deployment Guide](DOCKER_README.md)**: Detailed containerization instructions, multi-container orchestration, and production deployment
