@@ -4,6 +4,21 @@
 
 This project uses GitHub Actions for continuous integration and continuous deployment (CI/CD). The pipeline automatically builds, tests, and validates all components whenever code is pushed or a pull request is created.
 
+## Important Notes
+
+### Initial Setup Considerations
+
+The CI/CD pipeline is configured with `continue-on-error: true` for certain checks (tests, linting) during the initial setup phase. This allows the pipeline to run and provide feedback without blocking development due to pre-existing issues.
+
+**Once the codebase is stabilized:**
+1. Remove `continue-on-error: true` from test steps in workflow files
+2. Remove `|| true` from validation script checks  
+3. Fix all linting and TypeScript errors
+4. Ensure all tests pass consistently
+5. Make pipeline checks required for PR merges
+
+This approach allows for gradual improvement while still providing automated feedback.
+
 ## Pipeline Architecture
 
 The CI/CD system consists of several workflows working together:

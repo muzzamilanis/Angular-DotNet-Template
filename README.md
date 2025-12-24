@@ -461,6 +461,16 @@ Workflows can be triggered manually from the GitHub Actions tab:
 3. Click **"Run workflow"**
 4. Choose the branch and click **"Run workflow"**
 
+### Local Validation
+
+Before pushing code, run the local validation script to catch issues early:
+
+```bash
+./validate-pipeline.sh
+```
+
+This script runs the same checks as the CI/CD pipeline locally.
+
 For detailed CI/CD documentation, see [CI_CD_SETUP.md](CI_CD_SETUP.md).
 
 ## Contributing
