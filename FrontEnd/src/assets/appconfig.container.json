@@ -1,0 +1,10 @@
+{
+  "remoteServiceBaseUrl": "http://backend:5000",
+  "appBaseUrl": "http://localhost:4200",
+  "localeMappings": [
+    {
+      "from": "en-US",
+      "to": "en"
+    }
+  ]
+}
