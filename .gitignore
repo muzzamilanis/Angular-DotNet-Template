@@ -25,3 +25,6 @@ Mobile/SmartBizApp/web-build/
 *.backup
 
 
+
+# Environment configuration
+environment-configuration.env

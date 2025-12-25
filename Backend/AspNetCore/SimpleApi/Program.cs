@@ -9,26 +9,29 @@ using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var port = Environment.GetEnvironmentVariable("PORT") ?? "5000";
-
-// Only enforce HTTPS in Development
-if (builder.Environment.IsDevelopment())
+// Only configure Kestrel ports if ASPNETCORE_URLS is not set
+// This allows Docker and CI/CD to override ports via environment variable
+if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("ASPNETCORE_URLS")))
 {
-	builder.WebHost.ConfigureKestrel(options =>
+	// Only enforce HTTPS in Development
+	if (builder.Environment.IsDevelopment())
 	{
-		options.ListenAnyIP(5000); // HTTP
-		options.ListenAnyIP(5001, listenOptions =>
+		builder.WebHost.ConfigureKestrel(options =>
 		{
-			listenOptions.UseHttps(); // only for local dev cert
+			options.ListenAnyIP(5000); // HTTP
+			options.ListenAnyIP(5001, listenOptions =>
+			{
+				listenOptions.UseHttps(); // only for local dev cert
+			});
 		});
-	});
-}
-else
-{
-	builder.WebHost.ConfigureKestrel(options =>
+	}
+	else
 	{
-		options.ListenAnyIP(int.Parse(port)); // only HTTP in production
-	});
+		builder.WebHost.ConfigureKestrel(options =>
+		{
+			options.ListenAnyIP(5000); // only HTTP in production
+		});
+	}
 }
 
 // Add services to the container.
@@ -162,6 +165,10 @@ app.UseCors("AllowAll");
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+// Add a simple health check endpoint (accessible without authentication)
+app.MapGet("/health", () => Results.Ok(new { status = "healthy", timestamp = DateTime.UtcNow }))
+    .AllowAnonymous();
 
 app.MapControllers();
 

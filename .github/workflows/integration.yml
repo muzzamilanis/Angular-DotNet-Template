@@ -1,0 +1,105 @@
+name: Full Stack Integration
+
+on: 
+  push:
+    branches: [main, master, development]
+  pull_request: 
+    branches: [main, master, development]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  docker-compose-test:
+    name: Docker Compose Integration Test
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
+    steps:
+      - name:  Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create environment file
+        run: |
+          cat > environment-configuration.env << EOF
+          POSTGRES_HOST=postgres
+          POSTGRES_DB=smartbizapp_test
+          POSTGRES_USER=postgres
+          POSTGRES_PASSWORD=test_password_123
+          EOF
+
+      - name: Build and start services with CI config
+        run: docker compose -f docker-compose.yml -f docker-compose.ci.yml up -d --build
+
+      - name:  Wait for PostgreSQL to be healthy
+        run: |
+          echo "Waiting for PostgreSQL..."
+          timeout 60 bash -c 'until docker compose -f docker-compose.yml -f docker-compose.ci.yml exec -T postgres pg_isready -U postgres -d smartbizapp_test; do sleep 2; done'
+          echo "PostgreSQL is ready!"
+
+      - name: Wait for API to start
+        run: |
+          echo "Waiting for API to be ready..."
+          timeout 120 bash -c 'until curl -sf http://localhost:8080/health; do sleep 3; done'
+          echo "API is responding!"
+
+      - name: Run basic API health check
+        run: |
+          echo "Testing health endpoint..."
+          curl -f http://localhost:8080/health
+          echo ""
+          echo "Testing Swagger UI..."
+          curl -f http://localhost:8080/swagger/index.html
+          echo "All health checks passed!"
+
+      - name: Show container status
+        if: always()
+        run: docker compose -f docker-compose.yml -f docker-compose.ci.yml ps -a
+
+      - name: Show API logs
+        if: always()
+        run: docker compose -f docker-compose.yml -f docker-compose.ci.yml logs api
+
+      - name: Show PostgreSQL logs
+        if: always()
+        run: docker compose -f docker-compose.yml -f docker-compose.ci.yml logs postgres
+
+      - name:  Cleanup
+        if: always()
+        run: docker compose -f docker-compose.yml -f docker-compose.ci.yml down -v --remove-orphans
+
+  build-all:
+    name: Build All Components
+    runs-on: ubuntu-latest
+
+    permissions: 
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup . NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20.x"
+
+      - name: Build Backend
+        working-directory: ./Backend/AspNetCore/SimpleApi
+        run: |
+          dotnet restore
+          dotnet build --configuration Release
+
+      - name: Build Frontend
+        working-directory: ./FrontEnd
+        run: |
+          npm install
+          npm run build -- --configuration production
