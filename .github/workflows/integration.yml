@@ -1,25 +1,25 @@
 name: Full Stack Integration
 
-on:
+on: 
   push:
     branches: [ main, master, development ]
   pull_request:
     branches: [ main, master, development ]
   workflow_dispatch:
 
-permissions:
+permissions: 
   contents: read
 
-jobs:
-  docker-compose-test:
+jobs: 
+  docker-compose-test: 
     name: Docker Compose Integration Test
     runs-on: ubuntu-latest
     
-    permissions:
+    permissions: 
       contents: read
     
     steps:
-    - name: Checkout code
+    - name:  Checkout code
       uses: actions/checkout@v4
       
     - name: Create environment file
@@ -32,9 +32,9 @@ jobs:
         EOF
         
     - name: Build and start services
-      run: docker-compose up -d --build
+      run: docker compose up -d --build
       
-    - name: Wait for services to be healthy
+    - name:  Wait for services to be healthy
       run: |
         echo "Waiting for services to start..."
         sleep 30
@@ -53,19 +53,19 @@ jobs:
         exit 1
         
     - name: Check PostgreSQL
-      run: docker-compose exec -T postgres pg_isready -U postgres
+      run:  docker compose exec -T postgres pg_isready -U postgres
       
     - name: Show API logs
       if: always()
-      run: docker-compose logs api
+      run: docker compose logs api
       
     - name: Show PostgreSQL logs
       if: always()
-      run: docker-compose logs postgres
+      run: docker compose logs postgres
       
     - name: Stop services
       if: always()
-      run: docker-compose down -v
+      run: docker compose down -v
 
   build-all:
     name: Build All Components
@@ -83,7 +83,7 @@ jobs:
       with:
         dotnet-version: '8.0.x'
         
-    - name: Setup Node.js
+    - name:  Setup Node.js
       uses: actions/setup-node@v4
       with:
         node-version: '20.x'
@@ -94,8 +94,8 @@ jobs:
         dotnet restore
         dotnet build --configuration Release
         
-    - name: Build Frontend
-      working-directory: ./FrontEnd
+    - name:  Build Frontend
+      working-directory:  ./FrontEnd
       run: |
         npm install
         npm run build -- --configuration production
