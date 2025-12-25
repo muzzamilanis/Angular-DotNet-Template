@@ -1,6 +1,6 @@
 name: Full Stack Integration
 
-on:
+on: 
   push:
     branches: [main, master, development]
   pull_request: 
@@ -21,6 +21,15 @@ jobs:
     steps:
       - name:  Checkout code
         uses: actions/checkout@v4
+
+      - name: Create environment file
+        run: |
+          cat > environment-configuration.env << EOF
+          POSTGRES_HOST=postgres
+          POSTGRES_DB=smartbizapp_test
+          POSTGRES_USER=postgres
+          POSTGRES_PASSWORD=test_password_123
+          EOF
 
       - name: Build and start services with CI config
         run: docker compose -f docker-compose.yml -f docker-compose.ci. yml up -d --build
@@ -44,7 +53,7 @@ jobs:
 
       - name: Show container status
         if: always()
-        run: docker compose -f docker-compose.yml -f docker-compose.ci. yml ps -a
+        run: docker compose -f docker-compose.yml -f docker-compose.ci.yml ps -a
 
       - name: Show API logs
         if: always()
@@ -56,13 +65,13 @@ jobs:
 
       - name:  Cleanup
         if: always()
-        run: docker compose -f docker-compose.yml -f docker-compose.ci. yml down -v --remove-orphans
+        run: docker compose -f docker-compose.yml -f docker-compose.ci.yml down -v --remove-orphans
 
   build-all:
     name: Build All Components
     runs-on: ubuntu-latest
 
-    permissions:
+    permissions: 
       contents: read
 
     steps:
