@@ -1,0 +1,25 @@
+# CI/CD specific overrides - uses hardcoded test values
+services:
+  api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=smartbizapp_test;Username=postgres;Password=test_password_123
+      - Jwt__Key=your-secret-key-must-be-at-least-256-bits-long-for-security-in-production-environment
+      - Jwt__Issuer=SimpleApi
+      - Jwt__Audience=SimpleApi
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  postgres:
+    environment: 
+      - POSTGRES_DB=smartbizapp_test
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=test_password_123
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d smartbizapp_test"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
