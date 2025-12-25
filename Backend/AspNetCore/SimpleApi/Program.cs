@@ -152,10 +152,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// Add a simple health check endpoint
-app.MapGet("/health", () => Results.Ok(new { status = "healthy", timestamp = DateTime.UtcNow }))
-    .AllowAnonymous();
-
 // Create database if it doesn't exist
 using (var scope = app.Services.CreateScope())
 {
@@ -169,6 +165,10 @@ app.UseCors("AllowAll");
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+// Add a simple health check endpoint (accessible without authentication)
+app.MapGet("/health", () => Results.Ok(new { status = "healthy", timestamp = DateTime.UtcNow }))
+    .AllowAnonymous();
 
 app.MapControllers();
 
