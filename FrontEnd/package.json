@@ -10,6 +10,7 @@
         "lint": "eslint",
         "ng": "ng",
         "start": "ng serve --host 0.0.0.0 --port 4200 --no-hmr",
+        "build": "ng build",
         "test": "ng test",
         "prettier": "npx prettier --write ."
     },

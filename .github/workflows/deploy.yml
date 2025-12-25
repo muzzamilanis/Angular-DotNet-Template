@@ -1,0 +1,161 @@
+name: Deploy to Production
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deployment environment'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - staging
+          - production
+
+permissions:
+  contents: read
+
+jobs:
+  build-backend:
+    name: Build Backend for Deployment
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: read
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+        
+    - name: Restore dependencies
+      working-directory: ./Backend/AspNetCore/SimpleApi
+      run: dotnet restore
+      
+    - name: Build and publish
+      working-directory: ./Backend/AspNetCore/SimpleApi
+      run: dotnet publish -c Release -o ./publish
+      
+    - name: Upload backend artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: backend-deployment
+        path: ./Backend/AspNetCore/SimpleApi/publish
+        retention-days: 30
+
+  build-frontend:
+    name: Build Frontend for Deployment
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: read
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+        
+    - name: Install dependencies
+      working-directory: ./FrontEnd
+      run: npm install
+      
+    - name: Build for production
+      working-directory: ./FrontEnd
+      run: npm run build -- --configuration production
+      
+    - name: Upload frontend artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: frontend-deployment
+        path: ./FrontEnd/dist
+        retention-days: 30
+
+  build-docker-images:
+    name: Build and Push Docker Images
+    runs-on: ubuntu-latest
+    needs: [build-backend, build-frontend]
+    if: github.event_name == 'release'
+    
+    permissions:
+      contents: read
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+      
+    - name: Login to Docker Hub
+      uses: docker/login-action@v3
+      if: github.event_name == 'release'
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+      
+    - name: Extract version from tag
+      id: version
+      run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+      
+    - name: Build and push backend image
+      uses: docker/build-push-action@v5
+      with:
+        context: ./Backend/AspNetCore/SimpleApi
+        file: ./Backend/AspNetCore/SimpleApi/Dockerfile
+        push: ${{ github.event_name == 'release' }}
+        tags: |
+          ${{ secrets.DOCKER_USERNAME }}/smartbizapp-backend:latest
+          ${{ secrets.DOCKER_USERNAME }}/smartbizapp-backend:${{ steps.version.outputs.VERSION }}
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+        
+    - name: Build and push frontend image
+      uses: docker/build-push-action@v5
+      with:
+        context: ./FrontEnd
+        file: ./FrontEnd/Dockerfile
+        push: ${{ github.event_name == 'release' }}
+        tags: |
+          ${{ secrets.DOCKER_USERNAME }}/smartbizapp-frontend:latest
+          ${{ secrets.DOCKER_USERNAME }}/smartbizapp-frontend:${{ steps.version.outputs.VERSION }}
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+
+  deployment-summary:
+    name: Deployment Summary
+    runs-on: ubuntu-latest
+    needs: [build-backend, build-frontend, build-docker-images]
+    if: always()
+    
+    permissions: {}
+    
+    steps:
+    - name: Create deployment summary
+      run: |
+        echo "## Deployment Summary" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### Build Status:" >> $GITHUB_STEP_SUMMARY
+        echo "- Backend: ${{ needs.build-backend.result }}" >> $GITHUB_STEP_SUMMARY
+        echo "- Frontend: ${{ needs.build-frontend.result }}" >> $GITHUB_STEP_SUMMARY
+        echo "- Docker Images: ${{ needs.build-docker-images.result }}" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### Artifacts:" >> $GITHUB_STEP_SUMMARY
+        echo "- Backend artifacts available for 30 days" >> $GITHUB_STEP_SUMMARY
+        echo "- Frontend artifacts available for 30 days" >> $GITHUB_STEP_SUMMARY
+        
+        if [[ "${{ github.event_name }}" == "release" ]]; then
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Docker Images:" >> $GITHUB_STEP_SUMMARY
+          echo "- Backend: \`smartbizapp-backend:latest\` and \`smartbizapp-backend:${{ github.ref_name }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- Frontend: \`smartbizapp-frontend:latest\` and \`smartbizapp-frontend:${{ github.ref_name }}\`" >> $GITHUB_STEP_SUMMARY
+        fi
