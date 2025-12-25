@@ -24,3 +24,6 @@ Mobile/SmartBizApp/web-build/
 *.env
 
 
+
+# Environment configuration
+environment-configuration.env
