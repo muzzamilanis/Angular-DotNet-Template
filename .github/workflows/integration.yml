@@ -32,7 +32,7 @@ jobs:
           EOF
 
       - name: Build and start services with CI config
-        run: docker compose -f docker-compose.yml -f docker-compose.ci. yml up -d --build
+        run: docker compose -f docker-compose.yml -f docker-compose.ci.yml up -d --build
 
       - name:  Wait for PostgreSQL to be healthy
         run: |
