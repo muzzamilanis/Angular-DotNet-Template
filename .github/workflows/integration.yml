@@ -2,7 +2,7 @@ name: Full Stack Integration
 
 on: 
   push:
-    branches: [ main, master, development ]
+    branches:  [ main, master, development ]
   pull_request:
     branches: [ main, master, development ]
   workflow_dispatch:
@@ -12,13 +12,19 @@ permissions:
 
 jobs: 
   docker-compose-test: 
-    name: Docker Compose Integration Test
+    name:  Docker Compose Integration Test
     runs-on: ubuntu-latest
     
     permissions: 
       contents: read
     
-    steps:
+    env:
+      POSTGRES_HOST:  postgres
+      POSTGRES_DB:  smartbizapp_test
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: test_password_123
+    
+    steps: 
     - name:  Checkout code
       uses: actions/checkout@v4
       
