@@ -5,7 +5,7 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
 # Copy project files
-COPY SimpleApi.csproj ./
+COPY SimpleApi/SimpleApi.csproj ./
 COPY SimpleApi.FunctionalTests/SimpleApi.FunctionalTests.csproj ./SimpleApi.FunctionalTests/
 
 # Restore
