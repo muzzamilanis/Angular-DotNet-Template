@@ -21,7 +21,7 @@ RUN dotnet build SimpleApi/SimpleApi.csproj -c Release --no-restore
 # Run tests (separate project)
 RUN dotnet test SimpleApi.FunctionalTests/SimpleApi.FunctionalTests.csproj \
     -c Release \
-    --no-build
+    --no-restore
 
 # Publish API
 RUN dotnet publish SimpleApi/SimpleApi.csproj \
