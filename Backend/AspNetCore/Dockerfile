@@ -4,33 +4,30 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-# Copy project files
-COPY SimpleApi/SimpleApi.csproj ./
-COPY SimpleApi.FunctionalTests/SimpleApi.FunctionalTests.csproj ./SimpleApi.FunctionalTests/
+# Copy csproj files
+COPY SimpleApi/SimpleApi.csproj SimpleApi/
+COPY SimpleApi.FunctionalTests/SimpleApi.FunctionalTests.csproj SimpleApi.FunctionalTests/
 
 # Restore
-RUN dotnet restore SimpleApi.csproj
+RUN dotnet restore SimpleApi/SimpleApi.csproj
 RUN dotnet restore SimpleApi.FunctionalTests/SimpleApi.FunctionalTests.csproj
 
-# Copy everything else
+# Copy everything
 COPY . .
 
-# Build API only
-RUN dotnet build SimpleApi.csproj -c Release --no-restore
+# Build API ONLY
+RUN dotnet build SimpleApi/SimpleApi.csproj -c Release --no-restore
 
-# Run tests
+# Run tests (separate project)
 RUN dotnet test SimpleApi.FunctionalTests/SimpleApi.FunctionalTests.csproj \
     -c Release \
     --no-build
 
-# Publish API only
-RUN dotnet publish SimpleApi.csproj \
+# Publish API
+RUN dotnet publish SimpleApi/SimpleApi.csproj \
     -c Release \
     -o /app/publish \
     --no-build
-
-
-
 # =========================
 # Runtime stage
 # =========================
