@@ -1,29 +1,52 @@
-# Use the official .NET SDK image for building
+# =========================
+# Build & Test stage
+# =========================
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-WORKDIR /app
+WORKDIR /src
 
-# Copy the entire source code
+# Copy csproj files first (for caching)
+COPY SimpleApi.csproj ./
+COPY SimpleApi.FunctionalTests/SimpleApi.FunctionalTests.csproj ./SimpleApi.FunctionalTests/
+
+# Restore dependencies
+RUN dotnet restore SimpleApi.csproj
+RUN dotnet restore SimpleApi.FunctionalTests/SimpleApi.FunctionalTests.csproj
+
+# Copy the rest of the source
 COPY . .
 
-# Publish the application (this will restore, build, and publish)
-RUN dotnet publish -c Release -o /app/publish --verbosity normal
+# Build API project
+RUN dotnet build SimpleApi.csproj -c Release --no-restore
 
-# Use the official .NET runtime image for the final stage
+# Run tests (THIS is how tests are included correctly)
+RUN dotnet test SimpleApi.FunctionalTests/SimpleApi.FunctionalTests.csproj \
+    -c Release \
+    --no-build \
+    --logger trx
+
+# Publish ONLY the API project
+RUN dotnet publish SimpleApi.csproj \
+    -c Release \
+    -o /app/publish \
+    --no-build
+
+# =========================
+# Runtime stage
+# =========================
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 WORKDIR /app
 
-# Copy the published application from the build stage
+# Copy published output only
 COPY --from=build /app/publish .
 
-# Expose the port the app runs on
+# Expose ports
 EXPOSE 8080
 EXPOSE 8081
 
-# Set environment variables
+# Environment variables
 ENV ASPNETCORE_URLS=http://+:8080
 ENV ASPNETCORE_ENVIRONMENT=Production
 
-# Default environment variables (can be overridden)
 ENV ConnectionStrings__DefaultConnection=""
 ENV Jwt__Key=""
 ENV Jwt__Issuer="SimpleApi"
@@ -35,9 +58,10 @@ ENV Email__Password=""
 ENV Email__FromEmail=""
 ENV Email__FromName="SmartBizApp"
 
-# Create a non-root user for security
-RUN adduser --disabled-password --gecos '' appuser && chown -R appuser /app
+# Run as non-root user
+RUN adduser --disabled-password --gecos '' appuser \
+    && chown -R appuser /app
 USER appuser
 
-# Set the entry point
+# Entry point
 ENTRYPOINT ["dotnet", "SimpleApi.dll"]
