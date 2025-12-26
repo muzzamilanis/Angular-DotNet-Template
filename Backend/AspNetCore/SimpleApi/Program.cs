@@ -51,18 +51,24 @@ builder.Configuration
 	.AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true)
 	.AddEnvironmentVariables();
 
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-
-if (string.IsNullOrEmpty(connectionString))
+// Only configure database if not in Testing environment
+// (Testing environment will configure its own database provider)
+if (!builder.Environment.IsEnvironment("Testing"))
 {
-    throw new InvalidOperationException(
-        "Database connection string 'DefaultConnection' is not configured. " +
-        "Please set the ConnectionStrings__DefaultConnection environment variable or " +
-        "add DefaultConnection to appsettings.json");
+	var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+	if (string.IsNullOrEmpty(connectionString))
+	{
+		throw new InvalidOperationException(
+			"Database connection string 'DefaultConnection' is not configured. " +
+			"Please set the ConnectionStrings__DefaultConnection environment variable or " +
+			"add DefaultConnection to appsettings.json");
+	}
+
+	builder.Services.AddDbContext<ApplicationDbContext>(options =>
+		options.UseNpgsql(connectionString));
 }
 
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-	options.UseNpgsql(connectionString));
 
 // Add AutoMapper
 builder.Services.AddAutoMapper(typeof(MappingProfile));
@@ -173,3 +179,6 @@ app.MapGet("/health", () => Results.Ok(new { status = "healthy", timestamp = Dat
 app.MapControllers();
 
 app.Run();
+
+// Make the implicit Program class public so test projects can access it
+public partial class Program { }
