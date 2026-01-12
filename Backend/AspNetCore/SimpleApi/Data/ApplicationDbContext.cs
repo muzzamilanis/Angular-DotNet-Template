@@ -31,6 +31,7 @@ namespace SimpleApi.Data
 		public DbSet<Account> Accounts { get; set; }
 		public DbSet<Voucher> Vouchers { get; set; }
 		public DbSet<JournalEntry> JournalEntries { get; set; }
+		public DbSet<Vendor> Vendors { get; set; }
 		
 		// Construction Module
 		public DbSet<ConstructionProject> ConstructionProjects { get; set; }
@@ -141,6 +142,23 @@ namespace SimpleApi.Data
 				entity.Property(e => e.Address).HasMaxLength(500);
 				entity.Property(e => e.Phone).HasMaxLength(50);
 				entity.Property(e => e.Email).HasMaxLength(200);
+
+				entity.HasOne(e => e.Company)
+					  .WithMany()
+					  .HasForeignKey(e => e.CompanyId)
+					  .OnDelete(DeleteBehavior.Restrict);
+			});
+
+			// Configure Vendor
+			modelBuilder.Entity<Vendor>(entity =>
+			{
+				entity.HasKey(e => e.Id);
+				entity.Property(e => e.Name).IsRequired().HasMaxLength(200);
+				entity.Property(e => e.Address).HasMaxLength(500);
+				entity.Property(e => e.Phone).HasMaxLength(50);
+				entity.Property(e => e.Email).HasMaxLength(200);
+				entity.Property(e => e.ContactPerson).HasMaxLength(100);
+				entity.Property(e => e.Description).HasMaxLength(500);
 
 				entity.HasOne(e => e.Company)
 					  .WithMany()
@@ -605,7 +623,8 @@ namespace SimpleApi.Data
 				new BusinessNature { Id = 4, Name = "Retail", DisplayName = "Retail & E-commerce", Description = "Traditional retail and online commerce operations", IsActive = true, CreatedAt = seedDate },
 				new BusinessNature { Id = 5, Name = "Manufacturing", DisplayName = "Manufacturing", Description = "Manufacturing and production businesses", IsActive = true, CreatedAt = seedDate },
 				new BusinessNature { Id = 6, Name = "RealEstate", DisplayName = "Real Estate", Description = "Real estate property management, buying, selling, and rental services", IsActive = true, CreatedAt = seedDate },
-				new BusinessNature { Id = 7, Name = "Construction", DisplayName = "Construction", Description = "Construction project management with client, investor, and financial tracking", IsActive = true, CreatedAt = seedDate }
+				new BusinessNature { Id = 7, Name = "Construction", DisplayName = "Construction", Description = "Construction project management with client, investor, and financial tracking", IsActive = true, CreatedAt = seedDate },
+				new BusinessNature { Id = 8, Name = "Accounting", DisplayName = "Accounting & Finance", Description = "Accounting, bookkeeping, and financial management services", IsActive = true, CreatedAt = seedDate }
 			);
 
 			// Seed data - Create companies with business nature references

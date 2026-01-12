@@ -19,6 +19,12 @@ namespace SimpleApi.Services
             CreateMap<CreateCustomerDto, Customer>();
             CreateMap<UpdateCustomerDto, Customer>();
 
+            // Vendor mappings
+            CreateMap<Vendor, VendorDto>()
+                .ForMember(dest => dest.CompanyName, opt => opt.MapFrom(src => src.Company!.Name));
+            CreateMap<CreateVendorDto, Vendor>();
+            CreateMap<UpdateVendorDto, Vendor>();
+
             // Product mappings
             CreateMap<Product, ProductDto>()
                 .ForMember(dest => dest.CompanyName, opt => opt.MapFrom(src => src.Company!.Name));
