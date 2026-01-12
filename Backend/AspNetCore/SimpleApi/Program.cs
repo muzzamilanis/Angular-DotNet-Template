@@ -75,6 +75,7 @@ builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 // Add services
 builder.Services.AddScoped<ICustomerService, CustomerService>();
+builder.Services.AddScoped<IVendorService, VendorService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ISaleOrderService, SaleOrderService>();
 builder.Services.AddScoped<IProjectService, ProjectService>();

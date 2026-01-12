@@ -181,6 +181,15 @@ namespace SimpleApi.Migrations
                             DisplayName = "Construction",
                             IsActive = true,
                             Name = "Construction"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Accounting, bookkeeping, and financial management services",
+                            DisplayName = "Accounting & Finance",
+                            IsActive = true,
+                            Name = "Accounting"
                         });
                 });
 
@@ -1841,6 +1850,58 @@ namespace SimpleApi.Migrations
                         });
                 });
 
+            modelBuilder.Entity("SimpleApi.Models.Vendor", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Address")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ContactPerson")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("Phone")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.ToTable("Vendors");
+                });
+
             modelBuilder.Entity("SimpleApi.Models.Voucher", b =>
                 {
                     b.Property<int>("Id")
@@ -2394,6 +2455,17 @@ namespace SimpleApi.Migrations
                 });
 
             modelBuilder.Entity("SimpleApi.Models.User", b =>
+                {
+                    b.HasOne("SimpleApi.Models.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Company");
+                });
+
+            modelBuilder.Entity("SimpleApi.Models.Vendor", b =>
                 {
                     b.HasOne("SimpleApi.Models.Company", "Company")
                         .WithMany()

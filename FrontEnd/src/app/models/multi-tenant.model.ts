@@ -97,4 +97,5 @@ export enum BusinessNatureType {
     MANUFACTURING = 5,
     REALESTATE = 6,
     CONSTRUCTION = 7,
+    ACCOUNTING = 8,
 }
