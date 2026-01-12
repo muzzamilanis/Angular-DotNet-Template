@@ -1,0 +1,8 @@
+.badge-lg {
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+}
+
+.table-responsive {
+    overflow-x: auto;
+}

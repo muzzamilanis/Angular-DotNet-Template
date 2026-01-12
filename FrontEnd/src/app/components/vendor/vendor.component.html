@@ -1,0 +1,254 @@
+<!-- Vendor Form -->
+<div class="row">
+    <div class="col-md-12">
+        <div class="card card-primary">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-truck mr-2"></i>
+                    {{ editingVendor ? 'Edit' : 'Create' }} Vendor
+                </h3>
+            </div>
+            <form [formGroup]="vendorForm" (ngSubmit)="onSubmit()">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="name">Vendor Name *</label>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="name"
+                                    formControlName="name"
+                                    placeholder="Enter vendor name"
+                                    [class.is-invalid]="
+                                        vendorForm.get('name')?.invalid && vendorForm.get('name')?.touched
+                                    " />
+                                <div
+                                    class="invalid-feedback"
+                                    *ngIf="vendorForm.get('name')?.invalid && vendorForm.get('name')?.touched">
+                                    <div *ngIf="vendorForm.get('name')?.errors?.['required']">
+                                        Vendor name is required
+                                    </div>
+                                    <div *ngIf="vendorForm.get('name')?.errors?.['maxlength']">
+                                        Vendor name must be 200 characters or less
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="contactPerson">Contact Person</label>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="contactPerson"
+                                    formControlName="contactPerson"
+                                    placeholder="Enter contact person name"
+                                    [class.is-invalid]="
+                                        vendorForm.get('contactPerson')?.invalid && vendorForm.get('contactPerson')?.touched
+                                    " />
+                                <div
+                                    class="invalid-feedback"
+                                    *ngIf="vendorForm.get('contactPerson')?.invalid && vendorForm.get('contactPerson')?.touched">
+                                    <div *ngIf="vendorForm.get('contactPerson')?.errors?.['maxlength']">
+                                        Contact person name must be 100 characters or less
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="phone">Phone</label>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="phone"
+                                    formControlName="phone"
+                                    placeholder="Enter phone number"
+                                    [class.is-invalid]="
+                                        vendorForm.get('phone')?.invalid && vendorForm.get('phone')?.touched
+                                    " />
+                                <div
+                                    class="invalid-feedback"
+                                    *ngIf="vendorForm.get('phone')?.invalid && vendorForm.get('phone')?.touched">
+                                    <div *ngIf="vendorForm.get('phone')?.errors?.['maxlength']">
+                                        Phone must be 50 characters or less
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="email">Email</label>
+                                <input
+                                    type="email"
+                                    class="form-control"
+                                    id="email"
+                                    formControlName="email"
+                                    placeholder="Enter email address"
+                                    [class.is-invalid]="
+                                        vendorForm.get('email')?.invalid && vendorForm.get('email')?.touched
+                                    " />
+                                <div
+                                    class="invalid-feedback"
+                                    *ngIf="vendorForm.get('email')?.invalid && vendorForm.get('email')?.touched">
+                                    <div *ngIf="vendorForm.get('email')?.errors?.['email']">
+                                        Please enter a valid email address
+                                    </div>
+                                    <div *ngIf="vendorForm.get('email')?.errors?.['maxlength']">
+                                        Email must be 200 characters or less
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="address">Address</label>
+                                <textarea
+                                    class="form-control"
+                                    id="address"
+                                    formControlName="address"
+                                    placeholder="Enter vendor address"
+                                    rows="2"
+                                    [class.is-invalid]="
+                                        vendorForm.get('address')?.invalid && vendorForm.get('address')?.touched
+                                    "></textarea>
+                                <div
+                                    class="invalid-feedback"
+                                    *ngIf="
+                                        vendorForm.get('address')?.invalid && vendorForm.get('address')?.touched
+                                    ">
+                                    <div *ngIf="vendorForm.get('address')?.errors?.['maxlength']">
+                                        Address must be 500 characters or less
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-10">
+                            <div class="form-group">
+                                <label for="description">Description</label>
+                                <textarea
+                                    class="form-control"
+                                    id="description"
+                                    formControlName="description"
+                                    placeholder="Enter vendor description or notes"
+                                    rows="2"
+                                    [class.is-invalid]="
+                                        vendorForm.get('description')?.invalid && vendorForm.get('description')?.touched
+                                    "></textarea>
+                                <div
+                                    class="invalid-feedback"
+                                    *ngIf="
+                                        vendorForm.get('description')?.invalid && vendorForm.get('description')?.touched
+                                    ">
+                                    <div *ngIf="vendorForm.get('description')?.errors?.['maxlength']">
+                                        Description must be 500 characters or less
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label for="isActive">Status</label>
+                                <div class="form-check">
+                                    <input
+                                        class="form-check-input"
+                                        type="checkbox"
+                                        id="isActive"
+                                        formControlName="isActive" />
+                                    <label class="form-check-label" for="isActive">Active</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-footer">
+                    <button type="submit" class="btn btn-primary" [disabled]="vendorForm.invalid || loading">
+                        <span *ngIf="loading" class="spinner-border spinner-border-sm mr-2"></span>
+                        <i class="fas fa-save mr-2"></i>
+                        {{ editingVendor ? 'Update' : 'Create' }} Vendor
+                    </button>
+                    <button type="button" class="btn btn-secondary ml-2" (click)="resetForm()">
+                        <i class="fas fa-times mr-2"></i>
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Vendors List -->
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-list mr-2"></i>
+                    Vendors
+                </h3>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Contact Person</th>
+                                <th>Phone</th>
+                                <th>Email</th>
+                                <th>Address</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let vendor of vendors">
+                                <td>{{ vendor.name }}</td>
+                                <td>{{ vendor.contactPerson || '-' }}</td>
+                                <td>{{ vendor.phone || '-' }}</td>
+                                <td>{{ vendor.email || '-' }}</td>
+                                <td>{{ vendor.address || '-' }}</td>
+                                <td>
+                                    <span
+                                        class="badge"
+                                        [class.badge-success]="vendor.isActive"
+                                        [class.badge-danger]="!vendor.isActive">
+                                        {{ vendor.isActive ? 'Active' : 'Inactive' }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <button
+                                        type="button"
+                                        class="btn btn-warning btn-sm mr-2"
+                                        (click)="editVendor(vendor)">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button
+                                        type="button"
+                                        class="btn btn-danger btn-sm"
+                                        (click)="deleteVendor(vendor)">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr *ngIf="vendors.length === 0">
+                                <td colspan="7" class="text-center">No vendors found</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

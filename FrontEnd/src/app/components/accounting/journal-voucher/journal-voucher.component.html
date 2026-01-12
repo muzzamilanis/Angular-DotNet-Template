@@ -1,0 +1,155 @@
+<div class="row">
+    <div class="col-md-12">
+        <div class="card card-primary">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-book mr-2"></i>
+                    Journal Voucher Entry
+                </h3>
+            </div>
+            <form [formGroup]="voucherForm" (ngSubmit)="onSubmit()">
+                <div class="card-body">
+                    <!-- Voucher Header -->
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="voucherNumber">Voucher Number *</label>
+                                <input type="text" class="form-control" id="voucherNumber" 
+                                       formControlName="voucherNumber" placeholder="JV-001">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="voucherDate">Date *</label>
+                                <input type="date" class="form-control" id="voucherDate" 
+                                       formControlName="voucherDate">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="referenceNumber">Reference Number</label>
+                                <input type="text" class="form-control" id="referenceNumber" 
+                                       formControlName="referenceNumber" placeholder="Optional">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>&nbsp;</label>
+                                <div>
+                                    <span class="badge badge-lg" 
+                                          [ngClass]="isBalanced() ? 'badge-success' : 'badge-danger'">
+                                        {{ isBalanced() ? 'Balanced' : 'Not Balanced' }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="description">Description</label>
+                                <textarea class="form-control" id="description" 
+                                          formControlName="description" rows="2" 
+                                          placeholder="Enter voucher description"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Journal Entries -->
+                    <h5 class="mt-3 mb-3">
+                        <i class="fas fa-list mr-2"></i>
+                        Journal Entries
+                    </h5>
+
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th style="width: 35%;">Account *</th>
+                                    <th style="width: 15%;">Type *</th>
+                                    <th style="width: 20%;">Amount *</th>
+                                    <th style="width: 25%;">Description</th>
+                                    <th style="width: 5%;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody formArrayName="entries">
+                                <tr *ngFor="let entry of entries.controls; let i = index" [formGroupName]="i">
+                                    <td>
+                                        <select class="form-control" formControlName="accountId">
+                                            <option [value]="null">Select Account</option>
+                                            <option *ngFor="let account of accounts" [value]="account.id">
+                                                {{ account.accountCode }} - {{ account.accountName }}
+                                            </option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <select class="form-control" formControlName="entryType">
+                                            <option value="Debit">Debit</option>
+                                            <option value="Credit">Credit</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <input type="number" class="form-control" formControlName="amount" 
+                                               placeholder="0.00" step="0.01" min="0">
+                                    </td>
+                                    <td>
+                                        <input type="text" class="form-control" formControlName="description" 
+                                               placeholder="Entry description">
+                                    </td>
+                                    <td class="text-center">
+                                        <button type="button" class="btn btn-sm btn-danger" 
+                                                (click)="removeEntry(i)" 
+                                                [disabled]="entries.length <= 2">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tfoot class="font-weight-bold bg-light">
+                                <tr>
+                                    <td colspan="2" class="text-right">Total Debit:</td>
+                                    <td>${{ getTotalDebit() | number:'1.2-2' }}</td>
+                                    <td colspan="2"></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" class="text-right">Total Credit:</td>
+                                    <td>${{ getTotalCredit() | number:'1.2-2' }}</td>
+                                    <td colspan="2"></td>
+                                </tr>
+                                <tr [ngClass]="isBalanced() ? 'table-success' : 'table-danger'">
+                                    <td colspan="2" class="text-right">Difference:</td>
+                                    <td>${{ (getTotalDebit() - getTotalCredit()) | number:'1.2-2' }}</td>
+                                    <td colspan="2">
+                                        <span *ngIf="!isBalanced()" class="text-danger">
+                                            <i class="fas fa-exclamation-triangle mr-1"></i>
+                                            Must be zero
+                                        </span>
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+
+                    <button type="button" class="btn btn-info btn-sm" (click)="addEntry()">
+                        <i class="fas fa-plus mr-2"></i>
+                        Add Entry
+                    </button>
+                </div>
+
+                <div class="card-footer">
+                    <button type="submit" class="btn btn-primary" 
+                            [disabled]="voucherForm.invalid || loading || !isBalanced()">
+                        <span *ngIf="loading" class="spinner-border spinner-border-sm mr-2"></span>
+                        <i class="fas fa-save mr-2"></i>
+                        Save Journal Voucher
+                    </button>
+                    <button type="button" class="btn btn-secondary ml-2" (click)="resetForm()">
+                        <i class="fas fa-times mr-2"></i>
+                        Reset
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

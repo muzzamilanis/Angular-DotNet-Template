@@ -225,8 +225,8 @@
                         </ul>
                     </li>
 
-                    <!-- Accounting Modules - Only visible for Real Estate -->
-                    <li class="nav-item" [class.menu-open]="isMenuOpen('accounting')" *ngIf="isRealEstate()">
+                    <!-- Accounting Modules - Only visible for Real Estate and Accounting -->
+                    <li class="nav-item" [class.menu-open]="isMenuOpen('accounting')" *ngIf="isRealEstate() || isAccounting()">
                         <a (click)="toggleMenuState('accounting', $event)" class="nav-link">
                             <i class="nav-icon fas fa-calculator"></i>
                             <p>
@@ -246,6 +246,33 @@
                             </li>
                             <li class="nav-item">
                                 <a
+                                    routerLink="/accounting/journal-voucher"
+                                    class="nav-link"
+                                    routerLinkActive="active">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Journal Voucher</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a
+                                    routerLink="/accounting/cash-payment"
+                                    class="nav-link"
+                                    routerLinkActive="active">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Cash Payment</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a
+                                    routerLink="/accounting/bank-payment"
+                                    class="nav-link"
+                                    routerLinkActive="active">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Bank Payment</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a
                                     routerLink="/accounting/vouchers"
                                     class="nav-link"
                                     routerLinkActive="active">
@@ -256,8 +283,39 @@
                         </ul>
                     </li>
 
-                    <!-- Reports - Only visible for Real Estate -->
-                    <li class="nav-item" [class.menu-open]="isMenuOpen('reports')" *ngIf="isRealEstate()">
+                    <!-- Masters Menu - For Accounting business nature -->
+                    <li class="nav-item" [class.menu-open]="isMenuOpen('masters')" *ngIf="isAccounting()">
+                        <a (click)="toggleMenuState('masters', $event)" class="nav-link">
+                            <i class="nav-icon fas fa-database"></i>
+                            <p>
+                                Masters
+                                <i class="fas fa-angle-left right"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a
+                                    routerLink="/masters/customers"
+                                    class="nav-link"
+                                    routerLinkActive="active">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Customers</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a
+                                    routerLink="/accounting/vendors"
+                                    class="nav-link"
+                                    routerLinkActive="active">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Vendors</p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <!-- Reports - Only visible for Real Estate and Accounting -->
+                    <li class="nav-item" [class.menu-open]="isMenuOpen('reports')" *ngIf="isRealEstate() || isAccounting()">
                         <a (click)="toggleMenuState('reports', $event)" class="nav-link">
                             <i class="nav-icon fas fa-chart-line"></i>
                             <p>

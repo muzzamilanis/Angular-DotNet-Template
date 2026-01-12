@@ -35,6 +35,11 @@ import { OwnershipTransferComponent } from './components/realestate/ownership-tr
 // Accounting Components
 import { ChartOfAccountsComponent } from './components/accounting/chart-of-accounts/chart-of-accounts.component';
 import { VoucherManagementComponent } from './components/accounting/voucher-management/voucher-management.component';
+import { JournalVoucherComponent } from './components/accounting/journal-voucher/journal-voucher.component';
+import { CashPaymentComponent } from './components/accounting/cash-payment/cash-payment.component';
+import { BankPaymentComponent } from './components/accounting/bank-payment/bank-payment.component';
+// Vendor Component
+import { VendorComponent } from './components/vendor/vendor.component';
 // Reports Components
 import { GeneralLedgerComponent } from './components/reports/general-ledger/general-ledger.component';
 import { TrialBalanceComponent } from './components/reports/trial-balance/trial-balance.component';
@@ -93,6 +98,11 @@ export function initializeAppTheme(themeService: ThemeService, companyService: C
         // Accounting Components
         ChartOfAccountsComponent,
         VoucherManagementComponent,
+        JournalVoucherComponent,
+        CashPaymentComponent,
+        BankPaymentComponent,
+        // Vendor Component
+        VendorComponent,
         // Reports Components
         GeneralLedgerComponent,
         TrialBalanceComponent,

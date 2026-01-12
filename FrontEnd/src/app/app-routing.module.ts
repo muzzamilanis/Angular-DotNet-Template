@@ -27,6 +27,11 @@ import { OwnershipTransferComponent } from './components/realestate/ownership-tr
 // Accounting components
 import { ChartOfAccountsComponent } from './components/accounting/chart-of-accounts/chart-of-accounts.component';
 import { VoucherManagementComponent } from './components/accounting/voucher-management/voucher-management.component';
+import { JournalVoucherComponent } from './components/accounting/journal-voucher/journal-voucher.component';
+import { CashPaymentComponent } from './components/accounting/cash-payment/cash-payment.component';
+import { BankPaymentComponent } from './components/accounting/bank-payment/bank-payment.component';
+// Vendor component
+import { VendorComponent } from './components/vendor/vendor.component';
 // Reports components
 import { GeneralLedgerComponent } from './components/reports/general-ledger/general-ledger.component';
 import { TrialBalanceComponent } from './components/reports/trial-balance/trial-balance.component';
@@ -61,6 +66,10 @@ const routes: Routes = [
             // Accounting Routes
             { path: 'accounting/chart-of-accounts', component: ChartOfAccountsComponent },
             { path: 'accounting/vouchers', component: VoucherManagementComponent },
+            { path: 'accounting/journal-voucher', component: JournalVoucherComponent },
+            { path: 'accounting/cash-payment', component: CashPaymentComponent },
+            { path: 'accounting/bank-payment', component: BankPaymentComponent },
+            { path: 'accounting/vendors', component: VendorComponent },
             
             // Reports Routes
             { path: 'reports/general-ledger', component: GeneralLedgerComponent },
