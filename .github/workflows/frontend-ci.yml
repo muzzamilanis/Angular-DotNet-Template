@@ -1,13 +1,14 @@
 name: Frontend CI/CD
 
 on:
+  workflow_call:
   push:
-    branches: [ main, master, develop ]
+    branches: [ main, master, development ]
     paths:
       - 'FrontEnd/**'
       - '.github/workflows/frontend-ci.yml'
   pull_request:
-    branches: [ main, master, develop ]
+    branches: [ main, master, development ]
     paths:
       - 'FrontEnd/**'
       - '.github/workflows/frontend-ci.yml'
