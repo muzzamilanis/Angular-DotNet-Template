@@ -4,14 +4,14 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-# Copy csproj file for restore
-COPY ["Backend/AspNetCore/SimpleApi/SimpleApi.csproj", "SimpleApi/"]
+# Copy csproj file for restore (now relative to Backend/AspNetCore/SimpleApi)
+COPY ["SimpleApi.csproj", "SimpleApi/"]
 
 # Restore dependencies
 RUN dotnet restore "SimpleApi/SimpleApi.csproj"
 
-# Copy all source files
-COPY Backend/AspNetCore/SimpleApi/ SimpleApi/
+# Copy all source files (current directory)
+COPY . SimpleApi/
 
 # Build API
 RUN dotnet build "SimpleApi/SimpleApi.csproj" -c Release --no-restore
