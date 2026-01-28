@@ -4,16 +4,16 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-# Copy csproj files
-COPY SimpleApi/SimpleApi.csproj SimpleApi/
-COPY SimpleApi.FunctionalTests/SimpleApi.FunctionalTests.csproj SimpleApi.FunctionalTests/
+# Copy csproj files (from repo root perspective)
+COPY Backend/AspNetCore/SimpleApi/SimpleApi/SimpleApi.csproj SimpleApi/
+COPY Backend/AspNetCore/SimpleApi/SimpleApi.FunctionalTests/SimpleApi.FunctionalTests.csproj SimpleApi.FunctionalTests/
 
 # Restore
 RUN dotnet restore SimpleApi/SimpleApi.csproj
 RUN dotnet restore SimpleApi.FunctionalTests/SimpleApi.FunctionalTests.csproj
 
-# Copy everything
-COPY . .
+# Copy everything from Backend/AspNetCore/SimpleApi
+COPY Backend/AspNetCore/SimpleApi/ .
 
 # Build API ONLY
 RUN dotnet build SimpleApi/SimpleApi.csproj -c Release --no-restore
@@ -28,6 +28,7 @@ RUN dotnet publish SimpleApi/SimpleApi.csproj \
     -c Release \
     -o /app/publish \
     --no-build
+
 # =========================
 # Runtime stage
 # =========================
