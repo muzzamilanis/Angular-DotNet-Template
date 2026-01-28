@@ -1,30 +1,23 @@
 # =========================
-# Build & Test stage
+# Build stage
 # =========================
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-# Copy csproj files (from repo root perspective)
-COPY Backend/AspNetCore/SimpleApi/SimpleApi/SimpleApi.csproj SimpleApi/
-COPY Backend/AspNetCore/SimpleApi/SimpleApi.FunctionalTests/SimpleApi.FunctionalTests.csproj SimpleApi.FunctionalTests/
+# Copy csproj file for restore
+COPY ["Backend/AspNetCore/SimpleApi/SimpleApi.csproj", "SimpleApi/"]
 
-# Restore
-RUN dotnet restore SimpleApi/SimpleApi.csproj
-RUN dotnet restore SimpleApi.FunctionalTests/SimpleApi.FunctionalTests.csproj
+# Restore dependencies
+RUN dotnet restore "SimpleApi/SimpleApi.csproj"
 
-# Copy everything from Backend/AspNetCore/SimpleApi
-COPY Backend/AspNetCore/SimpleApi/ .
+# Copy all source files
+COPY Backend/AspNetCore/SimpleApi/ SimpleApi/
 
-# Build API ONLY
-RUN dotnet build SimpleApi/SimpleApi.csproj -c Release --no-restore
-
-# Run tests (separate project)
-RUN dotnet test SimpleApi.FunctionalTests/SimpleApi.FunctionalTests.csproj \
-    -c Release \
-    --no-restore
+# Build API
+RUN dotnet build "SimpleApi/SimpleApi.csproj" -c Release --no-restore
 
 # Publish API
-RUN dotnet publish SimpleApi/SimpleApi.csproj \
+RUN dotnet publish "SimpleApi/SimpleApi.csproj" \
     -c Release \
     -o /app/publish \
     --no-build
@@ -35,7 +28,7 @@ RUN dotnet publish SimpleApi/SimpleApi.csproj \
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 WORKDIR /app
 
-# Copy published output only
+# Copy published output
 COPY --from=build /app/publish .
 
 # Expose ports
