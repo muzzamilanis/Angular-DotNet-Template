@@ -1,10 +1,11 @@
 name: Code Quality
 
 on:
+  workflow_call:
   push:
-    branches: [ main, master, develop ]
+    branches: [ main, master, development ]
   pull_request:
-    branches: [ main, master, develop ]
+    branches: [ main, master, development ]
   workflow_dispatch:
 
 permissions:
