@@ -2,9 +2,9 @@ name: Main CI/CD Pipeline
 
 on:
   push:
-    branches: [ main, master, develop ]
+    branches: [ main, master, development ]
   pull_request:
-    branches: [ main, master, develop ]
+    branches: [ main, master, development ]
   workflow_dispatch:
 
 permissions:
@@ -56,28 +56,32 @@ jobs:
     needs: detect-changes
     if: needs.detect-changes.outputs.backend == 'true'
     uses: ./.github/workflows/backend-ci.yml
-    permissions: {}
+    permissions:
+      contents: read
 
   frontend-ci:
     name: Frontend CI
     needs: detect-changes
     if: needs.detect-changes.outputs.frontend == 'true'
     uses: ./.github/workflows/frontend-ci.yml
-    permissions: {}
+    permissions:
+      contents: read
 
   mobile-ci:
     name: Mobile CI
     needs: detect-changes
     if: needs.detect-changes.outputs.mobile == 'true'
     uses: ./.github/workflows/mobile-ci.yml
-    permissions: {}
+    permissions:
+      contents: read
 
   integration:
     name: Integration Tests
     needs: detect-changes
     if: needs.detect-changes.outputs.docker == 'true' || needs.detect-changes.outputs.backend == 'true'
     uses: ./.github/workflows/integration.yml
-    permissions: {}
+    permissions:
+      contents: read
 
   pipeline-summary:
     name: Pipeline Summary
@@ -85,7 +89,8 @@ jobs:
     needs: [detect-changes, backend-ci, frontend-ci, mobile-ci, integration]
     if: always()
     
-    permissions: {}
+    permissions:
+      contents: read
     
     steps:
     - name: Check results

@@ -1,6 +1,7 @@
 name: Full Stack Integration
 
-on: 
+on:
+  workflow_call:
   push:
     branches: [main, master, development]
   pull_request: 
