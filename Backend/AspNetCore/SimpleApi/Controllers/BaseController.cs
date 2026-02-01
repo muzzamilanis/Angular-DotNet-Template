@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using SimpleApi.Models;
 
@@ -40,7 +40,11 @@ namespace SimpleApi.Controllers
 		internal UserRole GetCurrentUserRole()
 		{
 			var roleClaim = User.FindFirst(ClaimTypes.Role)?.Value;
-			if (Enum.TryParse<UserRole>(roleClaim, out UserRole role))
+            if (GetCurrentUserIsSuperAdmin() == true)
+            {
+                return UserRole.SuperAdmin;
+            }
+			else if (Enum.TryParse<UserRole>(roleClaim, out UserRole role))
 			{
 				return role;
 			}

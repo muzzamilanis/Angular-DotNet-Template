@@ -60,6 +60,25 @@ namespace SimpleApi.Controllers
             }
         }
 
+        [HttpGet("available")]
+        public async Task<ActionResult<List<UserDto>>> GetAvailableWriters()
+        {
+            try
+            {
+                var companyId = GetCurrentUserCompanyId();
+                var availableWriters = await _userService.GetAvailableWritersAsync(companyId);
+                return Ok(availableWriters);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         [HttpPost("submit")]
         public async Task<ActionResult> SubmitWork([FromForm] WriterSubmissionDto submission, IFormFile? submittedFile)
         {
@@ -205,6 +224,29 @@ namespace SimpleApi.Controllers
 
                 var result = await _saleOrderService.AddOrderInstructionWithAttachmentAsync(instruction, userId, false, companyId, attachmentFile);
                 return Ok(result);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(ex.Message);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("{writerId}/workload")]
+        public async Task<ActionResult<WriterWorkloadDto>> GetWriterWorkload(int writerId)
+        {
+            try
+            {
+                var companyId = GetCurrentUserCompanyId();
+                var workload = await _saleOrderService.GetWriterWorkloadAsync(writerId, companyId);
+                return Ok(workload);
             }
             catch (UnauthorizedAccessException ex)
             {
