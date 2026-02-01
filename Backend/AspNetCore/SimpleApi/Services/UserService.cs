@@ -22,6 +22,7 @@ namespace SimpleApi.Services
         // Writer Portal methods
         Task<List<UserDto>> GetWritersAsync(int companyId);
         Task<List<UserDto>> GetSuperAdminsAsync(int companyId);
+        Task<List<UserDto>> GetAvailableWritersAsync(int companyId);
         Task<UserDto> GetUserByIdAsync(int userId);
     }
 
@@ -300,6 +301,28 @@ namespace SimpleApi.Services
                 .ToListAsync();
 
             return superAdmins;
+        }
+
+        public async Task<List<UserDto>> GetAvailableWritersAsync(int companyId)
+        {
+            var writers = await _context.Users
+                .Include(u => u.Company)
+                .Where(u => u.CompanyId == companyId && u.Role == UserRole.Writer && u.IsActive)
+                .Select(u => new UserDto
+                {
+                    Id = u.Id,
+                    Name = u.Name,
+                    Email = u.Email,
+                    IsActive = u.IsActive,
+                    IsSuperAdmin = u.IsSuperAdmin,
+                    Role = u.Role,
+                    CreatedAt = u.CreatedAt,
+                    CompanyId = u.CompanyId,
+                    CompanyName = u.Company != null ? u.Company.Name : null
+                })
+                .ToListAsync();
+
+            return writers;
         }
 
         public async Task<UserDto> GetUserByIdAsync(int userId)

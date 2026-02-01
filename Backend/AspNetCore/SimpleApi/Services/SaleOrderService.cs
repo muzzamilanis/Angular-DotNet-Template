@@ -15,6 +15,8 @@ namespace SimpleApi.Services
         Task<SaleOrderDto> UpdateAsync(UpdateSaleOrderDto input, int companyId);
         Task DeleteAsync(int id, int companyId);
         Task<List<SaleOrder>> GetDeadlineApproachingOrdersAsync();
+        // Add to ISaleOrderService
+        Task<WriterWorkloadDto> GetWriterWorkloadAsync(int writerId, int companyId);
         bool IsDeadlineApproaching(SaleOrder order);
         
         // Writer Portal methods
@@ -741,6 +743,66 @@ namespace SimpleApi.Services
 
             saleOrder.OrderDetails = updateDto.OrderDetails;
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<WriterWorkloadDto> GetWriterWorkloadAsync(int writerId, int companyId)
+        {
+            // Verify that the writer exists and belongs to the company
+            var writer = await _context.Users
+                .FirstOrDefaultAsync(u => u.Id == writerId && u.CompanyId == companyId && u.Role == UserRole.Writer);
+
+            if (writer == null)
+            {
+                throw new ArgumentException($"Writer with ID {writerId} not found or access denied.");
+            }
+
+            // Get all assignments for the writer
+            var assignments = await _context.SaleOrders
+                .Where(so => so.AssignedTo == writerId.ToString())
+                .ToListAsync();
+
+            var totalAssignments = assignments.Count;
+            var activeAssignments = assignments.Count(so => so.Status == "InProgress");
+            var completedAssignments = assignments.Count(so => so.Status == "Completed");
+            var pendingAssignments = assignments.Count(so => so.Status == "workSubmittedByWriter");
+
+            // Get current assignments details
+            var currentAssignments = assignments
+                .Where(so => so.Status == "InProgress" || so.Status == "workSubmittedByWriter")
+                .Select(so => new WriterAssignmentDto
+                {
+                    Id = so.Id,
+                    OrderNumber = so.OrderNumber,
+                    OrderDate = so.OrderDate,
+                    ClientName = so.ClientName,
+                    Deadline = so.Deadline,
+                    Status = so.Status,
+                    OrderDetails = so.OrderDetails,
+                    WordsOrPages = so.WordsOrPages,
+                    AcademicLevel = so.AcademicLevel,
+                    AttachmentFilenames = so.AttachmentFilenames,
+                    SubmissionStatus = so.SubmissionStatus,
+                    SubmissionDate = so.SubmissionDate,
+                    SubmittedFilename = so.SubmittedFilename
+                })
+                .ToList();
+
+            // Define max capacity (can be made configurable)
+            const int maxCapacity = 10;
+            var hasCapacity = activeAssignments < maxCapacity;
+
+            return new WriterWorkloadDto
+            {
+                WriterId = writerId,
+                WriterName = writer.Name,
+                TotalAssignments = totalAssignments,
+                ActiveAssignments = activeAssignments,
+                CompletedAssignments = completedAssignments,
+                PendingAssignments = pendingAssignments,
+                CurrentAssignments = currentAssignments,
+                HasCapacity = hasCapacity,
+                MaxCapacity = maxCapacity
+            };
         }
     }
 }
