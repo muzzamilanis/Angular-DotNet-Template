@@ -88,6 +88,7 @@ builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<ICurrencyService, CurrencyService>();
 builder.Services.AddScoped<IExchangeRateService, ExchangeRateService>();
+builder.Services.AddScoped<IOrderIntelligenceService, OrderIntelligenceService>();
 
 // Add Real Estate and Accounting services
 builder.Services.AddScoped<IPropertyService, PropertyService>();

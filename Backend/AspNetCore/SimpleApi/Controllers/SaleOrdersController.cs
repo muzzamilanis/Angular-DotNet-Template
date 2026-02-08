@@ -12,11 +12,13 @@ namespace SimpleApi.Controllers
     public class SaleOrdersController : BaseController
     {
         private readonly ISaleOrderService _saleOrderService;
+		private readonly IOrderIntelligenceService _orderIntelligenceService;
 
-        public SaleOrdersController(ISaleOrderService saleOrderService)
+        public SaleOrdersController(ISaleOrderService saleOrderService, IOrderIntelligenceService orderIntelligenceService)
         {
             _saleOrderService = saleOrderService;
-        }
+			_orderIntelligenceService = orderIntelligenceService;
+		}
 
         [HttpGet]
         public async Task<ActionResult<PagedResultDto<SaleOrderDto>>> GetAll([FromQuery] PagedResultRequestDto input)
@@ -70,7 +72,14 @@ namespace SimpleApi.Controllers
 
                 var companyId = GetCurrentUserCompanyId();
                 var result = await _saleOrderService.CreateAsync(input, companyId);
-                return CreatedAtAction(nameof(Get), new { id = result.Id }, result);
+				
+				// NEW: Trigger Intelligence Agent (non-blocking)
+				_ = Task.Run(async () =>
+				{
+					await _orderIntelligenceService.SendWebhook(result);
+				});
+
+				return CreatedAtAction(nameof(Get), new { id = result.Id }, result);
             }
             catch (UnauthorizedAccessException ex)
             {
@@ -97,7 +106,15 @@ namespace SimpleApi.Controllers
                 input.Id = id;
                 var companyId = GetCurrentUserCompanyId();
                 var result = await _saleOrderService.UpdateAsync(input, companyId);
-                return Ok(result);
+				// NEW: Re-trigger intelligence analysis if critical fields changed
+				if (input.ServiceTypeId != null || input.WordsOrPages != null || input.Deadline != null)
+				{
+					_ = Task.Run(async () =>
+					{
+						await _orderIntelligenceService.TriggerIntelligenceAnalysisAsync(id.ToString());
+					});
+				}
+				return Ok(result);
             }
             catch (UnauthorizedAccessException ex)
             {
