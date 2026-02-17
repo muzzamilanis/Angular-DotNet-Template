@@ -89,7 +89,7 @@ public class OrderIntelligenceService : IOrderIntelligenceService
 			orderId = order.Id,
 			customerName = order.CustomerName,
 			customerEmail = order.ContactEmail,
-			topic = order.ServiceTypeName,
+			topic = order.ProjectName,
 			pages = order.WordsOrPages,
 			deadline = order.Deadline,
 			specialRequirements = order.OrderDetails

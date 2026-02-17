@@ -85,16 +85,27 @@
                             <i class="fas fa-cogs"></i>
                             Service Type
                         </label>
-                        <select
-                            id="serviceTypeId"
-                            class="form-control"
-                            formControlName="serviceTypeId"
-                            [class.is-invalid]="isFieldInvalid('serviceTypeId')">
-                            <option value="">🔧 Select service type</option>
-                            <option *ngFor="let serviceType of serviceTypes" [value]="serviceType.id">
-                                {{ serviceType.name }}
-                            </option>
-                        </select>
+                        <div class="input-group">
+                            <select
+                                id="serviceTypeId"
+                                class="form-control"
+                                formControlName="serviceTypeId"
+                                [class.is-invalid]="isFieldInvalid('serviceTypeId')">
+                                <option value="">🔧 Select service type</option>
+                                <option *ngFor="let serviceType of serviceTypes" [value]="serviceType.id">
+                                    {{ serviceType.name }}
+                                </option>
+                            </select>
+                            <div class="input-group-append">
+                                <button
+                                    type="button"
+                                    class="btn btn-outline-success"
+                                    (click)="openCreateServiceTypeModal()"
+                                    title="Create New Service Type">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
                         <div class="invalid-feedback" *ngIf="isFieldInvalid('serviceTypeId')">
                             {{ getFieldError('serviceTypeId') }}
                         </div>
@@ -150,6 +161,111 @@
                 </div>
                 <p class="mt-2 text-muted">Loading project details...</p>
             </div>
+        </div>
+    </div>
+</div>
+
+<!-- Service Type Creation Modal for Project Form -->
+<div class="modal fade" id="createServiceTypeModal" tabindex="-1" role="dialog" *ngIf="isDigitalMarketing">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">
+                    <i class="fas fa-cogs mr-2"></i>
+                    Create Service Type
+                </h4>
+                <button type="button" class="close" (click)="closeCreateServiceTypeModal()" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <form [formGroup]="serviceTypeForm" (ngSubmit)="onCreateServiceType()" *ngIf="serviceTypeForm">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="modalServiceTypeName">Service Type Name *</label>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="modalServiceTypeName"
+                                    formControlName="name"
+                                    placeholder="Enter service type name"
+                                    [class.is-invalid]="
+                                        serviceTypeForm.get('name')?.invalid && serviceTypeForm.get('name')?.touched
+                                    " />
+                                <div
+                                    class="invalid-feedback"
+                                    *ngIf="
+                                        serviceTypeForm.get('name')?.invalid && serviceTypeForm.get('name')?.touched
+                                    ">
+                                    <div *ngIf="serviceTypeForm.get('name')?.errors?.['required']">
+                                        Service type name is required
+                                    </div>
+                                    <div *ngIf="serviceTypeForm.get('name')?.errors?.['maxlength']">
+                                        Service type name must be 100 characters or less
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="modalServiceTypeDescription">Description</label>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="modalServiceTypeDescription"
+                                    formControlName="description"
+                                    placeholder="Enter description (optional)"
+                                    [class.is-invalid]="
+                                        serviceTypeForm.get('description')?.invalid &&
+                                        serviceTypeForm.get('description')?.touched
+                                    " />
+                                <div
+                                    class="invalid-feedback"
+                                    *ngIf="
+                                        serviceTypeForm.get('description')?.invalid &&
+                                        serviceTypeForm.get('description')?.touched
+                                    ">
+                                    <div *ngIf="serviceTypeForm.get('description')?.errors?.['maxlength']">
+                                        Description must be 200 characters or less
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <div class="form-check">
+                                    <input
+                                        type="checkbox"
+                                        class="form-check-input"
+                                        id="modalServiceTypeIsActive"
+                                        formControlName="isActive" />
+                                    <label class="form-check-label" for="modalServiceTypeIsActive">Active</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" (click)="closeCreateServiceTypeModal()">
+                        <i class="fas fa-times"></i>
+                        Cancel
+                    </button>
+                    <button type="submit" class="btn btn-primary" [disabled]="serviceTypeForm.invalid || isCreatingServiceType">
+                        <span *ngIf="isCreatingServiceType" class="spinner-border spinner-border-sm mr-2"></span>
+                        <i class="fas fa-save" *ngIf="!isCreatingServiceType"></i>
+                        {{ isCreatingServiceType ? 'Creating...' : 'Create Service Type' }}
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>

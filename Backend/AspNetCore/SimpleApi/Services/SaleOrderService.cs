@@ -351,7 +351,7 @@ namespace SimpleApi.Services
             else
             {
 				assignments = await _context.SaleOrders
-				.Where(so => so.AssignedTo == writer.Name)
+				.Where(so => so.AssignedTo == writer.Id.ToString())
 				.Select(so => new WriterAssignmentDto
 				{
 					Id = so.Id,
@@ -383,7 +383,7 @@ namespace SimpleApi.Services
                 throw new ArgumentException("Writer not found");
 
             var saleOrder = await _context.SaleOrders
-                .FirstOrDefaultAsync(so => so.Id == submission.SaleOrderId && so.AssignedTo == writer.Name);
+                .FirstOrDefaultAsync(so => so.Id == submission.SaleOrderId && so.AssignedTo == writer.Id.ToString());
 
             if (saleOrder == null)
                 throw new ArgumentException("Sale order not found or not assigned to this writer");
