@@ -113,6 +113,20 @@ namespace SimpleApi.Services
             CreateMap<ClientLedgerEntry, ClientLedgerEntryDto>();
             CreateMap<InvestorLedgerEntry, InvestorLedgerEntryDto>();
             CreateMap<ProjectLedgerEntry, ProjectLedgerEntryDto>();
+
+            // PerformanceCriteria mappings
+            CreateMap<PerformanceCriteria, PerformanceCriteriaDto>()
+                .ForMember(dest => dest.CompanyName, opt => opt.MapFrom(src => src.Company!.Name));
+            CreateMap<CreatePerformanceCriteriaDto, PerformanceCriteria>();
+            CreateMap<UpdatePerformanceCriteriaDto, PerformanceCriteria>();
+
+            // UserPerformanceScore mappings
+            CreateMap<UserPerformanceScore, UserPerformanceScoreDto>()
+                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.User!.Name))
+                .ForMember(dest => dest.CriteriaName, opt => opt.MapFrom(src => src.PerformanceCriteria!.Name))
+                .ForMember(dest => dest.EvaluatorName, opt => opt.MapFrom(src => src.Evaluator!.Name));
+            CreateMap<CreateUserPerformanceScoreDto, UserPerformanceScore>();
+            CreateMap<UpdateUserPerformanceScoreDto, UserPerformanceScore>();
         }
     }
 }

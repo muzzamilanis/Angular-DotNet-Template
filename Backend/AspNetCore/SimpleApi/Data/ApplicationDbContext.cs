@@ -41,6 +41,10 @@ namespace SimpleApi.Data
 		public DbSet<ClientLedgerEntry> ClientLedgerEntries { get; set; }
 		public DbSet<InvestorLedgerEntry> InvestorLedgerEntries { get; set; }
 		public DbSet<ProjectLedgerEntry> ProjectLedgerEntries { get; set; }
+		
+		// Performance Criteria Module
+		public DbSet<PerformanceCriteria> PerformanceCriterias { get; set; }
+		public DbSet<UserPerformanceScore> UserPerformanceScores { get; set; }
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
@@ -591,6 +595,56 @@ namespace SimpleApi.Data
 				entity.HasOne(e => e.Voucher)
 					  .WithMany()
 					  .HasForeignKey(e => e.VoucherId)
+					  .OnDelete(DeleteBehavior.SetNull);
+			});
+
+			// Configure PerformanceCriteria
+			modelBuilder.Entity<PerformanceCriteria>(entity =>
+			{
+				entity.HasKey(e => e.Id);
+				entity.Property(e => e.Name).IsRequired().HasMaxLength(200);
+				entity.Property(e => e.Description).HasMaxLength(1000);
+				entity.Property(e => e.Category).HasMaxLength(100);
+				entity.Property(e => e.WeightPercentage).HasColumnType("decimal(5,2)");
+				entity.Property(e => e.MeasurementMethod).HasMaxLength(200);
+				entity.Property(e => e.ScoringMethod).HasMaxLength(200);
+				entity.Property(e => e.TargetValue).HasColumnType("decimal(18,2)");
+				entity.Property(e => e.MinimumThreshold).HasColumnType("decimal(18,2)");
+				entity.Property(e => e.MaximumThreshold).HasColumnType("decimal(18,2)");
+				entity.Property(e => e.UserRole).IsRequired();
+				entity.Property(e => e.CompanyId).IsRequired();
+
+				entity.HasOne(e => e.Company)
+					  .WithMany()
+					  .HasForeignKey(e => e.CompanyId)
+					  .OnDelete(DeleteBehavior.Restrict);
+			});
+
+			// Configure UserPerformanceScore
+			modelBuilder.Entity<UserPerformanceScore>(entity =>
+			{
+				entity.HasKey(e => e.Id);
+				entity.Property(e => e.Score).HasColumnType("decimal(5,2)");
+				entity.Property(e => e.AchievedValue).HasColumnType("decimal(18,2)");
+				entity.Property(e => e.EvaluationPeriod).HasMaxLength(100);
+				entity.Property(e => e.Comments).HasMaxLength(2000);
+
+				// User being evaluated
+				entity.HasOne(e => e.User)
+					  .WithMany()
+					  .HasForeignKey(e => e.UserId)
+					  .OnDelete(DeleteBehavior.Restrict);
+
+				// Performance criteria
+				entity.HasOne(e => e.PerformanceCriteria)
+					  .WithMany()
+					  .HasForeignKey(e => e.PerformanceCriteriaId)
+					  .OnDelete(DeleteBehavior.Restrict);
+
+				// Evaluator user
+				entity.HasOne(e => e.Evaluator)
+					  .WithMany()
+					  .HasForeignKey(e => e.EvaluatorUserId)
 					  .OnDelete(DeleteBehavior.SetNull);
 			});
 

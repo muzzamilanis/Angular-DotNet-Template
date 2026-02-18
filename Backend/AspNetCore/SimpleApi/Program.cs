@@ -106,6 +106,10 @@ builder.Services.AddScoped<ProjectPaymentService>();
 builder.Services.AddScoped<ProjectExpenseService>();
 builder.Services.AddScoped<ConstructionLedgerService>();
 
+// Add Performance Criteria services
+builder.Services.AddScoped<IPerformanceCriteriaService, PerformanceCriteriaService>();
+builder.Services.AddScoped<IUserPerformanceScoreService, UserPerformanceScoreService>();
+
 // Add HttpClient for external API calls
 builder.Services.AddHttpClient<IExchangeRateService, ExchangeRateService>();
 

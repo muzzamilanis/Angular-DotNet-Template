@@ -40,6 +40,9 @@ import { GeneralLedgerComponent } from './components/reports/general-ledger/gene
 import { TrialBalanceComponent } from './components/reports/trial-balance/trial-balance.component';
 import { BalanceSheetComponent } from './components/reports/balance-sheet/balance-sheet.component';
 import { ProfitLossComponent } from './components/reports/profit-loss/profit-loss.component';
+// Performance Management
+import { PerformanceCriteriaManagementComponent } from './pages/administration/performance-criteria-management/performance-criteria-management.component';
+import { UserPerformanceEvaluationComponent } from './pages/administration/user-performance-evaluation/user-performance-evaluation.component';
 // import { CurrencySetupComponent } from './components/currency-setup/currency-setup.component';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { ThemeService } from './services/theme.service';
@@ -98,6 +101,9 @@ export function initializeAppTheme(themeService: ThemeService, companyService: C
         TrialBalanceComponent,
         BalanceSheetComponent,
         ProfitLossComponent,
+        // Performance Management
+        PerformanceCriteriaManagementComponent,
+        UserPerformanceEvaluationComponent,
         // CurrencySetupComponent,
     ],
     imports: [
@@ -123,4 +129,4 @@ export function initializeAppTheme(themeService: ThemeService, companyService: C
     ],
     bootstrap: [AppComponent],
 })
-export class AppModule {}
+export class AppModule { }

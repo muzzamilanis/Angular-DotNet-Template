@@ -11,11 +11,7 @@
 
         <ul class="navbar-nav ml-auto">
             <li class="nav-item dropdown">
-                <a
-                    class="nav-link dropdown-toggle"
-                    id="navbarDropdown"
-                    role="button"
-                    data-bs-toggle="dropdown"
+                <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
                     aria-expanded="false">
                     <i class="fas fa-user"></i>
                     <span class="ml-2" *ngIf="!isLoadingUser">{{ getUserDisplayName() }}</span>
@@ -64,12 +60,8 @@
     <aside class="main-sidebar sidebar-dark-primary elevation-4">
         <!-- Brand Logo -->
         <a href="#" class="brand-link">
-            <img
-                *ngIf="getCompanyLogo(); else defaultIcon"
-                [src]="getCompanyLogo()"
-                alt="Company Logo"
-                class="brand-image"
-                style="height: 2rem; object-fit: contain; margin-right: 0.5rem" />
+            <img *ngIf="getCompanyLogo(); else defaultIcon" [src]="getCompanyLogo()" alt="Company Logo"
+                class="brand-image" style="height: 2rem; object-fit: contain; margin-right: 0.5rem" />
             <ng-template #defaultIcon>
                 <i class="fas fa-user-cog brand-image" style="font-size: 2rem; color: white; margin-right: 0.5rem"></i>
             </ng-template>
@@ -86,10 +78,7 @@
         <div class="sidebar">
             <!-- Sidebar Menu -->
             <nav class="mt-2">
-                <ul
-                    class="nav nav-pills nav-sidebar flex-column"
-                    data-widget="treeview"
-                    role="menu"
+                <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
                     data-accordion="false">
                     <!-- Dashboard - For Real Estate -->
                     <li class="nav-item" *ngIf="isRealEstate()">
@@ -132,7 +121,8 @@
                     </li>
 
                     <!-- Team Lead Portal - Visible to Team Leads only (Not for Real Estate or Construction) -->
-                    <li class="nav-item" *ngIf="(isTeamLead() || isSuperAdmin()) && !isRealEstate() && !isConstruction()">
+                    <li class="nav-item"
+                        *ngIf="(isTeamLead() || isSuperAdmin()) && !isRealEstate() && !isConstruction()">
                         <a routerLink="/team-lead/dashboard" class="nav-link" routerLinkActive="active">
                             <i class="nav-icon fas fa-users-cog"></i>
                             <p>Team Lead Portal</p>
@@ -140,9 +130,7 @@
                     </li>
 
                     <!-- Masters - Hidden from Writers, limited for Team Leads (Not for Real Estate or Construction) -->
-                    <li
-                        class="nav-item"
-                        [class.menu-open]="isMenuOpen('masters')"
+                    <li class="nav-item" [class.menu-open]="isMenuOpen('masters')"
                         *ngIf="!isWriter() && (isSuperAdmin() || isTeamLead()) && !isRealEstate() && !isConstruction()">
                         <a routerLink="/masters/projects" class="nav-link" routerLinkActive="active">
                             <i class="far fa-circle nav-icon"></i>
@@ -151,9 +139,7 @@
                     </li>
 
                     <!-- Transactions - Hidden from Writers and Team Leads (Not for Real Estate or Construction) -->
-                    <li
-                        class="nav-item"
-                        [class.menu-open]="isMenuOpen('transactions')"
+                    <li class="nav-item" [class.menu-open]="isMenuOpen('transactions')"
                         *ngIf="!isWriter() && !isTeamLead() && !isRealEstate() && !isConstruction()">
                         <a routerLink="/transactions/sale-orders" class="nav-link" routerLinkActive="active">
                             <i class="far fa-circle nav-icon"></i>
@@ -187,36 +173,25 @@
                         </a>
                         <ul class="nav nav-treeview">
                             <li class="nav-item">
-                                <a
-                                    routerLink="/realestate/properties"
-                                    class="nav-link"
-                                    routerLinkActive="active">
+                                <a routerLink="/realestate/properties" class="nav-link" routerLinkActive="active">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Property Registration</p>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a
-                                    routerLink="/realestate/purchases"
-                                    class="nav-link"
-                                    routerLinkActive="active">
+                                <a routerLink="/realestate/purchases" class="nav-link" routerLinkActive="active">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Land Purchase</p>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a
-                                    routerLink="/realestate/sales"
-                                    class="nav-link"
-                                    routerLinkActive="active">
+                                <a routerLink="/realestate/sales" class="nav-link" routerLinkActive="active">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Land Selling</p>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a
-                                    routerLink="/realestate/ownership-transfers"
-                                    class="nav-link"
+                                <a routerLink="/realestate/ownership-transfers" class="nav-link"
                                     routerLinkActive="active">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Ownership Transfer</p>
@@ -236,19 +211,14 @@
                         </a>
                         <ul class="nav nav-treeview">
                             <li class="nav-item">
-                                <a
-                                    routerLink="/accounting/chart-of-accounts"
-                                    class="nav-link"
+                                <a routerLink="/accounting/chart-of-accounts" class="nav-link"
                                     routerLinkActive="active">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Chart of Accounts</p>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a
-                                    routerLink="/accounting/vouchers"
-                                    class="nav-link"
-                                    routerLinkActive="active">
+                                <a routerLink="/accounting/vouchers" class="nav-link" routerLinkActive="active">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Voucher Management</p>
                                 </a>
@@ -267,37 +237,25 @@
                         </a>
                         <ul class="nav nav-treeview">
                             <li class="nav-item">
-                                <a
-                                    routerLink="/reports/general-ledger"
-                                    class="nav-link"
-                                    routerLinkActive="active">
+                                <a routerLink="/reports/general-ledger" class="nav-link" routerLinkActive="active">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>General Ledger</p>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a
-                                    routerLink="/reports/trial-balance"
-                                    class="nav-link"
-                                    routerLinkActive="active">
+                                <a routerLink="/reports/trial-balance" class="nav-link" routerLinkActive="active">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Trial Balance</p>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a
-                                    routerLink="/reports/balance-sheet"
-                                    class="nav-link"
-                                    routerLinkActive="active">
+                                <a routerLink="/reports/balance-sheet" class="nav-link" routerLinkActive="active">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Balance Sheet</p>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a
-                                    routerLink="/reports/profit-loss"
-                                    class="nav-link"
-                                    routerLinkActive="active">
+                                <a routerLink="/reports/profit-loss" class="nav-link" routerLinkActive="active">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Profit & Loss</p>
                                 </a>
@@ -316,46 +274,31 @@
                         </a>
                         <ul class="nav nav-treeview">
                             <li class="nav-item">
-                                <a
-                                    routerLink="/construction/projects"
-                                    class="nav-link"
-                                    routerLinkActive="active">
+                                <a routerLink="/construction/projects" class="nav-link" routerLinkActive="active">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Projects</p>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a
-                                    routerLink="/construction/clients"
-                                    class="nav-link"
-                                    routerLinkActive="active">
+                                <a routerLink="/construction/clients" class="nav-link" routerLinkActive="active">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Clients</p>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a
-                                    routerLink="/construction/investors"
-                                    class="nav-link"
-                                    routerLinkActive="active">
+                                <a routerLink="/construction/investors" class="nav-link" routerLinkActive="active">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Investors</p>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a
-                                    routerLink="/construction/payments"
-                                    class="nav-link"
-                                    routerLinkActive="active">
+                                <a routerLink="/construction/payments" class="nav-link" routerLinkActive="active">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Payments</p>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a
-                                    routerLink="/construction/expenses"
-                                    class="nav-link"
-                                    routerLinkActive="active">
+                                <a routerLink="/construction/expenses" class="nav-link" routerLinkActive="active">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Expenses</p>
                                 </a>
@@ -364,7 +307,8 @@
                     </li>
 
                     <!-- Ledgers & Reports - Only visible for Construction -->
-                    <li class="nav-item" [class.menu-open]="isMenuOpen('construction-reports')" *ngIf="isConstruction()">
+                    <li class="nav-item" [class.menu-open]="isMenuOpen('construction-reports')"
+                        *ngIf="isConstruction()">
                         <a (click)="toggleMenuState('construction-reports', $event)" class="nav-link">
                             <i class="nav-icon fas fa-chart-line"></i>
                             <p>
@@ -374,37 +318,26 @@
                         </a>
                         <ul class="nav nav-treeview">
                             <li class="nav-item">
-                                <a
-                                    routerLink="/construction/project-ledger"
-                                    class="nav-link"
-                                    routerLinkActive="active">
+                                <a routerLink="/construction/project-ledger" class="nav-link" routerLinkActive="active">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Project Ledger</p>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a
-                                    routerLink="/construction/client-ledger"
-                                    class="nav-link"
-                                    routerLinkActive="active">
+                                <a routerLink="/construction/client-ledger" class="nav-link" routerLinkActive="active">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Client Ledger</p>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a
-                                    routerLink="/construction/investor-ledger"
-                                    class="nav-link"
+                                <a routerLink="/construction/investor-ledger" class="nav-link"
                                     routerLinkActive="active">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Investor Ledger</p>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a
-                                    routerLink="/construction/profit-loss"
-                                    class="nav-link"
-                                    routerLinkActive="active">
+                                <a routerLink="/construction/profit-loss" class="nav-link" routerLinkActive="active">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Profit & Loss</p>
                                 </a>
@@ -413,7 +346,8 @@
                     </li>
 
                     <!-- Administration (Not for Real Estate or Construction users) -->
-                    <li class="nav-item" [class.menu-open]="isMenuOpen('administration')" *ngIf="isSuperAdmin() && !isRealEstate() && !isConstruction()">
+                    <li class="nav-item" [class.menu-open]="isMenuOpen('administration')"
+                        *ngIf="isSuperAdmin() && !isRealEstate() && !isConstruction()">
                         <a (click)="toggleMenuState('administration', $event)" class="nav-link">
                             <i class="nav-icon fas fa-cogs"></i>
                             <p>
@@ -423,21 +357,31 @@
                         </a>
                         <ul class="nav nav-treeview">
                             <li class="nav-item">
-                                <a
-                                    routerLink="/administration/company-setup"
-                                    class="nav-link"
+                                <a routerLink="/administration/company-setup" class="nav-link"
                                     routerLinkActive="active">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Company Setup</p>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a
-                                    routerLink="/administration/user-management"
-                                    class="nav-link"
+                                <a routerLink="/administration/user-management" class="nav-link"
                                     routerLinkActive="active">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>User Management</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a routerLink="/administration/performance-criteria" class="nav-link"
+                                    routerLinkActive="active">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Performance Criteria</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a routerLink="/administration/performance-evaluation" class="nav-link"
+                                    routerLinkActive="active">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Performance Evaluation</p>
                                 </a>
                             </li>
                         </ul>

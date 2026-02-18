@@ -1,0 +1,177 @@
+<section class="content">
+    <div class="container-fluid">
+        <!-- Evaluation Form Card -->
+        <div class="card card-success">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-user-check mr-2"></i>
+                    Evaluate User Performance
+                </h3>
+            </div>
+
+            <form [formGroup]="evaluationForm" (ngSubmit)="onSubmit()">
+                <div class="card-body">
+                    <div class="row">
+                        <!-- User Selection -->
+                        <div class="col-md-12 mb-3">
+                            <h5 class="text-success">
+                                <i class="fas fa-user mr-2"></i>
+                                Select User
+                            </h5>
+                            <div class="form-group">
+                                <label for="userId">
+                                    User
+                                    <span class="text-danger">*</span>
+                                </label>
+                                <select class="form-control" id="userId" formControlName="userId"
+                                    (change)="onUserChange($event.target.value)"
+                                    [class.is-invalid]="isFieldInvalid('userId')">
+                                    <option value="">Select a user to evaluate</option>
+                                    <option *ngFor="let user of users" [value]="user.id">
+                                        {{ user.name }} ({{ user.email }})
+                                    </option>
+                                </select>
+                            </div>
+
+                            <div class="alert alert-info" *ngIf="selectedUser">
+                                <i class="fas fa-info-circle mr-2"></i>
+                                <strong>{{ selectedUser.name }}</strong> - Role: {{ selectedUser.role }}
+                                <br />
+                                <small>Performance criteria loaded for this role</small>
+                            </div>
+                        </div>
+
+                        <!-- Evaluation Form -->
+                        <div class="col-md-6" *ngIf="selectedUser">
+                            <h5 class="text-success mb-3">
+                                <i class="fas fa-chart-line mr-2"></i>
+                                Evaluation Details
+                            </h5>
+
+                            <div class="form-group">
+                                <label for="performanceCriteriaId">
+                                    Performance Criteria
+                                    <span class="text-danger">*</span>
+                                </label>
+                                <select class="form-control" id="performanceCriteriaId"
+                                    formControlName="performanceCriteriaId"
+                                    [class.is-invalid]="isFieldInvalid('performanceCriteriaId')">
+                                    <option value="">Select criteria</option>
+                                    <option *ngFor="let c of criteria" [value]="c.id">
+                                        {{ c.name }} ({{ c.weightPercentage }}%)
+                                    </option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="score">
+                                    Score (0-100)
+                                    <span class="text-danger">*</span>
+                                </label>
+                                <input type="number" class="form-control" id="score" formControlName="score"
+                                    [class.is-invalid]="isFieldInvalid('score')" min="0" max="100"
+                                    placeholder="Enter score (0-100)" />
+                            </div>
+
+                            <div class="form-group">
+                                <label for="achievedValue">Achieved Value</label>
+                                <input type="number" class="form-control" id="achievedValue"
+                                    formControlName="achievedValue" placeholder="e.g., Actual sales achieved" />
+                            </div>
+                        </div>
+
+                        <div class="col-md-6" *ngIf="selectedUser">
+                            <h5 class="text-success mb-3">
+                                <i class="fas fa-comment mr-2"></i>
+                                Additional Information
+                            </h5>
+
+                            <div class="form-group">
+                                <label for="evaluationPeriod">Evaluation Period</label>
+                                <input type="text" class="form-control" id="evaluationPeriod"
+                                    formControlName="evaluationPeriod" placeholder="e.g., Q1 2024, January 2024" />
+                            </div>
+
+                            <div class="form-group">
+                                <label for="comments">Comments</label>
+                                <textarea class="form-control" id="comments" formControlName="comments" rows="4"
+                                    placeholder="Enter evaluation comments..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-footer" *ngIf="selectedUser">
+                    <button type="submit" class="btn btn-success mr-2" [disabled]="!evaluationForm.valid || isLoading">
+                        <i class="fas fa-save mr-2"></i>
+                        <span *ngIf="!isLoading">Submit Evaluation</span>
+                        <span *ngIf="isLoading">
+                            <i class="fas fa-spinner fa-spin mr-1"></i>
+                            Saving...
+                        </span>
+                    </button>
+                    <button type="button" class="btn btn-secondary" (click)="resetForm()">
+                        <i class="fas fa-times mr-2"></i>
+                        Reset
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- User Performance History -->
+        <div class="card" *ngIf="selectedUser">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-history mr-2"></i>
+                    Performance History for {{ selectedUser.name }}
+                </h3>
+                <div class="card-tools">
+                    <span class="badge badge-success">{{ scores.length }} evaluations</span>
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div *ngIf="scores.length === 0" class="text-center py-4">
+                    <i class="fas fa-chart-line fa-3x text-muted mb-3"></i>
+                    <h5 class="text-muted">No evaluations yet</h5>
+                    <p class="text-muted">Submit the first evaluation using the form above.</p>
+                </div>
+
+                <div class="table-responsive" *ngIf="scores.length > 0">
+                    <table class="table table-bordered table-striped">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th><i class="fas fa-heading mr-1"></i> Criteria</th>
+                                <th><i class="fas fa-star mr-1"></i> Score</th>
+                                <th><i class="fas fa-bullseye mr-1"></i> Achieved</th>
+                                <th><i class="fas fa-calendar mr-1"></i> Period</th>
+                                <th><i class="fas fa-user mr-1"></i> Evaluator</th>
+                                <th><i class="fas fa-clock mr-1"></i> Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let score of scores">
+                                <td><strong>{{ score.criteriaName }}</strong></td>
+                                <td>
+                                    <span class="badge" [class.badge-success]="score.score >= 70"
+                                        [class.badge-warning]="score.score >= 50 && score.score < 70"
+                                        [class.badge-danger]="score.score < 50">
+                                        {{ score.score }}
+                                    </span>
+                                </td>
+                                <td>{{ score.achievedValue || '-' }}</td>
+                                <td>{{ score.evaluationPeriod || '-' }}</td>
+                                <td>
+                                    <small>{{ score.evaluatorName }}</small>
+                                </td>
+                                <td>
+                                    <small>{{ score.evaluationDate | date: 'short' }}</small>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

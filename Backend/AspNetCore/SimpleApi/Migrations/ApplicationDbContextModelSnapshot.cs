@@ -707,6 +707,72 @@ namespace SimpleApi.Migrations
                     b.ToTable("OwnershipTransfers");
                 });
 
+            modelBuilder.Entity("SimpleApi.Models.PerformanceCriteria", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Category")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("CreatedByAI")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<decimal?>("MaximumThreshold")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("MeasurementMethod")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<decimal?>("MinimumThreshold")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("ModifiedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("ScoringMethod")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<decimal?>("TargetValue")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("UserRole")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("WeightPercentage")
+                        .HasColumnType("decimal(5,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.ToTable("PerformanceCriterias");
+                });
+
             modelBuilder.Entity("SimpleApi.Models.Product", b =>
                 {
                     b.Property<int>("Id")
@@ -1841,6 +1907,57 @@ namespace SimpleApi.Migrations
                         });
                 });
 
+            modelBuilder.Entity("SimpleApi.Models.UserPerformanceScore", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal?>("AchievedValue")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Comments")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("EvaluationDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("EvaluationPeriod")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<int?>("EvaluatorUserId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("ModifiedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("PerformanceCriteriaId")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("Score")
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EvaluatorUserId");
+
+                    b.HasIndex("PerformanceCriteriaId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserPerformanceScores");
+                });
+
             modelBuilder.Entity("SimpleApi.Models.Voucher", b =>
                 {
                     b.Property<int>("Id")
@@ -2100,6 +2217,17 @@ namespace SimpleApi.Migrations
                     b.Navigation("Company");
 
                     b.Navigation("Property");
+                });
+
+            modelBuilder.Entity("SimpleApi.Models.PerformanceCriteria", b =>
+                {
+                    b.HasOne("SimpleApi.Models.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Company");
                 });
 
             modelBuilder.Entity("SimpleApi.Models.Product", b =>
@@ -2402,6 +2530,32 @@ namespace SimpleApi.Migrations
                         .IsRequired();
 
                     b.Navigation("Company");
+                });
+
+            modelBuilder.Entity("SimpleApi.Models.UserPerformanceScore", b =>
+                {
+                    b.HasOne("SimpleApi.Models.User", "Evaluator")
+                        .WithMany()
+                        .HasForeignKey("EvaluatorUserId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("SimpleApi.Models.PerformanceCriteria", "PerformanceCriteria")
+                        .WithMany()
+                        .HasForeignKey("PerformanceCriteriaId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("SimpleApi.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Evaluator");
+
+                    b.Navigation("PerformanceCriteria");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("SimpleApi.Models.Voucher", b =>

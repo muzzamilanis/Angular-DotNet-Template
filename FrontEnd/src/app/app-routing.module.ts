@@ -32,6 +32,9 @@ import { GeneralLedgerComponent } from './components/reports/general-ledger/gene
 import { TrialBalanceComponent } from './components/reports/trial-balance/trial-balance.component';
 import { BalanceSheetComponent } from './components/reports/balance-sheet/balance-sheet.component';
 import { ProfitLossComponent } from './components/reports/profit-loss/profit-loss.component';
+// Performance Management
+import { PerformanceCriteriaManagementComponent } from './pages/administration/performance-criteria-management/performance-criteria-management.component';
+import { UserPerformanceEvaluationComponent } from './pages/administration/user-performance-evaluation/user-performance-evaluation.component';
 // import { CurrencySetupComponent } from './components/currency-setup/currency-setup.component';
 import { AuthGuard } from './guards/auth.guard';
 import { SuperAdminGuard } from './guards/super-admin.guard';
@@ -50,24 +53,24 @@ const routes: Routes = [
         children: [
             { path: '', component: DashboardComponent, canActivate: [AdminDashboardGuard] },
             { path: 'dashboard', component: DashboardComponent, canActivate: [AdminDashboardGuard] },
-            
+
             // Real Estate Routes
             { path: 'realestate/dashboard', component: RealEstateDashboardComponent },
             { path: 'realestate/properties', component: PropertyRegistrationComponent },
             { path: 'realestate/purchases', component: PropertyPurchaseComponent },
             { path: 'realestate/sales', component: PropertySaleComponent },
             { path: 'realestate/ownership-transfers', component: OwnershipTransferComponent },
-            
+
             // Accounting Routes
             { path: 'accounting/chart-of-accounts', component: ChartOfAccountsComponent },
             { path: 'accounting/vouchers', component: VoucherManagementComponent },
-            
+
             // Reports Routes
             { path: 'reports/general-ledger', component: GeneralLedgerComponent },
             { path: 'reports/trial-balance', component: TrialBalanceComponent },
             { path: 'reports/balance-sheet', component: BalanceSheetComponent },
             { path: 'reports/profit-loss', component: ProfitLossComponent },
-            
+
             // Construction Routes
             {
                 path: 'construction/dashboard',
@@ -142,7 +145,7 @@ const routes: Routes = [
                         (m) => m.ConstructionProfitLossComponent
                     ),
             },
-            
+
             // Existing Routes
             { path: 'transactions/sale-orders', component: SaleOrderComponent },
             { path: 'masters/products', component: ProductComponent },
@@ -164,6 +167,14 @@ const routes: Routes = [
                 path: 'administration/user-management',
                 component: UserManagementComponent,
                 canActivate: [SuperAdminGuard],
+            },
+            {
+                path: 'administration/performance-criteria',
+                component: PerformanceCriteriaManagementComponent,
+            },
+            {
+                path: 'administration/performance-evaluation',
+                component: UserPerformanceEvaluationComponent,
             },
             {
                 path: 'writer/assignments',
@@ -194,4 +205,4 @@ const routes: Routes = [
     imports: [RouterModule.forRoot(routes)],
     exports: [RouterModule],
 })
-export class AppRoutingModule {}
+export class AppRoutingModule { }

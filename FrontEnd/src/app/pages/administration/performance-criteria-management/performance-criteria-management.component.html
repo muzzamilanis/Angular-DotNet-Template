@@ -1,0 +1,302 @@
+<section class="content">
+    <div class="container-fluid">
+        <!-- Filter and Form Card -->
+        <div class="card card-primary">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-chart-line mr-2"></i>
+                    {{ isEditing ? 'Edit Performance Criteria' : 'Create Performance Criteria' }}
+                </h3>
+            </div>
+
+            <form [formGroup]="criteriaForm" (ngSubmit)="onSubmit()">
+                <div class="card-body">
+                    <!-- Role Filter Row -->
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <h5 class="text-primary">
+                                <i class="fas fa-filter mr-2"></i>
+                                Filter by Role
+                            </h5>
+                            <div class="btn-group btn-group-sm" role="group">
+                                <button
+                                    type="button"
+                                    class="btn"
+                                    [class.btn-primary]="selectedRole === null"
+                                    [class.btn-outline-primary]="selectedRole !== null"
+                                    (click)="filterByRole(null)">
+                                    All Roles
+                                </button>
+                                <button
+                                    type="button"
+                                    *ngFor="let role of roleOptions"
+                                    class="btn"
+                                    [class.btn-primary]="selectedRole === role.value"
+                                    [class.btn-outline-primary]="selectedRole !== role.value"
+                                    (click)="filterByRole(role.value)">
+                                    {{ role.label }}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <div class="row">
+                        <!-- Basic Information -->
+                        <div class="col-md-6">
+                            <h5 class="text-primary mb-3">
+                                <i class="fas fa-info-circle mr-2"></i>
+                                Basic Information
+                            </h5>
+
+                            <div class="form-group">
+                                <label for="userRole">
+                                    Role
+                                    <span class="text-danger">*</span>
+                                </label>
+                                <select
+                                    class="form-control"
+                                    id="userRole"
+                                    formControlName="userRole"
+                                    [class.is-invalid]="isFieldInvalid('userRole')">
+                                    <option [ngValue]="null">Select Role</option>
+                                    <option *ngFor="let role of roleOptions" [ngValue]="role.value">
+                                        {{ role.label }}
+                                    </option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="name">
+                                    Criteria Name
+                                    <span class="text-danger">*</span>
+                                </label>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="name"
+                                    formControlName="name"
+                                    [class.is-invalid]="isFieldInvalid('name')"
+                                    placeholder="e.g., Sales Target Achievement" />
+                            </div>
+
+                            <div class="form-group">
+                                <label for="category">Category</label>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="category"
+                                    formControlName="category"
+                                    placeholder="e.g., Sales, Quality, Productivity" />
+                            </div>
+
+                            <div class="form-group">
+                                <label for="weightPercentage">
+                                    Weight Percentage (%)
+                                    <span class="text-danger">*</span>
+                                </label>
+                                <input
+                                    type="number"
+                                    class="form-control"
+                                    id="weightPercentage"
+                                    formControlName="weightPercentage"
+                                    [class.is-invalid]="isFieldInvalid('weightPercentage')"
+                                    min="0"
+                                    max="100"
+                                    placeholder="0-100" />
+                            </div>
+                        </div>
+
+                        <!-- Details -->
+                        <div class="col-md-6">
+                            <h5 class="text-primary mb-3">
+                                <i class="fas fa-cog mr-2"></i>
+                                Criteria Details
+                            </h5>
+
+                            <div class="form-group">
+                                <label for="description">Description</label>
+                                <textarea
+                                    class="form-control"
+                                    id="description"
+                                    formControlName="description"
+                                    rows="3"
+                                    placeholder="Describe this performance criteria"></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="measurementMethod">Measurement Method</label>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="measurementMethod"
+                                    formControlName="measurementMethod"
+                                    placeholder="e.g., Monthly sales report" />
+                            </div>
+
+                            <div class="form-group">
+                                <label for="scoringMethod">Scoring Method</label>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="scoringMethod"
+                                    formControlName="scoringMethod"
+                                    placeholder="e.g., 1-100 scale" />
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="targetValue">Target</label>
+                                        <input
+                                            type="number"
+                                            class="form-control"
+                                            id="targetValue"
+                                            formControlName="targetValue"
+                                            placeholder="Target" />
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="minimumThreshold">Min</label>
+                                        <input
+                                            type="number"
+                                            class="form-control"
+                                            id="minimumThreshold"
+                                            formControlName="minimumThreshold"
+                                            placeholder="Min" />
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="maximumThreshold">Max</label>
+                                        <input
+                                            type="number"
+                                            class="form-control"
+                                            id="maximumThreshold"
+                                            formControlName="maximumThreshold"
+                                            placeholder="Max" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group" *ngIf="isEditing">
+                                <div class="form-check">
+                                    <input
+                                        type="checkbox"
+                                        class="form-check-input"
+                                        id="isActive"
+                                        formControlName="isActive" />
+                                    <label class="form-check-label" for="isActive">
+                                        <i class="fas fa-check-circle mr-1 text-success"></i>
+                                        Active
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-footer">
+                    <button type="submit" class="btn btn-primary mr-2" [disabled]="!criteriaForm.valid || isLoading">
+                        <i class="fas fa-save mr-2"></i>
+                        <span *ngIf="!isLoading">{{ isEditing ? 'Update Criteria' : 'Create Criteria' }}</span>
+                        <span *ngIf="isLoading">
+                            <i class="fas fa-spinner fa-spin mr-1"></i>
+                            {{ isEditing ? 'Updating...' : 'Creating...' }}
+                        </span>
+                    </button>
+                    <button type="button" class="btn btn-secondary" (click)="resetForm()">
+                        <i class="fas fa-times mr-2"></i>
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Criteria List Card -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-list mr-2"></i>
+                    Performance Criteria
+                </h3>
+                <div class="card-tools">
+                    <span class="badge badge-info">{{ filteredCriteria.length }} criteria</span>
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div *ngIf="isLoading" class="text-center py-4">
+                    <i class="fas fa-spinner fa-spin fa-2x text-primary"></i>
+                    <p class="mt-2">Loading criteria...</p>
+                </div>
+
+                <div *ngIf="!isLoading && filteredCriteria.length === 0" class="text-center py-4">
+                    <i class="fas fa-chart-line fa-3x text-muted mb-3"></i>
+                    <h5 class="text-muted">No performance criteria found</h5>
+                    <p class="text-muted">Create your first criteria using the form above.</p>
+                </div>
+
+                <div class="table-responsive" *ngIf="!isLoading && filteredCriteria.length > 0">
+                    <table class="table table-bordered table-striped">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th><i class="fas fa-user-tag mr-1"></i> Role</th>
+                                <th><i class="fas fa-heading mr-1"></i> Name</th>
+                                <th><i class="fas fa-tag mr-1"></i> Category</th>
+                                <th><i class="fas fa-percent mr-1"></i> Weight</th>
+                                <th><i class="fas fa-bullseye mr-1"></i> Target</th>
+                                <th><i class="fas fa-toggle-on mr-1"></i> Status</th>
+                                <th width="150"><i class="fas fa-cogs mr-1"></i> Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let criteria of filteredCriteria">
+                                <td>
+                                    <span class="badge badge-primary">{{ getRoleLabel(criteria.userRole) }}</span>
+                                </td>
+                                <td><strong>{{ criteria.name }}</strong></td>
+                                <td>{{ criteria.category || '-' }}</td>
+                                <td>{{ criteria.weightPercentage }}%</td>
+                                <td>{{ criteria.targetValue || '-' }}</td>
+                                <td>
+                                    <span
+                                        class="badge"
+                                        [class.badge-success]="criteria.isActive"
+                                        [class.badge-danger]="!criteria.isActive">
+                                        <i
+                                            class="fas"
+                                            [class.fa-check-circle]="criteria.isActive"
+                                            [class.fa-times-circle]="!criteria.isActive"
+                                            class="mr-1"></i>
+                                        {{ criteria.isActive ? 'Active' : 'Inactive' }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <button
+                                            type="button"
+                                            class="btn btn-outline-primary"
+                                            (click)="editCriteria(criteria)"
+                                            title="Edit Criteria">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button
+                                            type="button"
+                                            class="btn btn-outline-danger"
+                                            (click)="deleteCriteria(criteria)"
+                                            title="Delete Criteria">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
