@@ -1,6 +1,10 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
+using SimpleApi.Data;
 using SimpleApi.DTOs;
+using SimpleApi.Hubs;
+using SimpleApi.Models;
 using SimpleApi.Services;
 using System.Security.Claims;
 
@@ -13,11 +17,19 @@ namespace SimpleApi.Controllers
     {
         private readonly ISaleOrderService _saleOrderService;
 		private readonly IOrderIntelligenceService _orderIntelligenceService;
+		private readonly ApplicationDbContext _context;
+		private readonly IHubContext<OrderWorkflowHub> _hubContext;
 
-        public SaleOrdersController(ISaleOrderService saleOrderService, IOrderIntelligenceService orderIntelligenceService)
+        public SaleOrdersController(
+			ISaleOrderService saleOrderService,
+			IOrderIntelligenceService orderIntelligenceService,
+			ApplicationDbContext context,
+			IHubContext<OrderWorkflowHub> hubContext)
         {
             _saleOrderService = saleOrderService;
 			_orderIntelligenceService = orderIntelligenceService;
+			_context = context;
+			_hubContext = hubContext;
 		}
 
         [HttpGet]
@@ -78,6 +90,47 @@ namespace SimpleApi.Controllers
 				{
 					await _orderIntelligenceService.SendWebhook(result);
 				});
+
+				// Insert workflow status: OrderReceived
+				var currentUserName = User.FindFirst(ClaimTypes.Name)?.Value ?? "System";
+				var workflowEntry = new OrderWorkflowStatus
+				{
+					OrderId = result.Id,
+					Stage = "OrderReceived",
+					UpdatedBy = currentUserName,
+					Timestamp = DateTime.UtcNow
+				};
+				_context.OrderWorkflowStatuses.Add(workflowEntry);
+
+				// Insert workflow status: AIProcessing (webhook is fired immediately after creation)
+				var aiEntry = new OrderWorkflowStatus
+				{
+					OrderId = result.Id,
+					Stage = "AIProcessing",
+					UpdatedBy = "System",
+					Notes = "Order submitted to AI intelligence agent",
+					Timestamp = DateTime.UtcNow.AddMilliseconds(1)
+				};
+				_context.OrderWorkflowStatuses.Add(aiEntry);
+
+				await _context.SaveChangesAsync();
+
+				// Notify SignalR subscribers for this order
+				_ = _hubContext.Clients.Group($"order_{result.Id}")
+					.SendAsync("WorkflowUpdated", new
+					{
+						stage = "OrderReceived",
+						updatedBy = currentUserName,
+						timestamp = workflowEntry.Timestamp
+					});
+				_ = _hubContext.Clients.Group($"order_{result.Id}")
+					.SendAsync("WorkflowUpdated", new
+					{
+						stage = "AIProcessing",
+						updatedBy = "System",
+						notes = "Order submitted to AI intelligence agent",
+						timestamp = aiEntry.Timestamp
+					});
 
 				return CreatedAtAction(nameof(Get), new { id = result.Id }, result);
             }

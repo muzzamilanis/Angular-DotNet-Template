@@ -1,7 +1,10 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using OpenAI;
 using SimpleApi.Data;
+using SimpleApi.Hubs;
 using SimpleApi.Services;
 using System;
 using System.Text;
@@ -109,17 +112,26 @@ builder.Services.AddScoped<ConstructionLedgerService>();
 // Add HttpClient for external API calls
 builder.Services.AddHttpClient<IExchangeRateService, ExchangeRateService>();
 
+// Add OpenAI client
+builder.Services.AddSingleton(new OpenAIClient(
+    builder.Configuration["OpenAI:ApiKey"] ?? throw new InvalidOperationException("OpenAI:ApiKey is not configured.")));
+
 // Add background services
 builder.Services.AddHostedService<DeadlineNotificationService>();
+
+// Add SignalR
+builder.Services.AddSignalR();
 
 // Add CORS
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll", builder =>
+    options.AddPolicy("AllowAll", policy =>
     {
-        builder.AllowAnyOrigin()
+        policy
+               .SetIsOriginAllowed(_ => true)  // allow any origin with credentials (required for SignalR)
                .AllowAnyMethod()
-               .AllowAnyHeader();
+               .AllowAnyHeader()
+               .AllowCredentials();
     });
 });
 
@@ -183,6 +195,9 @@ app.MapGet("/health", () => Results.Ok(new { status = "healthy", timestamp = Dat
     .AllowAnonymous();
 
 app.MapControllers();
+
+// Map SignalR hubs
+app.MapHub<OrderWorkflowHub>("/hubs/orderworkflow");
 
 app.Run();
 

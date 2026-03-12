@@ -1,8 +1,12 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore;
+using SimpleApi.Data;
 using SimpleApi.DTOs;
-using SimpleApi.Services;
+using SimpleApi.Hubs;
 using SimpleApi.Models;
+using SimpleApi.Services;
 
 namespace SimpleApi.Controllers
 {
@@ -13,11 +17,19 @@ namespace SimpleApi.Controllers
     {
         private readonly IUserService _userService;
         private readonly ISaleOrderService _saleOrderService;
+        private readonly ApplicationDbContext _context;
+        private readonly IHubContext<OrderWorkflowHub> _hubContext;
 
-        public TeamLeadController(IUserService userService, ISaleOrderService saleOrderService)
+        public TeamLeadController(
+            IUserService userService,
+            ISaleOrderService saleOrderService,
+            ApplicationDbContext context,
+            IHubContext<OrderWorkflowHub> hubContext)
         {
             _userService = userService;
             _saleOrderService = saleOrderService;
+            _context = context;
+            _hubContext = hubContext;
         }
 
         [HttpGet("orders")]
@@ -92,6 +104,32 @@ namespace SimpleApi.Controllers
                 }
 
                 await _saleOrderService.AssignOrderToWriterAsync(assignment.SaleOrderId, assignment.WriterId, companyId);
+
+                // Record workflow stage: WriterAssigned
+                var writer = await _context.Users.FirstOrDefaultAsync(u => u.Id == assignment.WriterId);
+                var teamLeadName = User.Identity?.Name ?? "TeamLead";
+                var entry = new OrderWorkflowStatus
+                {
+                    OrderId = assignment.SaleOrderId,
+                    Stage = "WriterAssigned",
+                    AssignedTo = writer?.Name ?? assignment.WriterId.ToString(),
+                    UpdatedBy = teamLeadName,
+                    Notes = $"Order assigned to {writer?.Name ?? "writer"}",
+                    Timestamp = DateTime.UtcNow
+                };
+                _context.OrderWorkflowStatuses.Add(entry);
+                await _context.SaveChangesAsync();
+
+                await _hubContext.Clients.Group($"order_{assignment.SaleOrderId}")
+                    .SendAsync("WorkflowUpdated", new
+                    {
+                        stage = "WriterAssigned",
+                        assignedTo = entry.AssignedTo,
+                        updatedBy = teamLeadName,
+                        notes = entry.Notes,
+                        timestamp = entry.Timestamp
+                    });
+
                 return Ok(new { message = "Order assigned successfully" });
             }
             catch (UnauthorizedAccessException ex)
@@ -124,6 +162,32 @@ namespace SimpleApi.Controllers
                 }
 
                 await _saleOrderService.UpdateOrderAssignmentAsync(assignment.SaleOrderId, assignment.WriterId, companyId);
+
+                // Record workflow stage: WriterAssigned (reassignment)
+                var writer = await _context.Users.FirstOrDefaultAsync(u => u.Id == assignment.WriterId);
+                var teamLeadName = User.Identity?.Name ?? "TeamLead";
+                var entry = new OrderWorkflowStatus
+                {
+                    OrderId = assignment.SaleOrderId,
+                    Stage = "WriterAssigned",
+                    AssignedTo = writer?.Name ?? assignment.WriterId.ToString(),
+                    UpdatedBy = teamLeadName,
+                    Notes = $"Order reassigned to {writer?.Name ?? "writer"}",
+                    Timestamp = DateTime.UtcNow
+                };
+                _context.OrderWorkflowStatuses.Add(entry);
+                await _context.SaveChangesAsync();
+
+                await _hubContext.Clients.Group($"order_{assignment.SaleOrderId}")
+                    .SendAsync("WorkflowUpdated", new
+                    {
+                        stage = "WriterAssigned",
+                        assignedTo = entry.AssignedTo,
+                        updatedBy = teamLeadName,
+                        notes = entry.Notes,
+                        timestamp = entry.Timestamp
+                    });
+
                 return Ok(new { message = "Assignment updated successfully" });
             }
             catch (UnauthorizedAccessException ex)

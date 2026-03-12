@@ -104,7 +104,7 @@ export class SaleOrderComponent implements OnInit {
         private currencyService: CurrencyService,
         private notificationService: NotificationService,
         private route: ActivatedRoute,
-        private router: Router,
+        public router: Router,
         private authService: AuthService
     ) {
         this.initializeForm();

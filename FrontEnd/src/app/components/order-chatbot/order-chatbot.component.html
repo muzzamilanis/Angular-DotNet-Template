@@ -1,0 +1,76 @@
+<div class="chatbot-container">
+  <div class="chat-header">
+    <i class="fas fa-robot"></i>
+    <span>AI Order Entry</span>
+    <small>Type a description to create an order intelligently</small>
+  </div>
+
+  <div class="chat-messages" id="chat-messages">
+    <div
+      *ngFor="let msg of messages; trackBy: trackByIndex"
+      class="message"
+      [class.user-message]="msg.role === 'user'"
+      [class.assistant-message]="msg.role === 'assistant'">
+
+      <div class="bubble">
+        <p [innerHTML]="msg.text.replace('\\n', '<br>')"></p>
+
+        <!-- Parsed Order Card -->
+        <div *ngIf="msg.parsedOrder" class="parsed-order-card">
+          <h5><i class="fas fa-clipboard-check"></i> Parsed Order Details</h5>
+          <table class="parsed-table">
+            <tr>
+              <td><strong>Order Number</strong></td>
+              <td>{{ msg.parsedOrder.suggestedOrderId }}</td>
+            </tr>
+            <tr>
+              <td><strong>Client Name</strong></td>
+              <td>{{ msg.parsedOrder.suggestedClientName }}</td>
+            </tr>
+            <tr>
+              <td><strong>Order Details</strong></td>
+              <td>{{ msg.parsedOrder.suggestedOrderDetails }}</td>
+            </tr>
+            <tr>
+              <td><strong>Words / Pages</strong></td>
+              <td>{{ msg.parsedOrder.suggestedWordCount }}</td>
+            </tr>
+            <tr>
+              <td><strong>Suggested Deadline</strong></td>
+              <td>{{ msg.parsedOrder.suggestedDeadline }}</td>
+            </tr>
+          </table>
+
+          <div class="card-actions" *ngIf="pendingParsedOrder">
+            <button class="btn-confirm" (click)="confirmOrder()" [disabled]="isLoading">
+              <i class="fas fa-check"></i> Confirm &amp; Create Order
+            </button>
+            <button class="btn-cancel" (click)="cancelOrder()" [disabled]="isLoading">
+              <i class="fas fa-times"></i> Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Typing indicator -->
+    <div class="message assistant-message" *ngIf="isLoading">
+      <div class="bubble typing-indicator">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="chat-input">
+    <textarea
+      [(ngModel)]="inputText"
+      (keydown)="onKeyDown($event)"
+      placeholder="Describe the order... (Enter to send, Shift+Enter for new line)"
+      rows="2"
+      [disabled]="isLoading">
+    </textarea>
+    <button (click)="sendMessage()" [disabled]="isLoading || !inputText.trim()" class="send-btn">
+      <i class="fas fa-paper-plane"></i>
+    </button>
+  </div>
+</div>
