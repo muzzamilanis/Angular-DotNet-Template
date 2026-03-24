@@ -92,6 +92,7 @@ builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<ICurrencyService, CurrencyService>();
 builder.Services.AddScoped<IExchangeRateService, ExchangeRateService>();
 builder.Services.AddScoped<IOrderIntelligenceService, OrderIntelligenceService>();
+builder.Services.AddSingleton<ICountryService, CountryService>();
 
 // Add Real Estate and Accounting services
 builder.Services.AddScoped<IPropertyService, PropertyService>();

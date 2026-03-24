@@ -67,7 +67,7 @@ export class OrderChatbotComponent implements OnInit, OnDestroy {
 
     confirmOrder(): void {
         if (!this.pendingParsedOrder) return;
-
+        console.log('Creating order with payload:', this.pendingParsedOrder);
         this.isLoading = true;
         const orderPayload = {
             orderNumber: this.pendingParsedOrder.suggestedOrderId ?? `SO-${Date.now()}`,
@@ -78,6 +78,10 @@ export class OrderChatbotComponent implements OnInit, OnDestroy {
             customerAddress: '',
             deadline: this.pendingParsedOrder.suggestedDeadline,
             wordsOrPages: this.pendingParsedOrder.suggestedWordCount,
+            country: this.pendingParsedOrder.suggestedCountry,
+            currencyCode: this.pendingParsedOrder.suggestedCurrencyCode,
+            foreignCurrencyAmount: this.pendingParsedOrder.suggestedCurrencyAmount,
+            serviceTypeId: this.pendingParsedOrder.suggestedServiceTypeId,
             status: 'Pending',
             items: []
         };

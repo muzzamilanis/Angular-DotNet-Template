@@ -12,8 +12,7 @@ export interface WorkflowStage {
 }
 
 export const WORKFLOW_STAGES: WorkflowStage[] = [
-    { key: 'OrderReceived', label: 'Order Received', icon: 'fas fa-inbox' },
-    { key: 'AIProcessing', label: 'AI Processing', icon: 'fas fa-robot' },
+    { key: 'OrderLogged', label: 'Order Logged', icon: 'fas fa-inbox' },
     { key: 'WriterAssigned', label: 'Writer Assigned', icon: 'fas fa-user-edit' },
     { key: 'InProgress', label: 'In Progress', icon: 'fas fa-pen-nib' },
     { key: 'UnderReview', label: 'Under Review', icon: 'fas fa-search' },

@@ -130,6 +130,29 @@ namespace SimpleApi.Controllers
                         timestamp = entry.Timestamp
                     });
 
+                // Also record InProgress right after assignment (service sets order status to InProgress)
+                var inProgressEntry = new OrderWorkflowStatus
+                {
+                    OrderId = assignment.SaleOrderId,
+                    Stage = "InProgress",
+                    AssignedTo = writer?.Name ?? assignment.WriterId.ToString(),
+                    UpdatedBy = teamLeadName,
+                    Notes = "Writer has started working on the order",
+                    Timestamp = DateTime.UtcNow.AddMilliseconds(1)
+                };
+                _context.OrderWorkflowStatuses.Add(inProgressEntry);
+                await _context.SaveChangesAsync();
+
+                await _hubContext.Clients.Group($"order_{assignment.SaleOrderId}")
+                    .SendAsync("WorkflowUpdated", new
+                    {
+                        stage = "InProgress",
+                        assignedTo = inProgressEntry.AssignedTo,
+                        updatedBy = teamLeadName,
+                        notes = inProgressEntry.Notes,
+                        timestamp = inProgressEntry.Timestamp
+                    });
+
                 return Ok(new { message = "Order assigned successfully" });
             }
             catch (UnauthorizedAccessException ex)
@@ -186,6 +209,29 @@ namespace SimpleApi.Controllers
                         updatedBy = teamLeadName,
                         notes = entry.Notes,
                         timestamp = entry.Timestamp
+                    });
+
+                // Also record InProgress right after reassignment
+                var inProgressEntry = new OrderWorkflowStatus
+                {
+                    OrderId = assignment.SaleOrderId,
+                    Stage = "InProgress",
+                    AssignedTo = writer?.Name ?? assignment.WriterId.ToString(),
+                    UpdatedBy = teamLeadName,
+                    Notes = "Writer has started working on the order",
+                    Timestamp = DateTime.UtcNow.AddMilliseconds(1)
+                };
+                _context.OrderWorkflowStatuses.Add(inProgressEntry);
+                await _context.SaveChangesAsync();
+
+                await _hubContext.Clients.Group($"order_{assignment.SaleOrderId}")
+                    .SendAsync("WorkflowUpdated", new
+                    {
+                        stage = "InProgress",
+                        assignedTo = inProgressEntry.AssignedTo,
+                        updatedBy = teamLeadName,
+                        notes = inProgressEntry.Notes,
+                        timestamp = inProgressEntry.Timestamp
                     });
 
                 return Ok(new { message = "Assignment updated successfully" });

@@ -85,30 +85,30 @@ namespace SimpleApi.Controllers
                 var companyId = GetCurrentUserCompanyId();
                 var result = await _saleOrderService.CreateAsync(input, companyId);
 				
-				// NEW: Trigger Intelligence Agent (non-blocking)
-				_ = Task.Run(async () =>
-				{
-					await _orderIntelligenceService.SendWebhook(result);
-				});
+				// // NEW: Trigger Intelligence Agent (non-blocking)
+				// _ = Task.Run(async () =>
+				// {
+				// 	await _orderIntelligenceService.SendWebhook(result);
+				// });
 
-				// Insert workflow status: OrderReceived
-				var currentUserName = User.FindFirst(ClaimTypes.Name)?.Value ?? "System";
-				var workflowEntry = new OrderWorkflowStatus
-				{
-					OrderId = result.Id,
-					Stage = "OrderReceived",
-					UpdatedBy = currentUserName,
-					Timestamp = DateTime.UtcNow
-				};
-				_context.OrderWorkflowStatuses.Add(workflowEntry);
+				// // Insert workflow status: OrderReceived
+				// var currentUserName = User.FindFirst(ClaimTypes.Name)?.Value ?? "System";
+				// var workflowEntry = new OrderWorkflowStatus
+				// {
+				// 	OrderId = result.Id,
+				// 	Stage = "OrderReceived",
+				// 	UpdatedBy = currentUserName,
+				// 	Timestamp = DateTime.UtcNow
+				// };
+				// _context.OrderWorkflowStatuses.Add(workflowEntry);
 
 				// Insert workflow status: AIProcessing (webhook is fired immediately after creation)
 				var aiEntry = new OrderWorkflowStatus
 				{
 					OrderId = result.Id,
-					Stage = "AIProcessing",
+					Stage = "OrderLogged",
 					UpdatedBy = "System",
-					Notes = "Order submitted to AI intelligence agent",
+					Notes = "Order logged by CSR after getting processed by AI intelligence agent",
 					Timestamp = DateTime.UtcNow.AddMilliseconds(1)
 				};
 				_context.OrderWorkflowStatuses.Add(aiEntry);
@@ -119,16 +119,16 @@ namespace SimpleApi.Controllers
 				_ = _hubContext.Clients.Group($"order_{result.Id}")
 					.SendAsync("WorkflowUpdated", new
 					{
-						stage = "OrderReceived",
-						updatedBy = currentUserName,
-						timestamp = workflowEntry.Timestamp
+						stage = "OrderLogged",
+						updatedBy = "System",
+						timestamp = aiEntry.Timestamp
 					});
 				_ = _hubContext.Clients.Group($"order_{result.Id}")
 					.SendAsync("WorkflowUpdated", new
 					{
-						stage = "AIProcessing",
+						stage = "OrderLogged",
 						updatedBy = "System",
-						notes = "Order submitted to AI intelligence agent",
+						notes = "Order logged by CSR after getting processed by AI intelligence agent",
 						timestamp = aiEntry.Timestamp
 					});
 
@@ -159,7 +159,7 @@ namespace SimpleApi.Controllers
                 input.Id = id;
                 var companyId = GetCurrentUserCompanyId();
                 var result = await _saleOrderService.UpdateAsync(input, companyId);
-				// NEW: Re-trigger intelligence analysis if critical fields changed
+				// Re-trigger intelligence analysis if critical fields changed
 				if (input.ServiceTypeId != null || input.WordsOrPages != null || input.Deadline != null)
 				{
 					_ = Task.Run(async () =>
@@ -167,6 +167,32 @@ namespace SimpleApi.Controllers
 						await _orderIntelligenceService.TriggerIntelligenceAnalysisAsync(id.ToString());
 					});
 				}
+
+				// Record workflow stage: Delivered when order is marked Completed
+				if (input.Status == "Completed")
+				{
+					var currentUserName = User.FindFirst(System.Security.Claims.ClaimTypes.Name)?.Value ?? "System";
+					var deliveredEntry = new OrderWorkflowStatus
+					{
+						OrderId = id,
+						Stage = "Delivered",
+						UpdatedBy = currentUserName,
+						Notes = "Order completed and delivered to client",
+						Timestamp = DateTime.UtcNow
+					};
+					_context.OrderWorkflowStatuses.Add(deliveredEntry);
+					await _context.SaveChangesAsync();
+
+					_ = _hubContext.Clients.Group($"order_{id}")
+						.SendAsync("WorkflowUpdated", new
+						{
+							stage = "Delivered",
+							updatedBy = currentUserName,
+							notes = deliveredEntry.Notes,
+							timestamp = deliveredEntry.Timestamp
+						});
+				}
+
 				return Ok(result);
             }
             catch (UnauthorizedAccessException ex)
