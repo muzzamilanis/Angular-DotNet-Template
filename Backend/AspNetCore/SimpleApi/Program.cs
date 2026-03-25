@@ -75,6 +75,7 @@ if (!builder.Environment.IsEnvironment("Testing"))
 
 // Add AutoMapper
 builder.Services.AddAutoMapper(typeof(MappingProfile));
+builder.Services.AddMemoryCache();
 
 // Add services
 builder.Services.AddScoped<ICustomerService, CustomerService>();
@@ -92,6 +93,7 @@ builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<ICurrencyService, CurrencyService>();
 builder.Services.AddScoped<IExchangeRateService, ExchangeRateService>();
 builder.Services.AddScoped<IOrderIntelligenceService, OrderIntelligenceService>();
+builder.Services.AddScoped<IOrderParserService, OrderParserService>();
 builder.Services.AddSingleton<ICountryService, CountryService>();
 
 // Add Real Estate and Accounting services

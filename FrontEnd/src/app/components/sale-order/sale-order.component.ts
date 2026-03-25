@@ -80,7 +80,7 @@ export class SaleOrderComponent implements OnInit {
     projectFilter: number | string = '';
 
     readonly statusOptions = ['New', 'InProgress', 'Completed', 'Abandon', 'workSubmittedByWriter'];
-    readonly paymentStatusOptions = ['Pending', 'PartialPaid', 'FullPaid'];
+    readonly paymentStatusOptions = ['Pending', 'Partial', 'Paid'];
     readonly sourceOfPaymentOptions = ['Website', 'Payoneer', 'OnlineTransfer'];
 
     // Add after other public properties
@@ -293,7 +293,10 @@ export class SaleOrderComponent implements OnInit {
             );
             this.saleOrderForm.addControl('contactPhone', this.fb.control('', [Validators.maxLength(50)]));
             this.saleOrderForm.addControl('orderDetails', this.fb.control('', [Validators.maxLength(1000)]));
-            this.saleOrderForm.addControl('wordsOrPages', this.fb.control('', [Validators.maxLength(100)]));
+            this.saleOrderForm.addControl('wordsOrPages', this.fb.control('', [
+                Validators.maxLength(100),
+                Validators.pattern(/^\d+\s*(words?|pages?)?([\s-]*\d+\s*(words?|pages?))?$/i)
+            ]));
 
             // Currency-related fields
             this.saleOrderForm.addControl('country', this.fb.control('', [Validators.maxLength(100)]));
@@ -723,6 +726,20 @@ export class SaleOrderComponent implements OnInit {
         this.generalService.getCountries().subscribe({
             next: (countries) => {
                 this.countries = countries;
+                // Re-apply country selection if the form was populated before countries finished loading
+                if (!this.selectedCountry) {
+                    const storedCountry = this.currentOrder?.country || this.editingOrder?.country;
+                    if (storedCountry) {
+                        const found = countries.find((c) => c.name === storedCountry);
+                        if (found) {
+                            this.selectedCountry = found.code;
+                            this.selectedCurrencyCode = found.currency;
+                            this.selectedCurrencySymbol = found.symbol || '';
+                            this.currentExchangeRate =
+                                (this.currentOrder || this.editingOrder)?.exchangeRateUsed || 0;
+                        }
+                    }
+                }
             },
             error: (error) => {
                 console.error('Error loading countries:', error);
