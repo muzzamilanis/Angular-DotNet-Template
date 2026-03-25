@@ -1,6 +1,10 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
+using SimpleApi.Data;
 using SimpleApi.DTOs;
+using SimpleApi.Hubs;
+using SimpleApi.Models;
 using SimpleApi.Services;
 using System.Security.Claims;
 
@@ -13,11 +17,19 @@ namespace SimpleApi.Controllers
     {
         private readonly ISaleOrderService _saleOrderService;
 		private readonly IOrderIntelligenceService _orderIntelligenceService;
+		private readonly ApplicationDbContext _context;
+		private readonly IHubContext<OrderWorkflowHub> _hubContext;
 
-        public SaleOrdersController(ISaleOrderService saleOrderService, IOrderIntelligenceService orderIntelligenceService)
+        public SaleOrdersController(
+			ISaleOrderService saleOrderService,
+			IOrderIntelligenceService orderIntelligenceService,
+			ApplicationDbContext context,
+			IHubContext<OrderWorkflowHub> hubContext)
         {
             _saleOrderService = saleOrderService;
 			_orderIntelligenceService = orderIntelligenceService;
+			_context = context;
+			_hubContext = hubContext;
 		}
 
         [HttpGet]
@@ -73,11 +85,52 @@ namespace SimpleApi.Controllers
                 var companyId = GetCurrentUserCompanyId();
                 var result = await _saleOrderService.CreateAsync(input, companyId);
 				
-				// NEW: Trigger Intelligence Agent (non-blocking)
-				_ = Task.Run(async () =>
+				// // NEW: Trigger Intelligence Agent (non-blocking)
+				// _ = Task.Run(async () =>
+				// {
+				// 	await _orderIntelligenceService.SendWebhook(result);
+				// });
+
+				// // Insert workflow status: OrderReceived
+				// var currentUserName = User.FindFirst(ClaimTypes.Name)?.Value ?? "System";
+				// var workflowEntry = new OrderWorkflowStatus
+				// {
+				// 	OrderId = result.Id,
+				// 	Stage = "OrderReceived",
+				// 	UpdatedBy = currentUserName,
+				// 	Timestamp = DateTime.UtcNow
+				// };
+				// _context.OrderWorkflowStatuses.Add(workflowEntry);
+
+				// Insert workflow status: AIProcessing (webhook is fired immediately after creation)
+				var aiEntry = new OrderWorkflowStatus
 				{
-					await _orderIntelligenceService.SendWebhook(result);
-				});
+					OrderId = result.Id,
+					Stage = "OrderLogged",
+					UpdatedBy = "System",
+					Notes = "Order logged by CSR after getting processed by AI intelligence agent",
+					Timestamp = DateTime.UtcNow.AddMilliseconds(1)
+				};
+				_context.OrderWorkflowStatuses.Add(aiEntry);
+
+				await _context.SaveChangesAsync();
+
+				// Notify SignalR subscribers for this order
+				_ = _hubContext.Clients.Group($"order_{result.Id}")
+					.SendAsync("WorkflowUpdated", new
+					{
+						stage = "OrderLogged",
+						updatedBy = "System",
+						timestamp = aiEntry.Timestamp
+					});
+				_ = _hubContext.Clients.Group($"order_{result.Id}")
+					.SendAsync("WorkflowUpdated", new
+					{
+						stage = "OrderLogged",
+						updatedBy = "System",
+						notes = "Order logged by CSR after getting processed by AI intelligence agent",
+						timestamp = aiEntry.Timestamp
+					});
 
 				return CreatedAtAction(nameof(Get), new { id = result.Id }, result);
             }
@@ -106,7 +159,7 @@ namespace SimpleApi.Controllers
                 input.Id = id;
                 var companyId = GetCurrentUserCompanyId();
                 var result = await _saleOrderService.UpdateAsync(input, companyId);
-				// NEW: Re-trigger intelligence analysis if critical fields changed
+				// Re-trigger intelligence analysis if critical fields changed
 				if (input.ServiceTypeId != null || input.WordsOrPages != null || input.Deadline != null)
 				{
 					_ = Task.Run(async () =>
@@ -114,6 +167,32 @@ namespace SimpleApi.Controllers
 						await _orderIntelligenceService.TriggerIntelligenceAnalysisAsync(id.ToString());
 					});
 				}
+
+				// Record workflow stage: Delivered when order is marked Completed
+				if (input.Status == "Completed")
+				{
+					var currentUserName = User.FindFirst(System.Security.Claims.ClaimTypes.Name)?.Value ?? "System";
+					var deliveredEntry = new OrderWorkflowStatus
+					{
+						OrderId = id,
+						Stage = "Delivered",
+						UpdatedBy = currentUserName,
+						Notes = "Order completed and delivered to client",
+						Timestamp = DateTime.UtcNow
+					};
+					_context.OrderWorkflowStatuses.Add(deliveredEntry);
+					await _context.SaveChangesAsync();
+
+					_ = _hubContext.Clients.Group($"order_{id}")
+						.SendAsync("WorkflowUpdated", new
+						{
+							stage = "Delivered",
+							updatedBy = currentUserName,
+							notes = deliveredEntry.Notes,
+							timestamp = deliveredEntry.Timestamp
+						});
+				}
+
 				return Ok(result);
             }
             catch (UnauthorizedAccessException ex)

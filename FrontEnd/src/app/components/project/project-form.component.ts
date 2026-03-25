@@ -17,10 +17,12 @@ import { BusinessNatureType } from '../../models/multi-tenant.model';
 })
 export class ProjectFormComponent implements OnInit {
     projectForm: FormGroup;
+    serviceTypeForm: FormGroup;
     isEditMode = false;
     projectId?: number;
     loading = false;
     submitting = false;
+    isCreatingServiceType = false;
 
     // Alert state
     alertMessage = '';
@@ -48,6 +50,7 @@ export class ProjectFormComponent implements OnInit {
         private router: Router
     ) {
         this.projectForm = this.createForm();
+        this.serviceTypeForm = this.createServiceTypeForm();
     }
 
     ngOnInit(): void {
@@ -67,6 +70,14 @@ export class ProjectFormComponent implements OnInit {
             projectDescription: ['', Validators.maxLength(1000)],
             projectStatus: [ProjectStatus.Active, Validators.required],
             serviceTypeId: [''],
+            isActive: [true],
+        });
+    }
+
+    private createServiceTypeForm(): FormGroup {
+        return this.fb.group({
+            name: ['', [Validators.required, Validators.maxLength(100)]],
+            description: ['', [Validators.maxLength(200)]],
             isActive: [true],
         });
     }
@@ -194,6 +205,87 @@ export class ProjectFormComponent implements OnInit {
 
     onCancel(): void {
         this.router.navigate(['/masters/projects']);
+    }
+
+    openCreateServiceTypeModal(): void {
+        if (!this.serviceTypeForm) {
+            this.serviceTypeForm = this.createServiceTypeForm();
+        } else {
+            this.serviceTypeForm.reset({
+                name: '',
+                description: '',
+                isActive: true,
+            });
+        }
+
+        this.showCreateServiceTypeModal();
+    }
+
+    private showCreateServiceTypeModal(): void {
+        const modalElement = document.getElementById('createServiceTypeModal');
+        if (modalElement) {
+            modalElement.style.display = 'block';
+            modalElement.classList.add('show');
+            document.body.classList.add('modal-open');
+
+            const backdrop = document.createElement('div');
+            backdrop.className = 'modal-backdrop fade show';
+            backdrop.id = 'serviceTypeModalBackdrop';
+            document.body.appendChild(backdrop);
+        }
+    }
+
+    private hideCreateServiceTypeModal(): void {
+        const modalElement = document.getElementById('createServiceTypeModal');
+        if (modalElement) {
+            modalElement.style.display = 'none';
+            modalElement.classList.remove('show');
+            document.body.classList.remove('modal-open');
+
+            const backdrop = document.getElementById('serviceTypeModalBackdrop');
+            if (backdrop) {
+                backdrop.remove();
+            }
+        }
+    }
+
+    closeCreateServiceTypeModal(): void {
+        this.hideCreateServiceTypeModal();
+    }
+
+    onCreateServiceType(): void {
+        if (this.serviceTypeForm && this.serviceTypeForm.valid) {
+            this.isCreatingServiceType = true;
+            const formValue = this.serviceTypeForm.value;
+
+            const createServiceTypeDto = {
+                name: formValue.name,
+                description: formValue.description,
+                isActive: formValue.isActive,
+            };
+
+            this.serviceTypeService.createServiceType(createServiceTypeDto).subscribe({
+                next: (response) => {
+                    this.showAlertMessage('Service type created successfully', 'success');
+                    this.hideCreateServiceTypeModal();
+
+                    this.loadServiceTypes();
+
+                    if (response.id) {
+                        this.projectForm.get('serviceTypeId')?.setValue(response.id);
+                    }
+
+                    this.isCreatingServiceType = false;
+                },
+                error: (error) => {
+                    console.error('Error creating service type:', error);
+                    this.showAlertMessage('Failed to create service type', 'danger');
+                    this.isCreatingServiceType = false;
+                },
+            });
+        } else {
+            this.markFormGroupTouched(this.serviceTypeForm);
+        }
     }
 
     private markFormGroupTouched(formGroup: FormGroup): void {

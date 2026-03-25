@@ -642,6 +642,45 @@ namespace SimpleApi.Migrations
                     b.ToTable("OrderInstructions");
                 });
 
+            modelBuilder.Entity("SimpleApi.Models.OrderWorkflowStatus", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AssignedTo")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Stage")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdatedBy")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderId");
+
+                    b.ToTable("OrderWorkflowStatuses");
+                });
+
             modelBuilder.Entity("SimpleApi.Models.OwnershipTransfer", b =>
                 {
                     b.Property<int>("Id")
@@ -2083,6 +2122,17 @@ namespace SimpleApi.Migrations
                     b.Navigation("Sender");
                 });
 
+            modelBuilder.Entity("SimpleApi.Models.OrderWorkflowStatus", b =>
+                {
+                    b.HasOne("SimpleApi.Models.SaleOrder", "SaleOrder")
+                        .WithMany()
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("SaleOrder");
+                });
+
             modelBuilder.Entity("SimpleApi.Models.OwnershipTransfer", b =>
                 {
                     b.HasOne("SimpleApi.Models.Company", "Company")
@@ -2221,8 +2271,7 @@ namespace SimpleApi.Migrations
 
                     b.HasOne("SimpleApi.Models.Voucher", "Voucher")
                         .WithMany()
-                        .HasForeignKey("VoucherId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .HasForeignKey("VoucherId");
 
                     b.Navigation("Company");
 

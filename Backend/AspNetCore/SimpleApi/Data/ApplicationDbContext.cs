@@ -42,6 +42,9 @@ namespace SimpleApi.Data
 		public DbSet<InvestorLedgerEntry> InvestorLedgerEntries { get; set; }
 		public DbSet<ProjectLedgerEntry> ProjectLedgerEntries { get; set; }
 
+		// Order Workflow Module
+		public DbSet<OrderWorkflowStatus> OrderWorkflowStatuses { get; set; }
+
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
 			base.OnModelCreating(modelBuilder);
@@ -587,11 +590,22 @@ namespace SimpleApi.Data
 					  .WithMany()
 					  .HasForeignKey(e => e.ProjectExpenseId)
 					  .OnDelete(DeleteBehavior.SetNull);
+			});
 
-				entity.HasOne(e => e.Voucher)
+			// Configure OrderWorkflowStatus
+			modelBuilder.Entity<OrderWorkflowStatus>(entity =>
+			{
+				entity.HasKey(e => e.Id);
+				entity.Property(e => e.Stage).IsRequired().HasMaxLength(100);
+				entity.Property(e => e.UpdatedBy).IsRequired().HasMaxLength(200);
+				entity.Property(e => e.AssignedTo).HasMaxLength(200);
+				entity.Property(e => e.Notes).HasMaxLength(1000);
+				entity.Property(e => e.Timestamp).IsRequired();
+
+				entity.HasOne(e => e.SaleOrder)
 					  .WithMany()
-					  .HasForeignKey(e => e.VoucherId)
-					  .OnDelete(DeleteBehavior.SetNull);
+					  .HasForeignKey(e => e.OrderId)
+					  .OnDelete(DeleteBehavior.Cascade);
 			});
 
 			// Define a fixed seed date to avoid constant model changes
