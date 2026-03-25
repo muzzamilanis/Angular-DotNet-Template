@@ -1,8 +1,12 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore;
+using SimpleApi.Data;
 using SimpleApi.DTOs;
-using SimpleApi.Services;
+using SimpleApi.Hubs;
 using SimpleApi.Models;
+using SimpleApi.Services;
 
 namespace SimpleApi.Controllers
 {
@@ -14,12 +18,21 @@ namespace SimpleApi.Controllers
         private readonly IUserService _userService;
         private readonly ISaleOrderService _saleOrderService;
         private readonly IEmailService _emailService;
+        private readonly ApplicationDbContext _context;
+        private readonly IHubContext<OrderWorkflowHub> _hubContext;
 
-        public WritersController(IUserService userService, ISaleOrderService saleOrderService, IEmailService emailService)
+        public WritersController(
+            IUserService userService,
+            ISaleOrderService saleOrderService,
+            IEmailService emailService,
+            ApplicationDbContext context,
+            IHubContext<OrderWorkflowHub> hubContext)
         {
             _userService = userService;
             _saleOrderService = saleOrderService;
             _emailService = emailService;
+            _context = context;
+            _hubContext = hubContext;
         }
 
         [HttpGet("list")]
@@ -86,10 +99,33 @@ namespace SimpleApi.Controllers
             {
                 var userId = GetCurrentUserId();
                 await _saleOrderService.SubmitWriterWorkAsync(submission, submittedFile, userId);
-                
+
+                // Record workflow stage: UnderReview (work submitted, awaiting team lead review)
+                var writer = await _context.Users.FindAsync(userId);
+                var writerName = writer?.Name ?? "Writer";
+                var underReviewEntry = new OrderWorkflowStatus
+                {
+                    OrderId = submission.SaleOrderId,
+                    Stage = "UnderReview",
+                    UpdatedBy = writerName,
+                    Notes = $"Work submitted by {writerName}. Status: {submission.SubmissionStatus}",
+                    Timestamp = DateTime.UtcNow
+                };
+                _context.OrderWorkflowStatuses.Add(underReviewEntry);
+                await _context.SaveChangesAsync();
+
+                await _hubContext.Clients.Group($"order_{submission.SaleOrderId}")
+                    .SendAsync("WorkflowUpdated", new
+                    {
+                        stage = "UnderReview",
+                        updatedBy = writerName,
+                        notes = underReviewEntry.Notes,
+                        timestamp = underReviewEntry.Timestamp
+                    });
+
                 // Send email notification to Super Admin
                 await SendSubmissionNotificationAsync(submission);
-                
+
                 return Ok(new { message = "Work submitted successfully" });
             }
             catch (UnauthorizedAccessException ex)

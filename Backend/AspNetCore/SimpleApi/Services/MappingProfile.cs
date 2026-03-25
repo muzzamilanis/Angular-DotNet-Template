@@ -8,6 +8,12 @@ namespace SimpleApi.Services
     {
         public MappingProfile()
         {
+            // Normalize all DateTime values to UTC kind for PostgreSQL compatibility
+            CreateMap<DateTime, DateTime>()
+                .ConvertUsing(dt => DateTime.SpecifyKind(dt, DateTimeKind.Utc));
+            CreateMap<DateTime?, DateTime?>()
+                .ConvertUsing(dt => dt.HasValue ? DateTime.SpecifyKind(dt.Value, DateTimeKind.Utc) : (DateTime?)null);
+
             // Company mappings
             CreateMap<Company, CompanyDto>();
             CreateMap<CreateCompanyDto, Company>();

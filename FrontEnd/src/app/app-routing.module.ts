@@ -38,6 +38,8 @@ import { SuperAdminGuard } from './guards/super-admin.guard';
 import { WriterGuard } from './guards/writer.guard';
 import { TeamLeadGuard } from './guards/team-lead.guard';
 import { AdminDashboardGuard } from './guards/admin-dashboard.guard';
+import { OrderChatbotComponent } from './components/order-chatbot/order-chatbot.component';
+import { OrderWorkflowDiagramComponent } from './components/order-workflow-diagram/order-workflow-diagram.component';
 
 const routes: Routes = [
     { path: 'login', component: LoginComponent },
@@ -50,24 +52,24 @@ const routes: Routes = [
         children: [
             { path: '', component: DashboardComponent, canActivate: [AdminDashboardGuard] },
             { path: 'dashboard', component: DashboardComponent, canActivate: [AdminDashboardGuard] },
-            
+
             // Real Estate Routes
             { path: 'realestate/dashboard', component: RealEstateDashboardComponent },
             { path: 'realestate/properties', component: PropertyRegistrationComponent },
             { path: 'realestate/purchases', component: PropertyPurchaseComponent },
             { path: 'realestate/sales', component: PropertySaleComponent },
             { path: 'realestate/ownership-transfers', component: OwnershipTransferComponent },
-            
+
             // Accounting Routes
             { path: 'accounting/chart-of-accounts', component: ChartOfAccountsComponent },
             { path: 'accounting/vouchers', component: VoucherManagementComponent },
-            
+
             // Reports Routes
             { path: 'reports/general-ledger', component: GeneralLedgerComponent },
             { path: 'reports/trial-balance', component: TrialBalanceComponent },
             { path: 'reports/balance-sheet', component: BalanceSheetComponent },
             { path: 'reports/profit-loss', component: ProfitLossComponent },
-            
+
             // Construction Routes
             {
                 path: 'construction/dashboard',
@@ -142,9 +144,11 @@ const routes: Routes = [
                         (m) => m.ConstructionProfitLossComponent
                     ),
             },
-            
+
             // Existing Routes
             { path: 'transactions/sale-orders', component: SaleOrderComponent },
+            { path: 'order-entry', component: OrderChatbotComponent, canActivate: [AuthGuard] },
+            { path: 'order-workflow/:id', component: OrderWorkflowDiagramComponent, canActivate: [AuthGuard] },
             { path: 'masters/products', component: ProductComponent },
             { path: 'masters/customers', component: CustomerComponent },
             { path: 'masters/projects', component: ProjectListComponent },
@@ -194,4 +198,4 @@ const routes: Routes = [
     imports: [RouterModule.forRoot(routes)],
     exports: [RouterModule],
 })
-export class AppRoutingModule {}
+export class AppRoutingModule { }

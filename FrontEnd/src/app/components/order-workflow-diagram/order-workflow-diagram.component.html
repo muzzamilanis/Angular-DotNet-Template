@@ -1,0 +1,85 @@
+<div class="workflow-page">
+    <!-- Header -->
+    <div class="workflow-header">
+        <button class="btn btn-outline-secondary btn-sm back-btn" (click)="goBack()">
+            <i class="fas fa-arrow-left"></i> Back to Orders
+        </button>
+        <div class="order-badge">
+            <i class="fas fa-file-alt"></i>
+            <span>Order #{{ orderId }}</span>
+        </div>
+        <div class="live-badge" *ngIf="!isLoading">
+            <span class="dot"></span> Live
+        </div>
+    </div>
+
+    <!-- Loading -->
+    <div *ngIf="isLoading" class="loading-state">
+        <i class="fas fa-spinner fa-spin"></i> Loading workflow...
+    </div>
+
+    <!-- Diagram -->
+    <div *ngIf="!isLoading" class="diagram-wrapper">
+        <div class="stages-row">
+            <ng-container *ngFor="let stage of stages; let i = index; let last = last">
+                <!-- Stage Node -->
+                <div class="stage-node" [class.completed]="getStageStatus(stage.key) === 'completed'"
+                    [class.current]="getStageStatus(stage.key) === 'current'"
+                    [class.pending]="getStageStatus(stage.key) === 'pending'" (click)="selectStage(stage.key)"
+                    [title]="stage.label">
+                    <div class="node-circle">
+                        <i [class]="stage.icon"></i>
+                    </div>
+                    <span class="node-label">{{ stage.label }}</span>
+                    <span class="node-status" [ngSwitch]="getStageStatus(stage.key)">
+                        <ng-container *ngSwitchCase="'completed'"><i class="fas fa-check-circle"></i></ng-container>
+                        <ng-container *ngSwitchCase="'current'"><i class="fas fa-dot-circle pulse"></i></ng-container>
+                        <ng-container *ngSwitchCase="'pending'"><i class="far fa-circle"></i></ng-container>
+                    </span>
+                </div>
+
+                <!-- Connector arrow (not after last) -->
+                <div class="connector" *ngIf="!last" [class.filled]="getStageStatus(stage.key) === 'completed'">
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+            </ng-container>
+        </div>
+
+        <!-- Stage Detail Popup -->
+        <div class="stage-popup" *ngIf="selectedStage" (click)="closePopup()">
+            <div class="popup-card" (click)="$event.stopPropagation()">
+                <button class="popup-close" (click)="closePopup()"><i class="fas fa-times"></i></button>
+                <h5>{{ selectedStage.stage }}</h5>
+                <table class="popup-table">
+                    <tr>
+                        <td><strong>Time</strong></td>
+                        <td>{{ selectedStage.timestamp | date:'medium' }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Updated By</strong></td>
+                        <td>{{ selectedStage.updatedBy }}</td>
+                    </tr>
+                    <tr *ngIf="selectedStage.assignedTo">
+                        <td><strong>Assigned To</strong></td>
+                        <td>{{ selectedStage.assignedTo }}</td>
+                    </tr>
+                    <tr *ngIf="selectedStage.notes">
+                        <td><strong>Notes</strong></td>
+                        <td>{{ selectedStage.notes }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- History Log -->
+    <div *ngIf="!isLoading && workflowHistory.length > 0" class="history-log">
+        <h6><i class="fas fa-history"></i> Status History</h6>
+        <div class="history-item" *ngFor="let entry of workflowHistory">
+            <span class="history-stage">{{ entry.stage }}</span>
+            <span class="history-by">by {{ entry.updatedBy }}</span>
+            <span class="history-time">{{ entry.timestamp | date:'short' }}</span>
+            <span *ngIf="entry.notes" class="history-notes">— {{ entry.notes }}</span>
+        </div>
+    </div>
+</div>

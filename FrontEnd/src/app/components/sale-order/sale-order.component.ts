@@ -28,6 +28,7 @@ import { NotificationService } from '../../services/notification.service';
 import { BusinessNatureType } from '../../models/multi-tenant.model';
 import { ProjectStatus, CreateProjectDto } from '../../models/project.model';
 import { AuthService } from '../../services/auth.service';
+import { GeneralService } from '../../services/general.service';
 
 @Component({
     selector: 'app-sale-order',
@@ -79,7 +80,7 @@ export class SaleOrderComponent implements OnInit {
     projectFilter: number | string = '';
 
     readonly statusOptions = ['New', 'InProgress', 'Completed', 'Abandon', 'workSubmittedByWriter'];
-    readonly paymentStatusOptions = ['Pending', 'PartialPaid', 'FullPaid'];
+    readonly paymentStatusOptions = ['Pending', 'Partial', 'Paid'];
     readonly sourceOfPaymentOptions = ['Website', 'Payoneer', 'OnlineTransfer'];
 
     // Add after other public properties
@@ -102,13 +103,13 @@ export class SaleOrderComponent implements OnInit {
         private projectService: ProjectService,
         private serviceTypeService: ServiceTypeService,
         private currencyService: CurrencyService,
+        private generalService: GeneralService,
         private notificationService: NotificationService,
         private route: ActivatedRoute,
-        private router: Router,
+        public router: Router,
         private authService: AuthService
     ) {
         this.initializeForm();
-        this.initializeCountries();
     }
 
     ngOnInit(): void {
@@ -117,6 +118,7 @@ export class SaleOrderComponent implements OnInit {
         this.loadProducts();
         this.loadWriters();
         this.loadSaleOrders();
+        this.loadCountries();
     }
 
     private checkUserRole(): void {
@@ -291,7 +293,10 @@ export class SaleOrderComponent implements OnInit {
             );
             this.saleOrderForm.addControl('contactPhone', this.fb.control('', [Validators.maxLength(50)]));
             this.saleOrderForm.addControl('orderDetails', this.fb.control('', [Validators.maxLength(1000)]));
-            this.saleOrderForm.addControl('wordsOrPages', this.fb.control('', [Validators.maxLength(100)]));
+            this.saleOrderForm.addControl('wordsOrPages', this.fb.control('', [
+                Validators.maxLength(100),
+                Validators.pattern(/^\d+\s*(words?|pages?)?([\s-]*\d+\s*(words?|pages?))?$/i)
+            ]));
 
             // Currency-related fields
             this.saleOrderForm.addControl('country', this.fb.control('', [Validators.maxLength(100)]));
@@ -450,8 +455,8 @@ export class SaleOrderComponent implements OnInit {
 
         // Add Digital Marketing specific fields to sale order if company is Digital Marketing
         if (this.isDigitalMarketing) {
-            saleOrder.projectId = formValue.projectId || null;
-            saleOrder.serviceTypeId = formValue.serviceTypeId || null;
+            saleOrder.projectId = formValue.projectId ? +formValue.projectId : null;
+            saleOrder.serviceTypeId = formValue.serviceTypeId ? +formValue.serviceTypeId : null;
             saleOrder.clientName = formValue.clientName;
             saleOrder.deadline = formValue.deadline ? new Date(formValue.deadline) : undefined;
             saleOrder.status = formValue.status;
@@ -714,19 +719,32 @@ export class SaleOrderComponent implements OnInit {
     }
 
     private initializeCountries(): void {
-        this.countries = [
-            { name: 'United Arab Emirates', code: 'UAE', currency: 'AED', symbol: 'د.إ' },
-            { name: 'Saudi Arabia', code: 'SA', currency: 'SAR', symbol: '﷼' },
-            { name: 'United States', code: 'US', currency: 'USD', symbol: '$' },
-            { name: 'United Kingdom', code: 'UK', currency: 'GBP', symbol: '£' },
-            { name: 'European Union', code: 'EU', currency: 'EUR', symbol: '€' },
-            { name: 'Canada', code: 'CA', currency: 'CAD', symbol: 'C$' },
-            { name: 'Australia', code: 'AU', currency: 'AUD', symbol: 'A$' },
-            { name: 'Switzerland', code: 'CH', currency: 'CHF', symbol: 'CHF' },
-            { name: 'China', code: 'CN', currency: 'CNY', symbol: '¥' },
-            { name: 'India', code: 'IN', currency: 'INR', symbol: '₹' },
-            { name: 'Japan', code: 'JP', currency: 'JPY', symbol: '¥' },
-        ];
+        this.loadCountries();
+    }
+
+    private loadCountries(): void {
+        this.generalService.getCountries().subscribe({
+            next: (countries) => {
+                this.countries = countries;
+                // Re-apply country selection if the form was populated before countries finished loading
+                if (!this.selectedCountry) {
+                    const storedCountry = this.currentOrder?.country || this.editingOrder?.country;
+                    if (storedCountry) {
+                        const found = countries.find((c) => c.name === storedCountry);
+                        if (found) {
+                            this.selectedCountry = found.code;
+                            this.selectedCurrencyCode = found.currency;
+                            this.selectedCurrencySymbol = found.symbol || '';
+                            this.currentExchangeRate =
+                                (this.currentOrder || this.editingOrder)?.exchangeRateUsed || 0;
+                        }
+                    }
+                }
+            },
+            error: (error) => {
+                console.error('Error loading countries:', error);
+            },
+        });
     }
 
     onCountryChange(countryCode: string): void {

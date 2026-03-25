@@ -26,6 +26,8 @@ import { WriterDashboardComponent } from './components/writer-portal/writer-dash
 import { TeamLeadOrdersComponent } from './components/team-lead/team-lead-orders.component';
 import { TeamLeadDashboardComponent } from './components/team-lead/team-lead-dashboard.component';
 import { BrandingDemoComponent } from './components/branding-demo/branding-demo.component';
+import { OrderChatbotComponent } from './components/order-chatbot/order-chatbot.component';
+import { OrderWorkflowDiagramComponent } from './components/order-workflow-diagram/order-workflow-diagram.component';
 // Real Estate Components
 import { RealEstateDashboardComponent } from './components/realestate/realestate-dashboard/realestate-dashboard.component';
 import { PropertyRegistrationComponent } from './components/realestate/property-registration/property-registration.component';
@@ -84,6 +86,9 @@ export function initializeAppTheme(themeService: ThemeService, companyService: C
         TeamLeadOrdersComponent,
         TeamLeadDashboardComponent,
         BrandingDemoComponent,
+        // Order Workflow Components
+        OrderChatbotComponent,
+        OrderWorkflowDiagramComponent,
         // Real Estate Components
         RealEstateDashboardComponent,
         PropertyRegistrationComponent,
@@ -123,4 +128,4 @@ export function initializeAppTheme(themeService: ThemeService, companyService: C
     ],
     bootstrap: [AppComponent],
 })
-export class AppModule {}
+export class AppModule { }
