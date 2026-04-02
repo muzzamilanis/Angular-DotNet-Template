@@ -1,207 +1,162 @@
-<!-- Customer Form -->
-<div class="row">
-    <div class="col-md-12">
-        <div class="card card-primary">
-            <div class="card-header">
-                <h3 class="card-title">
-                    <i class="fas fa-users mr-2"></i>
-                    {{ editingCustomer ? 'Edit' : 'Create' }} Customer
-                </h3>
-            </div>
-            <form [formGroup]="customerForm" (ngSubmit)="onSubmit()">
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="name">Customer Name *</label>
-                                <input
-                                    type="text"
-                                    class="form-control"
-                                    id="name"
-                                    formControlName="name"
-                                    placeholder="Enter customer name"
-                                    [class.is-invalid]="
-                                        customerForm.get('name')?.invalid && customerForm.get('name')?.touched
-                                    " />
-                                <div
-                                    class="invalid-feedback"
-                                    *ngIf="customerForm.get('name')?.invalid && customerForm.get('name')?.touched">
-                                    <div *ngIf="customerForm.get('name')?.errors?.['required']">
-                                        Customer name is required
-                                    </div>
-                                    <div *ngIf="customerForm.get('name')?.errors?.['maxlength']">
-                                        Customer name must be 200 characters or less
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="phone">Phone</label>
-                                <input
-                                    type="text"
-                                    class="form-control"
-                                    id="phone"
-                                    formControlName="phone"
-                                    placeholder="Enter phone number"
-                                    [class.is-invalid]="
-                                        customerForm.get('phone')?.invalid && customerForm.get('phone')?.touched
-                                    " />
-                                <div
-                                    class="invalid-feedback"
-                                    *ngIf="customerForm.get('phone')?.invalid && customerForm.get('phone')?.touched">
-                                    <div *ngIf="customerForm.get('phone')?.errors?.['maxlength']">
-                                        Phone must be 50 characters or less
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+<!-- Customer Management — DM Command-Centre Theme -->
+<div class="dm-page">
 
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="email">Email</label>
-                                <input
-                                    type="email"
-                                    class="form-control"
-                                    id="email"
-                                    formControlName="email"
-                                    placeholder="Enter email address"
-                                    [class.is-invalid]="
-                                        customerForm.get('email')?.invalid && customerForm.get('email')?.touched
-                                    " />
-                                <div
-                                    class="invalid-feedback"
-                                    *ngIf="customerForm.get('email')?.invalid && customerForm.get('email')?.touched">
-                                    <div *ngIf="customerForm.get('email')?.errors?.['email']">
-                                        Please enter a valid email address
-                                    </div>
-                                    <div *ngIf="customerForm.get('email')?.errors?.['maxlength']">
-                                        Email must be 200 characters or less
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="isActive">Status</label>
-                                <div class="form-check">
-                                    <input
-                                        class="form-check-input"
-                                        type="checkbox"
-                                        id="isActive"
-                                        formControlName="isActive" />
-                                    <label class="form-check-label" for="isActive">Active</label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <label for="address">Address</label>
-                                <textarea
-                                    class="form-control"
-                                    id="address"
-                                    formControlName="address"
-                                    placeholder="Enter customer address"
-                                    rows="3"
-                                    [class.is-invalid]="
-                                        customerForm.get('address')?.invalid && customerForm.get('address')?.touched
-                                    "></textarea>
-                                <div
-                                    class="invalid-feedback"
-                                    *ngIf="
-                                        customerForm.get('address')?.invalid && customerForm.get('address')?.touched
-                                    ">
-                                    <div *ngIf="customerForm.get('address')?.errors?.['maxlength']">
-                                        Address must be 500 characters or less
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card-footer">
-                    <button type="submit" class="btn btn-primary" [disabled]="customerForm.invalid || loading">
-                        <span *ngIf="loading" class="spinner-border spinner-border-sm mr-2"></span>
-                        <i class="fas fa-save mr-2"></i>
-                        {{ editingCustomer ? 'Update' : 'Create' }} Customer
-                    </button>
-                    <button type="button" class="btn btn-secondary ml-2" (click)="resetForm()">
-                        <i class="fas fa-times mr-2"></i>
-                        Cancel
-                    </button>
-                </div>
-            </form>
+    <!-- Page Header -->
+    <div class="dm-page-header">
+        <div>
+            <h1 class="dm-page-title"><i class="fas fa-users"></i> Client Directory</h1>
+            <p class="dm-page-subtitle">Manage your clients and contacts</p>
+        </div>
+        <div class="dm-page-actions">
+            <span class="dm-badge dm-badge-active">{{ customers.length }} Clients</span>
         </div>
     </div>
-</div>
 
-<!-- Customers List -->
-<div class="row mt-4">
-    <div class="col-md-12">
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">
-                    <i class="fas fa-list mr-2"></i>
-                    Customers
-                </h3>
-            </div>
+    <!-- Customer Form Card -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h3 class="card-title">
+                <i class="fas fa-user-plus mr-2"></i>
+                {{ editingCustomer ? 'Edit Client' : 'Add New Client' }}
+            </h3>
+        </div>
+        <form [formGroup]="customerForm" (ngSubmit)="onSubmit()">
             <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-bordered table-striped">
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Phone</th>
-                                <th>Email</th>
-                                <th>Address</th>
-                                <th>Company</th>
-                                <th>Status</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr *ngFor="let customer of customers">
-                                <td>{{ customer.name }}</td>
-                                <td>{{ customer.phone || '-' }}</td>
-                                <td>{{ customer.email || '-' }}</td>
-                                <td>{{ customer.address || '-' }}</td>
-                                <td>{{ customer.companyName || 'Unknown' }}</td>
-                                <td>
-                                    <span
-                                        class="badge"
-                                        [class.badge-success]="customer.isActive"
-                                        [class.badge-danger]="!customer.isActive">
-                                        {{ customer.isActive ? 'Active' : 'Inactive' }}
-                                    </span>
-                                </td>
-                                <td>
-                                    <button
-                                        type="button"
-                                        class="btn btn-warning btn-sm mr-2"
-                                        (click)="editCustomer(customer)">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="name">Client Name *</label>
+                            <input type="text" class="form-control" id="name" formControlName="name"
+                                placeholder="Enter client name"
+                                [class.is-invalid]="customerForm.get('name')?.invalid && customerForm.get('name')?.touched" />
+                            <div class="invalid-feedback" *ngIf="customerForm.get('name')?.invalid && customerForm.get('name')?.touched">
+                                <div *ngIf="customerForm.get('name')?.errors?.['required']">Client name is required</div>
+                                <div *ngIf="customerForm.get('name')?.errors?.['maxlength']">Max 200 characters</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="phone">Phone</label>
+                            <input type="text" class="form-control" id="phone" formControlName="phone"
+                                placeholder="Enter phone number"
+                                [class.is-invalid]="customerForm.get('phone')?.invalid && customerForm.get('phone')?.touched" />
+                            <div class="invalid-feedback" *ngIf="customerForm.get('phone')?.invalid && customerForm.get('phone')?.touched">
+                                <div *ngIf="customerForm.get('phone')?.errors?.['maxlength']">Max 50 characters</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" class="form-control" id="email" formControlName="email"
+                                placeholder="Enter email address"
+                                [class.is-invalid]="customerForm.get('email')?.invalid && customerForm.get('email')?.touched" />
+                            <div class="invalid-feedback" *ngIf="customerForm.get('email')?.invalid && customerForm.get('email')?.touched">
+                                <div *ngIf="customerForm.get('email')?.errors?.['email']">Enter a valid email</div>
+                                <div *ngIf="customerForm.get('email')?.errors?.['maxlength']">Max 200 characters</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Status</label>
+                            <div class="form-check mt-2">
+                                <input class="form-check-input" type="checkbox" id="isActive" formControlName="isActive" />
+                                <label class="form-check-label" for="isActive">Active Client</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="address">Address</label>
+                            <textarea class="form-control" id="address" formControlName="address"
+                                placeholder="Enter client address" rows="3"
+                                [class.is-invalid]="customerForm.get('address')?.invalid && customerForm.get('address')?.touched"></textarea>
+                            <div class="invalid-feedback" *ngIf="customerForm.get('address')?.invalid && customerForm.get('address')?.touched">
+                                <div *ngIf="customerForm.get('address')?.errors?.['maxlength']">Max 500 characters</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer" style="display:flex;gap:10px">
+                <button type="submit" class="dm-btn-primary btn" [disabled]="customerForm.invalid || loading">
+                    <span *ngIf="loading" class="spinner-border spinner-border-sm"></span>
+                    <i class="fas fa-save" *ngIf="!loading"></i>
+                    {{ editingCustomer ? 'Update Client' : 'Add Client' }}
+                </button>
+                <button type="button" class="dm-btn-ghost btn" (click)="resetForm()">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Clients Table -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title"><i class="fas fa-list mr-2"></i> Client List</h3>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table mb-0">
+                    <thead>
+                        <tr>
+                            <th>Client</th>
+                            <th>Phone</th>
+                            <th>Email</th>
+                            <th>Address</th>
+                            <th>Company</th>
+                            <th>Status</th>
+                            <th style="width:90px">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let customer of customers">
+                            <td>
+                                <div style="display:flex;align-items:center;gap:10px">
+                                    <div class="dm-avatar dm-avatar-purple">{{ customer.name?.charAt(0)?.toUpperCase() }}</div>
+                                    <strong class="dm-text-primary">{{ customer.name }}</strong>
+                                </div>
+                            </td>
+                            <td>{{ customer.phone || '—' }}</td>
+                            <td>{{ customer.email || '—' }}</td>
+                            <td><span class="dm-text-muted">{{ customer.address || '—' }}</span></td>
+                            <td>{{ customer.companyName || 'Unknown' }}</td>
+                            <td>
+                                <span class="dm-badge" [class.dm-badge-active]="customer.isActive" [class.dm-badge-inactive]="!customer.isActive">
+                                    <i class="fas fa-circle" style="font-size:0.4rem"></i>
+                                    {{ customer.isActive ? 'Active' : 'Inactive' }}
+                                </span>
+                            </td>
+                            <td>
+                                <div style="display:flex;gap:4px">
+                                    <button type="button" class="dm-action-btn dm-action-edit" (click)="editCustomer(customer)" title="Edit">
                                         <i class="fas fa-edit"></i>
                                     </button>
-                                    <button
-                                        type="button"
-                                        class="btn btn-danger btn-sm"
-                                        (click)="deleteCustomer(customer)">
+                                    <button type="button" class="dm-action-btn dm-action-delete" (click)="deleteCustomer(customer)" title="Delete">
                                         <i class="fas fa-trash"></i>
                                     </button>
-                                </td>
-                            </tr>
-                            <tr *ngIf="customers.length === 0">
-                                <td colspan="7" class="text-center">No customers found</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr *ngIf="customers.length === 0">
+                            <td colspan="7">
+                                <div class="dm-empty-state">
+                                    <i class="fas fa-users-slash"></i>
+                                    <p>No clients found. Add your first client above.</p>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
-</div>
+
+</div><!-- /dm-page -->

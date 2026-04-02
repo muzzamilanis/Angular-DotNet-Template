@@ -1,271 +1,155 @@
-<!-- Alert Messages -->
-<div class="alert alert-dismissible fade show" [class]="'alert-' + alertType" *ngIf="showAlert" role="alert">
-    {{ alertMessage }}
-    <button type="button" class="btn-close" (click)="closeAlert()"></button>
-</div>
+<!-- Project Form — DM Command-Centre Theme -->
+<div class="dm-page">
 
-<!-- Project Form Card -->
-<div class="row justify-content-center">
-    <div class="col-lg-8">
-        <div class="card card-primary">
-            <div class="card-header">
-                <h3 class="card-title">
-                    <i class="fas fa-project-diagram mr-2"></i>
-                    {{ isEditMode ? 'Edit Project' : 'Create New Project' }}
-                </h3>
-                <div class="card-tools">
-                    <button type="button" class="btn btn-outline-light btn-sm" (click)="onCancel()">
-                        <i class="fas fa-arrow-left mr-1"></i>
-                        Back to Projects
-                    </button>
+    <div class="alert alert-dismissible fade show" [class]="'alert-' + alertType" *ngIf="showAlert" role="alert">
+        {{ alertMessage }}
+        <button type="button" class="btn-close" (click)="closeAlert()"></button>
+    </div>
+
+    <!-- Page Header -->
+    <div class="dm-page-header">
+        <div>
+            <h1 class="dm-page-title">
+                <i class="fas fa-project-diagram"></i>
+                {{ isEditMode ? 'Edit Project' : 'Create New Project' }}
+            </h1>
+            <p class="dm-page-subtitle">{{ isEditMode ? 'Update project details' : 'Define a new project or campaign' }}</p>
+        </div>
+        <div class="dm-page-actions">
+            <button type="button" class="dm-btn-ghost btn" (click)="onCancel()">
+                <i class="fas fa-arrow-left"></i> Back to Projects
+            </button>
+        </div>
+    </div>
+
+    <!-- Loading State -->
+    <div class="dm-loading-overlay" *ngIf="loading">
+        <div class="spinner-border"></div>
+        <span>Loading project details...</span>
+    </div>
+
+    <!-- Form Card -->
+    <div class="card" *ngIf="!loading">
+        <div class="card-header">
+            <h3 class="card-title"><i class="fas fa-edit mr-2"></i>Project Details</h3>
+        </div>
+        <form [formGroup]="projectForm" (ngSubmit)="onSubmit()">
+            <div class="card-body">
+                <!-- Project Name -->
+                <div class="form-group">
+                    <label for="projectName">Project Name *</label>
+                    <input type="text" id="projectName" class="form-control" formControlName="projectName"
+                        [class.is-invalid]="isFieldInvalid('projectName')"
+                        placeholder="Enter project name" />
+                    <div class="invalid-feedback" *ngIf="isFieldInvalid('projectName')">{{ getFieldError('projectName') }}</div>
                 </div>
-            </div>
 
-            <div class="card-body" *ngIf="!loading">
-                <form [formGroup]="projectForm" (ngSubmit)="onSubmit()">
-                    <!-- Project Name -->
-                    <div class="form-group">
-                        <label for="projectName">
-                            Project Name
-                            <span class="text-danger">*</span>
-                        </label>
-                        <input
-                            type="text"
-                            id="projectName"
-                            class="form-control"
-                            formControlName="projectName"
-                            [class.is-invalid]="isFieldInvalid('projectName')"
-                            placeholder="Enter project name" />
-                        <div class="invalid-feedback" *ngIf="isFieldInvalid('projectName')">
-                            {{ getFieldError('projectName') }}
-                        </div>
-                    </div>
+                <!-- Description -->
+                <div class="form-group">
+                    <label for="projectDescription">Description</label>
+                    <textarea id="projectDescription" class="form-control" formControlName="projectDescription"
+                        [class.is-invalid]="isFieldInvalid('projectDescription')"
+                        rows="4" placeholder="Enter project description (optional)"></textarea>
+                    <div class="invalid-feedback" *ngIf="isFieldInvalid('projectDescription')">{{ getFieldError('projectDescription') }}</div>
+                </div>
 
-                    <!-- Project Description -->
-                    <div class="form-group">
-                        <label for="projectDescription">Project Description</label>
-                        <textarea
-                            id="projectDescription"
-                            class="form-control"
-                            formControlName="projectDescription"
-                            [class.is-invalid]="isFieldInvalid('projectDescription')"
-                            rows="4"
-                            placeholder="Enter project description (optional)"></textarea>
-                        <div class="invalid-feedback" *ngIf="isFieldInvalid('projectDescription')">
-                            {{ getFieldError('projectDescription') }}
-                        </div>
-                        <small class="form-text text-muted">Maximum 1000 characters</small>
-                    </div>
-
-                    <!-- Project Status Selection -->
-                    <div class="form-group">
-                        <label for="projectStatus">
-                            <i class="fas fa-tasks"></i>
-                            Project Status
-                            <span class="text-danger">*</span>
-                        </label>
-                        <select
-                            id="projectStatus"
-                            class="form-control"
-                            formControlName="projectStatus"
-                            [class.is-invalid]="isFieldInvalid('projectStatus')">
-                            <option [ngValue]="null">📊 Select project status</option>
-                            <option *ngFor="let option of statusOptions" [ngValue]="option.value">
-                                {{ option.label }}
-                            </option>
-                        </select>
-                        <div class="invalid-feedback" *ngIf="isFieldInvalid('projectStatus')">
-                            {{ getFieldError('projectStatus') }}
-                        </div>
-                    </div>
-
-                    <!-- Service Type Selection -->
-                    <div class="form-group" *ngIf="isDigitalMarketing">
-                        <label for="serviceTypeId">
-                            <i class="fas fa-cogs"></i>
-                            Service Type
-                        </label>
-                        <div class="input-group">
-                            <select
-                                id="serviceTypeId"
-                                class="form-control"
-                                formControlName="serviceTypeId"
-                                [class.is-invalid]="isFieldInvalid('serviceTypeId')">
-                                <option value="">🔧 Select service type</option>
-                                <option *ngFor="let serviceType of serviceTypes" [value]="serviceType.id">
-                                    {{ serviceType.name }}
+                <div class="row">
+                    <!-- Status -->
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="projectStatus">Project Status *</label>
+                            <select id="projectStatus" class="form-control" formControlName="projectStatus"
+                                [class.is-invalid]="isFieldInvalid('projectStatus')">
+                                <option [ngValue]="null">Select project status</option>
+                                <option *ngFor="let option of statusOptions" [ngValue]="option.value">
+                                    {{ option.label }}
                                 </option>
                             </select>
-                            <div class="input-group-append">
-                                <button
-                                    type="button"
-                                    class="btn btn-outline-success"
-                                    (click)="openCreateServiceTypeModal()"
-                                    title="Create New Service Type">
+                            <div class="invalid-feedback" *ngIf="isFieldInvalid('projectStatus')">{{ getFieldError('projectStatus') }}</div>
+                        </div>
+                    </div>
+
+                    <!-- Service Type -->
+                    <div class="col-md-6" *ngIf="isDigitalMarketing">
+                        <div class="form-group">
+                            <label for="serviceTypeId">Service Type</label>
+                            <div style="display:flex;gap:8px">
+                                <select id="serviceTypeId" class="form-control" formControlName="serviceTypeId">
+                                    <option value="">Select service type</option>
+                                    <option *ngFor="let serviceType of serviceTypes" [value]="serviceType.id">
+                                        {{ serviceType.name }}
+                                    </option>
+                                </select>
+                                <button type="button" class="dm-btn-success btn" (click)="openCreateServiceTypeModal()" title="Create New Service Type" style="min-width:40px;padding:0 12px">
                                     <i class="fas fa-plus"></i>
                                 </button>
                             </div>
                         </div>
-                        <div class="invalid-feedback" *ngIf="isFieldInvalid('serviceTypeId')">
-                            {{ getFieldError('serviceTypeId') }}
+                    </div>
+                </div>
+
+                <!-- Active Toggle -->
+                <div class="form-group">
+                    <div class="form-check">
+                        <input type="checkbox" id="isActive" class="form-check-input" formControlName="isActive" />
+                        <label for="isActive" class="form-check-label">Active Project</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer" style="display:flex;justify-content:space-between;align-items:center">
+                <button type="button" class="dm-btn-ghost btn" (click)="onCancel()" [disabled]="submitting">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+                <button type="submit" class="dm-btn-primary btn" [disabled]="submitting || projectForm.invalid">
+                    <span *ngIf="submitting" class="spinner-border spinner-border-sm"></span>
+                    <i class="fas fa-save" *ngIf="!submitting"></i>
+                    {{ isEditMode ? 'Update Project' : 'Create Project' }}
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Service Type Creation Modal -->
+    <div class="modal fade dm-modal" id="createServiceTypeModal" tabindex="-1" role="dialog" *ngIf="isDigitalMarketing">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title"><i class="fas fa-cogs mr-2"></i>Create Service Type</h4>
+                    <button type="button" class="close" (click)="closeCreateServiceTypeModal()"><span>&times;</span></button>
+                </div>
+                <form [formGroup]="serviceTypeForm" (ngSubmit)="onCreateServiceType()" *ngIf="serviceTypeForm">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="modalServiceTypeName">Service Type Name *</label>
+                            <input type="text" class="form-control" id="modalServiceTypeName" formControlName="name"
+                                placeholder="Enter service type name"
+                                [class.is-invalid]="serviceTypeForm.get('name')?.invalid && serviceTypeForm.get('name')?.touched" />
+                            <div class="invalid-feedback" *ngIf="serviceTypeForm.get('name')?.invalid && serviceTypeForm.get('name')?.touched">
+                                <div *ngIf="serviceTypeForm.get('name')?.errors?.['required']">Name is required</div>
+                                <div *ngIf="serviceTypeForm.get('name')?.errors?.['maxlength']">Max 100 characters</div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Description</label>
+                            <input type="text" class="form-control" formControlName="description" placeholder="Description (optional)" />
+                        </div>
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="modalIsActive" formControlName="isActive" />
+                            <label class="form-check-label" for="modalIsActive">Active</label>
                         </div>
                     </div>
-
-                    <!-- Is Active -->
-                    <div class="form-group">
-                        <div class="custom-control custom-checkbox">
-                            <input
-                                type="checkbox"
-                                id="isActive"
-                                class="custom-control-input"
-                                formControlName="isActive" />
-                            <label for="isActive" class="custom-control-label">Active Project</label>
-                        </div>
-                        <small class="form-text text-muted">
-                            Inactive projects will not appear in dropdown selections
-                        </small>
-                    </div>
-
-                    <!-- Form Actions -->
-                    <div class="card-footer">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <button
-                                    type="button"
-                                    class="btn btn-secondary"
-                                    (click)="onCancel()"
-                                    [disabled]="submitting">
-                                    <i class="fas fa-times mr-1"></i>
-                                    Cancel
-                                </button>
-                            </div>
-                            <div class="col-md-6 text-right">
-                                <button
-                                    type="submit"
-                                    class="btn btn-primary"
-                                    [disabled]="submitting || projectForm.invalid">
-                                    <span *ngIf="submitting" class="spinner-border spinner-border-sm mr-2"></span>
-                                    <i class="fas fa-save mr-1" *ngIf="!submitting"></i>
-                                    {{ isEditMode ? 'Update Project' : 'Create Project' }}
-                                </button>
-                            </div>
-                        </div>
+                    <div class="modal-footer">
+                        <button type="button" class="dm-btn-ghost btn" (click)="closeCreateServiceTypeModal()"><i class="fas fa-times"></i> Cancel</button>
+                        <button type="submit" class="dm-btn-primary btn" [disabled]="serviceTypeForm.invalid || isCreatingServiceType">
+                            <span *ngIf="isCreatingServiceType" class="spinner-border spinner-border-sm"></span>
+                            <i class="fas fa-save" *ngIf="!isCreatingServiceType"></i>
+                            {{ isCreatingServiceType ? 'Creating...' : 'Create' }}
+                        </button>
                     </div>
                 </form>
             </div>
-
-            <!-- Loading State -->
-            <div class="card-body text-center" *ngIf="loading">
-                <div class="spinner-border text-primary" role="status">
-                    <span class="sr-only">Loading...</span>
-                </div>
-                <p class="mt-2 text-muted">Loading project details...</p>
-            </div>
         </div>
     </div>
-</div>
 
-<!-- Service Type Creation Modal for Project Form -->
-<div class="modal fade" id="createServiceTypeModal" tabindex="-1" role="dialog" *ngIf="isDigitalMarketing">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title">
-                    <i class="fas fa-cogs mr-2"></i>
-                    Create Service Type
-                </h4>
-                <button type="button" class="close" (click)="closeCreateServiceTypeModal()" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-
-            <form [formGroup]="serviceTypeForm" (ngSubmit)="onCreateServiceType()" *ngIf="serviceTypeForm">
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <label for="modalServiceTypeName">Service Type Name *</label>
-                                <input
-                                    type="text"
-                                    class="form-control"
-                                    id="modalServiceTypeName"
-                                    formControlName="name"
-                                    placeholder="Enter service type name"
-                                    [class.is-invalid]="
-                                        serviceTypeForm.get('name')?.invalid && serviceTypeForm.get('name')?.touched
-                                    " />
-                                <div
-                                    class="invalid-feedback"
-                                    *ngIf="
-                                        serviceTypeForm.get('name')?.invalid && serviceTypeForm.get('name')?.touched
-                                    ">
-                                    <div *ngIf="serviceTypeForm.get('name')?.errors?.['required']">
-                                        Service type name is required
-                                    </div>
-                                    <div *ngIf="serviceTypeForm.get('name')?.errors?.['maxlength']">
-                                        Service type name must be 100 characters or less
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <label for="modalServiceTypeDescription">Description</label>
-                                <input
-                                    type="text"
-                                    class="form-control"
-                                    id="modalServiceTypeDescription"
-                                    formControlName="description"
-                                    placeholder="Enter description (optional)"
-                                    [class.is-invalid]="
-                                        serviceTypeForm.get('description')?.invalid &&
-                                        serviceTypeForm.get('description')?.touched
-                                    " />
-                                <div
-                                    class="invalid-feedback"
-                                    *ngIf="
-                                        serviceTypeForm.get('description')?.invalid &&
-                                        serviceTypeForm.get('description')?.touched
-                                    ">
-                                    <div *ngIf="serviceTypeForm.get('description')?.errors?.['maxlength']">
-                                        Description must be 200 characters or less
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <div class="form-check">
-                                    <input
-                                        type="checkbox"
-                                        class="form-check-input"
-                                        id="modalServiceTypeIsActive"
-                                        formControlName="isActive" />
-                                    <label class="form-check-label" for="modalServiceTypeIsActive">Active</label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" (click)="closeCreateServiceTypeModal()">
-                        <i class="fas fa-times"></i>
-                        Cancel
-                    </button>
-                    <button type="submit" class="btn btn-primary" [disabled]="serviceTypeForm.invalid || isCreatingServiceType">
-                        <span *ngIf="isCreatingServiceType" class="spinner-border spinner-border-sm mr-2"></span>
-                        <i class="fas fa-save" *ngIf="!isCreatingServiceType"></i>
-                        {{ isCreatingServiceType ? 'Creating...' : 'Create Service Type' }}
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
+</div><!-- /dm-page -->

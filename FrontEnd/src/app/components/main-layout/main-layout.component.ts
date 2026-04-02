@@ -59,14 +59,16 @@ export class MainLayoutComponent implements OnInit {
                 if (company) {
                     this.currentCompany = company;
                     console.log('Current Company:', this.currentCompany);
+
+                    // Apply company theme immediately — do not wait for logo
+                    if (this.currentCompany.primaryColor) {
+                        this.themeService.setTheme(this.currentCompany.primaryColor);
+                        console.log('Theme Color:', this.currentCompany.primaryColor);
+                    }
+
                     const companyLogo = this.companyService.getLogo(this.currentCompany.logoUrl).subscribe({
                         next: (logo) => {
                             this.companyLogo = URL.createObjectURL(logo);
-                            // Apply company theme
-                            if (this.currentCompany.primaryColor) {
-                                this.themeService.setTheme(this.currentCompany.primaryColor);
-                            }
-                            console.log('Theme Color:', this.currentCompany.primaryColor);
                             console.log('Logo URL:', this.companyLogo);
                         },
                         error: (error) => {

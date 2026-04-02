@@ -1,105 +1,78 @@
-<div class="row">
-    <div class="col-12">
-        <h1 class="m-0">Welcome back, {{ getUserDisplayName() }}!</h1>
-        <p class="text-muted">Your writing assignments dashboard</p>
-    </div>
-</div>
+<!-- Writer Dashboard — DM Command-Centre Theme -->
+<div class="dm-page">
 
-<!-- Assignment Statistics -->
-<div class="row mt-4">
-    <div class="col-lg-3 col-6">
-        <div class="small-box bg-info">
-            <div class="inner">
-                <h3>{{ assignmentStats.total }}</h3>
-                <p>Total Assignments</p>
-            </div>
-            <div class="icon">
-                <i class="fas fa-tasks"></i>
-            </div>
-            <a routerLink="/writer/assignments" class="small-box-footer">
-                View All Assignments
-                <i class="fas fa-arrow-circle-right"></i>
+    <!-- Overdue Alert -->
+    <div class="alert alert-danger" *ngIf="assignmentStats.overdue > 0" style="border-radius:10px;border:none;background:rgba(239,68,68,0.12);border-left:4px solid #ef4444;color:#fca5a5;margin-bottom:1.25rem">
+        <i class="fas fa-exclamation-triangle mr-2"></i>
+        <strong>{{ assignmentStats.overdue }} overdue assignment(s)!</strong>
+        Please review and submit them as soon as possible.
+        <a routerLink="/writer/assignments" class="ml-2 dm-text-danger" style="text-decoration:underline">View now &rarr;</a>
+    </div>
+
+    <!-- Page Header -->
+    <div class="dm-page-header">
+        <div>
+            <h1 class="dm-page-title"><i class="fas fa-pen-nib"></i> Your Workspace</h1>
+            <p class="dm-page-subtitle">Welcome back, {{ getUserDisplayName() }}!</p>
+        </div>
+        <div class="dm-page-actions">
+            <a routerLink="/writer/assignments" class="dm-btn-primary btn">
+                <i class="fas fa-tasks"></i> View Assignments
             </a>
         </div>
     </div>
 
-    <div class="col-lg-3 col-6">
-        <div class="small-box bg-warning">
-            <div class="inner">
-                <h3>{{ assignmentStats.pending }}</h3>
-                <p>Pending</p>
+    <!-- KPI Stats Bar -->
+    <div class="dm-stats-bar mb-4">
+        <div class="dm-stat-chip" style="border-color:rgba(56,189,248,0.2)">
+            <div>
+                <div class="dm-stat-num dm-text-info">{{ assignmentStats.total }}</div>
+                <div class="dm-stat-lbl">Total Assignments</div>
             </div>
-            <div class="icon">
-                <i class="fas fa-clock"></i>
+        </div>
+        <div class="dm-stat-chip" style="border-color:rgba(234,179,8,0.2)">
+            <div>
+                <div class="dm-stat-num dm-text-warning">{{ assignmentStats.pending }}</div>
+                <div class="dm-stat-lbl">Pending</div>
             </div>
-            <a routerLink="/writer/assignments" class="small-box-footer">
-                View Pending
-                <i class="fas fa-arrow-circle-right"></i>
-            </a>
+        </div>
+        <div class="dm-stat-chip" style="border-color:rgba(16,185,129,0.2)">
+            <div>
+                <div class="dm-stat-num dm-text-success">{{ assignmentStats.completed }}</div>
+                <div class="dm-stat-lbl">Completed</div>
+            </div>
+        </div>
+        <div class="dm-stat-chip" style="border-color:rgba(239,68,68,0.2)">
+            <div>
+                <div class="dm-stat-num dm-text-danger">{{ assignmentStats.overdue }}</div>
+                <div class="dm-stat-lbl">Overdue</div>
+            </div>
         </div>
     </div>
 
-    <div class="col-lg-3 col-6">
-        <div class="small-box bg-success">
-            <div class="inner">
-                <h3>{{ assignmentStats.completed }}</h3>
-                <p>Completed</p>
-            </div>
-            <div class="icon">
-                <i class="fas fa-check-circle"></i>
-            </div>
-            <a routerLink="/writer/assignments" class="small-box-footer">
-                View Completed
-                <i class="fas fa-arrow-circle-right"></i>
-            </a>
-        </div>
-    </div>
-
-    <div class="col-lg-3 col-6">
-        <div class="small-box bg-danger">
-            <div class="inner">
-                <h3>{{ assignmentStats.overdue }}</h3>
-                <p>Overdue</p>
-            </div>
-            <div class="icon">
-                <i class="fas fa-exclamation-triangle"></i>
-            </div>
-            <a routerLink="/writer/assignments" class="small-box-footer">
-                View Overdue
-                <i class="fas fa-arrow-circle-right"></i>
-            </a>
-        </div>
-    </div>
-</div>
-
-<!-- Main Content -->
-<div class="row mt-4">
-    <div class="col-md-8">
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">Recent Assignments</h3>
-                <div class="card-tools">
-                    <a routerLink="/writer/assignments" class="btn btn-primary btn-sm">
-                        <i class="fas fa-eye"></i>
-                        View All
-                    </a>
+    <div class="row">
+        <!-- Recent Assignments Table -->
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title"><i class="fas fa-clock mr-2"></i>Recent Assignments</h3>
+                    <div class="card-tools">
+                        <a routerLink="/writer/assignments" class="dm-btn-ghost btn" style="padding:4px 12px;font-size:0.8rem">
+                            <i class="fas fa-eye"></i> View All
+                        </a>
+                    </div>
                 </div>
-            </div>
-            <div class="card-body">
-                <div *ngIf="isLoading" class="text-center">
-                    <i class="fas fa-spinner fa-spin"></i>
-                    Loading assignments...
-                </div>
-
-                <div *ngIf="!isLoading && assignments.length === 0" class="text-center">
-                    <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
-                    <h5>No assignments yet</h5>
-                    <p class="text-muted">You don't have any assignments at the moment.</p>
-                </div>
-
-                <div *ngIf="!isLoading && assignments.length > 0">
-                    <div class="table-responsive">
-                        <table class="table table-sm">
+                <div class="card-body p-0">
+                    <div class="dm-loading-overlay" *ngIf="isLoading">
+                        <div class="spinner-border"></div>
+                        <span>Loading...</span>
+                    </div>
+                    <div class="dm-empty-state" *ngIf="!isLoading && assignments.length === 0">
+                        <i class="fas fa-inbox"></i>
+                        <p>No assignments at the moment.</p>
+                    </div>
+                    <div class="table-responsive" *ngIf="!isLoading && assignments.length > 0">
+                        <table class="table mb-0">
                             <thead>
                                 <tr>
                                     <th>Order #</th>
@@ -111,26 +84,25 @@
                             </thead>
                             <tbody>
                                 <tr *ngFor="let assignment of getRecentAssignments()">
-                                    <td>
-                                        <strong>{{ assignment.orderNumber }}</strong>
-                                    </td>
+                                    <td><span class="dm-order-chip">{{ assignment.orderNumber }}</span></td>
                                     <td>{{ assignment.clientName || 'N/A' }}</td>
                                     <td>
-                                        <span [ngClass]="{ 'text-danger': isDeadlineUrgent(assignment.deadline) }">
+                                        <span [class.dm-overdue]="isDeadlineUrgent(assignment.deadline)"
+                                              [class.dm-on-time]="!isDeadlineUrgent(assignment.deadline)">
                                             {{ formatDate(assignment.deadline) }}
                                         </span>
                                     </td>
                                     <td>
-                                        <span class="badge" [ngClass]="getStatusClass(assignment.status)">
+                                        <span class="dm-badge"
+                                            [class.dm-badge-new]="assignment.status === 'New'"
+                                            [class.dm-badge-progress]="assignment.status === 'InProgress'"
+                                            [class.dm-badge-done]="assignment.status === 'Completed'"
+                                            [class.dm-badge-pending]="!assignment.status">
                                             {{ assignment.status || 'Pending' }}
                                         </span>
                                     </td>
                                     <td>
-                                        <span
-                                            class="badge"
-                                            [ngClass]="
-                                                assignment.submissionStatus ? 'badge-success' : 'badge-secondary'
-                                            ">
+                                        <span class="dm-badge" [class.dm-badge-submitted]="assignment.submissionStatus" [class.dm-badge-inactive]="!assignment.submissionStatus">
                                             {{ assignment.submissionStatus || 'Not Submitted' }}
                                         </span>
                                     </td>
@@ -141,78 +113,34 @@
                 </div>
             </div>
         </div>
-    </div>
 
-    <div class="col-md-4">
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">Quick Actions</h3>
-            </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-12 mb-3">
-                        <a routerLink="/writer/assignments" class="btn btn-primary btn-lg d-block">
-                            <i class="fas fa-tasks mb-2"></i>
-                            <br />
-                            View All Assignments
-                        </a>
-                    </div>
+        <!-- Quick Actions + Performance -->
+        <div class="col-md-4">
+            <div class="card mb-3">
+                <div class="card-header"><h3 class="card-title"><i class="fas fa-bolt mr-2"></i>Quick Actions</h3></div>
+                <div class="card-body" style="display:flex;flex-direction:column;gap:10px">
+                    <a routerLink="/writer/assignments" class="dm-btn-primary btn" style="justify-content:center">
+                        <i class="fas fa-tasks"></i> All Assignments
+                    </a>
                 </div>
             </div>
-        </div>
 
-        <!-- Performance Overview -->
-        <div class="card mt-3">
-            <div class="card-header">
-                <h3 class="card-title">Performance Overview</h3>
-            </div>
-            <div class="card-body">
-                <div class="row text-center">
-                    <div class="col-6">
-                        <div class="description-block border-right">
-                            <span class="description-percentage text-success">
-                                <i class="fas fa-caret-up"></i>
-                                {{ assignmentStats.completed }}
-                            </span>
-                            <h5 class="description-header">Completed</h5>
-                            <span class="description-text">ASSIGNMENTS</span>
+            <div class="card">
+                <div class="card-header"><h3 class="card-title"><i class="fas fa-chart-bar mr-2"></i>Performance</h3></div>
+                <div class="card-body">
+                    <div class="dm-stats-bar" style="flex-direction:column">
+                        <div class="dm-stat-chip" style="width:100%">
+                            <span class="dm-stat-num dm-text-success">{{ assignmentStats.completed }}</span>
+                            <span class="dm-stat-lbl">Completed Assignments</span>
                         </div>
-                    </div>
-                    <div class="col-6">
-                        <div class="description-block">
-                            <span class="description-percentage text-warning">
-                                <i class="fas fa-clock"></i>
-                                {{ assignmentStats.pending }}
-                            </span>
-                            <h5 class="description-header">Pending</h5>
-                            <span class="description-text">ASSIGNMENTS</span>
+                        <div class="dm-stat-chip" style="width:100%">
+                            <span class="dm-stat-num dm-text-warning">{{ assignmentStats.pending }}</span>
+                            <span class="dm-stat-lbl">Pending Assignments</span>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-<!-- Urgent Deadlines Alert -->
-<div class="row mt-4" *ngIf="assignmentStats.overdue > 0">
-    <div class="col-12">
-        <div class="alert alert-danger" role="alert">
-            <h4 class="alert-heading">
-                <i class="fas fa-exclamation-triangle"></i>
-                Urgent: Overdue Assignments
-            </h4>
-            <p>
-                You have {{ assignmentStats.overdue }} overdue assignment(s). Please review and submit them as soon as
-                possible.
-            </p>
-            <hr />
-            <p class="mb-0">
-                <a routerLink="/writer/assignments" class="btn btn-outline-danger">
-                    <i class="fas fa-eye"></i>
-                    View Overdue Assignments
-                </a>
-            </p>
-        </div>
-    </div>
-</div>
+</div><!-- /dm-page -->
