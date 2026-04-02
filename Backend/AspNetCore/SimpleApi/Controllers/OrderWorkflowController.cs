@@ -179,7 +179,101 @@ namespace SimpleApi.Controllers
 			}
 		}
 
-		// â”€â”€ Request DTOs â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+		/// <summary>POST /api/orderworkflow/update-order — updates a "New" order via natural language chat. Locked once status changes.</summary>
+		[HttpPost("update-order")]
+		public async Task<IActionResult> UpdateOrderViaChat([FromBody] UpdateOrderViaChatRequest req)
+		{
+			try
+			{
+				if (string.IsNullOrWhiteSpace(req.Text))
+					return BadRequest("Update description text is required.");
+
+				int companyId;
+				try { companyId = GetCurrentUserCompanyId(); } catch { return Forbid(); }
+
+				// Load existing order and enforce "New" status lock
+				var saleOrder = await _context.SaleOrders
+					.Include(o => o.Items)
+					.FirstOrDefaultAsync(o => o.Id == req.OrderId && o.CompanyId == companyId);
+
+				if (saleOrder == null)
+					return NotFound("Order not found.");
+
+				if (saleOrder.Status != "New")
+					return Conflict("This order can no longer be modified. Orders are locked once their status progresses beyond 'New'.");
+
+				// Parse the natural language update request via AI
+				var parsed = await _orderParser.ParseOrderAsync(req.Text, companyId);
+
+				// Merge AI results onto the existing order — only override fields the AI actually found
+				if (parsed.ClientName != null)      { saleOrder.ClientName = parsed.ClientName; saleOrder.CustomerName = parsed.ClientName; }
+				if (parsed.OrderDetails != null)    saleOrder.OrderDetails = parsed.OrderDetails;
+				if (parsed.Deadline != null)        saleOrder.Deadline = DateTime.TryParse(parsed.Deadline, out var dl) ? dl : saleOrder.Deadline;
+				if (parsed.WordCount != null)       saleOrder.WordsOrPages = parsed.WordCount;
+				if (parsed.Country != null)         saleOrder.Country = parsed.Country;
+				if (parsed.CurrencyCode != null)    saleOrder.CurrencyCode = parsed.CurrencyCode;
+				if (parsed.CurrencyAmount != null)  saleOrder.ForeignCurrencyAmount = parsed.CurrencyAmount;
+				if (parsed.PkrAmount != null)       saleOrder.PkrAmount = parsed.PkrAmount;
+				if (parsed.ExchangeRate != null)    saleOrder.ExchangeRateUsed = parsed.ExchangeRate;
+				if (parsed.ServiceTypeId != null)   saleOrder.ServiceTypeId = parsed.ServiceTypeId;
+				if (parsed.ProjectId != null)       saleOrder.ProjectId = parsed.ProjectId;
+				if (parsed.ContactPhone != null)    saleOrder.ContactPhone = parsed.ContactPhone;
+				if (parsed.ContactEmail != null)    saleOrder.ContactEmail = parsed.ContactEmail;
+				if (parsed.AmountReceived != null)  saleOrder.AmountReceived = parsed.AmountReceived;
+				if (parsed.AmountReceivedInPkr != null) saleOrder.AmountReceivedInPkr = parsed.AmountReceivedInPkr;
+				if (parsed.PaymentStatus != null)   saleOrder.PaymentStatus = parsed.PaymentStatus;
+				if (parsed.TotalPaymentAmount != null) saleOrder.TotalPayment = parsed.TotalPaymentAmount;
+				if (parsed.SourceOfPayment != null) saleOrder.SourceOfPayment = parsed.SourceOfPayment;
+
+				// Persist the CSR chat input as an OrderInstruction for full audit trail
+				int csrUserId;
+				try { csrUserId = GetCurrentUserId(); } catch { csrUserId = 0; }
+				if (csrUserId > 0)
+				{
+					_context.OrderInstructions.Add(new OrderInstruction
+					{
+						SaleOrderId = saleOrder.Id,
+						SenderId = csrUserId,
+						Message = $"[CSR Chat Update] {req.Text.Trim()}",
+						CreatedAt = DateTime.UtcNow,
+						IsFromTeamLead = false
+					});
+				}
+
+				await _context.SaveChangesAsync();
+
+				_logger.LogInformation("Order {OrderId} updated via chat by user {UserId}", req.OrderId, csrUserId);
+
+				return Ok(new
+				{
+					id = saleOrder.Id,
+					orderNumber = saleOrder.OrderNumber,
+					clientName = saleOrder.ClientName,
+					orderDetails = saleOrder.OrderDetails,
+					deadline = saleOrder.Deadline,
+					wordsOrPages = saleOrder.WordsOrPages,
+					country = saleOrder.Country,
+					currencyCode = saleOrder.CurrencyCode,
+					foreignCurrencyAmount = saleOrder.ForeignCurrencyAmount,
+					pkrAmount = saleOrder.PkrAmount,
+					paymentStatus = saleOrder.PaymentStatus,
+					status = saleOrder.Status,
+					message = "Order updated successfully via chat."
+				});
+			}
+			catch (JsonException)
+			{
+				_logger.LogWarning("AI returned unparseable JSON for update input on order {OrderId}", req.OrderId);
+				return StatusCode(502, "AI returned an unexpected response format. Please try again.");
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex, "Failed to update order {OrderId} via chat", req.OrderId);
+				return BadRequest(ex.Message);
+			}
+		}
+
+		// ── Request DTOs ─────────────────────────────────────────────────────────────
 
 		public class UpdateWorkflowStatusRequest
 		{
@@ -192,6 +286,12 @@ namespace SimpleApi.Controllers
 
 		public class ParseOrderRequest
 		{
+			public string Text { get; set; } = string.Empty;
+		}
+
+		public class UpdateOrderViaChatRequest
+		{
+			public int OrderId { get; set; }
 			public string Text { get; set; } = string.Empty;
 		}
 	}

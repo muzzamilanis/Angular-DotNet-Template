@@ -1,85 +1,170 @@
-<div class="workflow-page">
-    <!-- Header -->
-    <div class="workflow-header">
-        <button class="btn btn-outline-secondary btn-sm back-btn" (click)="goBack()">
-            <i class="fas fa-arrow-left"></i> Back to Orders
+<div class="wf-page">
+
+    <!-- ══════════════════════════════════════════════════════ HEADER -->
+    <div class="wf-header">
+        <button class="wf-back-btn" (click)="goBack()">
+            <i class="fas fa-arrow-left"></i>
         </button>
-        <div class="order-badge">
-            <i class="fas fa-file-alt"></i>
-            <span>Order #{{ orderId }}</span>
+
+        <div class="wf-header-center">
+            <div class="wf-order-chip">
+                <i class="fas fa-robot wf-bot-icon-sm"></i>
+                <span>Order Tracker</span>
+                <span class="wf-order-num">#{{ orderId }}</span>
+            </div>
+            <!-- Progress bar -->
+            <div class="wf-progress-track" *ngIf="!isLoading && currentStage">
+                <div class="wf-progress-fill" [style.width.%]="progressPercent"></div>
+            </div>
+            <span class="wf-progress-label" *ngIf="!isLoading && currentStage">
+                {{ progressPercent }}% complete
+            </span>
         </div>
-        <div class="live-badge" *ngIf="!isLoading">
-            <span class="dot"></span> Live
+
+        <div class="wf-live-chip" *ngIf="!isLoading">
+            <span class="wf-live-dot"></span>
+            <span>Live</span>
         </div>
     </div>
 
-    <!-- Loading -->
-    <div *ngIf="isLoading" class="loading-state">
-        <i class="fas fa-spinner fa-spin"></i> Loading workflow...
+    <!-- Live flash banner -->
+    <div class="wf-flash" *ngIf="liveFlash">
+        <i class="fas fa-bolt"></i> {{ liveFlash }}
     </div>
 
-    <!-- Diagram -->
-    <div *ngIf="!isLoading" class="diagram-wrapper">
-        <div class="stages-row">
-            <ng-container *ngFor="let stage of stages; let i = index; let last = last">
-                <!-- Stage Node -->
-                <div class="stage-node" [class.completed]="getStageStatus(stage.key) === 'completed'"
-                    [class.current]="getStageStatus(stage.key) === 'current'"
-                    [class.pending]="getStageStatus(stage.key) === 'pending'" (click)="selectStage(stage.key)"
-                    [title]="stage.label">
-                    <div class="node-circle">
+    <!-- ══════════════════════════════════════════════════════ LOADING -->
+    <div *ngIf="isLoading" class="wf-loading">
+        <div class="wf-loading-ring"></div>
+        <p>AI is loading your order status…</p>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════ MAIN BODY -->
+    <div *ngIf="!isLoading" class="wf-body">
+
+        <!-- ─── LEFT: Vertical stage tracker ─────────────────────────── -->
+        <div class="wf-tracker">
+            <h6 class="wf-panel-title">
+                <i class="fas fa-route"></i> Progress Path
+            </h6>
+
+            <div class="wf-stages">
+                <div class="wf-stage-item"
+                    *ngFor="let stage of stages; let i = index; let last = last"
+                    [class.wf-completed]="getStageStatus(stage.key) === 'completed'"
+                    [class.wf-current]="getStageStatus(stage.key) === 'current'"
+                    [class.wf-pending]="getStageStatus(stage.key) === 'pending'"
+                    (click)="selectStage(stage.key)">
+
+                    <!-- Icon bubble -->
+                    <div class="wf-stage-bubble">
                         <i [class]="stage.icon"></i>
+                        <span class="wf-stage-check" *ngIf="getStageStatus(stage.key) === 'completed'">
+                            <i class="fas fa-check"></i>
+                        </span>
                     </div>
-                    <span class="node-label">{{ stage.label }}</span>
-                    <span class="node-status" [ngSwitch]="getStageStatus(stage.key)">
-                        <ng-container *ngSwitchCase="'completed'"><i class="fas fa-check-circle"></i></ng-container>
-                        <ng-container *ngSwitchCase="'current'"><i class="fas fa-dot-circle pulse"></i></ng-container>
-                        <ng-container *ngSwitchCase="'pending'"><i class="far fa-circle"></i></ng-container>
-                    </span>
-                </div>
 
-                <!-- Connector arrow (not after last) -->
-                <div class="connector" *ngIf="!last" [class.filled]="getStageStatus(stage.key) === 'completed'">
-                    <i class="fas fa-chevron-right"></i>
+                    <!-- Connector line -->
+                    <div class="wf-connector" *ngIf="!last"
+                        [class.wf-connector-done]="getStageStatus(stage.key) === 'completed'">
+                    </div>
+
+                    <!-- Stage info -->
+                    <div class="wf-stage-info">
+                        <div class="wf-stage-name">{{ stage.label }}</div>
+                        <div class="wf-stage-meta" *ngIf="getStageEntry(stage.key) as entry">
+                            <span>{{ timeAgo(entry.timestamp) }}</span>
+                            <span class="wf-dot-sep">·</span>
+                            <span>{{ entry.updatedBy }}</span>
+                        </div>
+                        <div class="wf-stage-meta wf-meta-pending"
+                            *ngIf="!getStageEntry(stage.key) && getStageStatus(stage.key) === 'pending'">
+                            Awaiting…
+                        </div>
+                        <div class="wf-current-tag" *ngIf="getStageStatus(stage.key) === 'current'">
+                            <span class="wf-current-dot"></span> In progress
+                        </div>
+                    </div>
                 </div>
-            </ng-container>
+            </div>
         </div>
 
-        <!-- Stage Detail Popup -->
-        <div class="stage-popup" *ngIf="selectedStage" (click)="closePopup()">
-            <div class="popup-card" (click)="$event.stopPropagation()">
-                <button class="popup-close" (click)="closePopup()"><i class="fas fa-times"></i></button>
-                <h5>{{ selectedStage.stage }}</h5>
-                <table class="popup-table">
-                    <tr>
-                        <td><strong>Time</strong></td>
-                        <td>{{ selectedStage.timestamp | date:'medium' }}</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Updated By</strong></td>
-                        <td>{{ selectedStage.updatedBy }}</td>
-                    </tr>
-                    <tr *ngIf="selectedStage.assignedTo">
-                        <td><strong>Assigned To</strong></td>
-                        <td>{{ selectedStage.assignedTo }}</td>
-                    </tr>
-                    <tr *ngIf="selectedStage.notes">
-                        <td><strong>Notes</strong></td>
-                        <td>{{ selectedStage.notes }}</td>
-                    </tr>
-                </table>
+        <!-- ─── RIGHT: Bot chat narration ────────────────────────────── -->
+        <div class="wf-bot-panel">
+            <h6 class="wf-panel-title">
+                <i class="fas fa-robot"></i> AI Status Narration
+            </h6>
+
+            <!-- Empty state -->
+            <div class="wf-bot-empty" *ngIf="workflowHistory.length === 0">
+                <i class="fas fa-comment-dots"></i>
+                <p>Waiting for the first status update…</p>
+            </div>
+
+            <!-- Bot messages — one per history entry -->
+            <div class="wf-chat-log" *ngIf="workflowHistory.length > 0">
+                <div class="wf-bot-msg" *ngFor="let entry of workflowHistory">
+                    <div class="wf-bot-avatar">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="wf-bot-bubble">
+                        <div class="wf-bubble-stage-tag">
+                            <i [class]="stageIcon(entry.stage)"></i>
+                            {{ stageLabel(entry.stage) }}
+                        </div>
+                        <p class="wf-bubble-text">{{ botMessage(entry) }}</p>
+                        <div class="wf-bubble-footer">
+                            <span *ngIf="entry.notes" class="wf-bubble-notes">
+                                <i class="fas fa-quote-left"></i> {{ entry.notes }}
+                            </span>
+                            <span *ngIf="entry.assignedTo" class="wf-bubble-assigned">
+                                <i class="fas fa-user"></i> {{ entry.assignedTo }}
+                            </span>
+                            <span class="wf-bubble-time">
+                                {{ entry.timestamp | date:'MMM d, h:mm a' }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════ STAGE DETAIL MODAL -->
+    <div class="wf-modal-backdrop" *ngIf="selectedStage" (click)="closePopup()">
+        <div class="wf-modal" (click)="$event.stopPropagation()">
+            <div class="wf-modal-header">
+                <div class="wf-modal-title">
+                    <i class="fas fa-info-circle"></i>
+                    {{ stageLabel(selectedStage.stage) }}
+                </div>
+                <button class="wf-modal-close" (click)="closePopup()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="wf-modal-body">
+                <div class="wf-detail-row">
+                    <span class="wf-detail-label">Stage</span>
+                    <span class="wf-detail-value">{{ selectedStage.stage }}</span>
+                </div>
+                <div class="wf-detail-row">
+                    <span class="wf-detail-label">Timestamp</span>
+                    <span class="wf-detail-value">{{ selectedStage.timestamp | date:'medium' }}</span>
+                </div>
+                <div class="wf-detail-row">
+                    <span class="wf-detail-label">Updated By</span>
+                    <span class="wf-detail-value">{{ selectedStage.updatedBy }}</span>
+                </div>
+                <div class="wf-detail-row" *ngIf="selectedStage.assignedTo">
+                    <span class="wf-detail-label">Assigned To</span>
+                    <span class="wf-detail-value">{{ selectedStage.assignedTo }}</span>
+                </div>
+                <div class="wf-detail-row" *ngIf="selectedStage.notes">
+                    <span class="wf-detail-label">Notes</span>
+                    <span class="wf-detail-value wf-detail-notes">{{ selectedStage.notes }}</span>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- History Log -->
-    <div *ngIf="!isLoading && workflowHistory.length > 0" class="history-log">
-        <h6><i class="fas fa-history"></i> Status History</h6>
-        <div class="history-item" *ngFor="let entry of workflowHistory">
-            <span class="history-stage">{{ entry.stage }}</span>
-            <span class="history-by">by {{ entry.updatedBy }}</span>
-            <span class="history-time">{{ entry.timestamp | date:'short' }}</span>
-            <span *ngIf="entry.notes" class="history-notes">— {{ entry.notes }}</span>
-        </div>
-    </div>
 </div>

@@ -539,9 +539,14 @@ export class SaleOrderComponent implements OnInit {
 
     editOrder(order: SaleOrder): void {
         this.editingOrder = order;
-        this.currentOrder = order;
-        this.showCreateForm = true; // Show form when editing
         this.populateFormForEdit(order);
+        this.showCreateForm = true;
+        // Scroll to the top of the form
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    editOrderViaChat(order: SaleOrder): void {
+        this.router.navigate(['/order-entry'], { queryParams: { orderId: order.id } });
     }
 
     private populateFormForEdit(order: SaleOrder): void {
@@ -806,7 +811,8 @@ export class SaleOrderComponent implements OnInit {
     }
 
     isFormReadonly(): boolean {
-        return this.editingOrder?.status?.toLowerCase() === 'completed';
+        // Orders are fully locked once they leave "New" status — no manual form edits allowed.
+        return this.editingOrder != null && this.editingOrder.status !== 'New';
     }
 
     // Writer Portal methods

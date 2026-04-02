@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore;
 using SimpleApi.Data;
 using SimpleApi.DTOs;
 using SimpleApi.Hubs;
@@ -113,6 +114,21 @@ namespace SimpleApi.Controllers
 				};
 				_context.OrderWorkflowStatuses.Add(aiEntry);
 
+				// Persist the original CSR chat input as an OrderInstruction for full audit trail
+				if (!string.IsNullOrWhiteSpace(input.CsrChatText))
+				{
+					var csrUserId = GetCurrentUserId();
+					var chatInstruction = new OrderInstruction
+					{
+						SaleOrderId = result.Id,
+						SenderId = csrUserId,
+						Message = $"[CSR Chat Input] {input.CsrChatText.Trim()}",
+						CreatedAt = DateTime.UtcNow,
+						IsFromTeamLead = false
+					};
+					_context.OrderInstructions.Add(chatInstruction);
+				}
+
 				await _context.SaveChangesAsync();
 
 				// Notify SignalR subscribers for this order
@@ -158,6 +174,15 @@ namespace SimpleApi.Controllers
 
                 input.Id = id;
                 var companyId = GetCurrentUserCompanyId();
+
+                // Only "New" orders can be modified. Once the workflow progresses, the order is locked.
+                var currentOrder = await _context.SaleOrders
+                    .FirstOrDefaultAsync(so => so.Id == id && so.CompanyId == companyId);
+                if (currentOrder == null)
+                    return NotFound("Order not found.");
+                if (currentOrder.Status != "New")
+                    return Conflict("This order can no longer be modified. Orders are locked once their status progresses beyond 'New'.");
+
                 var result = await _saleOrderService.UpdateAsync(input, companyId);
 				// Re-trigger intelligence analysis if critical fields changed
 				if (input.ServiceTypeId != null || input.WordsOrPages != null || input.Deadline != null)

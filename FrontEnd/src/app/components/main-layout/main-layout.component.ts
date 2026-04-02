@@ -18,6 +18,7 @@ export class MainLayoutComponent implements OnInit {
     isLoadingUser = true; // Add loading state
     currentCompany: any = null;
     companyLogo: string | null = null;
+    showChatPopup = false;
 
     // Track open/closed state of menus
     openMenus: { [key: string]: boolean } = {};
@@ -138,6 +139,14 @@ export class MainLayoutComponent implements OnInit {
 
     toggleSidebar(): void {
         this.sidebarCollapsed = !this.sidebarCollapsed;
+    }
+
+    toggleChatPopup(): void {
+        this.showChatPopup = !this.showChatPopup;
+    }
+
+    closeChatPopup(): void {
+        this.showChatPopup = false;
     }
 
     // Enhanced version with better UX
