@@ -1,174 +1,153 @@
-<!-- Alert Messages -->
-<div class="alert alert-dismissible fade show" [class]="'alert-' + alertType" *ngIf="showAlert" role="alert">
-    {{ alertMessage }}
-    <button type="button" class="btn-close" (click)="closeAlert()"></button>
-</div>
+<!-- Project Management — DM Command-Centre Theme -->
+<div class="dm-page">
 
-<!-- Project Management Card -->
-<div class="card card-primary">
-    <div class="card-header">
-        <h3 class="card-title">
-            <i class="fas fa-project-diagram mr-2"></i>
-            Project Management
-        </h3>
-        <div class="card-tools">
-            <button type="button" class="btn btn-outline-light btn-sm mr-2" (click)="refresh()" [disabled]="loading">
-                <i class="fas fa-sync-alt" [class.fa-spin]="loading"></i>
-                Refresh
+    <!-- Alert -->
+    <div class="alert alert-dismissible fade show" [class]="'alert-' + alertType" *ngIf="showAlert" role="alert">
+        {{ alertMessage }}
+        <button type="button" class="btn-close" (click)="closeAlert()"></button>
+    </div>
+
+    <!-- Page Header -->
+    <div class="dm-page-header">
+        <div>
+            <h1 class="dm-page-title"><i class="fas fa-project-diagram"></i> Project Management</h1>
+            <p class="dm-page-subtitle">Track and manage all active campaigns & projects</p>
+        </div>
+        <div class="dm-page-actions">
+            <button type="button" class="dm-btn-ghost btn" (click)="refresh()" [disabled]="loading">
+                <i class="fas fa-sync-alt" [class.fa-spin]="loading"></i> Refresh
             </button>
-            <a class="btn btn-success btn-sm" routerLink="create">
-                <i class="fas fa-plus mr-1"></i>
-                New Project
+            <a class="dm-btn-success btn" routerLink="create">
+                <i class="fas fa-plus"></i> New Project
             </a>
         </div>
     </div>
 
-    <div class="card-body">
-        <!-- Search and Filter -->
-        <div class="row mb-3">
-            <div class="col-md-6">
-                <div class="input-group">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">
-                            <i class="fas fa-search"></i>
-                        </span>
-                    </div>
-                    <input
-                        type="text"
-                        class="form-control"
-                        placeholder="Search projects..."
-                        [(ngModel)]="globalFilter"
-                        (input)="onGlobalFilter()" />
-                </div>
+    <!-- Stats Bar -->
+    <div class="dm-stats-bar">
+        <div class="dm-stat-chip">
+            <span class="dm-stat-num">{{ totalRecords }}</span>
+            <span class="dm-stat-lbl">Total Projects</span>
+        </div>
+        <div class="dm-stat-chip">
+            <span class="dm-stat-num dm-text-success">{{ projects.length }}</span>
+            <span class="dm-stat-lbl">Loaded</span>
+        </div>
+    </div>
+
+    <!-- Projects Card -->
+    <div class="card">
+        <!-- Filter Bar -->
+        <div class="dm-filter-bar">
+            <div class="dm-filter-group" style="flex:1;min-width:220px">
+                <span class="dm-filter-label"><i class="fas fa-search" style="margin-right:4px"></i>Search</span>
+                <input type="text" class="dm-filter-control" placeholder="Search projects..." [(ngModel)]="globalFilter" (input)="onGlobalFilter()" />
             </div>
         </div>
 
-        <!-- Projects Table -->
-        <div class="table-responsive">
-            <table class="table table-striped table-hover">
-                <thead class="table-dark">
-                    <tr>
-                        <th (click)="onSort('projectName')" style="cursor: pointer">
-                            Project Name
-                            <i [class]="getSortIcon('projectName')" class="ml-1"></i>
-                        </th>
-                        <th>Description</th>
-                        <th (click)="onSort('projectStatus')" style="cursor: pointer">
-                            Status
-                            <i [class]="getSortIcon('projectStatus')" class="ml-1"></i>
-                        </th>
-                        <th>Service Type</th>
-                        <th (click)="onSort('createdDate')" style="cursor: pointer">
-                            Created Date
-                            <i [class]="getSortIcon('createdDate')" class="ml-1"></i>
-                        </th>
-                        <th (click)="onSort('updatedDate')" style="cursor: pointer">
-                            Updated Date
-                            <i [class]="getSortIcon('updatedDate')" class="ml-1"></i>
-                        </th>
-                        <th>Related Orders</th>
-                        <th width="120">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr *ngFor="let project of projects">
-                        <td>
-                            <strong>{{ project.projectName }}</strong>
-                        </td>
-                        <td>
-                            <span class="text-muted">{{ project.projectDescription || 'No description' }}</span>
-                        </td>
-                        <td>
-                            <span class="badge" [ngClass]="'badge-' + getStatusClass(project.projectStatus)">
-                                {{ getStatusText(project.projectStatus) }}
-                            </span>
-                        </td>
-                        <td>
-                            <span class="text-muted">{{ project.serviceTypeName || 'Not assigned' }}</span>
-                        </td>
-                        <td>
-                            {{ project.createdDate | date: 'short' }}
-                        </td>
-                        <td>
-                            {{ project.updatedDate | date: 'short' }}
-                        </td>
-                        <td>
-                            <span class="badge badge-info">{{ project.relatedSaleOrdersCount }}</span>
-                        </td>
-                        <td>
-                            <div class="btn-group" role="group">
-                                <a class="btn btn-sm btn-outline-info" [routerLink]="[project.id]" title="View Details">
-                                    <i class="fas fa-eye"></i>
-                                </a>
-                                <a
-                                    class="btn btn-sm btn-outline-primary"
-                                    [routerLink]="['edit', project.id]"
-                                    title="Edit Project">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                                <button
-                                    type="button"
-                                    class="btn btn-sm btn-outline-danger"
-                                    (click)="confirmDelete(project)"
-                                    title="Delete Project">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+        <div class="card-body p-0">
+            <!-- Loading State -->
+            <div class="dm-loading-overlay" *ngIf="loading">
+                <div class="spinner-border"></div>
+                <span>Loading projects...</span>
+            </div>
 
             <!-- Empty State -->
-            <div class="text-center py-4" *ngIf="!loading && projects.length === 0">
-                <div class="text-muted">
-                    <i class="fas fa-folder-open fa-3x mb-3"></i>
-                    <br />
-                    No projects found
-                </div>
+            <div *ngIf="!loading && projects.length === 0" class="dm-empty-state">
+                <i class="fas fa-folder-open"></i>
+                <p>No projects found. Create your first project to get started.</p>
+                <a class="dm-btn-success btn mt-2" routerLink="create"><i class="fas fa-plus mr-1"></i> New Project</a>
             </div>
 
-            <!-- Loading State -->
-            <div class="text-center py-4" *ngIf="loading">
-                <div class="spinner-border text-primary" role="status">
-                    <span class="sr-only">Loading...</span>
-                </div>
-                <p class="mt-2 text-muted">Loading projects...</p>
+            <!-- Table -->
+            <div class="table-responsive" *ngIf="!loading && projects.length > 0">
+                <table class="table mb-0">
+                    <thead>
+                        <tr>
+                            <th (click)="onSort('projectName')" style="cursor:pointer">
+                                Project Name <i [class]="getSortIcon('projectName')" class="ml-1"></i>
+                            </th>
+                            <th>Description</th>
+                            <th (click)="onSort('projectStatus')" style="cursor:pointer">
+                                Status <i [class]="getSortIcon('projectStatus')" class="ml-1"></i>
+                            </th>
+                            <th>Service Type</th>
+                            <th (click)="onSort('createdDate')" style="cursor:pointer">
+                                Created <i [class]="getSortIcon('createdDate')" class="ml-1"></i>
+                            </th>
+                            <th>Orders</th>
+                            <th style="width:110px">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let project of projects">
+                            <td>
+                                <div style="display:flex;align-items:center;gap:10px">
+                                    <div class="dm-avatar dm-avatar-blue">
+                                        <i class="fas fa-project-diagram" style="font-size:0.75rem"></i>
+                                    </div>
+                                    <strong class="dm-text-primary">{{ project.projectName }}</strong>
+                                </div>
+                            </td>
+                            <td><span class="dm-text-muted">{{ project.projectDescription || 'No description' }}</span></td>
+                            <td>
+                                <span class="dm-badge"
+                                    [class.dm-badge-active]="project.projectStatus === 1"
+                                    [class.dm-badge-inactive]="project.projectStatus === 2"
+                                    [class.dm-badge-done]="project.projectStatus === 3">
+                                    <i class="fas fa-circle" style="font-size:0.4rem"></i>
+                                    {{ getStatusText(project.projectStatus) }}
+                                </span>
+                            </td>
+                            <td><span class="dm-text-muted">{{ project.serviceTypeName || 'Not assigned' }}</span></td>
+                            <td><span class="dm-text-muted">{{ project.createdDate | date:'MMM d, y' }}</span></td>
+                            <td>
+                                <span class="dm-badge dm-badge-progress">{{ project.relatedSaleOrdersCount }}</span>
+                            </td>
+                            <td>
+                                <div style="display:flex;gap:4px">
+                                    <a class="dm-action-btn dm-action-view" [routerLink]="[project.id]" title="View Details">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a class="dm-action-btn dm-action-edit" [routerLink]="['edit', project.id]" title="Edit Project">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <button type="button" class="dm-action-btn dm-action-delete" (click)="confirmDelete(project)" title="Delete">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            <div class="p-3" *ngIf="totalPages > 1">
+                <nav aria-label="Project pagination">
+                    <ul class="pagination justify-content-center mb-1">
+                        <li class="page-item" [class.disabled]="currentPage === 1">
+                            <a class="page-link" (click)="onPageChange(currentPage - 1)">
+                                <i class="fas fa-angle-left"></i>
+                            </a>
+                        </li>
+                        <li class="page-item" *ngFor="let page of getPageNumbers()" [class.active]="page === currentPage">
+                            <a class="page-link" (click)="onPageChange(page)">{{ page }}</a>
+                        </li>
+                        <li class="page-item" [class.disabled]="currentPage === totalPages">
+                            <a class="page-link" (click)="onPageChange(currentPage + 1)">
+                                <i class="fas fa-angle-right"></i>
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="text-center">
+                        <small class="dm-text-muted">
+                            Showing {{ (currentPage - 1) * itemsPerPage + 1 }} – {{ getEndRecord() }} of {{ totalRecords }} projects
+                        </small>
+                    </div>
+                </nav>
             </div>
         </div>
-
-        <!-- Pagination -->
-        <nav aria-label="Project pagination" *ngIf="totalPages > 1">
-            <ul class="pagination justify-content-center">
-                <li class="page-item" [class.disabled]="currentPage === 1">
-                    <a
-                        class="page-link"
-                        (click)="onPageChange(currentPage - 1)"
-                        [attr.tabindex]="currentPage === 1 ? -1 : null">
-                        <i class="fas fa-angle-left"></i>
-                    </a>
-                </li>
-
-                <li class="page-item" *ngFor="let page of getPageNumbers()" [class.active]="page === currentPage">
-                    <a class="page-link" (click)="onPageChange(page)">{{ page }}</a>
-                </li>
-
-                <li class="page-item" [class.disabled]="currentPage === totalPages">
-                    <a
-                        class="page-link"
-                        (click)="onPageChange(currentPage + 1)"
-                        [attr.tabindex]="currentPage === totalPages ? -1 : null">
-                        <i class="fas fa-angle-right"></i>
-                    </a>
-                </li>
-            </ul>
-
-            <div class="text-center">
-                <small class="text-muted">
-                    Showing {{ (currentPage - 1) * itemsPerPage + 1 }} to {{ getEndRecord() }} of
-                    {{ totalRecords }} results
-                </small>
-            </div>
-        </nav>
     </div>
-</div>
+
+</div><!-- /dm-page -->

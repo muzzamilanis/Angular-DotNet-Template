@@ -43,6 +43,7 @@ import { TrialBalanceComponent } from './components/reports/trial-balance/trial-
 import { BalanceSheetComponent } from './components/reports/balance-sheet/balance-sheet.component';
 import { ProfitLossComponent } from './components/reports/profit-loss/profit-loss.component';
 // import { CurrencySetupComponent } from './components/currency-setup/currency-setup.component';
+import { SumCountPipe } from './pipes/sum-count.pipe';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { ThemeService } from './services/theme.service';
 import { CompanyService } from './services/company.service';
@@ -104,6 +105,7 @@ export function initializeAppTheme(themeService: ThemeService, companyService: C
         BalanceSheetComponent,
         ProfitLossComponent,
         // CurrencySetupComponent,
+        SumCountPipe,
     ],
     imports: [
         BrowserModule,

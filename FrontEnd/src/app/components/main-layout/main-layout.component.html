@@ -147,13 +147,13 @@
                         </a>
                     </li>
 
-                    <!-- New Order (AI) - Visible to SuperAdmin and non-writer, non-real-estate, non-construction -->
-                    <li class="nav-item" *ngIf="!isWriter() && !isTeamLead() && !isRealEstate() && !isConstruction()">
+                    <!-- New Order (AI) - moved to floating popup button -->
+                    <!-- <li class="nav-item" *ngIf="!isWriter() && !isTeamLead() && !isRealEstate() && !isConstruction()">
                         <a routerLink="/order-entry" class="nav-link" routerLinkActive="active">
                             <i class="nav-icon fas fa-robot"></i>
                             <p>Order Log Chatbot</p>
                         </a>
-                    </li>
+                    </li> -->
                     <!-- <a (click)="toggleMenuState('transactions', $event)" class="nav-link">
                             <i class="nav-icon fas fa-shopping-cart"></i>
                             <p>
@@ -436,6 +436,20 @@
             </div>
         </section>
     </div>
+
+    <!-- AI Order Chatbot — Floating button + Slide-in panel (create mode only, MVP) -->
+    <ng-container *ngIf="!isWriter() && !isTeamLead() && !isRealEstate() && !isConstruction()">
+        <button class="chat-fab" (click)="toggleChatPopup()"
+            [title]="showChatPopup ? 'Close AI Chat' : 'New Order via AI'">
+            <i class="fas" [ngClass]="showChatPopup ? 'fa-times' : 'fa-robot'"></i>
+        </button>
+        <ng-container *ngIf="showChatPopup">
+            <div class="chat-popup-backdrop" (click)="closeChatPopup()"></div>
+            <div class="chat-popup-panel">
+                <app-order-chatbot [isPopup]="true" (closed)="closeChatPopup()"></app-order-chatbot>
+            </div>
+        </ng-container>
+    </ng-container>
 
     <!-- Footer -->
     <footer class="main-footer">

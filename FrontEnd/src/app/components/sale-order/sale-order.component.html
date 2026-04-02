@@ -1,3 +1,6 @@
+<!-- DM Command-Centre Theme Wrapper -->
+<div [class.dm-page]="isDigitalMarketing">
+
 <!-- Sale Order Form - Only show when showCreateForm is true -->
 <div class="row" *ngIf="showCreateForm">
     <div class="col-md-12">
@@ -983,14 +986,14 @@
                 <div class="card-footer">
                     <button
                         type="submit"
-                        class="btn btn-primary"
+                        class="dm-btn-primary btn"
                         [disabled]="
                             saleOrderForm.invalid || (!isDigitalMarketing && items.length === 0) || isFormReadonly()
                         ">
                         <i class="fas fa-save"></i>
                         {{ editingOrder ? 'Update' : 'Create' }} Order
                     </button>
-                    <button type="button" class="btn btn-secondary ml-2" (click)="exitCreateMode()">
+                    <button type="button" class="dm-btn-ghost btn ml-2" (click)="exitCreateMode()">
                         <i class="fas fa-times"></i>
                         Cancel
                     </button>
@@ -1015,92 +1018,79 @@
     <div class="col-md-12">
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title">{{ isDigitalMarketing ? 'Order Log' : 'Sale Orders' }}</h3>
+                <h3 class="card-title">
+                    <i class="fas" [class.fa-robot]="isDigitalMarketing" [class.fa-shopping-cart]="!isDigitalMarketing"></i>
+                    {{ isDigitalMarketing ? 'Order Log' : 'Sale Orders' }}
+                    <span *ngIf="isDigitalMarketing" class="dm-badge dm-badge-progress ml-2" style="font-size:0.7rem;vertical-align:middle">{{ filteredSaleOrders.length }} orders</span>
+                </h3>
                 <div class="card-tools">
-                    <button type="button" class="btn btn-primary btn-sm" (click)="enterCreateMode()">
+                    <button type="button" class="dm-btn-success btn" (click)="enterCreateMode()">
                         <i class="fas fa-plus"></i>
-                        {{ isDigitalMarketing ? 'Create Order' : 'Add Order' }}
+                        {{ isDigitalMarketing ? 'New Order' : 'Add Order' }}
                     </button>
                 </div>
             </div>
             <!-- Filter Controls -->
-            <div class="card-body pb-2">
+            <div class="dm-filter-bar" *ngIf="isDigitalMarketing">
+                <div class="dm-filter-group">
+                    <span class="dm-filter-label">Search</span>
+                    <input type="text" class="dm-filter-control" [(ngModel)]="searchFilter" (input)="onSearchFilterChange()" placeholder="Search orders..." />
+                </div>
+                <div class="dm-filter-group" *ngIf="isDigitalMarketing">
+                    <span class="dm-filter-label">Project</span>
+                    <select class="dm-filter-control" [(ngModel)]="projectFilter" (change)="onProjectFilterChange()">
+                        <option value="">All Projects</option>
+                        <option *ngFor="let project of projects" [value]="project.id">
+                            {{ project.projectName }}
+                        </option>
+                    </select>
+                </div>
+                <div class="dm-filter-group" *ngIf="isDigitalMarketing">
+                    <span class="dm-filter-label">Status</span>
+                    <select class="dm-filter-control" [(ngModel)]="statusFilter" (change)="onStatusFilterChange()">
+                        <option value="">All Status</option>
+                        <option *ngFor="let status of statusOptions" [value]="status">{{ status }}</option>
+                    </select>
+                </div>
+                <div class="dm-filter-group">
+                    <span class="dm-filter-label">From Date</span>
+                    <input type="date" class="dm-filter-control" [(ngModel)]="dateFromFilter" (change)="onDateFilterChange()" />
+                </div>
+                <div class="dm-filter-group">
+                    <span class="dm-filter-label">To Date</span>
+                    <input type="date" class="dm-filter-control" [(ngModel)]="dateToFilter" (change)="onDateFilterChange()" />
+                </div>
+                <div class="dm-filter-group" style="justify-content:flex-end">
+                    <button type="button" class="dm-btn-ghost btn" (click)="clearFilters()">
+                        <i class="fas fa-times"></i> Clear
+                    </button>
+                </div>
+            </div>
+            <!-- Legacy filter bar for non-DM -->
+            <div class="card-body pb-2" *ngIf="!isDigitalMarketing">
                 <div class="row mb-3">
                     <div class="col-md-2">
                         <div class="form-group mb-2">
                             <label for="searchFilter" class="form-label mb-1">Search</label>
-                            <input
-                                type="text"
-                                class="form-control form-control-sm"
-                                id="searchFilter"
-                                [(ngModel)]="searchFilter"
-                                (input)="onSearchFilterChange()"
-                                placeholder="Search orders..." />
-                        </div>
-                    </div>
-                    <div class="col-md-2" *ngIf="isDigitalMarketing">
-                        <div class="form-group mb-2">
-                            <label for="projectFilter" class="form-label mb-1">Project</label>
-                            <select
-                                class="form-control form-control-sm"
-                                id="projectFilter"
-                                [(ngModel)]="projectFilter"
-                                (change)="onProjectFilterChange()">
-                                <option value="">All Projects</option>
-                                <option *ngFor="let project of projects" [value]="project.id">
-                                    {{ project.projectName }}
-                                </option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-2" *ngIf="isDigitalMarketing">
-                        <div class="form-group mb-2">
-                            <label for="statusFilter" class="form-label mb-1">Status</label>
-                            <select
-                                class="form-control form-control-sm"
-                                id="statusFilter"
-                                [(ngModel)]="statusFilter"
-                                (change)="onStatusFilterChange()">
-                                <option value="">All Status</option>
-                                <option *ngFor="let status of statusOptions" [value]="status">{{ status }}</option>
-                            </select>
+                            <input type="text" class="form-control form-control-sm" [(ngModel)]="searchFilter" (input)="onSearchFilterChange()" placeholder="Search orders..." />
                         </div>
                     </div>
                     <div class="col-md-2">
                         <div class="form-group mb-2">
                             <label for="dateFromFilter" class="form-label mb-1">From Date</label>
-                            <input
-                                type="date"
-                                class="form-control form-control-sm"
-                                id="dateFromFilter"
-                                [(ngModel)]="dateFromFilter"
-                                (change)="onDateFilterChange()" />
+                            <input type="date" class="form-control form-control-sm" [(ngModel)]="dateFromFilter" (change)="onDateFilterChange()" />
                         </div>
                     </div>
                     <div class="col-md-2">
                         <div class="form-group mb-2">
                             <label for="dateToFilter" class="form-label mb-1">To Date</label>
-                            <input
-                                type="date"
-                                class="form-control form-control-sm"
-                                id="dateToFilter"
-                                [(ngModel)]="dateToFilter"
-                                (change)="onDateFilterChange()" />
+                            <input type="date" class="form-control form-control-sm" [(ngModel)]="dateToFilter" (change)="onDateFilterChange()" />
                         </div>
                     </div>
                     <div class="col-md-2">
                         <div class="form-group mb-2">
                             <label class="form-label mb-1">&nbsp;</label>
-                            <div>
-                                <button
-                                    type="button"
-                                    class="btn btn-secondary btn-sm"
-                                    (click)="clearFilters()"
-                                    title="Clear all filters">
-                                    <i class="fas fa-times"></i>
-                                    Clear
-                                </button>
-                            </div>
+                            <div><button type="button" class="btn btn-secondary btn-sm" (click)="clearFilters()"><i class="fas fa-times"></i> Clear</button></div>
                         </div>
                     </div>
                 </div>
@@ -1143,13 +1133,24 @@
                                 <td *ngIf="isDigitalMarketing">
                                     {{ order.deadline ? (order.deadline | date: 'short') : 'N/A' }}
                                 </td>
-                                <td *ngIf="isDigitalMarketing">{{ order.status || 'N/A' }}</td>
+                                <td *ngIf="isDigitalMarketing">
+                    <span class="dm-badge"
+                        [class.dm-badge-new]="order.status === 'New'"
+                        [class.dm-badge-progress]="order.status === 'InProgress'"
+                        [class.dm-badge-done]="order.status === 'Completed'"
+                        [class.dm-badge-cancelled]="order.status === 'Abandon'"
+                        [class.dm-badge-review]="order.status === 'workSubmittedByWriter'">
+                        <i class="fas fa-circle" style="font-size:0.45rem"></i>
+                        {{ order.status || 'N/A' }}
+                    </span>
+                </td>
                                 <td *ngIf="isDigitalMarketing">{{ order.assignedTo || 'N/A' }}</td>
                                 <td *ngIf="isDigitalMarketing">
                                     <div *ngIf="order.submissionStatus">
-                                        <span
-                                            class="badge"
-                                            [ngClass]="getSubmissionStatusClass(order.submissionStatus)">
+                                        <span class="dm-badge"
+                                            [class.dm-badge-done]="order.submissionStatus === 'Completed'"
+                                            [class.dm-badge-review]="order.submissionStatus === 'Need clarity'"
+                                            [class.dm-badge-pending]="order.submissionStatus !== 'Completed' && order.submissionStatus !== 'Need clarity'">
                                             {{ order.submissionStatus }}
                                         </span>
                                         <div *ngIf="order.submittedFilename" class="mt-1">
@@ -1176,22 +1177,17 @@
                                 </td>
                                 <td *ngIf="!isDigitalMarketing">${{ order.totalAmount.toFixed(2) }}</td>
                                 <td>
-                                    <button
-                                        type="button"
-                                        class="btn btn-info btn-sm mr-2"
-                                        title="View Workflow"
-                                        (click)="router.navigate(['/order-workflow', order.id])">
-                                        <i class="fas fa-project-diagram"></i>
-                                    </button>
-                                    <button
-                                        type="button"
-                                        class="btn btn-warning btn-sm mr-2"
-                                        (click)="editOrder(order)">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button type="button" class="btn btn-danger btn-sm" (click)="deleteOrder(order)">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
+                                    <div style="display:flex;gap:4px;align-items:center">
+                                        <button type="button" class="dm-action-btn dm-action-workflow" title="View Workflow" (click)="router.navigate(['/order-workflow', order.id])">
+                                            <i class="fas fa-project-diagram"></i>
+                                        </button>
+                                        <button type="button" class="dm-action-btn dm-action-edit" title="View / Edit Order" (click)="editOrder(order)">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button type="button" class="dm-action-btn dm-action-delete" title="Delete" (click)="deleteOrder(order)">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
                                 </td>
                             </tr>
                             <tr *ngIf="filteredSaleOrders.length === 0">
@@ -1341,13 +1337,13 @@
                     </div>
                 </div>
 
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" (click)="closeCreateProjectModal()">
+                <div class="modal-footer dm-modal">
+                    <button type="button" class="dm-btn-ghost btn" (click)="closeCreateProjectModal()">
                         <i class="fas fa-times"></i>
                         Cancel
                     </button>
-                    <button type="submit" class="btn btn-primary" [disabled]="projectForm.invalid || isCreatingProject">
-                        <span *ngIf="isCreatingProject" class="spinner-border spinner-border-sm mr-2"></span>
+                    <button type="submit" class="dm-btn-primary btn" [disabled]="projectForm.invalid || isCreatingProject">
+                        <span *ngIf="isCreatingProject" class="spinner-border spinner-border-sm"></span>
                         <i class="fas fa-save" *ngIf="!isCreatingProject"></i>
                         {{ isCreatingProject ? 'Creating...' : 'Create Project' }}
                     </button>
@@ -1356,3 +1352,5 @@
         </div>
     </div>
 </div>
+
+</div><!-- /dm-page -->

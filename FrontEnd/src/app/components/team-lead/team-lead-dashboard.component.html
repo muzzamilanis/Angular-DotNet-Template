@@ -1,105 +1,82 @@
-<div class="row">
-    <div class="col-12">
-        <h1 class="m-0">Welcome back, {{ getUserDisplayName() }}!</h1>
-        <p class="text-muted">Team Lead management dashboard</p>
-    </div>
-</div>
+<!-- Team Lead Dashboard — DM Command-Centre Theme -->
+<div class="dm-page">
 
-<!-- Order Statistics -->
-<div class="row mt-4">
-    <div class="col-lg-3 col-6">
-        <div class="small-box bg-info">
-            <div class="inner">
-                <h3>{{ orderStats.total }}</h3>
-                <p>Total Orders</p>
-            </div>
-            <div class="icon">
-                <i class="fas fa-clipboard-list"></i>
-            </div>
-            <a routerLink="/team-lead/orders" class="small-box-footer">
-                Manage Orders
-                <i class="fas fa-arrow-circle-right"></i>
+    <!-- Alert: Overdue -->
+    <div class="alert" *ngIf="orderStats.overdue > 0"
+        style="border-radius:10px;border:none;background:rgba(239,68,68,0.12);border-left:4px solid #ef4444;color:#fca5a5;margin-bottom:1rem">
+        <i class="fas fa-exclamation-triangle mr-2"></i>
+        <strong>{{ orderStats.overdue }} overdue order(s)!</strong> Immediate review required.
+        <a routerLink="/team-lead/orders" class="ml-2" style="color:#fca5a5;text-decoration:underline">View now &rarr;</a>
+    </div>
+
+    <!-- Alert: Unassigned -->
+    <div class="alert" *ngIf="orderStats.unassigned > 0 && orderStats.overdue === 0"
+        style="border-radius:10px;border:none;background:rgba(234,179,8,0.1);border-left:4px solid #f59e0b;color:#fbbf24;margin-bottom:1rem">
+        <i class="fas fa-user-times mr-2"></i>
+        <strong>{{ orderStats.unassigned }} unassigned order(s)</strong> waiting for writer assignment.
+        <a routerLink="/team-lead/orders" class="ml-2" style="color:#fbbf24;text-decoration:underline">Assign now &rarr;</a>
+    </div>
+
+    <!-- Page Header -->
+    <div class="dm-page-header">
+        <div>
+            <h1 class="dm-page-title"><i class="fas fa-user-tie"></i> Team Lead Hub</h1>
+            <p class="dm-page-subtitle">Welcome back, {{ getUserDisplayName() }}!</p>
+        </div>
+        <div class="dm-page-actions">
+            <a routerLink="/team-lead/orders" class="dm-btn-primary btn">
+                <i class="fas fa-clipboard-list"></i> Manage Orders
             </a>
         </div>
     </div>
 
-    <div class="col-lg-3 col-6">
-        <div class="small-box bg-warning">
-            <div class="inner">
-                <h3>{{ orderStats.unassigned }}</h3>
-                <p>Unassigned</p>
-            </div>
-            <div class="icon">
-                <i class="fas fa-user-times"></i>
-            </div>
-            <a routerLink="/team-lead/orders" class="small-box-footer">
-                Assign Orders
-                <i class="fas fa-arrow-circle-right"></i>
-            </a>
+    <!-- KPI Stats Bar -->
+    <div class="dm-stats-bar mb-4">
+        <div class="dm-stat-chip" style="border-color:rgba(56,189,248,0.2)">
+            <div class="dm-stat-num dm-text-info">{{ orderStats.total }}</div>
+            <div class="dm-stat-lbl">Total Orders</div>
+        </div>
+        <div class="dm-stat-chip" style="border-color:rgba(234,179,8,0.2)">
+            <div class="dm-stat-num dm-text-warning">{{ orderStats.unassigned }}</div>
+            <div class="dm-stat-lbl">Unassigned</div>
+        </div>
+        <div class="dm-stat-chip" style="border-color:rgba(99,102,241,0.2)">
+            <div class="dm-stat-num" style="color:#818cf8">{{ orderStats.assigned }}</div>
+            <div class="dm-stat-lbl">Assigned</div>
+        </div>
+        <div class="dm-stat-chip" style="border-color:rgba(16,185,129,0.2)">
+            <div class="dm-stat-num dm-text-success">{{ orderStats.completed }}</div>
+            <div class="dm-stat-lbl">Completed</div>
+        </div>
+        <div class="dm-stat-chip" style="border-color:rgba(239,68,68,0.2)">
+            <div class="dm-stat-num dm-text-danger">{{ orderStats.overdue }}</div>
+            <div class="dm-stat-lbl">Overdue</div>
         </div>
     </div>
 
-    <div class="col-lg-3 col-6">
-        <div class="small-box bg-success">
-            <div class="inner">
-                <h3>{{ orderStats.assigned }}</h3>
-                <p>Assigned</p>
-            </div>
-            <div class="icon">
-                <i class="fas fa-user-check"></i>
-            </div>
-            <a routerLink="/team-lead/orders" class="small-box-footer">
-                View Assigned
-                <i class="fas fa-arrow-circle-right"></i>
-            </a>
-        </div>
-    </div>
-
-    <div class="col-lg-3 col-6">
-        <div class="small-box bg-danger">
-            <div class="inner">
-                <h3>{{ orderStats.overdue }}</h3>
-                <p>Overdue</p>
-            </div>
-            <div class="icon">
-                <i class="fas fa-exclamation-triangle"></i>
-            </div>
-            <a routerLink="/team-lead/orders" class="small-box-footer">
-                View Overdue
-                <i class="fas fa-arrow-circle-right"></i>
-            </a>
-        </div>
-    </div>
-</div>
-
-<!-- Main Content -->
-<div class="row mt-4">
-    <div class="col-md-8">
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">Recent Orders</h3>
-                <div class="card-tools">
-                    <a routerLink="/team-lead/orders" class="btn btn-primary btn-sm">
-                        <i class="fas fa-eye"></i>
-                        View All Orders
-                    </a>
+    <div class="row">
+        <!-- Recent Orders Table -->
+        <div class="col-md-9">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title"><i class="fas fa-clock mr-2"></i>Recent Orders</h3>
+                    <div class="card-tools">
+                        <a routerLink="/team-lead/orders" class="dm-btn-ghost btn" style="padding:4px 12px;font-size:0.8rem">
+                            <i class="fas fa-eye"></i> View All
+                        </a>
+                    </div>
                 </div>
-            </div>
-            <div class="card-body">
-                <div *ngIf="isLoading" class="text-center">
-                    <i class="fas fa-spinner fa-spin"></i>
-                    Loading orders...
-                </div>
-
-                <div *ngIf="!isLoading && orders.length === 0" class="text-center">
-                    <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
-                    <h5>No orders yet</h5>
-                    <p class="text-muted">There are no orders to manage at the moment.</p>
-                </div>
-
-                <div *ngIf="!isLoading && orders.length > 0">
-                    <div class="table-responsive">
-                        <table class="table table-sm">
+                <div class="card-body p-0">
+                    <div class="dm-loading-overlay" *ngIf="isLoading">
+                        <div class="spinner-border"></div>
+                        <span>Loading...</span>
+                    </div>
+                    <div class="dm-empty-state" *ngIf="!isLoading && orders.length === 0">
+                        <i class="fas fa-inbox"></i>
+                        <p>No orders to manage.</p>
+                    </div>
+                    <div class="table-responsive" *ngIf="!isLoading && orders.length > 0">
+                        <table class="table mb-0">
                             <thead>
                                 <tr>
                                     <th>Order #</th>
@@ -111,22 +88,29 @@
                             </thead>
                             <tbody>
                                 <tr *ngFor="let order of getRecentOrders()">
-                                    <td>
-                                        <strong>{{ order.orderNumber }}</strong>
-                                    </td>
+                                    <td><span class="dm-order-chip">{{ order.orderNumber }}</span></td>
                                     <td>{{ order.clientName || order.customerName || 'N/A' }}</td>
                                     <td>
-                                        <span [ngClass]="{ 'text-danger': isDeadlineUrgent(order.deadline) }">
+                                        <span [class.dm-overdue]="isDeadlineUrgent(order.deadline)"
+                                              [class.dm-on-time]="!isDeadlineUrgent(order.deadline)">
                                             {{ formatDate(order.deadline) }}
                                         </span>
                                     </td>
                                     <td>
-                                        <span class="badge" [ngClass]="getStatusClass(order.status)">
+                                        <span class="dm-badge"
+                                            [class.dm-badge-new]="order.status === 'New'"
+                                            [class.dm-badge-progress]="order.status === 'InProgress'"
+                                            [class.dm-badge-done]="order.status === 'Completed'"
+                                            [class.dm-badge-cancelled]="order.status === 'Abandon'"
+                                            [class.dm-badge-review]="order.status === 'workSubmittedByWriter'"
+                                            [class.dm-badge-pending]="!order.status">
                                             {{ order.status || 'Pending' }}
                                         </span>
                                     </td>
                                     <td>
-                                        <span class="badge" [ngClass]="getAssignmentStatusClass(order)">
+                                        <span class="dm-badge"
+                                            [class.dm-badge-active]="order.assignedToUserId"
+                                            [class.dm-badge-cancelled]="!order.assignedToUserId">
                                             {{ getAssignmentStatusText(order) }}
                                         </span>
                                     </td>
@@ -137,107 +121,28 @@
                 </div>
             </div>
         </div>
-    </div>
 
-    <div class="col-md-4">
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">Quick Actions</h3>
-            </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-12 mb-3">
-                        <a routerLink="/team-lead/orders" class="btn btn-primary btn-lg d-block">
-                            <i class="fas fa-clipboard-list mb-2"></i>
-                            <br />
-                            Manage All Orders
-                        </a>
-                    </div>
+        <!-- Quick Actions + Overview -->
+        <div class="col-md-3">
+            <div class="card mb-3">
+                <div class="card-header"><h3 class="card-title"><i class="fas fa-bolt mr-2"></i>Quick Actions</h3></div>
+                <div class="card-body" style="display:flex;flex-direction:column;gap:10px">
+                    <a routerLink="/team-lead/orders" class="dm-btn-primary btn" style="justify-content:center">
+                        <i class="fas fa-clipboard-list"></i> All Orders
+                    </a>
                 </div>
             </div>
-        </div>
 
-        <!-- Performance Overview -->
-        <div class="card mt-3">
-            <div class="card-header">
-                <h3 class="card-title">Order Overview</h3>
-            </div>
-            <div class="card-body">
-                <div class="row text-center">
-                    <div class="col-6">
-                        <div class="description-block border-right">
-                            <span class="description-percentage text-success">
-                                <i class="fas fa-check-circle"></i>
-                                {{ orderStats.completed }}
-                            </span>
-                            <h5 class="description-header">Completed</h5>
-                            <span class="description-text">ORDERS</span>
-                        </div>
-                    </div>
-                    <div class="col-6">
-                        <div class="description-block">
-                            <span class="description-percentage text-warning">
-                                <i class="fas fa-user-times"></i>
-                                {{ orderStats.unassigned }}
-                            </span>
-                            <h5 class="description-header">Unassigned</h5>
-                            <span class="description-text">ORDERS</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="row text-center mt-3" *ngIf="orderStats.needClarity > 0">
-                    <div class="col-12">
-                        <div class="description-block">
-                            <span class="description-percentage text-danger">
-                                <i class="fas fa-question-circle"></i>
-                                {{ orderStats.needClarity }}
-                            </span>
-                            <h5 class="description-header">Need Clarity</h5>
-                            <span class="description-text">ORDERS</span>
-                        </div>
+            <div class="card" *ngIf="orderStats.needClarity > 0">
+                <div class="card-header"><h3 class="card-title"><i class="fas fa-question-circle mr-2"></i>Need Clarity</h3></div>
+                <div class="card-body">
+                    <div class="dm-stat-chip">
+                        <div class="dm-stat-num dm-text-warning">{{ orderStats.needClarity }}</div>
+                        <div class="dm-stat-lbl">Orders</div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-<!-- Urgent Orders Alert -->
-<div class="row mt-4" *ngIf="orderStats.overdue > 0">
-    <div class="col-12">
-        <div class="alert alert-danger" role="alert">
-            <h4 class="alert-heading">
-                <i class="fas fa-exclamation-triangle"></i>
-                Urgent: Overdue Orders
-            </h4>
-            <p>There are {{ orderStats.overdue }} overdue order(s) that need immediate attention.</p>
-            <hr />
-            <p class="mb-0">
-                <a routerLink="/team-lead/orders" class="btn btn-outline-danger">
-                    <i class="fas fa-eye"></i>
-                    Review Overdue Orders
-                </a>
-            </p>
-        </div>
-    </div>
-</div>
-
-<!-- Unassigned Orders Alert -->
-<div class="row mt-4" *ngIf="orderStats.unassigned > 0 && orderStats.overdue === 0">
-    <div class="col-12">
-        <div class="alert alert-warning" role="alert">
-            <h4 class="alert-heading">
-                <i class="fas fa-user-times"></i>
-                Action Required: Unassigned Orders
-            </h4>
-            <p>There are {{ orderStats.unassigned }} unassigned order(s) waiting for writer assignment.</p>
-            <hr />
-            <p class="mb-0">
-                <a routerLink="/team-lead/orders" class="btn btn-outline-warning">
-                    <i class="fas fa-user-plus"></i>
-                    Assign Orders to Writers
-                </a>
-            </p>
-        </div>
-    </div>
-</div>
+</div><!-- /dm-page -->

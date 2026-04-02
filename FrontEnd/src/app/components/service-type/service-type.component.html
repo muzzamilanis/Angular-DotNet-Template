@@ -1,160 +1,123 @@
-<!-- Service Type Form -->
-<div class="row">
-    <div class="col-md-12">
-        <div class="card card-primary">
-            <div class="card-header">
-                <h3 class="card-title">
-                    <i class="fas fa-cogs mr-2"></i>
-                    {{ editingServiceType ? 'Edit' : 'Create' }} Service Type
-                </h3>
-            </div>
-            <form [formGroup]="serviceTypeForm" (ngSubmit)="onSubmit()">
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="name">Service Type Name *</label>
-                                <input
-                                    type="text"
-                                    class="form-control"
-                                    id="name"
-                                    formControlName="name"
-                                    placeholder="Enter service type name"
-                                    [class.is-invalid]="
-                                        serviceTypeForm.get('name')?.invalid && serviceTypeForm.get('name')?.touched
-                                    " />
-                                <div
-                                    class="invalid-feedback"
-                                    *ngIf="
-                                        serviceTypeForm.get('name')?.invalid && serviceTypeForm.get('name')?.touched
-                                    ">
-                                    <div *ngIf="serviceTypeForm.get('name')?.errors?.['required']">
-                                        Service type name is required
-                                    </div>
-                                    <div *ngIf="serviceTypeForm.get('name')?.errors?.['maxlength']">
-                                        Service type name must be 100 characters or less
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="description">Description</label>
-                                <input
-                                    type="text"
-                                    class="form-control"
-                                    id="description"
-                                    formControlName="description"
-                                    placeholder="Enter description (optional)"
-                                    [class.is-invalid]="
-                                        serviceTypeForm.get('description')?.invalid &&
-                                        serviceTypeForm.get('description')?.touched
-                                    " />
-                                <div
-                                    class="invalid-feedback"
-                                    *ngIf="
-                                        serviceTypeForm.get('description')?.invalid &&
-                                        serviceTypeForm.get('description')?.touched
-                                    ">
-                                    <div *ngIf="serviceTypeForm.get('description')?.errors?.['maxlength']">
-                                        Description must be 200 characters or less
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <div class="form-check">
-                                    <input
-                                        type="checkbox"
-                                        class="form-check-input"
-                                        id="isActive"
-                                        formControlName="isActive" />
-                                    <label class="form-check-label" for="isActive">Active</label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-footer">
-                    <button type="submit" class="btn btn-primary" [disabled]="!serviceTypeForm.valid || loading">
-                        <i class="fas fa-save mr-2"></i>
-                        <span *ngIf="loading" class="spinner-border spinner-border-sm mr-2"></span>
-                        {{ editingServiceType ? 'Update' : 'Create' }} Service Type
-                    </button>
-                    <button type="button" class="btn btn-secondary ml-2" (click)="resetForm()">
-                        <i class="fas fa-times mr-2"></i>
-                        Cancel
-                    </button>
-                </div>
-            </form>
+<!-- Service Type Management — DM Command-Centre Theme -->
+<div class="dm-page">
+
+    <!-- Page Header -->
+    <div class="dm-page-header">
+        <div>
+            <h1 class="dm-page-title"><i class="fas fa-cogs"></i> Service Types</h1>
+            <p class="dm-page-subtitle">Manage the service types offered to clients</p>
+        </div>
+        <div class="dm-page-actions">
+            <span class="dm-badge dm-badge-active">{{ serviceTypes.length }} types</span>
         </div>
     </div>
-</div>
 
-<!-- Service Types List -->
-<div class="row">
-    <div class="col-md-12">
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">
-                    <i class="fas fa-list mr-2"></i>
-                    Service Types List
-                </h3>
-            </div>
+    <!-- Create / Edit Form -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h3 class="card-title">
+                <i class="fas fa-plus-circle mr-2"></i>
+                {{ editingServiceType ? 'Edit Service Type' : 'Add Service Type' }}
+            </h3>
+        </div>
+        <form [formGroup]="serviceTypeForm" (ngSubmit)="onSubmit()">
             <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-bordered table-striped">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Name</th>
-                                <th>Description</th>
-                                <th>Company</th>
-                                <th>Status</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr *ngFor="let serviceType of serviceTypes">
-                                <td>{{ serviceType.id }}</td>
-                                <td>{{ serviceType.name }}</td>
-                                <td>{{ serviceType.description || '-' }}</td>
-                                <td>{{ serviceType.companyName || '-' }}</td>
-                                <td>
-                                    <span
-                                        class="badge"
-                                        [class.badge-success]="serviceType.isActive"
-                                        [class.badge-secondary]="!serviceType.isActive">
-                                        {{ serviceType.isActive ? 'Active' : 'Inactive' }}
-                                    </span>
-                                </td>
-                                <td>
-                                    <button
-                                        type="button"
-                                        class="btn btn-sm btn-info mr-2"
-                                        (click)="editServiceType(serviceType)"
-                                        title="Edit Service Type">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="name">Service Type Name *</label>
+                            <input type="text" class="form-control" id="name" formControlName="name"
+                                placeholder="e.g. Blog Writing, SEO Audit"
+                                [class.is-invalid]="serviceTypeForm.get('name')?.invalid && serviceTypeForm.get('name')?.touched" />
+                            <div class="invalid-feedback" *ngIf="serviceTypeForm.get('name')?.invalid && serviceTypeForm.get('name')?.touched">
+                                <div *ngIf="serviceTypeForm.get('name')?.errors?.['required']">Name is required</div>
+                                <div *ngIf="serviceTypeForm.get('name')?.errors?.['maxlength']">Max 100 characters</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="description">Description</label>
+                            <input type="text" class="form-control" id="description" formControlName="description"
+                                placeholder="Short description (optional)"
+                                [class.is-invalid]="serviceTypeForm.get('description')?.invalid && serviceTypeForm.get('description')?.touched" />
+                            <div class="invalid-feedback" *ngIf="serviceTypeForm.get('description')?.invalid && serviceTypeForm.get('description')?.touched">
+                                <div *ngIf="serviceTypeForm.get('description')?.errors?.['maxlength']">Max 200 characters</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="isActive" formControlName="isActive" />
+                    <label class="form-check-label" for="isActive">Active</label>
+                </div>
+            </div>
+            <div class="card-footer" style="display:flex;gap:10px">
+                <button type="submit" class="dm-btn-primary btn" [disabled]="!serviceTypeForm.valid || loading">
+                    <span *ngIf="loading" class="spinner-border spinner-border-sm"></span>
+                    <i class="fas fa-save" *ngIf="!loading"></i>
+                    {{ editingServiceType ? 'Update' : 'Create' }} Service Type
+                </button>
+                <button type="button" class="dm-btn-ghost btn" (click)="resetForm()">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Service Types Table -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title"><i class="fas fa-list mr-2"></i> Service Types List</h3>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table mb-0">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Description</th>
+                            <th>Company</th>
+                            <th>Status</th>
+                            <th style="width:90px">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let serviceType of serviceTypes">
+                            <td><span class="dm-order-chip">{{ serviceType.id }}</span></td>
+                            <td><strong class="dm-text-primary">{{ serviceType.name }}</strong></td>
+                            <td><span class="dm-text-muted">{{ serviceType.description || '—' }}</span></td>
+                            <td>{{ serviceType.companyName || '—' }}</td>
+                            <td>
+                                <span class="dm-badge" [class.dm-badge-active]="serviceType.isActive" [class.dm-badge-inactive]="!serviceType.isActive">
+                                    <i class="fas fa-circle" style="font-size:0.4rem"></i>
+                                    {{ serviceType.isActive ? 'Active' : 'Inactive' }}
+                                </span>
+                            </td>
+                            <td>
+                                <div style="display:flex;gap:4px">
+                                    <button type="button" class="dm-action-btn dm-action-edit" (click)="editServiceType(serviceType)" title="Edit">
                                         <i class="fas fa-edit"></i>
                                     </button>
-                                    <button
-                                        type="button"
-                                        class="btn btn-sm btn-danger"
-                                        (click)="deleteServiceType(serviceType)"
-                                        title="Delete Service Type">
+                                    <button type="button" class="dm-action-btn dm-action-delete" (click)="deleteServiceType(serviceType)" title="Delete">
                                         <i class="fas fa-trash"></i>
                                     </button>
-                                </td>
-                            </tr>
-                            <tr *ngIf="serviceTypes.length === 0">
-                                <td colspan="6" class="text-center">No service types found</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr *ngIf="serviceTypes.length === 0">
+                            <td colspan="6">
+                                <div class="dm-empty-state">
+                                    <i class="fas fa-cog"></i>
+                                    <p>No service types yet. Add your first one above.</p>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
-</div>
+
+</div><!-- /dm-page -->
