@@ -1,324 +1,225 @@
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">Team Lead - Order Management</h3>
-                </div>
-                <div class="card-body">
-                    <div *ngIf="isLoading" class="loading">
-                        <i class="fas fa-spinner fa-spin"></i>
-                        Loading orders...
-                    </div>
+<!-- Team Lead Orders — DM Command-Centre Theme -->
+<div class="dm-page">
 
-                    <div *ngIf="!isLoading && orders.length === 0" class="no-orders">
-                        <i class="fas fa-inbox fa-3x" style="color: #ccc"></i>
-                        <h4>No orders found</h4>
-                        <p>There are no orders to manage at the moment.</p>
-                    </div>
-
-                    <div *ngIf="!isLoading && orders.length > 0" class="orders-list">
-                        <div *ngFor="let order of orders" class="order-card">
-                            <div class="order-header">
-                                <span class="order-title">{{ order.orderNumber }}</span>
-                                <span class="badge" [ngClass]="getStatusClass(order.status)">
-                                    {{ order.status || 'Not Set' }}
-                                </span>
-                            </div>
-
-                            <div class="order-meta">
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="meta-item">
-                                            <span class="meta-label">Client:</span>
-                                            <span class="meta-value">
-                                                {{ order.clientName || order.customerName || 'N/A' }}
-                                            </span>
-                                        </div>
-                                        <div class="meta-item">
-                                            <span class="meta-label">Order Date:</span>
-                                            <span class="meta-value">{{ formatDate(order.orderDate) }}</span>
-                                        </div>
-                                        <div class="meta-item">
-                                            <span class="meta-label">Deadline:</span>
-                                            <span
-                                                class="meta-value"
-                                                [ngClass]="{ 'deadline-urgent': isDeadlineUrgent(order.deadline) }">
-                                                {{ formatDate(order.deadline) }}
-                                            </span>
-                                        </div>
-                                        <div class="meta-item">
-                                            <span class="meta-label">Pages/Words:</span>
-                                            <span class="meta-value">{{ order.wordsOrPages || 'N/A' }}</span>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="meta-item">
-                                            <span class="meta-label">Assigned Writer:</span>
-                                            <span
-                                                class="meta-value"
-                                                [ngClass]="{ 'text-danger': !order.assignedToUserId }">
-                                                {{ getWriterName(order.assignedToUserId) }}
-                                            </span>
-                                        </div>
-                                        <div class="meta-item">
-                                            <span class="meta-label">Academic Level:</span>
-                                            <span class="meta-value">{{ order.academicLevel || 'N/A' }}</span>
-                                        </div>
-                                        <div class="meta-item">
-                                            <span class="meta-label">Country:</span>
-                                            <span class="meta-value">{{ order.country || 'N/A' }}</span>
-                                        </div>
-                                        <div class="meta-item">
-                                            <span class="meta-label">Submission Status:</span>
-                                            <span
-                                                class="badge"
-                                                [ngClass]="getSubmissionStatusClass(order.submissionStatus)">
-                                                {{ order.submissionStatus || 'Not Submitted' }}
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Order Details Section - Now Editable -->
-                            <div class="meta-item" style="margin-bottom: 1rem">
-                                <span class="meta-label">Order Details:</span>
-                                <div style="margin-top: 0.5rem">
-                                    <!-- Read-only view -->
-                                    <div
-                                        *ngIf="!isEditingDetails || editingOrderId !== order.id"
-                                        style="
-                                            padding: 0.75rem;
-                                            background: #f8f9fa;
-                                            border-radius: 4px;
-                                            position: relative;
-                                        ">
-                                        <div style="margin-bottom: 0.5rem">
-                                            {{
-                                                order.orderDetails ||
-                                                    'No details provided yet. Click edit to add details.'
-                                            }}
-                                        </div>
-                                        <!-- <button 
-                                            class="btn btn-sm btn-outline-primary" 
-                                            (click)="startEditingDetails(order)"
-                                            style="position: absolute; top: 5px; right: 5px;">
-                                            <i class="fas fa-edit"></i> Edit
-                                        </button> -->
-                                    </div>
-
-                                    <!-- Edit mode -->
-                                    <div *ngIf="isEditingDetails && editingOrderId === order.id">
-                                        <textarea
-                                            [(ngModel)]="editedOrderDetails"
-                                            class="form-control"
-                                            rows="4"
-                                            placeholder="Enter order details and instructions..."
-                                            style="margin-bottom: 0.5rem"></textarea>
-                                        <div>
-                                            <button
-                                                class="btn btn-sm btn-success"
-                                                (click)="saveOrderDetails()"
-                                                [disabled]="!editedOrderDetails.trim()">
-                                                <i class="fas fa-save"></i>
-                                                Save
-                                            </button>
-                                            <button
-                                                class="btn btn-sm btn-secondary ml-2"
-                                                (click)="cancelEditingDetails()">
-                                                <i class="fas fa-times"></i>
-                                                Cancel
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Attachments Section -->
-                            <div *ngIf="order.attachmentFilenames" class="attachments-section">
-                                <h6>
-                                    <i class="fas fa-paperclip"></i>
-                                    Attachments:
-                                </h6>
-                                <div *ngFor="let filename of getAttachmentsList(order.attachmentFilenames)">
-                                    <span class="attachment-item">
-                                        <i class="fas fa-file"></i>
-                                        {{ filename }}
-                                    </span>
-                                </div>
-                            </div>
-
-                            <!-- Assignment Section -->
-                            <div class="assignment-section">
-                                <div *ngIf="order.submissionStatus && order.submissionDate" class="row mb-2">
-                                    <div class="col-md-12">
-                                        <strong>Last Submission:</strong>
-                                        {{ formatDate(order.submissionDate) }}
-                                        <span
-                                            class="badge ml-2"
-                                            [ngClass]="getSubmissionStatusClass(order.submissionStatus)">
-                                            {{ order.submissionStatus }}
-                                        </span>
-                                    </div>
-                                </div>
-
-                                <div class="mt-3">
-                                    <button
-                                        class="btn btn-primary btn-sm"
-                                        (click)="openAssignModal(order)"
-                                        [disabled]="!canReassign(order)">
-                                        <i class="fas fa-user-edit"></i>
-                                        {{ order.assignedToUserId ? 'Reassign' : 'Assign Writer' }}
-                                    </button>
-                                    <button class="btn btn-info btn-sm ml-2" (click)="openInstructionsModal(order)">
-                                        <i class="fas fa-comments"></i>
-                                        Instructions
-                                    </button>
-                                    <small *ngIf="!canReassign(order)" class="text-muted ml-2">
-                                        Cannot reassign completed orders
-                                    </small>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <!-- Page Header -->
+    <div class="dm-page-header">
+        <div>
+            <h1 class="dm-page-title"><i class="fas fa-clipboard-list"></i> Order Management</h1>
+            <p class="dm-page-subtitle">{{ orders.length }} order(s) in queue</p>
         </div>
     </div>
-</div>
 
-<!-- Assignment Modal -->
-<div *ngIf="isAssignModalOpen" class="modal-overlay" (click)="closeAssignModal()">
-    <div class="modal-content" (click)="$event.stopPropagation()">
-        <h4>{{ selectedOrder?.assignedToUserId ? 'Reassign' : 'Assign' }} Order - {{ selectedOrder?.orderNumber }}</h4>
-
-        <form (ngSubmit)="assignOrder()" #assignForm="ngForm">
-            <div class="form-group">
-                <label for="writerId">Select Writer *</label>
-                <select id="writerId" name="writerId" class="form-control" [(ngModel)]="selectedWriterId" required>
-                    <option value="">Select a writer</option>
-                    <option *ngFor="let writer of writers" [value]="writer.id">
-                        {{ writer.name }} ({{ writer.email }})
-                    </option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <button type="submit" class="btn btn-primary" [disabled]="!selectedWriterId">
-                    <i class="fas fa-check"></i>
-                    {{ selectedOrder?.assignedToUserId ? 'Update Assignment' : 'Assign Order' }}
-                </button>
-                <button type="button" class="btn btn-secondary ml-2" (click)="closeAssignModal()">Cancel</button>
-            </div>
-        </form>
+    <!-- Loading -->
+    <div class="dm-loading-overlay" *ngIf="isLoading">
+        <div class="spinner-border"></div>
+        <span>Loading orders...</span>
     </div>
-</div>
 
-<!-- Instructions Modal -->
-<div class="modal" [class.show]="isInstructionModalOpen" [style.display]="isInstructionModalOpen ? 'block' : 'none'">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4>Order Instructions - {{ selectedOrder?.orderNumber }}</h4>
-                <button type="button" class="close" (click)="closeInstructionsModal()">
-                    <span>&times;</span>
-                </button>
+    <!-- Empty State -->
+    <div class="dm-empty-state" *ngIf="!isLoading && orders.length === 0">
+        <i class="fas fa-inbox"></i>
+        <p>No orders to manage at the moment.</p>
+    </div>
+
+    <!-- Order Cards -->
+    <div *ngIf="!isLoading && orders.length > 0">
+        <div *ngFor="let order of orders" class="card mb-3">
+            <div class="card-header" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+                <span class="dm-order-chip">{{ order.orderNumber }}</span>
+                <span class="dm-badge"
+                    [class.dm-badge-new]="order.status === 'New'"
+                    [class.dm-badge-progress]="order.status === 'InProgress'"
+                    [class.dm-badge-done]="order.status === 'Completed'"
+                    [class.dm-badge-cancelled]="order.status === 'Abandon'"
+                    [class.dm-badge-review]="order.status === 'workSubmittedByWriter'"
+                    [class.dm-badge-pending]="!order.status">
+                    {{ order.status || 'Pending' }}
+                </span>
+                <span *ngIf="isDeadlineUrgent(order.deadline)" class="dm-badge dm-badge-cancelled">
+                    <i class="fas fa-fire"></i> OVERDUE
+                </span>
+                <span class="dm-badge ml-auto"
+                    [class.dm-badge-submitted]="order.submissionStatus"
+                    [class.dm-badge-inactive]="!order.submissionStatus">
+                    {{ order.submissionStatus || 'Not Submitted' }}
+                </span>
             </div>
-            <div class="modal-body">
-                <!-- Instructions History -->
-                <div class="instructions-history" style="max-height: 400px; overflow-y: auto; margin-bottom: 1rem">
-                    <h6>Instruction History:</h6>
-                    <div *ngIf="isLoadingInstructions" class="text-center">
-                        <i class="fas fa-spinner fa-spin"></i>
-                        Loading instructions...
-                    </div>
-                    <div *ngIf="!isLoadingInstructions && instructions.length === 0" class="text-muted">
-                        No instructions yet. Add the first instruction below.
-                    </div>
-                    <div
-                        *ngFor="let instruction of instructions"
-                        class="instruction-item"
-                        [class.team-lead-instruction]="instruction.isFromTeamLead"
-                        [class.writer-instruction]="!instruction.isFromTeamLead"
-                        style="margin-bottom: 1rem; padding: 0.75rem; border-radius: 8px; border-left: 4px solid">
-                        <div
-                            class="instruction-header"
-                            style="display: flex; justify-content: space-between; margin-bottom: 0.5rem">
-                            <strong>{{ instruction.senderName }}</strong>
-                            <small class="text-muted">{{ formatInstructionDate(instruction.createdAt) }}</small>
-                        </div>
-                        <div class="instruction-message" style="margin-bottom: 0.5rem">
-                            {{ instruction.message }}
-                        </div>
-                        <div *ngIf="instruction.attachmentFilenames" class="instruction-attachments">
-                            <small>
-                                <i class="fas fa-paperclip"></i>
-                                Attachments:
-                            </small>
-                            <span
-                                *ngFor="let filename of getInstructionAttachments(instruction.attachmentFilenames)"
-                                class="attachment-tag"
-                                style="
-                                    margin-left: 0.5rem;
-                                    background: #e9ecef;
-                                    padding: 2px 6px;
-                                    border-radius: 3px;
-                                    font-size: 0.8em;
-                                ">
-                                {{ filename }}
+
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="dm-meta-row"><span class="dm-filter-label">Client:</span><span>{{ order.clientName || order.customerName || 'N/A' }}</span></div>
+                        <div class="dm-meta-row"><span class="dm-filter-label">Order Date:</span><span>{{ formatDate(order.orderDate) }}</span></div>
+                        <div class="dm-meta-row">
+                            <span class="dm-filter-label">Deadline:</span>
+                            <span [class.dm-overdue]="isDeadlineUrgent(order.deadline)" [class.dm-on-time]="!isDeadlineUrgent(order.deadline)">
+                                {{ formatDate(order.deadline) }}
                             </span>
                         </div>
+                        <div class="dm-meta-row"><span class="dm-filter-label">Pages / Words:</span><span>{{ order.wordsOrPages || 'N/A' }}</span></div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="dm-meta-row">
+                            <span class="dm-filter-label">Assigned Writer:</span>
+                            <span [class.dm-text-danger]="!order.assignedToUserId" [class.dm-text-success]="order.assignedToUserId">
+                                {{ getWriterName(order.assignedToUserId) }}
+                            </span>
+                        </div>
+                        <div class="dm-meta-row"><span class="dm-filter-label">Academic Level:</span><span>{{ order.academicLevel || 'N/A' }}</span></div>
+                        <div class="dm-meta-row"><span class="dm-filter-label">Country:</span><span>{{ order.country || 'N/A' }}</span></div>
+                        <div *ngIf="order.submissionDate" class="dm-meta-row">
+                            <span class="dm-filter-label">Last Submission:</span>
+                            <span>{{ formatDate(order.submissionDate) }}</span>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Add New Instruction -->
-                <div class="add-instruction-section" style="border-top: 1px solid #dee2e6; padding-top: 1rem">
-                    <h6>Add New Instruction:</h6>
-                    <div class="form-group">
-                        <textarea
-                            [(ngModel)]="newInstructionMessage"
-                            class="form-control"
-                            rows="3"
-                            placeholder="Type your instruction or clarification here..."></textarea>
+                <!-- Order Details (view / edit) -->
+                <div style="margin-top:1rem">
+                    <div class="dm-filter-label mb-1">Order Details:</div>
+                    <!-- View mode -->
+                    <div *ngIf="!isEditingDetails || editingOrderId !== order.id"
+                        style="background:#0f172a;border-radius:6px;padding:0.75rem;color:#94a3b8;font-size:0.88rem">
+                        {{ order.orderDetails || 'No details provided yet.' }}
                     </div>
+                    <!-- Edit mode -->
+                    <div *ngIf="isEditingDetails && editingOrderId === order.id">
+                        <textarea [(ngModel)]="editedOrderDetails" class="form-control" rows="4"
+                            placeholder="Enter order details and instructions..." style="margin-bottom:0.5rem"></textarea>
+                        <div style="display:flex;gap:10px">
+                            <button class="dm-btn-primary btn" (click)="saveOrderDetails()" [disabled]="!editedOrderDetails.trim()">
+                                <i class="fas fa-save"></i> Save
+                            </button>
+                            <button class="dm-btn-ghost btn" (click)="cancelEditingDetails()">
+                                <i class="fas fa-times"></i> Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
 
-                    <div class="form-group">
-                        <label for="instructionFiles">Attach Files (optional):</label>
-                        <input
-                            type="file"
-                            id="instructionFiles"
-                            class="form-control"
-                            multiple
-                            (change)="onInstructionFilesSelected($event)"
-                            accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png" />
-                        <small class="text-muted">Supported formats: PDF, DOC, DOCX, TXT, JPG, PNG</small>
-                        <div
-                            *ngIf="selectedInstructionFiles.length > 0"
-                            class="selected-files"
-                            style="margin-top: 0.5rem">
-                            <small><strong>Selected files:</strong></small>
-                            <div *ngFor="let file of selectedInstructionFiles" style="margin-left: 1rem">
-                                <i class="fas fa-file"></i>
-                                {{ file.name }}
+                <!-- Attachments -->
+                <div *ngIf="order.attachmentFilenames" style="margin-top:0.75rem">
+                    <div class="dm-filter-label mb-1"><i class="fas fa-paperclip mr-1"></i>Attachments:</div>
+                    <div *ngFor="let filename of getAttachmentsList(order.attachmentFilenames)"
+                        style="margin-bottom:4px;color:#64748b;font-size:0.88rem">
+                        <i class="fas fa-file mr-1"></i>{{ filename }}
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div style="border-top:1px solid rgba(99,102,241,0.1);padding-top:1rem;margin-top:1rem;display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+                    <button class="dm-btn-primary btn" (click)="openAssignModal(order)" [disabled]="!canReassign(order)">
+                        <i class="fas fa-user-edit"></i>
+                        {{ order.assignedToUserId ? 'Reassign Writer' : 'Assign Writer' }}
+                    </button>
+                    <button class="dm-btn-ghost btn" (click)="openInstructionsModal(order)">
+                        <i class="fas fa-comments"></i> Instructions
+                    </button>
+                    <small *ngIf="!canReassign(order)" style="color:#64748b">Cannot reassign completed orders</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== Assignment Modal ==================== -->
+    <div *ngIf="isAssignModalOpen" class="modal-overlay" (click)="closeAssignModal()">
+        <div class="modal-content dm-modal" (click)="$event.stopPropagation()">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem">
+                <h4 style="color:#e2e8f0;margin:0">
+                    <i class="fas fa-user-edit mr-2" style="color:#6366f1"></i>
+                    {{ selectedOrder?.assignedToUserId ? 'Reassign' : 'Assign' }} Writer
+                    <span class="dm-order-chip ml-2">{{ selectedOrder?.orderNumber }}</span>
+                </h4>
+                <button class="dm-action-btn" (click)="closeAssignModal()" style="background:none;padding:4px 8px"><i class="fas fa-times"></i></button>
+            </div>
+            <form (ngSubmit)="assignOrder()" #assignForm="ngForm">
+                <div class="form-group">
+                    <label class="dm-filter-label">Select Writer *</label>
+                    <select class="form-control" name="writerId" [(ngModel)]="selectedWriterId" required>
+                        <option value="">-- Select a writer --</option>
+                        <option *ngFor="let writer of writers" [value]="writer.id">
+                            {{ writer.name }} ({{ writer.email }})
+                        </option>
+                    </select>
+                </div>
+                <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:1rem">
+                    <button type="button" class="dm-btn-ghost btn" (click)="closeAssignModal()">Cancel</button>
+                    <button type="submit" class="dm-btn-primary btn" [disabled]="!selectedWriterId">
+                        <i class="fas fa-check"></i>
+                        {{ selectedOrder?.assignedToUserId ? 'Update Assignment' : 'Assign Order' }}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ==================== Instructions Modal ==================== -->
+    <div class="modal" [class.show]="isInstructionModalOpen" [style.display]="isInstructionModalOpen ? 'block' : 'none'" style="z-index:1050">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-comments mr-2" style="color:#6366f1"></i>Instructions
+                        <span class="dm-order-chip ml-2">{{ selectedOrder?.orderNumber }}</span>
+                    </h5>
+                    <button type="button" class="close" (click)="closeInstructionsModal()"><span>&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <!-- History -->
+                    <div style="max-height:350px;overflow-y:auto;margin-bottom:1rem">
+                        <div class="dm-filter-label mb-2">Instruction History:</div>
+                        <div *ngIf="isLoadingInstructions" style="color:#64748b;padding:0.5rem">
+                            <i class="fas fa-spinner fa-spin mr-2"></i> Loading...
+                        </div>
+                        <div *ngIf="!isLoadingInstructions && instructions.length === 0" style="color:#64748b;font-size:0.88rem">
+                            No instructions yet. Add the first instruction below.
+                        </div>
+                        <div *ngFor="let instruction of instructions" class="instruction-item"
+                            [class.team-lead-instruction]="instruction.isFromTeamLead"
+                            [class.writer-instruction]="!instruction.isFromTeamLead"
+                            style="margin-bottom:0.75rem;padding:0.75rem;border-radius:8px;border-left:4px solid">
+                            <div style="display:flex;justify-content:space-between;margin-bottom:0.4rem">
+                                <strong style="color:#e2e8f0">{{ instruction.senderName }}</strong>
+                                <small style="color:#64748b">{{ formatInstructionDate(instruction.createdAt) }}</small>
+                            </div>
+                            <div style="color:#cbd5e1">{{ instruction.message }}</div>
+                            <div *ngIf="instruction.attachmentFilenames" style="margin-top:0.5rem">
+                                <span *ngFor="let filename of getInstructionAttachments(instruction.attachmentFilenames)"
+                                    class="attachment-item" style="margin-right:0.5rem;font-size:0.85rem">
+                                    <i class="fas fa-paperclip mr-1"></i>{{ filename }}
+                                </span>
                             </div>
                         </div>
                     </div>
-
-                    <div class="form-group">
-                        <button
-                            class="btn btn-primary"
-                            (click)="addInstruction()"
-                            [disabled]="!newInstructionMessage.trim()">
-                            <i class="fas fa-paper-plane"></i>
-                            Send Instruction
-                        </button>
-                        <button type="button" class="btn btn-secondary ml-2" (click)="closeInstructionsModal()">
-                            Close
-                        </button>
+                    <!-- Add instruction -->
+                    <div style="border-top:1px solid rgba(99,102,241,0.15);padding-top:1rem">
+                        <div class="dm-filter-label mb-2">Add New Instruction:</div>
+                        <div class="form-group">
+                            <textarea [(ngModel)]="newInstructionMessage" class="form-control" rows="3"
+                                placeholder="Type your instruction or clarification here..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label class="dm-filter-label">Attach Files (optional):</label>
+                            <input type="file" class="form-control" multiple
+                                (change)="onInstructionFilesSelected($event)"
+                                accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png" />
+                            <small style="color:#64748b">PDF, DOC, DOCX, TXT, JPG, PNG</small>
+                            <div *ngIf="selectedInstructionFiles.length > 0" style="margin-top:0.5rem;color:#94a3b8;font-size:0.85rem">
+                                <div *ngFor="let file of selectedInstructionFiles">
+                                    <i class="fas fa-file mr-1"></i>{{ file.name }}
+                                </div>
+                            </div>
+                        </div>
+                        <div style="display:flex;gap:10px;justify-content:flex-end">
+                            <button class="dm-btn-ghost btn" (click)="closeInstructionsModal()">Close</button>
+                            <button class="dm-btn-primary btn" (click)="addInstruction()" [disabled]="!newInstructionMessage.trim()">
+                                <i class="fas fa-paper-plane"></i> Send Instruction
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+
+</div><!-- /dm-page -->

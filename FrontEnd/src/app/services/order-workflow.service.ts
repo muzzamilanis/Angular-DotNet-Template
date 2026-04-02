@@ -55,6 +55,10 @@ export class OrderWorkflowService {
         return this.http.post<any>(`${this.apiUrl}/parse-order`, { text });
     }
 
+    updateOrderViaChat(orderId: number, text: string): Observable<any> {
+        return this.http.post<any>(`${this.apiUrl}/update-order`, { orderId, text });
+    }
+
     updateStatus(payload: {
         orderId: number;
         stage: string;

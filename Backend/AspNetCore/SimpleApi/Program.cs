@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -163,6 +164,17 @@ builder.Services.AddAuthentication(x =>
         ValidAudience = builder.Configuration["Jwt:Audience"] ?? "SimpleApi",
         ClockSkew = TimeSpan.Zero
     };
+});
+
+// In Program.cs — simple per-user rate limit
+builder.Services.AddRateLimiter(options =>
+{
+	options.AddFixedWindowLimiter("parse-order", config =>
+	{
+		config.PermitLimit = 10;              // max 10 parses
+		config.Window = TimeSpan.FromMinutes(1); // per minute per user
+		config.QueueLimit = 0;               // no queue — reject immediately
+	});
 });
 
 var app = builder.Build();

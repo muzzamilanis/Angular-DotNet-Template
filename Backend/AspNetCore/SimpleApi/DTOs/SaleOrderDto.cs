@@ -176,7 +176,14 @@ namespace SimpleApi.DTOs
         public decimal? PkrAmount { get; set; }
 
         public decimal? ExchangeRateUsed { get; set; }
-        
+
+        /// <summary>
+        /// The original natural language text typed by the CSR in the chat.
+        /// Persisted as an OrderInstruction for audit and dispute resolution.
+        /// </summary>
+        [StringLength(2000)]
+        public string? CsrChatText { get; set; }
+
         public List<CreateSaleOrderItemDto> Items { get; set; } = new List<CreateSaleOrderItemDto>();
     }
 

@@ -9,6 +9,32 @@
   overflow: hidden;
 }
 
+/* Overrides when rendered inside the slide-in popup panel */
+.chatbot-container.popup-mode {
+  height: 100vh;
+  min-height: unset;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.chat-close-btn {
+  margin-left: auto;
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 1.1rem;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  line-height: 1;
+  transition: color 0.2s, background 0.2s;
+}
+
+.chat-close-btn:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.15);
+}
+
 .chat-header {
   display: flex;
   align-items: center;
@@ -31,6 +57,10 @@
   margin-left: auto;
   opacity: 0.75;
   font-size: 0.78rem;
+}
+
+.chatbot-container.popup-mode .chat-header small {
+  margin-left: 0;
 }
 
 /* Messages area */

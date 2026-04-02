@@ -1,283 +1,211 @@
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">My Assignments</h3>
-                </div>
-                <div class="card-body">
-                    <div *ngIf="isLoading" class="loading">
-                        <i class="fas fa-spinner fa-spin"></i>
-                        Loading assignments...
-                    </div>
+<!-- Writer Assignments — DM Command-Centre Theme -->
+<div class="dm-page">
 
-                    <div *ngIf="!isLoading && assignments.length === 0" class="no-assignments">
-                        <i class="fas fa-inbox fa-3x" style="color: #ccc"></i>
-                        <h4>No assignments yet</h4>
-                        <p>You don't have any assignments at the moment.</p>
-                    </div>
-
-                    <div *ngIf="!isLoading && assignments.length > 0" class="assignments-list">
-                        <div *ngFor="let assignment of assignments" class="assignment-card">
-                            <div class="assignment-header">
-                                <span class="assignment-title">{{ assignment.orderNumber }}</span>
-                                <span class="badge" [ngClass]="getStatusClass(assignment.status)">
-                                    {{ assignment.status || 'Not Set' }}
-                                </span>
-                            </div>
-
-                            <div class="assignment-meta">
-                                <div class="meta-item">
-                                    <span class="meta-label">Client:</span>
-                                    <span class="meta-value">{{ assignment.clientName || 'N/A' }}</span>
-                                </div>
-                                <div class="meta-item">
-                                    <span class="meta-label">Order Date:</span>
-                                    <span class="meta-value">{{ formatDate(assignment.orderDate) }}</span>
-                                </div>
-                                <div class="meta-item">
-                                    <span class="meta-label">Deadline:</span>
-                                    <span
-                                        class="meta-value"
-                                        [ngClass]="{ 'deadline-urgent': isDeadlineUrgent(assignment.deadline) }">
-                                        {{ formatDate(assignment.deadline) }}
-                                    </span>
-                                </div>
-                                <div class="meta-item">
-                                    <span class="meta-label">Pages/Words:</span>
-                                    <span class="meta-value">{{ assignment.wordsOrPages || 'N/A' }}</span>
-                                </div>
-                                <div class="meta-item">
-                                    <span class="meta-label">Academic Level:</span>
-                                    <span class="meta-value">{{ assignment.academicLevel || 'N/A' }}</span>
-                                </div>
-                                <div class="meta-item">
-                                    <span class="meta-label">Submission Status:</span>
-                                    <span
-                                        class="badge"
-                                        [ngClass]="getSubmissionStatusClass(assignment.submissionStatus)">
-                                        {{ assignment.submissionStatus || 'Not Submitted' }}
-                                    </span>
-                                </div>
-                            </div>
-
-                            <div *ngIf="assignment.orderDetails" class="meta-item" style="margin-bottom: 1rem">
-                                <span class="meta-label">Order Details:</span>
-                                <div
-                                    class="meta-value"
-                                    style="
-                                        margin-top: 0.5rem;
-                                        padding: 0.75rem;
-                                        background: #f8f9fa;
-                                        border-radius: 4px;
-                                    ">
-                                    {{ assignment.orderDetails }}
-                                </div>
-                            </div>
-
-                            <!-- Attachments Section -->
-                            <div *ngIf="assignment.attachmentFilenames" class="attachments-section">
-                                <h6>
-                                    <i class="fas fa-paperclip"></i>
-                                    Attachments:
-                                </h6>
-                                <div *ngFor="let filename of getAttachmentsList(assignment.attachmentFilenames)">
-                                    <a class="attachment-item" (click)="downloadAttachment(filename)">
-                                        <i class="fas fa-download"></i>
-                                        {{ filename }}
-                                    </a>
-                                </div>
-                            </div>
-
-                            <!-- Submission Section -->
-                            <div class="submission-section">
-                                <div *ngIf="assignment.submissionStatus">
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <strong>Submitted on:</strong>
-                                            {{ formatDate(assignment.submissionDate) }}
-                                        </div>
-                                        <div class="col-md-6" *ngIf="assignment.submittedFilename">
-                                            <strong>Submitted file:</strong>
-                                            <a
-                                                (click)="downloadAttachment(assignment.submittedFilename)"
-                                                class="attachment-item btn-sm">
-                                                <i class="fas fa-download"></i>
-                                                {{ assignment.submittedFilename }}
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="mt-3">
-                                    <button
-                                        class="btn btn-success btn-sm"
-                                        (click)="openSubmissionModal(assignment)"
-                                        [disabled]="assignment.submissionStatus === 'Completed'">
-                                        <i class="fas fa-upload"></i>
-                                        {{ assignment.submissionStatus ? 'Update Submission' : 'Submit Work' }}
-                                    </button>
-                                    <button
-                                        class="btn btn-info btn-sm ml-2"
-                                        (click)="openInstructionsModal(assignment)">
-                                        <i class="fas fa-comments"></i>
-                                        Instructions
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <!-- Page Header -->
+    <div class="dm-page-header">
+        <div>
+            <h1 class="dm-page-title"><i class="fas fa-tasks"></i> My Assignments</h1>
+            <p class="dm-page-subtitle">{{ assignments.length }} assignment(s) active</p>
         </div>
     </div>
-</div>
 
-<!-- Submission Modal -->
-<div *ngIf="isSubmissionModalOpen" class="modal-overlay" (click)="closeSubmissionModal()">
-    <div class="modal-content" (click)="$event.stopPropagation()">
-        <h4>Submit Work - {{ selectedAssignment?.orderNumber }}</h4>
-
-        <form (ngSubmit)="submitWork()" #submissionForm="ngForm">
-            <div class="form-group">
-                <label for="submissionStatus">Submission Status *</label>
-                <input
-                    type="text"
-                    id="submissionStatus"
-                    name="submissionStatus"
-                    class="form-control"
-                    [(ngModel)]="submissionStatus"
-                    readonly
-                    required />
-            </div>
-
-            <div class="form-group">
-                <label for="submissionFile">Upload File/Document/Screenshot (optional)</label>
-                <input
-                    type="file"
-                    id="submissionFile"
-                    name="submissionFile"
-                    class="form-control"
-                    (change)="onFileSelected($event)"
-                    accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png,.webp" />
-                <small class="text-muted">Supported formats: PDF, DOC, DOCX, TXT, JPG, JPEG, PNG, WebP</small>
-            </div>
-
-            <div class="form-group">
-                <label for="submissionNotes">Notes (optional)</label>
-                <textarea
-                    id="submissionNotes"
-                    name="submissionNotes"
-                    class="form-control"
-                    rows="3"
-                    [(ngModel)]="submissionNotes"
-                    placeholder="Add any notes or comments..."></textarea>
-            </div>
-
-            <div class="form-group">
-                <button type="submit" class="btn btn-primary" [disabled]="!submissionStatus">
-                    <i class="fas fa-paper-plane"></i>
-                    Submit
-                </button>
-                <button type="button" class="btn btn-secondary" (click)="closeSubmissionModal()">Cancel</button>
-            </div>
-        </form>
+    <!-- Loading -->
+    <div class="dm-loading-overlay" *ngIf="isLoading">
+        <div class="spinner-border"></div>
+        <span>Loading assignments...</span>
     </div>
-</div>
 
-<!-- Instructions Modal -->
-<div class="modal" [class.show]="isInstructionModalOpen" [style.display]="isInstructionModalOpen ? 'block' : 'none'">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4>Order Instructions - {{ selectedAssignment?.orderNumber }}</h4>
-                <button type="button" class="close" (click)="closeInstructionsModal()">
-                    <span>&times;</span>
-                </button>
+    <!-- Empty State -->
+    <div class="dm-empty-state" *ngIf="!isLoading && assignments.length === 0">
+        <i class="fas fa-inbox"></i>
+        <p>No assignments yet. Check back later.</p>
+    </div>
+
+    <!-- Assignment Cards -->
+    <div *ngIf="!isLoading && assignments.length > 0">
+        <div *ngFor="let assignment of assignments" class="card mb-3">
+            <div class="card-header" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+                <span class="dm-order-chip">{{ assignment.orderNumber }}</span>
+                <span class="dm-badge"
+                    [class.dm-badge-new]="assignment.status === 'New'"
+                    [class.dm-badge-progress]="assignment.status === 'InProgress'"
+                    [class.dm-badge-done]="assignment.status === 'Completed'"
+                    [class.dm-badge-cancelled]="assignment.status === 'Abandon'"
+                    [class.dm-badge-review]="assignment.status === 'workSubmittedByWriter'"
+                    [class.dm-badge-pending]="!assignment.status">
+                    {{ assignment.status || 'Pending' }}
+                </span>
+                <span *ngIf="isDeadlineUrgent(assignment.deadline)" class="dm-badge dm-badge-cancelled">
+                    <i class="fas fa-fire"></i> URGENT
+                </span>
+                <span class="dm-badge ml-auto"
+                    [class.dm-badge-submitted]="assignment.submissionStatus"
+                    [class.dm-badge-inactive]="!assignment.submissionStatus">
+                    {{ assignment.submissionStatus || 'Not Submitted' }}
+                </span>
             </div>
-            <div class="modal-body">
-                <!-- Instructions History -->
-                <div class="instructions-history" style="max-height: 400px; overflow-y: auto; margin-bottom: 1rem">
-                    <h6>Instruction History:</h6>
-                    <div *ngIf="isLoadingInstructions" class="text-center">
-                        <i class="fas fa-spinner fa-spin"></i>
-                        Loading instructions...
-                    </div>
-                    <div *ngIf="!isLoadingInstructions && instructions.length === 0" class="text-muted">
-                        No instructions yet. Check back later or contact your team lead if you have questions.
-                    </div>
-                    <div
-                        *ngFor="let instruction of instructions"
-                        class="instruction-item"
-                        [class.team-lead-instruction]="instruction.isFromTeamLead"
-                        [class.writer-instruction]="!instruction.isFromTeamLead"
-                        style="margin-bottom: 1rem; padding: 0.75rem; border-radius: 8px; border-left: 4px solid">
-                        <div
-                            class="instruction-header"
-                            style="display: flex; justify-content: space-between; margin-bottom: 0.5rem">
-                            <strong>{{ instruction.senderName }}</strong>
-                            <small class="text-muted">{{ formatInstructionDate(instruction.createdAt) }}</small>
-                        </div>
-                        <div class="instruction-message" style="margin-bottom: 0.5rem">
-                            {{ instruction.message }}
-                        </div>
-                        <div *ngIf="instruction.attachmentFilenames" class="instruction-attachments">
-                            <small>
-                                <i class="fas fa-paperclip"></i>
-                                Attachments:
-                            </small>
-                            <span
-                                *ngFor="let filename of getInstructionAttachments(instruction.attachmentFilenames)"
-                                class="attachment-tag"
-                                style="
-                                    margin-left: 0.5rem;
-                                    background: #e9ecef;
-                                    padding: 2px 6px;
-                                    border-radius: 3px;
-                                    font-size: 0.8em;
-                                    cursor: pointer;
-                                "
-                                (click)="downloadAttachment(filename)">
-                                {{ filename }}
+
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="dm-meta-row"><span class="dm-filter-label">Client:</span><span>{{ assignment.clientName || 'N/A' }}</span></div>
+                        <div class="dm-meta-row"><span class="dm-filter-label">Order Date:</span><span>{{ formatDate(assignment.orderDate) }}</span></div>
+                        <div class="dm-meta-row">
+                            <span class="dm-filter-label">Deadline:</span>
+                            <span [class.dm-overdue]="isDeadlineUrgent(assignment.deadline)" [class.dm-on-time]="!isDeadlineUrgent(assignment.deadline)">
+                                {{ formatDate(assignment.deadline) }}
                             </span>
                         </div>
                     </div>
+                    <div class="col-md-6">
+                        <div class="dm-meta-row"><span class="dm-filter-label">Pages / Words:</span><span>{{ assignment.wordsOrPages || 'N/A' }}</span></div>
+                        <div class="dm-meta-row"><span class="dm-filter-label">Academic Level:</span><span>{{ assignment.academicLevel || 'N/A' }}</span></div>
+                        <div *ngIf="assignment.submissionStatus" class="dm-meta-row">
+                            <span class="dm-filter-label">Submitted On:</span>
+                            <span>{{ formatDate(assignment.submissionDate) }}</span>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- Add Response -->
-                <div class="add-response-section" style="border-top: 1px solid #dee2e6; padding-top: 1rem">
-                    <h6>Ask for Clarification or Report Issues:</h6>
-                    <div class="form-group">
-                        <textarea
-                            [(ngModel)]="newResponseMessage"
-                            class="form-control"
-                            rows="3"
-                            placeholder="Type your question, clarification request, or report any issues you're facing..."></textarea>
+                <!-- Order Details -->
+                <div *ngIf="assignment.orderDetails" style="margin-top:1rem">
+                    <div class="dm-filter-label mb-1">Order Details:</div>
+                    <div style="background:#0f172a;border-radius:6px;padding:0.75rem;color:#94a3b8;font-size:0.88rem">
+                        {{ assignment.orderDetails }}
                     </div>
+                </div>
 
-                    <div class="form-group">
-                        <label for="instructionFile">Attach Document/Screenshot (optional)</label>
-                        <input
-                            type="file"
-                            id="instructionFile"
-                            name="instructionFile"
-                            class="form-control"
-                            (change)="onInstructionFileSelected($event)"
-                            accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png,.webp" />
-                        <small class="text-muted">Supported formats: PDF, DOC, DOCX, TXT, JPG, JPEG, PNG, WebP</small>
+                <!-- Submitted File -->
+                <div *ngIf="assignment.submittedFilename" style="margin-top:0.75rem">
+                    <div class="dm-filter-label mb-1">Submitted File:</div>
+                    <a class="attachment-item" (click)="downloadAttachment(assignment.submittedFilename)">
+                        <i class="fas fa-download"></i>{{ assignment.submittedFilename }}
+                    </a>
+                </div>
+
+                <!-- Attachments -->
+                <div *ngIf="assignment.attachmentFilenames" style="margin-top:0.75rem">
+                    <div class="dm-filter-label mb-1"><i class="fas fa-paperclip mr-1"></i>Attachments:</div>
+                    <div *ngFor="let filename of getAttachmentsList(assignment.attachmentFilenames)" style="margin-bottom:4px">
+                        <a class="attachment-item" (click)="downloadAttachment(filename)">
+                            <i class="fas fa-download"></i>{{ filename }}
+                        </a>
                     </div>
+                </div>
 
-                    <div class="form-group">
-                        <button class="btn btn-primary" (click)="addResponse()" [disabled]="!newResponseMessage.trim()">
-                            <i class="fas fa-paper-plane"></i>
-                            Send Response
-                        </button>
-                        <button type="button" class="btn btn-secondary ml-2" (click)="closeInstructionsModal()">
-                            Close
-                        </button>
+                <!-- Actions -->
+                <div style="border-top:1px solid rgba(99,102,241,0.1);padding-top:1rem;margin-top:1rem;display:flex;gap:10px;flex-wrap:wrap">
+                    <button class="dm-btn-primary btn"
+                        (click)="openSubmissionModal(assignment)"
+                        [disabled]="assignment.submissionStatus === 'Completed'">
+                        <i class="fas fa-upload"></i>
+                        {{ assignment.submissionStatus ? 'Update Submission' : 'Submit Work' }}
+                    </button>
+                    <button class="dm-btn-ghost btn" (click)="openInstructionsModal(assignment)">
+                        <i class="fas fa-comments"></i> Instructions
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== Submission Modal ==================== -->
+    <div *ngIf="isSubmissionModalOpen" class="modal-overlay" (click)="closeSubmissionModal()">
+        <div class="modal-content dm-modal" (click)="$event.stopPropagation()">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem">
+                <h4 style="color:#e2e8f0;margin:0">
+                    <i class="fas fa-upload mr-2" style="color:#6366f1"></i>Submit Work
+                    <span class="dm-order-chip ml-2">{{ selectedAssignment?.orderNumber }}</span>
+                </h4>
+                <button class="dm-action-btn" (click)="closeSubmissionModal()" style="background:none;padding:4px 8px"><i class="fas fa-times"></i></button>
+            </div>
+            <form (ngSubmit)="submitWork()" #submissionForm="ngForm">
+                <div class="form-group">
+                    <label class="dm-filter-label">Submission Status</label>
+                    <input type="text" class="form-control" name="submissionStatus" [(ngModel)]="submissionStatus" readonly required />
+                </div>
+                <div class="form-group">
+                    <label class="dm-filter-label">Upload File (optional)</label>
+                    <input type="file" class="form-control" name="submissionFile" (change)="onFileSelected($event)"
+                        accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png,.webp" />
+                    <small style="color:#64748b">PDF, DOC, DOCX, TXT, JPG, PNG, WebP</small>
+                </div>
+                <div class="form-group">
+                    <label class="dm-filter-label">Notes (optional)</label>
+                    <textarea class="form-control" name="submissionNotes" rows="3" [(ngModel)]="submissionNotes"
+                        placeholder="Add any notes or comments..."></textarea>
+                </div>
+                <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:1rem">
+                    <button type="button" class="dm-btn-ghost btn" (click)="closeSubmissionModal()">Cancel</button>
+                    <button type="submit" class="dm-btn-primary btn" [disabled]="!submissionStatus">
+                        <i class="fas fa-paper-plane"></i> Submit
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ==================== Instructions Modal ==================== -->
+    <div class="modal" [class.show]="isInstructionModalOpen" [style.display]="isInstructionModalOpen ? 'block' : 'none'" style="z-index:1050">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-comments mr-2" style="color:#6366f1"></i>Instructions
+                        <span class="dm-order-chip ml-2">{{ selectedAssignment?.orderNumber }}</span>
+                    </h5>
+                    <button type="button" class="close" (click)="closeInstructionsModal()"><span>&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <!-- History -->
+                    <div style="max-height:350px;overflow-y:auto;margin-bottom:1rem">
+                        <div class="dm-filter-label mb-2">Conversation:</div>
+                        <div *ngIf="isLoadingInstructions" style="color:#64748b;padding:0.5rem">
+                            <i class="fas fa-spinner fa-spin mr-2"></i> Loading...
+                        </div>
+                        <div *ngIf="!isLoadingInstructions && instructions.length === 0" style="color:#64748b;font-size:0.88rem">
+                            No instructions yet. Contact your team lead if you have questions.
+                        </div>
+                        <div *ngFor="let instruction of instructions" class="instruction-item"
+                            [class.team-lead-instruction]="instruction.isFromTeamLead"
+                            [class.writer-instruction]="!instruction.isFromTeamLead"
+                            style="margin-bottom:0.75rem;padding:0.75rem;border-radius:8px;border-left:4px solid">
+                            <div style="display:flex;justify-content:space-between;margin-bottom:0.4rem">
+                                <strong style="color:#e2e8f0">{{ instruction.senderName }}</strong>
+                                <small style="color:#64748b">{{ formatInstructionDate(instruction.createdAt) }}</small>
+                            </div>
+                            <div style="color:#cbd5e1">{{ instruction.message }}</div>
+                            <div *ngIf="instruction.attachmentFilenames" style="margin-top:0.5rem">
+                                <span *ngFor="let filename of getInstructionAttachments(instruction.attachmentFilenames)"
+                                    class="attachment-item" (click)="downloadAttachment(filename)" style="margin-right:0.5rem">
+                                    <i class="fas fa-paperclip"></i>{{ filename }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Respond -->
+                    <div style="border-top:1px solid rgba(99,102,241,0.15);padding-top:1rem">
+                        <div class="dm-filter-label mb-2">Ask for Clarification / Report Issue:</div>
+                        <div class="form-group">
+                            <textarea [(ngModel)]="newResponseMessage" class="form-control" rows="3"
+                                placeholder="Type your question or report an issue..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label class="dm-filter-label">Attach Document (optional)</label>
+                            <input type="file" class="form-control" (change)="onInstructionFileSelected($event)"
+                                accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png,.webp" />
+                            <small style="color:#64748b">PDF, DOC, DOCX, TXT, JPG, PNG, WebP</small>
+                        </div>
+                        <div style="display:flex;gap:10px;justify-content:flex-end">
+                            <button class="dm-btn-ghost btn" (click)="closeInstructionsModal()">Close</button>
+                            <button class="dm-btn-primary btn" (click)="addResponse()" [disabled]="!newResponseMessage.trim()">
+                                <i class="fas fa-paper-plane"></i> Send Response
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+
+</div><!-- /dm-page -->
